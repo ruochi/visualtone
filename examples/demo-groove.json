@@ -19,7 +19,7 @@
     {
       "id": "kick-drum",
       "hue": 0,
-      "channel": 0,
+      "channel": [0, 1],
       "lightness": 0.35,
       "notes": [
         {
@@ -1268,7 +1268,7 @@
     {
       "id": "bass",
       "hue": 30,
-      "channel": 0,
+      "channel": [0, 1],
       "lightness": 0.45,
       "duck": {
         "by": "kick-drum",

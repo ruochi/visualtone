@@ -55,12 +55,29 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 
 轨道可选：`space`（混响）、`echo`（延迟）、`duck`（侧链）、`saturation`、`channel: [0,1]` 立体声路由；乐谱级 `bpm` 与 `master` 总线响度/效果。
 
+### 混音、调制与律动
+
+信号链（每轨）：曲线 → 音色 Voice → `eq` → `comp` → 增益/声像 LFO 与自动化 → `duck` → 混响/延迟发送 → 主总线 `comp` → 软削波 → 响度对齐。
+
+| 字段 | 作用 | 示例 |
+|------|------|------|
+| `eq` | RBJ 双二阶：`lowCut` / `highCut`（Hz）、`lowShelf` / `highShelf` `{freq, gain}`、`peaks` `[{freq, gain, q}]` | `{ "lowCut": 180, "peaks": [{ "freq": 600, "gain": -2, "q": 1 }] }` |
+| `comp` | 软拐点立体声联动压缩：`threshold` `ratio` `attackMs` `releaseMs` `knee` `makeup` | `{ "threshold": -14, "ratio": 4, "attackMs": 8 }` |
+| `lfo` | `[{ target, depth, rate|beats, shape, phase }]`；target = `lightness`（滤波扫频）/ `pitch`（颤音，半音）/ `gain`（tremolo）/ `pan`（±1 = 左右） | `{ "target": "pitch", "depth": 0.16, "rate": 5.3 }` |
+| `automation` | 关键帧线性插值：`lightness`（加到亮度上的偏移）、`gain`（乘数） | `{ "gain": [{ "t": 0, "v": 0.6 }, { "t": 4, "v": 1 }] }` |
+| `swing` | 乐谱级（或轨道覆盖）0 = 平直，1 = 三连音；`swingGrid` 8 或 16 | `"swing": 0.42` |
+| `humanize` | 确定性微抖动：`timeMs`、`size` | `{ "timeMs": 4, "size": 0.25 }` |
+| `master.comp` | 总线胶水压缩，阈值相对目标响度 | `{ "threshold": -9, "ratio": 2 }` |
+
+完整示例见 `examples/deep-house-v5.json`（由 `examples/scripts/deep-house-v5.mjs` 生成）。
+
 详见 `llms.txt`（面向 AI 作者的速查与示例）。
 
 ### 多轨道与立体声
 
 - 每条轨道是一条单色曲线 (每条轨道一个色调值)
-- 立体声 = 两条单声道轨道 (L 和 R)，而不是声像参数
+- `channel: 0` / `1` 把单声道曲线送到左 / 右；`channel: [0,1]` 走立体声（居中，齐奏与 `pan` LFO 会展开声像）
+- 立体声乐谱里只写 `channel: 0` 的轨道只在左声道出声，底鼓、贝斯请用 `[0,1]`
 - 多轨道 = 多条平行曲线
 - 音乐 = 这些值随时间变化 (平滑插值或阶跃式打击乐)
 
@@ -77,6 +94,9 @@ npm install visualtone
 ```bash
 # 渲染乐谱文件
 npx visualtone render examples/rising-pad.json -o output.wav
+
+# 输出格式：16（默认，带 TPDF 抖动）| 24 | 32f（浮点，适合导入 DAW 再加工）
+npx visualtone render examples/deep-house-v5.json -o out.wav --bit-depth 24
 
 # 查看 JSON Schema
 npx visualtone schema
@@ -252,25 +272,29 @@ console.log('Track report:', result.eventReport);
 
 ## API 参考
 
-### `render(score: Score): RenderResult`
+### `render(score: Score, options?: { wav?: WavOptions }): RenderResult`
 
-渲染乐谱为音频。
+渲染乐谱为音频。`WavOptions = { bitDepth?: 16 | 24 | 32, dither?: boolean, seed?: number }`。
 
 **返回值：**
 
 ```typescript
 {
-  buffers: Float32Array[];      // 每个通道的音频缓冲区
-  sampleRate: number;            // 采样率
-  duration: number;              // 持续时间 (秒)
-  eventReport: Array<{           // 每轨道统计信息
+  buffers: Float32Array[];      // 每个通道的音频缓冲区（内部全程浮点）
+  sampleRate: number;
+  duration: number;             // 秒
+  eventReport: Array<{          // 每轨道统计信息
     trackId: string;
-    channel: number;
+    channels: number[];
     samplesRendered: number;
     peakGain: number;
     rmsGain: number;
+    onsets: number;
+    spectralCentroid: number;   // Hz，Hann 窗 FFT 帧按能量加权
+    gainReductionDb: number;    // 轨道压缩最大增益衰减
   }>;
-  wav: Buffer;                   // WAV 文件数据
+  master: { peak: number; loudnessDb: number; gainReductionDb: number };
+  wav: Buffer;                  // WAV 文件数据
 }
 ```
 
@@ -282,7 +306,9 @@ console.log('Track report:', result.eventReport);
 - `hueToSynthParams()`: 色调到合成器参数映射
 - `midiToFrequency()`: MIDI 音符到频率转换
 - `SimpleSynth`: 合成器类
-- `writeWavFile()`: WAV 文件写入工具
+- `writeWavFile(buffers, sampleRate, options?)`: WAV 写入（16/24-bit PCM + TPDF 抖动，或 32-bit float）
+- `Biquad` / `StereoEq` / `Compressor` / `lfoValue` / `keyframeAt`: 混音构件
+- `swingTime()` / `applyGroove()`: swing 时间扭曲与 humanize
 
 ## AI 创作指南
 
@@ -320,22 +346,21 @@ npm run dev
 
 ## 技术细节
 
-- **插值**: 线性插值，曲线控制点之间平滑过渡
-- **合成**: 简单的减法合成器 (振荡器 + 滤波器 + 包络)
-- **间隙处理**: 轨道点之外的时间区域产生静音
-- **归一化**: 自动峰值归一化防止削波
-- **确定性**: 相同的乐谱和种子产生相同的音频
+- **插值**: 按 ease 规则在曲线控制点之间过渡
+- **合成**: 带限 mip 波表 + 齐奏 + 共振 SVF（左右声道独立状态）+ 噪声/瞬态/音高包络
+- **混音**: 每轨 EQ/压缩、LFO、自动化；每轨独立混响/延迟实例（尾音不串轨）
+- **主总线**: 胶水压缩 → 软削波 → 响度对齐 → 峰值上限 0.891
+- **输出**: 内部浮点，写出时一次量化；16/24-bit 默认 TPDF 抖动
+- **确定性**: 相同的乐谱和种子产生逐字节相同的 WAV（抖动噪声也由种子决定）
 
 ## 限制与未来计划
 
-当前版本 (v0.1) 保持最小范围：
-
-- ✅ 基础曲线到音频渲染
-- ✅ 多轨道和多通道
-- ✅ 简单的音色映射
-- ⏳ 混音总线处理 (未来)
-- ⏳ 效果器 (混响、延迟等) (未来)
-- ⏳ Remotion 集成 (未来)
+- ✅ 曲线到音频渲染、多轨立体声
+- ✅ hue 音色环 + 参数覆盖
+- ✅ 混响、延迟、侧链、EQ、压缩、LFO、自动化、swing
+- ⏳ 采样鼓 / 采样音色（尚未引入）
+- ⏳ 前瞻式限幅器（目前峰值上限是整体缩放）
+- ⏳ Remotion 集成
 
 ## 许可证
 
