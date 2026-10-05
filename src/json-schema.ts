@@ -1,18 +1,31 @@
 // @ts-nocheck
 import { z } from 'zod';
-// Avoid deep type instantiation from zod-to-json-schema during project compile.
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
 const JsonScoreSchema = z.object({
   sampleRate: z.number().int().positive().default(44100),
   duration: z.number().positive().optional(),
   seed: z.number().int().optional(),
+  bpm: z.number().positive().optional(),
+  master: z
+    .object({
+      loudness: z.number().default(-14),
+      drive: z.number().min(0).max(1).default(0.15),
+      reverb: z.object({ size: z.number(), decay: z.number() }).optional(),
+      delay: z.object({ beats: z.number(), feedback: z.number() }).optional(),
+    })
+    .optional(),
   tracks: z.array(
     z.object({
       id: z.string(),
       hue: z.number().min(0).max(360),
-      channel: z.number().int().min(0).default(0),
+      channel: z.union([z.number().int().min(0), z.array(z.number().int().min(0))]).default(0),
       lightness: z.number().min(0).max(1).default(0.5),
+      saturation: z.number().min(0).max(1).optional(),
+      space: z.number().min(0).max(1).optional(),
+      echo: z.number().min(0).max(1).optional(),
+      duck: z.object({ by: z.string(), amount: z.number().min(0).max(1) }).optional(),
+      timbre: z.record(z.number()).optional(),
       points: z
         .array(
           z.object({
@@ -42,7 +55,7 @@ const JsonScoreSchema = z.object({
 });
 
 export function getJsonSchema(): Record<string, unknown> {
-  const generated = zodToJsonSchema(JsonScoreSchema as z.ZodTypeAny, {
+  const generated = zodToJsonSchema(JsonScoreSchema, {
     name: 'VisualtoneScore',
     $refStrategy: 'none',
   }) as Record<string, unknown>;

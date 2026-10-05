@@ -39,17 +39,21 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 - `hold`（默认）：保持音量，结尾约 20ms 收掉
 - `exp`：在 `duration` 内指数衰减（鼓、镲）
 
-### Hue 音色环（概略）
+### Hue 音色环（v3 电子乐引擎）
 
 | Hue | 家族 |
 |-----|------|
-| 0° | 鼓 |
-| 40° | 拨弦 / 贝斯 |
-| 90° | 钟 / 木琴 |
-| 150° | 簧片 / 主旋律 |
-| 210° | 弦乐 / Pad |
-| 270° | 气声 |
-| 320° | 噪声 / Hi-hat |
+| 0° | Kick |
+| 30° | Bass |
+| 70° | Pluck / arp |
+| 110° | Bell / keys |
+| 160° | Supersaw lead |
+| 210° | Pad |
+| 260° | Vocal / breath |
+| 300° | Snare / clap |
+| 335° | Hi-hat |
+
+轨道可选：`space`（混响）、`echo`（延迟）、`duck`（侧链）、`saturation`、`channel: [0,1]` 立体声路由；乐谱级 `bpm` 与 `master` 总线响度/效果。
 
 详见 `llms.txt`（面向 AI 作者的速查与示例）。
 

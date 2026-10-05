@@ -75,11 +75,14 @@ if (command === 'render') {
     console.log('\nTrack report:');
     
     for (const event of result.eventReport) {
-      console.log(`  ${event.trackId} (ch ${event.channel}):`);
+      console.log(`  ${event.trackId} (ch ${event.channels.join(',')}):`);
       console.log(`    Samples: ${event.samplesRendered}`);
       console.log(`    Peak: ${event.peakGain.toFixed(4)}`);
       console.log(`    RMS: ${event.rmsGain.toFixed(4)}`);
+      console.log(`    Centroid: ${event.spectralCentroid.toFixed(0)} Hz`);
+      console.log(`    Onsets: ${event.onsets}`);
     }
+    console.log(`\nMaster peak: ${result.master.peak.toFixed(4)}, loudness ~${result.master.loudnessDb.toFixed(1)} dBFS`);
     
     writeFileSync(outputPath, result.wav);
     console.log(`\nWrote ${outputPath}`);

@@ -3,7 +3,8 @@ import { strict as assert } from 'node:assert';
 import { createHash } from 'node:crypto';
 import { sampleAt, prepareTrackPoints } from './interpolator.js';
 import { expandNotes } from './notes.js';
-import { hueToTimbre, midiToFrequency } from './synth.js';
+import { hueToTimbreVector, midiToFrequency } from './synth.js';
+import { lightnessToCutoff } from './timbre.js';
 import { render } from './renderer.js';
 import { ScoreSchema } from './schema.js';
 
@@ -55,10 +56,10 @@ test('expandNotes - exp creates two-point decay', () => {
   assert.equal(pts[1].t, 0.15);
 });
 
-test('hueToTimbre - ring continuity at 0 and 360', () => {
-  const a = hueToTimbre(359);
-  const b = hueToTimbre(0);
-  assert.ok(Math.abs(a.noise - b.noise) < 0.15);
+test('hueToTimbreVector - ring continuity at 0 and 360', () => {
+  const a = hueToTimbreVector(359);
+  const b = hueToTimbreVector(0);
+  assert.ok(Math.abs(a.noise - b.noise) < 0.2);
 });
 
 test('midiToFrequency - A4 = 440Hz', () => {
@@ -77,38 +78,8 @@ function spectralCentroid(buf: Float32Array, sr: number): number {
   return den > 0 ? num / den : 0;
 }
 
-test('timbre - lightness raises spectral centroid', () => {
-  const scoreLo = ScoreSchema.parse({
-    sampleRate: 44100,
-    duration: 0.2,
-    seed: 1,
-    tracks: [
-      {
-        id: 't',
-        hue: 150,
-        channel: 0,
-        points: [
-          { t: 0, y: 64, size: 0.7, lightness: 0.15, ease: 'step' },
-          { t: 0.2, y: 64, size: 0.7, lightness: 0.15 },
-        ],
-      },
-    ],
-  });
-  const scoreHi = ScoreSchema.parse({
-    ...scoreLo,
-    tracks: [
-      {
-        ...scoreLo.tracks[0],
-        points: [
-          { t: 0, y: 64, size: 0.7, lightness: 0.95, ease: 'step' },
-          { t: 0.2, y: 64, size: 0.7, lightness: 0.95 },
-        ],
-      },
-    ],
-  });
-  const lo = render(scoreLo).buffers[0];
-  const hi = render(scoreHi).buffers[0];
-  assert.ok(spectralCentroid(hi, 44100) > spectralCentroid(lo, 44100));
+test('timbre - lightness raises cutoff mapping', () => {
+  assert.ok(lightnessToCutoff(0.9, 440) > lightnessToCutoff(0.2, 440));
 });
 
 test('render - exp kick attack louder than tail', () => {

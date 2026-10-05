@@ -7,7 +7,8 @@ Music = colored curves over time. Audio is a pure function of curve data.
 - y (MIDI float 0–127): pitch
 - size (0–1): gain / stroke width
 - hue (0–360°): timbre family (ring of synth anchors)
-- lightness (0–1): brightness → low-pass cutoff (default 0.5 on track)
+- lightness (0–1): brightness → spectral tilt + filter cutoff (default 0.5)
+- saturation (0–1, optional): 1 = pure tone, lower = more noise ("grey = noisy")
 
 ## Curve syntax (points)
 Optional per point:
@@ -27,8 +28,16 @@ Defaults when ease omitted:
 - hold (default): sustain then ~20ms release
 - exp: exponential decay over duration (drums, hats)
 
-## Hue families (approximate)
-0° drum, 40° pluck/bass, 90° bell, 150° reed/lead, 210° strings/pad, 270° breathy, 320° noise/hat
+## Hue families (v3 engine)
+0° kick, 30° bass, 70° pluck, 110° bell/keys, 160° supersaw lead, 210° pad, 260° vocal, 300° snare/clap, 335° hi-hat
+
+## Track FX (optional)
+- `channel`: `0` or `[0,1]` stereo route from one mono curve
+- `space`: reverb send 0–1 (visual: glow)
+- `echo`: delay send 0–1
+- `duck`: `{ "by": "kick-drum", "amount": 0.6 }`
+- `timbre`: partial override of internal synth vector
+- `bpm` + `master`: `{ "loudness": -14, "reverb": { "size": 0.6 }, "delay": { "beats": 0.75 } }`
 
 ## Example: rising pad (linear fades)
 See examples/rising-pad.json

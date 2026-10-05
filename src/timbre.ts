@@ -1,121 +1,221 @@
-/** Hue anchor timbre parameters (blended on a ring). */
+/** Internal timbre vector (~18 params) + hue macro mapping. */
 
-export interface TimbreParams {
-  sine: number;
-  saw: number;
-  square: number;
-  detuneCents: number;
-  noise: number;
+export interface TimbreVector {
+  tilt: number;
+  oddEven: number;
   inharmonic: number;
+  formantFreq: number;
+  formantGain: number;
+  unison: number;
+  detuneCents: number;
+  spread: number;
+  noise: number;
+  noiseColor: number;
+  transient: number;
   attackMs: number;
-  filterEnvAmount: number;
-  decayMs: number;
-  pitchDropSemitones: number;
-  pitchDropMs: number;
+  resonance: number;
+  filterEnv: number;
+  filterDecayMs: number;
+  pitchEnvSemis: number;
+  pitchEnvMs: number;
+  drive: number;
 }
 
-interface Anchor extends TimbreParams {
+export type TimbreOverride = Partial<TimbreVector>;
+
+interface Anchor extends TimbreVector {
   hue: number;
 }
 
 const ANCHORS: Anchor[] = [
   {
     hue: 0,
-    sine: 0.7,
-    saw: 0.1,
-    square: 0,
+    tilt: 2.5,
+    oddEven: 0.8,
+    inharmonic: 0.05,
+    formantFreq: 120,
+    formantGain: 0.1,
+    unison: 1,
     detuneCents: 0,
-    noise: 0.55,
-    inharmonic: 0.1,
-    attackMs: 1,
-    filterEnvAmount: 0.2,
-    decayMs: 80,
-    pitchDropSemitones: 4,
-    pitchDropMs: 45,
+    spread: 0,
+    noise: 0.35,
+    noiseColor: 0.15,
+    transient: 0.9,
+    attackMs: 0.5,
+    resonance: 0.2,
+    filterEnv: 0.15,
+    filterDecayMs: 60,
+    pitchEnvSemis: 30,
+    pitchEnvMs: 60,
+    drive: 0.45,
   },
   {
-    hue: 40,
-    sine: 0.2,
-    saw: 0.65,
-    square: 0.1,
-    detuneCents: 4,
-    noise: 0.08,
-    inharmonic: 0.05,
+    hue: 30,
+    tilt: 0.8,
+    oddEven: -0.3,
+    inharmonic: 0.02,
+    formantFreq: 200,
+    formantGain: 0.15,
+    unison: 1,
+    detuneCents: 5,
+    spread: 0.1,
+    noise: 0.06,
+    noiseColor: 0.25,
+    transient: 0.15,
     attackMs: 3,
-    filterEnvAmount: 0.85,
-    decayMs: 120,
-    pitchDropSemitones: 0,
-    pitchDropMs: 0,
+    resonance: 0.55,
+    filterEnv: 0.7,
+    filterDecayMs: 140,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.25,
   },
   {
-    hue: 90,
-    sine: 0.5,
-    saw: 0.15,
-    square: 0.1,
-    detuneCents: 0,
-    noise: 0.05,
-    inharmonic: 0.45,
-    attackMs: 2,
-    filterEnvAmount: 0.5,
-    decayMs: 200,
-    pitchDropSemitones: 0,
-    pitchDropMs: 0,
-  },
-  {
-    hue: 150,
-    sine: 0.15,
-    saw: 0.25,
-    square: 0.55,
-    detuneCents: 6,
+    hue: 70,
+    tilt: 0.5,
+    oddEven: -0.5,
+    inharmonic: 0.08,
+    formantFreq: 800,
+    formantGain: 0.2,
+    unison: 2,
+    detuneCents: 8,
+    spread: 0.35,
     noise: 0.04,
-    inharmonic: 0.05,
+    noiseColor: 0.4,
+    transient: 0.35,
+    attackMs: 2,
+    resonance: 0.75,
+    filterEnv: 0.95,
+    filterDecayMs: 90,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.2,
+  },
+  {
+    hue: 110,
+    tilt: 1.2,
+    oddEven: 0.2,
+    inharmonic: 0.55,
+    formantFreq: 1200,
+    formantGain: 0.55,
+    unison: 2,
+    detuneCents: 4,
+    spread: 0.25,
+    noise: 0.05,
+    noiseColor: 0.5,
+    transient: 0.4,
+    attackMs: 2,
+    resonance: 0.4,
+    filterEnv: 0.5,
+    filterDecayMs: 180,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.15,
+  },
+  {
+    hue: 160,
+    tilt: 0.35,
+    oddEven: -0.6,
+    inharmonic: 0.03,
+    formantFreq: 600,
+    formantGain: 0.1,
+    unison: 7,
+    detuneCents: 18,
+    spread: 0.85,
+    noise: 0.02,
+    noiseColor: 0.55,
+    transient: 0.1,
     attackMs: 8,
-    filterEnvAmount: 0.35,
-    decayMs: 150,
-    pitchDropSemitones: 0,
-    pitchDropMs: 0,
+    resonance: 0.35,
+    filterEnv: 0.25,
+    filterDecayMs: 120,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.18,
   },
   {
     hue: 210,
-    sine: 0.1,
-    saw: 0.7,
-    square: 0.05,
-    detuneCents: 12,
-    noise: 0.02,
+    tilt: 1.1,
+    oddEven: -0.4,
     inharmonic: 0.02,
-    attackMs: 25,
-    filterEnvAmount: 0.15,
-    decayMs: 300,
-    pitchDropSemitones: 0,
-    pitchDropMs: 0,
+    formantFreq: 400,
+    formantGain: 0.08,
+    unison: 5,
+    detuneCents: 14,
+    spread: 0.95,
+    noise: 0.03,
+    noiseColor: 0.35,
+    transient: 0.05,
+    attackMs: 200,
+    resonance: 0.25,
+    filterEnv: 0.12,
+    filterDecayMs: 400,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.1,
   },
   {
-    hue: 270,
-    sine: 0.35,
-    saw: 0.2,
-    square: 0.05,
-    detuneCents: 8,
-    noise: 0.18,
-    inharmonic: 0.15,
-    attackMs: 15,
-    filterEnvAmount: 0.4,
-    decayMs: 180,
-    pitchDropSemitones: 0,
-    pitchDropMs: 0,
-  },
-  {
-    hue: 320,
-    sine: 0.05,
-    saw: 0.1,
-    square: 0.05,
-    detuneCents: 0,
-    noise: 0.85,
+    hue: 260,
+    tilt: 1.4,
+    oddEven: 0.1,
     inharmonic: 0.2,
+    formantFreq: 900,
+    formantGain: 0.75,
+    unison: 3,
+    detuneCents: 10,
+    spread: 0.5,
+    noise: 0.22,
+    noiseColor: 0.45,
+    transient: 0.12,
+    attackMs: 25,
+    resonance: 0.45,
+    filterEnv: 0.3,
+    filterDecayMs: 200,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.12,
+  },
+  {
+    hue: 300,
+    tilt: 0.9,
+    oddEven: 0,
+    inharmonic: 0.12,
+    formantFreq: 1800,
+    formantGain: 0.35,
+    unison: 2,
+    detuneCents: 6,
+    spread: 0.4,
+    noise: 0.55,
+    noiseColor: 0.55,
+    transient: 0.85,
     attackMs: 1,
-    filterEnvAmount: 0.6,
-    decayMs: 40,
-    pitchDropSemitones: 0,
-    pitchDropMs: 0,
+    resonance: 0.5,
+    filterEnv: 0.6,
+    filterDecayMs: 70,
+    pitchEnvSemis: 2,
+    pitchEnvMs: 25,
+    drive: 0.3,
+  },
+  {
+    hue: 335,
+    tilt: 2,
+    oddEven: 0.3,
+    inharmonic: 0.35,
+    formantFreq: 6000,
+    formantGain: 0.2,
+    unison: 1,
+    detuneCents: 0,
+    spread: 0.6,
+    noise: 0.92,
+    noiseColor: 0.92,
+    transient: 0.5,
+    attackMs: 0.5,
+    resonance: 0.15,
+    filterEnv: 0.2,
+    filterDecayMs: 35,
+    pitchEnvSemis: 0,
+    pitchEnvMs: 0,
+    drive: 0.15,
   },
 ];
 
@@ -123,23 +223,31 @@ function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
-function blendAnchor(a: Anchor, b: Anchor, t: number): TimbreParams {
+function blendVector(a: TimbreVector, b: TimbreVector, t: number): TimbreVector {
+  const u = Math.round(lerp(a.unison, b.unison, t));
   return {
-    sine: lerp(a.sine, b.sine, t),
-    saw: lerp(a.saw, b.saw, t),
-    square: lerp(a.square, b.square, t),
-    detuneCents: lerp(a.detuneCents, b.detuneCents, t),
-    noise: lerp(a.noise, b.noise, t),
+    tilt: lerp(a.tilt, b.tilt, t),
+    oddEven: lerp(a.oddEven, b.oddEven, t),
     inharmonic: lerp(a.inharmonic, b.inharmonic, t),
+    formantFreq: lerp(a.formantFreq, b.formantFreq, t),
+    formantGain: lerp(a.formantGain, b.formantGain, t),
+    unison: Math.max(1, Math.min(7, u)),
+    detuneCents: lerp(a.detuneCents, b.detuneCents, t),
+    spread: lerp(a.spread, b.spread, t),
+    noise: lerp(a.noise, b.noise, t),
+    noiseColor: lerp(a.noiseColor, b.noiseColor, t),
+    transient: lerp(a.transient, b.transient, t),
     attackMs: lerp(a.attackMs, b.attackMs, t),
-    filterEnvAmount: lerp(a.filterEnvAmount, b.filterEnvAmount, t),
-    decayMs: lerp(a.decayMs, b.decayMs, t),
-    pitchDropSemitones: lerp(a.pitchDropSemitones, b.pitchDropSemitones, t),
-    pitchDropMs: lerp(a.pitchDropMs, b.pitchDropMs, t),
+    resonance: lerp(a.resonance, b.resonance, t),
+    filterEnv: lerp(a.filterEnv, b.filterEnv, t),
+    filterDecayMs: lerp(a.filterDecayMs, b.filterDecayMs, t),
+    pitchEnvSemis: lerp(a.pitchEnvSemis, b.pitchEnvSemis, t),
+    pitchEnvMs: lerp(a.pitchEnvMs, b.pitchEnvMs, t),
+    drive: lerp(a.drive, b.drive, t),
   };
 }
 
-export function hueToTimbre(hue: number): TimbreParams {
+export function hueToTimbreVector(hue: number): TimbreVector {
   const h = ((hue % 360) + 360) % 360;
   const sorted = [...ANCHORS].sort((a, b) => a.hue - b.hue);
   for (let i = 0; i < sorted.length; i++) {
@@ -152,17 +260,41 @@ export function hueToTimbre(hue: number): TimbreParams {
     if (hh < h1) hh += 360;
     if (hh >= h1 && hh <= h2) {
       const t = h2 === h1 ? 0 : (hh - h1) / (h2 - h1);
-      return blendAnchor(a, b, t);
+      return blendVector(a, b, t);
     }
   }
   return { ...sorted[0] };
 }
 
-/** Map lightness 0-1 to effective range and cutoff multiplier. */
+/** @deprecated alias */
+export const hueToTimbre = hueToTimbreVector;
+export type TimbreParams = TimbreVector;
+
+export function applyMacros(
+  base: TimbreVector,
+  lightness: number,
+  saturation = 1,
+  override?: TimbreOverride,
+): TimbreVector {
+  const L = 0.2 + 0.6 * Math.max(0, Math.min(1, lightness));
+  const sat = Math.max(0, Math.min(1, saturation));
+  const v: TimbreVector = {
+    ...base,
+    tilt: base.tilt * (0.6 + 0.8 * L),
+    noise: base.noise * (1.4 - sat * 0.9),
+    resonance: base.resonance * (0.7 + 0.5 * L),
+  };
+  if (override) {
+    Object.assign(v, override);
+  }
+  v.unison = Math.max(1, Math.min(7, Math.round(v.unison)));
+  return v;
+}
+
 export function lightnessToCutoff(lightness: number, baseFreq: number): number {
   const L = 0.2 + 0.6 * Math.max(0, Math.min(1, lightness));
   const minCut = baseFreq * 0.5;
-  const maxCut = Math.min(12000, baseFreq * 8);
+  const maxCut = Math.min(14000, baseFreq * 12);
   return minCut + (maxCut - minCut) * L;
 }
 
@@ -171,4 +303,9 @@ export function hashSeed(scoreSeed: number | undefined, trackIndex: number): num
   h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
   h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
   return (h ^ (h >>> 16)) >>> 0;
+}
+
+export function vectorHash(v: TimbreVector): string {
+  const keys = Object.keys(v) as (keyof TimbreVector)[];
+  return keys.map((k) => `${k}:${(v[k] as number).toFixed(4)}`).join('|');
 }
