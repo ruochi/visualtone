@@ -42,7 +42,8 @@ class SvfLowpass {
   private z2 = 0;
 
   process(input: number, cutoff: number, resonance: number, sampleRate: number): number {
-    const g = Math.tan((Math.PI * Math.max(80, cutoff)) / sampleRate);
+    const fc = Math.min(Math.max(80, cutoff), sampleRate * 0.45);
+    const g = Math.tan((Math.PI * fc) / sampleRate);
     const k = 2 - 2 * resonance * 0.95;
     const a1 = 1 / (1 + g * (g + k));
     const a2 = g * a1;
@@ -66,7 +67,8 @@ class SvfBandpass {
   private z2 = 0;
 
   process(input: number, center: number, sampleRate: number): number {
-    const g = Math.tan((Math.PI * Math.max(80, center)) / sampleRate);
+    const fc = Math.min(Math.max(80, center), sampleRate * 0.45);
+    const g = Math.tan((Math.PI * fc) / sampleRate);
     const k = 2;
     const a1 = 1 / (1 + g * (g + k));
     const a2 = g * a1;
@@ -88,7 +90,8 @@ export class Voice {
   private readonly unisonPhases: number[];
   private readonly unisonPanL: number[];
   private readonly unisonPanR: number[];
-  private readonly filter: SvfLowpass;
+  private readonly filterL: SvfLowpass;
+  private readonly filterR: SvfLowpass;
   private readonly noiseBp: SvfBandpass;
   private smoothGain = 0;
   private wasSilent = true;
@@ -110,7 +113,8 @@ export class Voice {
     this.wt = buildWavetable(this.vector);
     this.rng = mulberry32(seed);
     this.gainSmoothCoeff = Math.exp(-1 / (sampleRate * 0.002));
-    this.filter = new SvfLowpass();
+    this.filterL = new SvfLowpass();
+    this.filterR = new SvfLowpass();
     this.noiseBp = new SvfBandpass();
     const n = this.vector.unison;
     this.unisonPhases = new Array(n).fill(0);
@@ -118,9 +122,9 @@ export class Voice {
     this.unisonPanR = new Array(n);
     for (let i = 0; i < n; i++) {
       const pan = n === 1 ? 0 : (i / (n - 1) - 0.5) * 2 * this.vector.spread;
-      const angle = pan * 0.5 * Math.PI;
-      this.unisonPanL[i] = Math.cos(angle) * 0.5 + 0.5;
-      this.unisonPanR[i] = Math.sin(angle) * 0.5 + 0.5;
+      const angle = (pan + 1) * 0.25 * Math.PI;
+      this.unisonPanL[i] = Math.cos(angle);
+      this.unisonPanR[i] = Math.sin(angle);
     }
   }
 
@@ -201,8 +205,8 @@ export class Voice {
       this.filterEnvLeft--;
     }
 
-    mixL = this.filter.process(mixL, cutoff, this.vector.resonance, this.sampleRate);
-    mixR = this.filter.process(mixR, cutoff, this.vector.resonance, this.sampleRate);
+    mixL = this.filterL.process(mixL, cutoff, this.vector.resonance, this.sampleRate);
+    mixR = this.filterR.process(mixR, cutoff, this.vector.resonance, this.sampleRate);
 
     mixL = this.softDrive(mixL);
     mixR = this.softDrive(mixR);
@@ -216,7 +220,8 @@ export class Voice {
     this.smoothGain = 0;
     this.wasSilent = true;
     this.unisonPhases.fill(0);
-    this.filter.reset();
+    this.filterL.reset();
+    this.filterR.reset();
     this.filterEnvLeft = 0;
     this.pitchEnvLeft = 0;
     this.attackLeft = 0;

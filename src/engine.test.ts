@@ -153,6 +153,54 @@ test('json schema has bpm and master', () => {
   assert.ok(raw.includes('master'));
 });
 
+test('spectralCentroid tracks a pure sine frequency', () => {
+  const sr = 44100;
+  for (const f of [440, 1000, 4000]) {
+    const buf = new Float32Array(sr);
+    for (let i = 0; i < buf.length; i++) buf[i] = Math.sin((2 * Math.PI * f * i) / sr);
+    const c = spectralCentroid(buf, sr);
+    assert.ok(Math.abs(c - f) < f * 0.05, `centroid ${c} for ${f}Hz`);
+  }
+  assert.equal(spectralCentroid(new Float32Array(1000), sr), 0);
+});
+
+test('stereo filter state is independent per channel', () => {
+  const score = ScoreSchema.parse({
+    sampleRate: 44100,
+    duration: 0.3,
+    master: { drive: 0 },
+    tracks: [
+      {
+        id: 'mono-in-stereo',
+        hue: 70,
+        channel: [0, 1],
+        timbre: { unison: 1, spread: 0, resonance: 0.8 },
+        notes: [{ t: 0, y: 57, size: 0.6, duration: 0.25 }],
+      },
+    ],
+  });
+  const [l, r] = render(score).buffers;
+  let maxDiff = 0;
+  for (let i = 0; i < l.length; i++) maxDiff = Math.max(maxDiff, Math.abs(l[i] - r[i]));
+  assert.ok(maxDiff < 1e-6, `L/R diverged by ${maxDiff}`);
+});
+
+test('reverb tail does not bleed across tracks', () => {
+  const late = { t: 0.85, y: 60, size: 0.8, duration: 0.15 };
+  const score = ScoreSchema.parse({
+    sampleRate: 44100,
+    duration: 1.0,
+    tracks: [
+      { id: 'a', hue: 210, channel: 0, space: 0.9, echo: 0.6, notes: [late] },
+      { id: 'b', hue: 160, channel: 0, space: 0.9, echo: 0.6, notes: [late] },
+    ],
+  });
+  const buf = render(score).buffers[0];
+  let maxEarly = 0;
+  for (let i = 0; i < Math.floor(0.8 * 44100); i++) maxEarly = Math.max(maxEarly, Math.abs(buf[i]));
+  assert.ok(maxEarly < 1e-6, `early leak ${maxEarly}`);
+});
+
 test('demo-groove renders under 30s', () => {
   const t0 = Date.now();
   const score = ScoreSchema.parse(JSON.parse(readFileSync('examples/demo-groove.json', 'utf8')));

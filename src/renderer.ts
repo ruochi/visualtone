@@ -169,11 +169,6 @@ export function render(score: Score): RenderResult {
     channelBuffers.set(ch, new Float32Array(numSamples));
   }
 
-  const reverb = new Freeverb(sampleRate);
-  reverb.setParams(revCfg.size, revCfg.decay);
-  const delay = new StereoDelay(sampleRate, score.bpm, dlyCfg.beats / 4);
-  delay.setFeedback(dlyCfg.feedback);
-
   const revL = new Float32Array(numSamples);
   const revR = new Float32Array(numSamples);
   const dlyL = new Float32Array(numSamples);
@@ -183,6 +178,11 @@ export function render(score: Score): RenderResult {
     const chs = getChannelIndices(tr.track.channel);
     const space = tr.track.space ?? 0;
     const echo = tr.track.echo ?? 0;
+    // Per-track instances so one track's tail never leaks into another's send.
+    const reverb = space > 0 ? new Freeverb(sampleRate) : null;
+    reverb?.setParams(revCfg.size, revCfg.decay);
+    const delay = echo > 0 ? new StereoDelay(sampleRate, score.bpm, dlyCfg.beats / 4) : null;
+    delay?.setFeedback(dlyCfg.feedback);
 
     for (let i = 0; i < numSamples; i++) {
       const sl = tr.l[i];
@@ -195,13 +195,13 @@ export function render(score: Score): RenderResult {
         channelBuffers.get(chs[0])![i] += mono;
       }
 
-      if (space > 0) {
+      if (reverb) {
         const send = (sl + sr) * 0.5 * space;
         const [rl, rr] = reverb.processStereo(send, send);
         revL[i] += rl;
         revR[i] += rr;
       }
-      if (echo > 0) {
+      if (delay) {
         const send = (sl + sr) * 0.5 * echo;
         const [dl, dr] = delay.process(send, send);
         dlyL[i] += dl;

@@ -66,18 +66,6 @@ test('midiToFrequency - A4 = 440Hz', () => {
   assert.ok(Math.abs(midiToFrequency(69) - 440) < 0.01);
 });
 
-function spectralCentroid(buf: Float32Array, sr: number): number {
-  const n = Math.min(buf.length, 4096);
-  let num = 0;
-  let den = 0;
-  for (let i = 0; i < n; i++) {
-    const w = buf[i] * buf[i];
-    num += (i * sr) / n * w;
-    den += w;
-  }
-  return den > 0 ? num / den : 0;
-}
-
 test('timbre - lightness raises cutoff mapping', () => {
   assert.ok(lightnessToCutoff(0.9, 440) > lightnessToCutoff(0.2, 440));
 });

@@ -173,14 +173,88 @@ export function applyLoudnessMatch(buffers: Float32Array[], targetDb = -14): voi
   }
 }
 
-export function spectralCentroid(buf: Float32Array, sampleRate: number): number {
-  const n = Math.min(buf.length, 8192);
+/** In-place iterative radix-2 FFT; length must be a power of two. */
+export function fft(re: Float64Array, im: Float64Array): void {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      [re[i], re[j]] = [re[j], re[i]];
+      [im[i], im[j]] = [im[j], im[i]];
+    }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = (-2 * Math.PI) / len;
+    const wr = Math.cos(ang);
+    const wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1;
+      let ci = 0;
+      for (let k = 0; k < len / 2; k++) {
+        const a = i + k;
+        const b = a + len / 2;
+        const tr = re[b] * cr - im[b] * ci;
+        const ti = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - tr;
+        im[b] = im[a] - ti;
+        re[a] += tr;
+        im[a] += ti;
+        const ncr = cr * wr - ci * wi;
+        ci = cr * wi + ci * wr;
+        cr = ncr;
+      }
+    }
+  }
+}
+
+/**
+ * Magnitude-weighted mean frequency (Hz), from Hann-windowed 4096-point FFT frames,
+ * averaged across frames weighted by frame energy. Frames >60 dB below the loudest are skipped.
+ */
+export function spectralCentroid(buf: Float32Array, sampleRate: number, frameSize = 4096): number {
+  const n = frameSize;
+  if (buf.length === 0) return 0;
+  const window = new Float64Array(n);
+  for (let i = 0; i < n; i++) window[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (n - 1));
+
+  const starts: number[] = [];
+  const energies: number[] = [];
+  for (let s = 0; s < buf.length; s += n) {
+    let e = 0;
+    const end = Math.min(buf.length, s + n);
+    for (let i = s; i < end; i++) e += buf[i] * buf[i];
+    starts.push(s);
+    energies.push(e);
+  }
+  const maxE = Math.max(...energies);
+  if (maxE <= 0) return 0;
+
+  const re = new Float64Array(n);
+  const im = new Float64Array(n);
   let num = 0;
   let den = 0;
-  for (let i = 0; i < n; i++) {
-    const w = buf[i] * buf[i];
-    num += (i * sampleRate) / n * w;
-    den += w;
+  for (let f = 0; f < starts.length; f++) {
+    if (energies[f] < maxE * 1e-6) continue;
+    const s = starts[f];
+    for (let i = 0; i < n; i++) {
+      const idx = s + i;
+      re[i] = idx < buf.length ? buf[idx] * window[i] : 0;
+      im[i] = 0;
+    }
+    fft(re, im);
+    let fNum = 0;
+    let fDen = 0;
+    for (let k = 1; k < n / 2; k++) {
+      const mag = Math.hypot(re[k], im[k]);
+      fNum += ((k * sampleRate) / n) * mag;
+      fDen += mag;
+    }
+    if (fDen > 0) {
+      num += (fNum / fDen) * energies[f];
+      den += energies[f];
+    }
   }
   return den > 0 ? num / den : 0;
 }
