@@ -15,7 +15,9 @@ import {
   measureRmsDb,
   spectralCentroid,
 } from './fx.js';
-import { writeWavFile } from './wav.js';
+import { Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
+import { applyGroove } from './groove.js';
+import { writeWavFile, type WavOptions } from './wav.js';
 
 export interface RenderResult {
   buffers: Float32Array[];
@@ -29,10 +31,13 @@ export interface RenderResult {
     rmsGain: number;
     onsets: number;
     spectralCentroid: number;
+    /** Deepest compressor gain reduction (dB, positive); 0 without comp. */
+    gainReductionDb: number;
   }[];
   master: {
     peak: number;
     loudnessDb: number;
+    gainReductionDb: number;
   };
   wav: Buffer;
 }
@@ -45,6 +50,7 @@ interface TrackRender {
   track: Track;
   onsets: number;
   samplesRendered: number;
+  gainReductionDb: number;
 }
 
 function sortTracksForDuck(tracks: Track[]): Track[] {
@@ -72,8 +78,27 @@ function renderTrackDry(
 ): TrackRender {
   let onsets = 0;
   let samplesRendered = 0;
-  const points = prepareTrackPoints(track);
+  const points = prepareTrackPoints(applyGroove(score, track, trackIndex));
   const defaultLightness = track.lightness ?? 0.5;
+  const eq = track.eq ? new StereoEq(sampleRate, track.eq) : null;
+  const comp = track.comp ? new Compressor(sampleRate, track.comp) : null;
+  const beatSec = 60 / (score.bpm ?? 120);
+  const lfos = (track.lfo ?? []).map((l) => ({
+    ...l,
+    hz: l.rate ?? 1 / (l.beats! * beatSec),
+  }));
+  const lfoSum = (target: string, time: number) => {
+    let v = 0;
+    for (const l of lfos) if (l.target === target) v += l.depth * lfoValue(l.shape, l.phase + l.hz * time);
+    return v;
+  };
+  const hasLfo = (target: string) => lfos.some((l) => l.target === target);
+  const lfoPitch = hasLfo('pitch');
+  const lfoLight = hasLfo('lightness');
+  const lfoGain = lfos.filter((l) => l.target === 'gain');
+  const lfoPan = hasLfo('pan');
+  const autoLight = track.automation?.lightness ? [...track.automation.lightness].sort((a, b) => a.t - b.t) : null;
+  const autoGain = track.automation?.gain ? [...track.automation.gain].sort((a, b) => a.t - b.t) : null;
   const sampler = createTrackSampler(points, defaultLightness);
   const voice = new Voice(
     sampleRate,
@@ -100,24 +125,64 @@ function renderTrackDry(
     let sl = 0;
     let sr = 0;
     if (sampled) {
-      [sl, sr] = voice.processSample(sampled.y, sampled.size, sampled.lightness);
+      let y = sampled.y;
+      let light = sampled.lightness;
+      if (lfoPitch) y += lfoSum('pitch', time);
+      if (lfoLight) light += lfoSum('lightness', time);
+      if (autoLight) light += keyframeAt(autoLight, time);
+      [sl, sr] = voice.processSample(y, sampled.size, Math.min(1, Math.max(0, light)));
       samplesRendered++;
     } else {
       voice.processSample(0, 0, defaultLightness);
+    }
+    if (eq) [sl, sr] = eq.process(sl, sr);
+    if (comp) [sl, sr] = comp.process(sl, sr);
+    // Gain/pan modulate after the voice so an LFO trough never re-triggers an onset.
+    let g = 1;
+    for (const lg of lfoGain) {
+      const w = lfoValue(lg.shape, lg.phase + lg.hz * time);
+      g *= 1 - Math.min(1, Math.max(0, lg.depth)) * (0.5 - 0.5 * w);
+    }
+    if (autoGain) g *= Math.max(0, keyframeAt(autoGain, time));
+    if (g !== 1) {
+      sl *= g;
+      sr *= g;
+    }
+    if (lfoPan) {
+      const p = Math.min(1, Math.max(-1, lfoSum('pan', time)));
+      const angle = (p + 1) * 0.25 * Math.PI;
+      sl *= Math.cos(angle) * Math.SQRT2;
+      sr *= Math.sin(angle) * Math.SQRT2;
     }
     l[i] = sl;
     r[i] = sr;
     envelope[i] = Math.max(Math.abs(sl), Math.abs(sr));
   }
 
-  return { id: track.id, l, r, envelope, track, onsets, samplesRendered };
+  return {
+    id: track.id,
+    l,
+    r,
+    envelope,
+    track,
+    onsets,
+    samplesRendered,
+    gainReductionDb: comp?.maxReductionDb ?? 0,
+  };
 }
 
-export function render(score: Score): RenderResult {
+export interface RenderOptions {
+  wav?: WavOptions;
+}
+
+export function render(score: Score, options: RenderOptions = {}): RenderResult {
   const sampleRate = score.sampleRate;
   let duration = score.duration;
   if (!duration) {
-    duration = Math.max(...score.tracks.map((track) => getTrackDuration(track)), 0);
+    duration = Math.max(
+      ...score.tracks.map((track, i) => getTrackDuration(applyGroove(score, track, i))),
+      0,
+    );
   }
   if (!Number.isFinite(duration) || duration <= 0) duration = 0;
 
@@ -226,6 +291,21 @@ export function render(score: Score): RenderResult {
     buffers.push(mono);
   }
 
+  let masterReduction = 0;
+  if (masterCfg.comp) {
+    // Threshold is relative to the target loudness, so normalise before compressing.
+    applyLoudnessMatch(buffers, masterCfg.loudness ?? -14);
+    const glue = new Compressor(sampleRate, masterCfg.comp);
+    const left = buffers[0];
+    const right = buffers[1] ?? buffers[0];
+    for (let i = 0; i < numSamples; i++) {
+      const [cl, cr] = glue.process(left[i], right[i]);
+      left[i] = cl;
+      if (buffers[1]) right[i] = cr;
+    }
+    masterReduction = glue.maxReductionDb;
+  }
+
   const drive = masterCfg.drive ?? 0.15;
   for (const b of buffers) {
     for (let i = 0; i < b.length; i++) b[i] = softClip(b[i], drive);
@@ -260,17 +340,18 @@ export function render(score: Score): RenderResult {
       rmsGain: n > 0 ? Math.sqrt(sum / n) : 0,
       onsets: tr.onsets,
       spectralCentroid: spectralCentroid(mono, sampleRate),
+      gainReductionDb: tr.gainReductionDb,
     };
   });
 
-  const wav = writeWavFile(buffers, sampleRate);
+  const wav = writeWavFile(buffers, sampleRate, { seed: score.seed, ...options.wav });
 
   return {
     buffers,
     sampleRate,
     duration,
     eventReport,
-    master: { peak: masterPeak, loudnessDb },
+    master: { peak: masterPeak, loudnessDb, gainReductionDb: masterReduction },
     wav,
   };
 }

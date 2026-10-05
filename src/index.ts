@@ -5,9 +5,14 @@ export {
   NoteSchema,
   EaseSchema,
   MasterSchema,
+  EqSchema,
+  CompSchema,
+  LfoSchema,
+  AutomationSchema,
+  HumanizeSchema,
   getChannelIndices,
 } from './schema.js';
-export type { Score, Track, Point, Note, Ease, TimbreOverride } from './schema.js';
+export type { Score, Track, Point, Note, Ease, TimbreOverride, Lfo } from './schema.js';
 export { getJsonSchema } from './json-schema.js';
 export {
   sampleAt,
@@ -40,5 +45,9 @@ export {
   measureRmsDb,
 } from './fx.js';
 export { render } from './renderer.js';
-export type { RenderResult } from './renderer.js';
+export type { RenderResult, RenderOptions } from './renderer.js';
 export { writeWavFile } from './wav.js';
+export type { BitDepth, WavOptions } from './wav.js';
+export { Biquad, StereoEq, Compressor, lfoValue, keyframeAt } from './mix.js';
+export type { EqConfig, CompConfig, LfoShape } from './mix.js';
+export { swingTime, applyGroove } from './groove.js';

@@ -34,6 +34,53 @@ export const DuckSchema = z.object({
   amount: z.number().min(0).max(1).default(0.6),
 });
 
+export const EqSchema = z.object({
+  lowCut: z.number().positive().optional().describe('High-pass corner Hz (removes rumble/mud)'),
+  highCut: z.number().positive().optional().describe('Low-pass corner Hz'),
+  lowShelf: z.object({ freq: z.number().positive().default(120), gain: z.number() }).optional(),
+  highShelf: z.object({ freq: z.number().positive().default(8000), gain: z.number() }).optional(),
+  peaks: z
+    .array(z.object({ freq: z.number().positive(), gain: z.number(), q: z.number().positive().default(1) }))
+    .optional()
+    .describe('Bell bands; negative gain carves space for other tracks'),
+});
+
+export const CompSchema = z.object({
+  threshold: z.number().default(-18).describe('dBFS'),
+  ratio: z.number().min(1).default(3),
+  attackMs: z.number().min(0).default(10),
+  releaseMs: z.number().min(1).default(120),
+  knee: z.number().min(0).default(6).describe('Soft knee width dB'),
+  makeup: z.number().default(0).describe('Makeup gain dB'),
+});
+
+export const LfoSchema = z
+  .object({
+    target: z.enum(['lightness', 'pitch', 'gain', 'pan']),
+    depth: z
+      .number()
+      .describe('lightness: ±offset 0-1; pitch: ±semitones; gain: dip 0-1; pan: ±1 = hard L/R'),
+    rate: z.number().positive().optional().describe('Hz'),
+    beats: z.number().positive().optional().describe('Period in quarter-note beats (uses bpm)'),
+    shape: z.enum(['sine', 'triangle', 'saw', 'square']).default('sine'),
+    phase: z.number().default(0).describe('Start phase in cycles 0-1'),
+  })
+  .refine((l) => l.rate !== undefined || l.beats !== undefined, {
+    message: 'LFO needs rate (Hz) or beats',
+  });
+
+const KeyframeSchema = z.object({ t: z.number(), v: z.number() });
+
+export const AutomationSchema = z.object({
+  lightness: z.array(KeyframeSchema).optional().describe('Offset added to lightness, linear between keyframes'),
+  gain: z.array(KeyframeSchema).optional().describe('Gain multiplier (1 = unchanged), linear'),
+});
+
+export const HumanizeSchema = z.object({
+  timeMs: z.number().min(0).default(0).describe('Max ± onset jitter in ms'),
+  size: z.number().min(0).max(1).default(0).describe('Max ± relative size jitter'),
+});
+
 export const PointSchema = z.object({
   t: z.number().describe('Time in seconds'),
   y: z.number().describe('Pitch as MIDI note float (0-127, continuous)'),
@@ -73,6 +120,7 @@ export const MasterSchema = z
         feedback: z.number().min(0).max(0.95).default(0.35),
       })
       .optional(),
+    comp: CompSchema.optional().describe('Glue compressor on the summed mix'),
   })
   .optional();
 
@@ -86,6 +134,12 @@ const TrackSchemaBase = z.object({
   echo: z.number().min(0).max(1).optional().describe('Delay send 0-1'),
   duck: DuckSchema.optional(),
   timbre: TimbreOverrideSchema.optional(),
+  eq: EqSchema.optional(),
+  comp: CompSchema.optional(),
+  lfo: z.array(LfoSchema).optional(),
+  automation: AutomationSchema.optional(),
+  swing: z.number().min(0).max(1).optional().describe('Overrides score swing for this track'),
+  humanize: HumanizeSchema.optional(),
   points: z.array(PointSchema).optional(),
   notes: z.array(NoteSchema).optional(),
 });
@@ -100,6 +154,8 @@ export const ScoreSchema = z.object({
   duration: z.number().positive().optional(),
   seed: z.number().int().optional(),
   bpm: z.number().positive().optional(),
+  swing: z.number().min(0).max(1).optional().describe('0 straight, 1 triplet; needs bpm'),
+  swingGrid: z.union([z.literal(8), z.literal(16)]).optional().describe('Grid that swing pushes (default 16ths)'),
   master: MasterSchema,
   tracks: z.array(TrackSchema),
 });
@@ -109,6 +165,7 @@ export type Note = z.infer<typeof NoteSchema>;
 export type Track = z.infer<typeof TrackSchema>;
 export type Score = z.infer<typeof ScoreSchema>;
 export type TimbreOverride = z.infer<typeof TimbreOverrideSchema>;
+export type Lfo = z.infer<typeof LfoSchema>;
 
 export function getChannelIndices(channel: number | number[]): number[] {
   return Array.isArray(channel) ? channel : [channel];
