@@ -48,6 +48,31 @@ test('kick pitch envelope - early ZCR higher', () => {
   assert.ok(zcr(0, 441) > zcr(2205, 441));
 });
 
+test('kick pitch envelope sweeps down onto the note (after transient)', () => {
+  const score = ScoreSchema.parse({
+    sampleRate: 44100,
+    duration: 0.2,
+    tracks: [
+      {
+        id: 'k',
+        hue: 0,
+        channel: 0,
+        timbre: { transient: 0, noise: 0 },
+        notes: [{ t: 0, y: 36, size: 0.9, duration: 0.18, ease: 'hold' }],
+      },
+    ],
+  });
+  const buf = render(score).buffers[0];
+  const crossings = (a: number, b: number) => {
+    let z = 0;
+    for (let i = a + 1; i < b; i++) if ((buf[i - 1] >= 0) !== (buf[i] >= 0)) z++;
+    return z / (b - a);
+  };
+  const early = crossings(Math.floor(0.01 * 44100), Math.floor(0.035 * 44100));
+  const late = crossings(Math.floor(0.1 * 44100), Math.floor(0.15 * 44100));
+  assert.ok(early > late * 1.3, `early ${early} late ${late}`);
+});
+
 test('unison stereo correlation', () => {
   const score = ScoreSchema.parse({
     sampleRate: 44100,

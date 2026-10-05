@@ -154,8 +154,8 @@ export class Voice {
 
     let freq = midiToFrequency(midiY);
     if (this.pitchEnvLeft > 0 && this.pitchEnvTotal > 0) {
-      const t = 1 - this.pitchEnvLeft / this.pitchEnvTotal;
-      freq *= Math.pow(2, (-this.vector.pitchEnvSemis * t) / 12);
+      const env = this.pitchEnvLeft / this.pitchEnvTotal;
+      freq *= Math.pow(2, (this.vector.pitchEnvSemis * env * env) / 12);
       this.pitchEnvLeft--;
     }
 
@@ -201,7 +201,7 @@ export class Voice {
     let cutoff = lightnessToCutoff(lightness, freq);
     if (this.filterEnvLeft > 0) {
       const envT = this.filterEnvLeft / ((this.vector.filterDecayMs / 1000) * this.sampleRate);
-      cutoff *= 1 + this.vector.filterEnv * (1 - envT) * 3;
+      cutoff *= 1 + this.vector.filterEnv * envT * envT * 3;
       this.filterEnvLeft--;
     }
 
