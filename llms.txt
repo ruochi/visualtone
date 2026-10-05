@@ -1,0 +1,43 @@
+# visualtone — LLM authoring guide
+
+Music = colored curves over time. Audio is a pure function of curve data.
+
+## Axes
+- t (seconds): time / x
+- y (MIDI float 0–127): pitch
+- size (0–1): gain / stroke width
+- hue (0–360°): timbre family (ring of synth anchors)
+- lightness (0–1): brightness → low-pass cutoff (default 0.5 on track)
+
+## Curve syntax (points)
+Optional per point:
+- ease: step | linear | in | out | inOut | exp — how to **arrive** at this point
+- tween: seconds — only the last `tween` seconds before this point interpolate
+
+Defaults when ease omitted:
+- size 0 → >0: step (instant attack)
+- size falling: exp
+- both size 0: silence between
+- pitch while sounding: linear (legato); use silence between notes for staccato
+
+## Notes shorthand
+```json
+{ "t": 0, "y": 36, "size": 0.9, "duration": 0.15, "ease": "exp" }
+```
+- hold (default): sustain then ~20ms release
+- exp: exponential decay over duration (drums, hats)
+
+## Hue families (approximate)
+0° drum, 40° pluck/bass, 90° bell, 150° reed/lead, 210° strings/pad, 270° breathy, 320° noise/hat
+
+## Example: rising pad (linear fades)
+See examples/rising-pad.json
+
+## Example: stereo sketch
+See examples/stereo-sketch.json
+
+## Example: groove (120 BPM, A minor, notes + points)
+See examples/demo-groove.json
+
+CLI: `npx visualtone render score.json -o out.wav`
+Schema: `npx visualtone schema`

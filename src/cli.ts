@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import { readFileSync, writeFileSync } from 'fs';
-import { ScoreSchema, getJsonSchema } from './schema.js';
+import { ScoreSchema } from './schema.js';
+import { getJsonSchema } from './json-schema.js';
 import { render } from './renderer.js';
 
 const args = process.argv.slice(2);

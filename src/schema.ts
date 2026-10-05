@@ -1,18 +1,47 @@
 import { z } from 'zod';
 
+export const EaseSchema = z.enum(['step', 'linear', 'in', 'out', 'inOut', 'exp']);
+export type Ease = z.infer<typeof EaseSchema>;
+
+export const NoteEaseSchema = z.enum(['hold', 'exp']);
+export type NoteEase = z.infer<typeof NoteEaseSchema>;
+
 export const PointSchema = z.object({
   t: z.number().describe('Time in seconds'),
   y: z.number().describe('Pitch as MIDI note float (0-127, continuous)'),
   size: z.number().min(0).max(1).describe('Normalized size 0-1 mapping to gain'),
-  lightness: z.number().min(0).max(1).optional().describe('Reserved for future use'),
+  lightness: z.number().min(0).max(1).optional().describe('Brightness 0-1, maps to filter cutoff'),
+  ease: EaseSchema.optional().describe('How to arrive at this point from the previous one'),
+  tween: z.number().min(0).optional().describe('Seconds before this point over which to tween'),
 });
 
-export const TrackSchema = z.object({
-  id: z.string().describe('Unique track identifier'),
-  hue: z.number().min(0).max(360).describe('Hue in degrees (0-360) mapping to timbre'),
-  channel: z.number().int().min(0).default(0).describe('Channel index (0 = mono bus)'),
-  points: z.array(PointSchema).describe('Curve control points, sorted by time'),
+export const NoteSchema = z.object({
+  t: z.number().describe('Note onset time in seconds'),
+  y: z.number().describe('Pitch MIDI float'),
+  size: z.number().min(0).max(1).describe('Peak gain 0-1'),
+  duration: z.number().positive().describe('Note length in seconds'),
+  ease: NoteEaseSchema.optional().describe('hold = sustain then short release; exp = exponential decay'),
+  lightness: z.number().min(0).max(1).optional(),
 });
+
+const TrackSchemaBase = z.object({
+  id: z.string().describe('Unique track identifier'),
+  hue: z.number().min(0).max(360).describe('Hue in degrees (0-360) mapping to timbre family'),
+  channel: z.number().int().min(0).default(0).describe('Channel index (0 = mono bus)'),
+  lightness: z
+    .number()
+    .min(0)
+    .max(1)
+    .default(0.5)
+    .describe('Default lightness for this track when not set on points/notes'),
+  points: z.array(PointSchema).optional().describe('Curve control points'),
+  notes: z.array(NoteSchema).optional().describe('Shorthand notes expanded to points before render'),
+});
+
+export const TrackSchema = TrackSchemaBase.refine(
+  (t) => (t.points?.length ?? 0) > 0 || (t.notes?.length ?? 0) > 0,
+  { message: 'Track must have points or notes' },
+);
 
 export const ScoreSchema = z.object({
   sampleRate: z.number().int().positive().default(44100).describe('Audio sample rate in Hz'),
@@ -22,78 +51,6 @@ export const ScoreSchema = z.object({
 });
 
 export type Point = z.infer<typeof PointSchema>;
+export type Note = z.infer<typeof NoteSchema>;
 export type Track = z.infer<typeof TrackSchema>;
 export type Score = z.infer<typeof ScoreSchema>;
-
-export function getJsonSchema() {
-  const zodToJsonSchema = (schema: z.ZodType): any => {
-    if (schema instanceof z.ZodObject) {
-      const shape = schema._def.shape();
-      const properties: any = {};
-      const required: string[] = [];
-      
-      for (const [key, value] of Object.entries(shape)) {
-        const zodValue = value as z.ZodType;
-        properties[key] = zodToJsonSchema(zodValue);
-        
-        if (!(zodValue instanceof z.ZodOptional) && !(zodValue instanceof z.ZodDefault)) {
-          required.push(key);
-        }
-      }
-      
-      const result: any = {
-        type: 'object',
-        properties,
-      };
-      
-      if (required.length > 0) {
-        result.required = required;
-      }
-      
-      return result;
-    }
-    
-    if (schema instanceof z.ZodArray) {
-      return {
-        type: 'array',
-        items: zodToJsonSchema(schema.element),
-      };
-    }
-    
-    if (schema instanceof z.ZodString) {
-      return { type: 'string' };
-    }
-    
-    if (schema instanceof z.ZodNumber) {
-      const result: any = { type: 'number' };
-      const checks = (schema as any)._def.checks || [];
-      
-      for (const check of checks) {
-        if (check.kind === 'min') result.minimum = check.value;
-        if (check.kind === 'max') result.maximum = check.value;
-        if (check.kind === 'int') result.type = 'integer';
-      }
-      
-      return result;
-    }
-    
-    if (schema instanceof z.ZodOptional) {
-      return zodToJsonSchema(schema.unwrap());
-    }
-    
-    if (schema instanceof z.ZodDefault) {
-      const inner = zodToJsonSchema(schema.removeDefault());
-      inner.default = schema._def.defaultValue();
-      return inner;
-    }
-    
-    return {};
-  };
-  
-  return {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    title: 'Visualtone Score',
-    description: 'Music as animated colored curves - audio as a pure function of visual data',
-    ...zodToJsonSchema(ScoreSchema),
-  };
-}

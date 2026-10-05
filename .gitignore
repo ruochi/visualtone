@@ -3,9 +3,11 @@ dist/
 *.log
 .DS_Store
 *.wav
+!examples/out/*.wav
 *.mp3
 .vscode/
 .idea/
 *.tgz
 coverage/
 .npm/
+artifacts/

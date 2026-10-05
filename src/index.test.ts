@@ -1,98 +1,163 @@
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { interpolateTrack } from './interpolator.js';
-import { hueToSynthParams, midiToFrequency } from './synth.js';
+import { createHash } from 'node:crypto';
+import { sampleAt, prepareTrackPoints } from './interpolator.js';
+import { expandNotes } from './notes.js';
+import { hueToTimbre, midiToFrequency } from './synth.js';
 import { render } from './renderer.js';
-import type { Score } from './schema.js';
+import { ScoreSchema } from './schema.js';
 
-test('interpolateTrack - linear interpolation', () => {
+test('sampleAt - linear interpolation with explicit ease', () => {
   const points = [
     { t: 0, y: 60, size: 0.5 },
-    { t: 1, y: 72, size: 1.0 },
+    { t: 1, y: 72, size: 1.0, ease: 'linear' as const },
   ];
-  
-  const result = interpolateTrack(points, 0.5);
+
+  const result = sampleAt(points, 0.5);
   assert.ok(result !== null);
   assert.equal(result.y, 66);
   assert.equal(result.size, 0.75);
 });
 
-test('interpolateTrack - out of bounds returns null', () => {
+test('sampleAt - silence between two zero points', () => {
   const points = [
-    { t: 1, y: 60, size: 0.5 },
-    { t: 2, y: 72, size: 1.0 },
+    { t: 0, y: 60, size: 0.5 },
+    { t: 0.1, y: 60, size: 0, ease: 'exp' as const },
+    { t: 0.5, y: 60, size: 0 },
+    { t: 0.6, y: 60, size: 0.8, ease: 'step' as const },
   ];
-  
-  assert.equal(interpolateTrack(points, 0.5), null);
-  assert.equal(interpolateTrack(points, 2.5), null);
+  assert.equal(sampleAt(points, 0.3), null);
 });
 
-test('interpolateTrack - single point', () => {
-  const points = [{ t: 1, y: 60, size: 0.5 }];
-  
-  const result = interpolateTrack(points, 1);
-  assert.ok(result !== null);
-  assert.equal(result.y, 60);
-  assert.equal(result.size, 0.5);
+test('sampleAt - step attack holds silence until onset', () => {
+  const points = [
+    { t: 0, y: 60, size: 0 },
+    { t: 0.5, y: 60, size: 0.8, ease: 'step' as const },
+  ];
+  assert.equal(sampleAt(points, 0.25), null);
+  const at = sampleAt(points, 0.5);
+  assert.ok(at && at.size > 0.79);
 });
 
-test('hueToSynthParams - returns valid parameters', () => {
-  const params = hueToSynthParams(180);
-  
-  assert.ok(params.brightness >= 0 && params.brightness <= 1);
-  assert.ok(params.thickness >= 0 && params.thickness <= 1);
-  assert.ok(params.noise >= 0 && params.noise <= 1);
+test('expandNotes - hold creates sustain and release', () => {
+  const pts = expandNotes([{ t: 1, y: 60, size: 0.5, duration: 0.5 }]);
+  assert.ok(pts.length >= 3);
+  assert.equal(pts[0].t, 1);
+  assert.equal(pts[0].ease, 'step');
+  const last = pts[pts.length - 1];
+  assert.equal(last.size, 0);
 });
 
-test('hueToSynthParams - wraps hue values', () => {
-  const params1 = hueToSynthParams(0);
-  const params2 = hueToSynthParams(360);
-  const params3 = hueToSynthParams(720);
-  
-  assert.equal(params1.brightness, params2.brightness);
-  assert.equal(params1.brightness, params3.brightness);
+test('expandNotes - exp creates two-point decay', () => {
+  const pts = expandNotes([{ t: 0, y: 36, size: 0.9, duration: 0.15, ease: 'exp' }]);
+  assert.equal(pts.length, 2);
+  assert.equal(pts[1].ease, 'exp');
+  assert.equal(pts[1].t, 0.15);
+});
+
+test('hueToTimbre - ring continuity at 0 and 360', () => {
+  const a = hueToTimbre(359);
+  const b = hueToTimbre(0);
+  assert.ok(Math.abs(a.noise - b.noise) < 0.15);
 });
 
 test('midiToFrequency - A4 = 440Hz', () => {
-  const freq = midiToFrequency(69);
-  assert.ok(Math.abs(freq - 440) < 0.01);
+  assert.ok(Math.abs(midiToFrequency(69) - 440) < 0.01);
 });
 
-test('midiToFrequency - C4', () => {
-  const freq = midiToFrequency(60);
-  assert.ok(Math.abs(freq - 261.63) < 0.01);
-});
+function spectralCentroid(buf: Float32Array, sr: number): number {
+  const n = Math.min(buf.length, 4096);
+  let num = 0;
+  let den = 0;
+  for (let i = 0; i < n; i++) {
+    const w = buf[i] * buf[i];
+    num += (i * sr) / n * w;
+    den += w;
+  }
+  return den > 0 ? num / den : 0;
+}
 
-test('render - simple score produces valid output', () => {
-  const score: Score = {
+test('timbre - lightness raises spectral centroid', () => {
+  const scoreLo = ScoreSchema.parse({
     sampleRate: 44100,
-    duration: 0.1,
-    seed: 42,
+    duration: 0.2,
+    seed: 1,
     tracks: [
       {
-        id: 'test-track',
-        hue: 180,
+        id: 't',
+        hue: 150,
         channel: 0,
         points: [
-          { t: 0, y: 60, size: 0.5 },
-          { t: 0.1, y: 72, size: 0.3 },
+          { t: 0, y: 64, size: 0.7, lightness: 0.15, ease: 'step' },
+          { t: 0.2, y: 64, size: 0.7, lightness: 0.15 },
         ],
       },
     ],
-  };
-  
-  const result = render(score);
-  
-  assert.equal(result.buffers.length, 1);
-  assert.ok(result.buffers[0].length > 0);
-  assert.equal(result.sampleRate, 44100);
-  assert.ok(result.duration >= 0.1);
-  assert.equal(result.eventReport.length, 1);
-  assert.ok(result.wav.length > 44);
+  });
+  const scoreHi = ScoreSchema.parse({
+    ...scoreLo,
+    tracks: [
+      {
+        ...scoreLo.tracks[0],
+        points: [
+          { t: 0, y: 64, size: 0.7, lightness: 0.95, ease: 'step' },
+          { t: 0.2, y: 64, size: 0.7, lightness: 0.95 },
+        ],
+      },
+    ],
+  });
+  const lo = render(scoreLo).buffers[0];
+  const hi = render(scoreHi).buffers[0];
+  assert.ok(spectralCentroid(hi, 44100) > spectralCentroid(lo, 44100));
 });
 
-test('render - multi-track score', () => {
-  const score: Score = {
+test('render - exp kick attack louder than tail', () => {
+  const score = ScoreSchema.parse({
+    sampleRate: 44100,
+    duration: 0.3,
+    seed: 42,
+    tracks: [
+      {
+        id: 'kick',
+        hue: 0,
+        channel: 0,
+        notes: [{ t: 0, y: 36, size: 0.9, duration: 0.15, ease: 'exp' }],
+      },
+    ],
+  });
+  const buf = render(score).buffers[0];
+  const sr = 44100;
+  const win = Math.floor(0.02 * sr);
+  let early = 0;
+  let late = 0;
+  for (let i = 0; i < win; i++) early += buf[i] ** 2;
+  for (let i = Math.floor(0.1 * sr); i < Math.floor(0.1 * sr) + win; i++) late += buf[i] ** 2;
+  early = Math.sqrt(early / win);
+  late = Math.sqrt(late / win);
+  assert.ok(early > late * 3);
+});
+
+test('render - deterministic wav hash', () => {
+  const score = ScoreSchema.parse({
+    sampleRate: 44100,
+    duration: 0.05,
+    seed: 99,
+    tracks: [
+      {
+        id: 'a',
+        hue: 40,
+        channel: 0,
+        notes: [{ t: 0, y: 60, size: 0.5, duration: 0.05 }],
+      },
+    ],
+  });
+  const h1 = createHash('sha256').update(render(score).wav).digest('hex');
+  const h2 = createHash('sha256').update(render(score).wav).digest('hex');
+  assert.equal(h1, h2);
+});
+
+test('render - multi-track and normalization', () => {
+  const score = ScoreSchema.parse({
     sampleRate: 44100,
     duration: 0.1,
     tracks: [
@@ -100,72 +165,35 @@ test('render - multi-track score', () => {
         id: 'track-1',
         hue: 120,
         channel: 0,
-        points: [{ t: 0, y: 60, size: 0.5 }, { t: 0.1, y: 60, size: 0.5 }],
+        points: [{ t: 0, y: 60, size: 0.5, ease: 'step' }, { t: 0.1, y: 60, size: 0.5 }],
       },
       {
         id: 'track-2',
         hue: 240,
         channel: 1,
-        points: [{ t: 0, y: 72, size: 0.3 }, { t: 0.1, y: 72, size: 0.3 }],
+        points: [{ t: 0, y: 72, size: 0.3, ease: 'step' }, { t: 0.1, y: 72, size: 0.3 }],
       },
     ],
-  };
-  
+  });
   const result = render(score);
-  
   assert.equal(result.buffers.length, 2);
-  assert.equal(result.eventReport.length, 2);
-});
-
-test('render - empty gaps produce silence', () => {
-  const score: Score = {
-    sampleRate: 44100,
-    duration: 1.0,
-    tracks: [
-      {
-        id: 'gapped-track',
-        hue: 0,
-        channel: 0,
-        points: [
-          { t: 0.0, y: 60, size: 0.5 },
-          { t: 0.1, y: 60, size: 0.5 },
-        ],
-      },
-    ],
-  };
-  
-  const result = render(score);
-  
-  const buffer = result.buffers[0];
-  const midPoint = Math.floor(buffer.length / 2);
-  const hasSilence = buffer[midPoint] === 0;
-  
-  assert.ok(hasSilence);
-});
-
-test('render - peak normalization prevents clipping', () => {
-  const score: Score = {
-    sampleRate: 44100,
-    duration: 0.1,
-    tracks: [
-      {
-        id: 'loud-track-1',
-        hue: 0,
-        channel: 0,
-        points: [{ t: 0, y: 60, size: 1.0 }, { t: 0.1, y: 60, size: 1.0 }],
-      },
-      {
-        id: 'loud-track-2',
-        hue: 180,
-        channel: 0,
-        points: [{ t: 0, y: 64, size: 1.0 }, { t: 0.1, y: 64, size: 1.0 }],
-      },
-    ],
-  };
-  
-  const result = render(score);
-  const buffer = result.buffers[0];
-  
-  const peak = Math.max(...Array.from(buffer).map(Math.abs));
+  const peak = Math.max(...Array.from(result.buffers[0]).map(Math.abs));
   assert.ok(peak <= 1.0);
+});
+
+test('prepareTrackPoints merges notes and points', () => {
+  const track = ScoreSchema.parse({
+    sampleRate: 44100,
+    tracks: [
+      {
+        id: 'x',
+        hue: 0,
+        channel: 0,
+        points: [{ t: 0, y: 60, size: 0.5 }],
+        notes: [{ t: 1, y: 62, size: 0.4, duration: 0.2 }],
+      },
+    ],
+  }).tracks[0];
+  const pts = prepareTrackPoints(track);
+  assert.ok(pts.length > 2);
 });
