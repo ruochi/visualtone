@@ -1,9 +1,9 @@
-import { fft } from './fft.js';
+import { interSamplePeak } from '../fx.js';
 
 /**
  * BS.1770-4 K-weighting and gated loudness.
- * The consistency point is a stereo 997 Hz sine at 0 dBFS = -3.01 LUFS
- * (each channel full scale). A -20 dBFS stereo sine reads -23.01 LUFS.
+ * A mono 997 Hz sine at 0 dBFS reads about -3.01 LUFS and -20 dBFS reads -23;
+ * the same sine on both stereo channels reads 3 dB louder.
  */
 
 interface BiquadCoeff {
@@ -164,8 +164,9 @@ function loudnessRange(powers: number[]): number {
 }
 
 /**
- * 4x oversampled peak via zero-padded FFT. Catches inter-sample peaks
- * that 16-bit sample peaks miss.
+ * 4x oversampled peak via a polyphase Hann-windowed sinc interpolator
+ * (32 taps per phase). Catches inter-sample peaks that sample peaks miss,
+ * without the block-edge ringing a zero-padded FFT adds.
  */
 export function truePeakLinear(buffers: Float32Array[]): number {
   let peak = 0;
@@ -174,47 +175,14 @@ export function truePeakLinear(buffers: Float32Array[]): number {
 }
 
 function oversamplePeak(x: Float32Array): number {
-  const block = 4096;
-  const factor = 4;
-  const big = block * factor;
-  const hop = block / 2;
-  const re = new Float64Array(block);
-  const im = new Float64Array(block);
-  const reB = new Float64Array(big);
-  const imB = new Float64Array(big);
+  const n = x.length;
   let peak = 0;
-  for (let i = 0; i < x.length; i++) peak = Math.max(peak, Math.abs(x[i]));
-  if (x.length < 32) return peak;
-
-  for (let start = 0; start < x.length; start += hop) {
-    for (let i = 0; i < block; i++) {
-      const idx = start + i;
-      re[i] = idx < x.length ? x[idx] : 0;
-      im[i] = 0;
-    }
-    fft(re, im, false);
-    reB.fill(0);
-    imB.fill(0);
-    const half = block / 2;
-    for (let k = 0; k < half; k++) {
-      reB[k] = re[k];
-      imB[k] = im[k];
-    }
-    // Split the Nyquist bin so the upsampled signal stays real.
-    reB[half] = re[half] / 2;
-    reB[big - half] = re[half] / 2;
-    for (let k = 1; k < half; k++) {
-      reB[big - k] = re[block - k];
-      imB[big - k] = im[block - k];
-    }
-    fft(reB, imB, true);
-    // Zero-padding in frequency scales amplitude by 1/factor.
-    const from = start === 0 ? 0 : (hop * factor) / 4;
-    const to = Math.min(big, Math.round(((Math.min(x.length, start + block) - start) * factor)));
-    for (let i = from; i < to; i++) {
-      const v = Math.abs(reB[i]) * factor;
-      if (v > peak) peak = v;
-    }
+  for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(x[i]));
+  for (let i = 0; i < n - 1; i++) {
+    // Only neighbourhoods near the running peak can beat it; skip quiet stretches.
+    if (Math.abs(x[i]) < peak * 0.5 && Math.abs(x[i + 1]) < peak * 0.5) continue;
+    const v = interSamplePeak(x, i);
+    if (v > peak) peak = v;
   }
   return peak;
 }
