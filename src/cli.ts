@@ -5,6 +5,7 @@ import { ScoreSchema } from './schema.js';
 import { getJsonSchema } from './json-schema.js';
 import { render } from './renderer.js';
 import type { BitDepth } from './wav.js';
+import { runAnalyze, runDiff, runProfile } from './cli-listen.js';
 
 const args = process.argv.slice(2);
 
@@ -14,11 +15,17 @@ visualtone - Music as animated colored curves
 
 Usage:
   visualtone render <score.json> -o <output.wav>
+  visualtone analyze <score.json|mix.wav> [--profile deep-house] [--json report.json] [--png report.png] [--panel name]
+  visualtone diff a.report.json b.report.json
+  visualtone profile <ref.wav> [more.wav ...] -o profile.json
   visualtone schema
 
 Commands:
-  render    Render a score JSON file to WAV audio
-  schema    Print the JSON Schema for score files
+  render     Render a score JSON file to WAV audio
+  analyze    Measure a score or WAV and write a listening report
+  diff       Compare two analysis reports
+  profile    Build a target profile from reference WAVs
+  schema     Print the JSON Schema for score files
 
 Options:
   -o, --output       Output WAV file path (for render command)
@@ -34,6 +41,21 @@ const command = args[0];
 if (command === 'schema') {
   const schema = getJsonSchema();
   console.log(JSON.stringify(schema, null, 2));
+  process.exit(0);
+}
+
+if (command === 'analyze') {
+  runAnalyze(args);
+  process.exit(0);
+}
+
+if (command === 'diff') {
+  runDiff(args);
+  process.exit(0);
+}
+
+if (command === 'profile') {
+  runProfile(args);
   process.exit(0);
 }
 

@@ -81,6 +81,32 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 - 多轨道 = 多条平行曲线
 - 音乐 = 这些值随时间变化 (平滑插值或阶跃式打击乐)
 
+## 听感分析
+
+`analyze` 把成片（以及乐谱渲染出的分轨）变成能看的报告，用来判断浑浊、遮蔽、声像、响度和编曲起伏。输入 `.json` 时会带分轨渲染；输入 `.wav` 时只分析混音（支持 16/24-bit PCM 和 32-bit float）。
+
+报告里的数字：
+
+- 响度：BS.1770 积分 LUFS、响度范围、4 倍过采样真峰值、峰均比
+- 频段能量：sub / bass / mid / presence / air
+- 立体声：相关性、侧中比、120Hz 以下的左右平衡
+- 节奏：速度、swing、底鼓冲击力、侧链深度
+- 和声：色度 + Krumhansl 调性
+- 结构：按小节的能量、自相似、段落对比
+- 遮蔽：分轨在 ERB 频带上的时频重叠和能量占比
+
+`--profile` 用 `deep-house`、`techno`、`pop-edm`、`ambient` 之一，或 `profile` 命令从参考曲生成的 JSON。内置画像是通用混音经验值，不是标准。差距会写成 findings，每条带严重度和一条指向乐谱字段的建议。
+
+PNG 面板（标签是英文）：乐谱曲线、对数频谱、分轨频谱、频段柱、短时响度、相位、底鼓包络、遮蔽矩阵、自相似和色度。
+
+听完一轮可以记一条偏好，攒多了再看哪些指标跟你的分数相关。追加到 `feedback/ratings.jsonl`，一行一个 JSON：
+
+```json
+{"date":"2026-10-06","file":"examples/deep-house-v5.json","reportHash":"…","scores":{"groove":4,"timbre":3,"clarity":4,"overall":3},"note":"drop 还是不够砸"}
+```
+
+`groove`、`timbre`、`clarity`、`overall` 都是 1–5。
+
 ## 安装
 
 ```bash
@@ -100,6 +126,16 @@ npx visualtone render examples/deep-house-v5.json -o out.wav --bit-depth 24
 
 # 查看 JSON Schema
 npx visualtone schema
+
+# 听感报告：指标、问题清单、多面板 PNG
+npx visualtone analyze examples/deep-house-v5.json --profile deep-house --json report.json --png report.png
+
+# 只看某一块高清图：curves spectrogram stems bands loudness phase kick masking ssm
+npx visualtone analyze examples/deep-house-v5.json --panel spectrogram --png spectrogram.png
+
+# 对比两次报告；从参考曲提取画像（WAV，不进仓库）
+npx visualtone diff a.report.json b.report.json
+npx visualtone profile ref.wav -o my-profile.json --name mine
 ```
 
 ### 编程使用
@@ -358,6 +394,7 @@ npm run dev
 - ✅ 曲线到音频渲染、多轨立体声
 - ✅ hue 音色环 + 参数覆盖
 - ✅ 混响、延迟、侧链、EQ、压缩、LFO、自动化、swing
+- ✅ 听感分析（LUFS、遮蔽、画像对比、PNG 报告）
 - ⏳ 采样鼓 / 采样音色（尚未引入）
 - ⏳ 前瞻式限幅器（目前峰值上限是整体缩放）
 - ⏳ Remotion 集成

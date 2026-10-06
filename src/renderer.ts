@@ -40,6 +40,12 @@ export interface RenderResult {
     gainReductionDb: number;
   };
   wav: Buffer;
+  /**
+   * Per-track audio after EQ, compression, modulation and ducking,
+   * before reverb and delay sends. Present only when `stems: true`.
+   * Arrays are the renderer's own buffers; do not mutate them.
+   */
+  stems?: { id: string; l: Float32Array; r: Float32Array }[];
 }
 
 interface TrackRender {
@@ -173,6 +179,8 @@ function renderTrackDry(
 
 export interface RenderOptions {
   wav?: WavOptions;
+  /** Keep per-track buffers (post channel-strip, pre send) for analysis. */
+  stems?: boolean;
 }
 
 export function render(score: Score, options: RenderOptions = {}): RenderResult {
@@ -353,5 +361,11 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     eventReport,
     master: { peak: masterPeak, loudnessDb, gainReductionDb: masterReduction },
     wav,
+    stems: options.stems
+      ? score.tracks.map((t) => {
+          const tr = byId.get(t.id)!;
+          return { id: tr.id, l: tr.l, r: tr.r };
+        })
+      : undefined,
   };
 }
