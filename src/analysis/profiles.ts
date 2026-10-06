@@ -17,6 +17,16 @@ export interface Profile {
   maskOverlapMax: number;
   /** A family of tracks (pad-1 + pad-2 + …) above this share is too loud. */
   trackShareMax: number;
+  /** Reverb/delay returns as a share of dry stems plus returns. */
+  wetShareMin: number;
+  /** Tail RMS versus the hit, dB. Below this the notes die too fast. */
+  tailRatioDbMin: number;
+  /** Median per-hit level deviation, dB. Below this the part is mechanical. */
+  hitVariationMinDb: number;
+  /** 150–500 Hz energy share. */
+  warmth: [number, number];
+  /** Fraction of 4- and 8-bar repeats allowed before the arrangement is a loop. */
+  repetitionMax: number;
 }
 
 const EXPERIENCE = '通用混音经验值，不是测量标准';
@@ -40,6 +50,11 @@ export const PROFILES: Record<string, Profile> = {
     contrastMinDb: 2.5,
     maskOverlapMax: 0.45,
     trackShareMax: 0.3,
+    wetShareMin: 0.12,
+    tailRatioDbMin: -18,
+    hitVariationMinDb: 1.2,
+    warmth: [0.28, 0.5],
+    repetitionMax: 0.45,
   },
   techno: {
     name: 'techno',
@@ -59,6 +74,11 @@ export const PROFILES: Record<string, Profile> = {
     contrastMinDb: 1.5,
     maskOverlapMax: 0.45,
     trackShareMax: 0.45,
+    wetShareMin: 0.06,
+    tailRatioDbMin: -14,
+    hitVariationMinDb: 1.2,
+    warmth: [0.18, 0.48],
+    repetitionMax: 0.6,
   },
   'pop-edm': {
     name: 'pop-edm',
@@ -78,6 +98,11 @@ export const PROFILES: Record<string, Profile> = {
     contrastMinDb: 3,
     maskOverlapMax: 0.4,
     trackShareMax: 0.35,
+    wetShareMin: 0.1,
+    tailRatioDbMin: -10,
+    hitVariationMinDb: 1.8,
+    warmth: [0.2, 0.48],
+    repetitionMax: 0.4,
   },
   ambient: {
     name: 'ambient',
@@ -97,6 +122,11 @@ export const PROFILES: Record<string, Profile> = {
     contrastMinDb: 0.4,
     maskOverlapMax: 0.6,
     trackShareMax: 0.55,
+    wetShareMin: 0.2,
+    tailRatioDbMin: -8,
+    hitVariationMinDb: 0.8,
+    warmth: [0.15, 0.55],
+    repetitionMax: 0.7,
   },
 };
 
@@ -139,5 +169,13 @@ export function profileFromReports(name: string, reports: AnalysisReport[]): Pro
     contrastMinDb: Math.max(0, Math.min(...reports.map((r) => r.structure.contrastDb)) - 0.5),
     maskOverlapMax: 0.5,
     trackShareMax: 0.45,
+    wetShareMin: 0.05,
+    tailRatioDbMin: -20,
+    hitVariationMinDb: 0.5,
+    warmth: padRange(
+      reports.map((r) => r.warmth),
+      0.04,
+    ),
+    repetitionMax: Math.min(1, Math.max(...reports.map((r) => r.dynamics.repetition)) + 0.1),
   };
 }

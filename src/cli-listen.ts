@@ -89,7 +89,11 @@ function printReport(report: AnalysisReport): void {
   );
   console.log(
     `harmony  ${report.harmony.key ?? '-'} (${report.harmony.correlation.toFixed(2)})  ` +
-      `contrast ${report.structure.contrastDb.toFixed(1)} dB`,
+      `contrast ${report.structure.contrastDb.toFixed(1)} dB  repeat ${(report.dynamics.repetition * 100).toFixed(0)}%`,
+  );
+  console.log(
+    `texture  warmth ${(report.warmth * 100).toFixed(1)}%  wet ${report.space.wetShare === null ? '-' : (report.space.wetShare * 100).toFixed(1) + '%'}  ` +
+      `tail ${report.space.tailRatioDb?.toFixed(1) ?? '-'} dB  hit var ${report.dynamics.hitVariationDb?.toFixed(2) ?? '-'} dB`,
   );
   if (report.masking) {
     const top = report.masking.trackIds

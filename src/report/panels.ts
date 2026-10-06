@@ -12,7 +12,7 @@ const ACCENT: RGB = [120, 210, 190];
 const WARN: RGB = [240, 170, 70];
 const BAD: RGB = [230, 90, 90];
 
-const PANEL_NAMES = ['curves', 'spectrogram', 'stems', 'bands', 'loudness', 'phase', 'kick', 'masking', 'ssm'] as const;
+const PANEL_NAMES = ['curves', 'spectrogram', 'stems', 'bands', 'loudness', 'phase', 'kick', 'masking', 'ssm', 'space', 'dynamics'] as const;
 export type PanelName = (typeof PANEL_NAMES)[number];
 
 function flag(f: Finding): string {
@@ -26,6 +26,11 @@ function flag(f: Finding): string {
   if (f.id.startsWith('band.')) return f.id.slice(5).toUpperCase();
   if (f.id.startsWith('share.')) return f.id.slice(6).toUpperCase() + ' LOUD';
   if (f.id.startsWith('mask.')) return 'MASK ' + f.id.slice(5).replace('|', '/').toUpperCase();
+  if (f.id === 'space.wet') return 'DRY';
+  if (f.id === 'space.tail') return 'SHORT TAIL';
+  if (f.id === 'dynamics.variation') return 'MIDI';
+  if (f.id === 'warmth') return 'THIN';
+  if (f.id === 'dynamics.repetition') return 'LOOP';
   return f.id.toUpperCase();
 }
 
@@ -322,6 +327,62 @@ function drawSsm(c: Canvas, analysis: Analysis, _score: Score | undefined, x: nu
   return h + 22;
 }
 
+function drawSpace(c: Canvas, analysis: Analysis, _score: Score | undefined, x: number, y: number, w: number): number {
+  const sp = analysis.report.space;
+  const wet = sp.wetShare === null ? '-' : `${(sp.wetShare * 100).toFixed(1)}%`;
+  const tail = sp.tailRatioDb === null ? '-' : `${sp.tailRatioDb.toFixed(1)} DB`;
+  c.text(x, y, `SPACE  WET ${wet}   TAIL ${tail}`, DIM, 1);
+  const top = y + 16;
+  const buses = analysis.plot.busShares;
+  buses.forEach((b, i) => {
+    const yy = top + i * 18;
+    c.text(x, yy, b.id.replace('bus:', '').slice(0, 8), INK, 1);
+    c.fillRect(x + 70, yy + 1, Math.max(1, (w * 0.45 * b.share) / 0.25), 8, ACCENT);
+  });
+  const ratios = analysis.plot.tailRatiosDb;
+  const times = analysis.plot.tailTimes;
+  const plotX = x + Math.floor(w * 0.55);
+  const plotW = w - Math.floor(w * 0.55);
+  const h = 70;
+  c.fillRect(plotX, top, plotW, h, [12, 14, 20]);
+  const dur = analysis.report.duration || 1;
+  if (ratios.length > 1) {
+    const lo = -36;
+    const hi = 0;
+    for (let i = 1; i < ratios.length; i++) {
+      const x0 = plotX + (times[i - 1] / dur) * plotW;
+      const x1 = plotX + (times[i] / dur) * plotW;
+      const y0 = top + ((hi - Math.max(lo, Math.min(hi, ratios[i - 1]))) / (hi - lo)) * (h - 8);
+      const y1 = top + ((hi - Math.max(lo, Math.min(hi, ratios[i]))) / (hi - lo)) * (h - 8);
+      c.line(x0, y0, x1, y1, ACCENT);
+    }
+  }
+  return 16 + Math.max(buses.length * 18, h) + 8;
+}
+
+function drawDynamics(c: Canvas, analysis: Analysis, _score: Score | undefined, x: number, y: number, w: number): number {
+  const tracks = analysis.plot.hitTracks.slice(0, 12);
+  const v = analysis.report.dynamics.hitVariationDb;
+  c.text(x, y, `DYNAMICS  HIT LEVEL   MEDIAN ${v === null ? '-' : v.toFixed(2)} DB`, DIM, 1);
+  const top = y + 16;
+  const rowH = 16;
+  const dur = analysis.report.duration || 1;
+  const label = 90;
+  tracks.forEach((t, i) => {
+    const yy = top + i * rowH;
+    c.text(x, yy, t.id.slice(0, 12), DIM, 1);
+    if (t.peaksDb.length === 0) return;
+    const lo = Math.min(...t.peaksDb);
+    const hi = Math.max(lo + 1, ...t.peaksDb);
+    for (let k = 0; k < t.peaksDb.length; k++) {
+      const px = x + label + (t.times[k] / dur) * (w - label);
+      const py = yy + 12 - ((t.peaksDb[k] - lo) / (hi - lo)) * 12;
+      c.fillRect(px, py, 2, 2, ACCENT);
+    }
+  });
+  return 16 + Math.max(1, tracks.length) * rowH + 8;
+}
+
 const DRAW: Record<PanelName, (c: Canvas, a: Analysis, s: Score | undefined, x: number, y: number, w: number) => number> = {
   curves: drawCurves,
   spectrogram: drawSpectrogram,
@@ -332,6 +393,8 @@ const DRAW: Record<PanelName, (c: Canvas, a: Analysis, s: Score | undefined, x: 
   kick: drawKick,
   masking: drawMask,
   ssm: drawSsm,
+  space: drawSpace,
+  dynamics: drawDynamics,
 };
 
 export function renderReport(analysis: Analysis, score?: Score, panel?: string): Buffer {

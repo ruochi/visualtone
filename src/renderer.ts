@@ -379,10 +379,15 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     master: { peak: masterPeak, loudnessDb, gainReductionDb: masterReduction, limiterReductionDb: limiterReduction },
     wav,
     stems: options.stems
-      ? score.tracks.map((t) => {
-          const tr = byId.get(t.id)!;
-          return { id: tr.id, l: tr.l, r: tr.r };
-        })
+      ? [
+          ...score.tracks.map((t) => {
+            const tr = byId.get(t.id)!;
+            return { id: tr.id, l: tr.l, r: tr.r };
+          }),
+          { id: 'bus:hall', l: revL, r: revR },
+          { id: 'bus:room', l: new Float32Array(numSamples), r: new Float32Array(numSamples) },
+          { id: 'bus:delay', l: dlyL, r: dlyR },
+        ]
       : undefined,
   };
 }

@@ -223,7 +223,9 @@ test('render stems follow score order and are omitted by default', () => {
     ],
   });
   assert.equal(render(score).stems, undefined);
-  assert.deepEqual(render(score, { stems: true }).stems!.map((s) => s.id), ['b', 'a']);
+  const ids = render(score, { stems: true }).stems!.map((s) => s.id);
+  assert.deepEqual(ids.slice(0, 2), ['b', 'a']);
+  assert.deepEqual(ids.slice(2), ['bus:hall', 'bus:room', 'bus:delay']);
 });
 
 test('wav round-trip for 16, 24 and 32-bit float', () => {

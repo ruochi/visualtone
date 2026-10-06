@@ -7,8 +7,10 @@ import { getProfile, type Profile } from './profiles.js';
 import { analyzeRhythm } from './rhythm.js';
 import { analyzeStereo } from './stereo.js';
 import { BANDS, mixdown, spectrogram, type Spectrogram } from './stft.js';
+import { analyzeSpace, bandShare } from './space.js';
 import { analyzeStructure } from './structure.js';
 import type { AnalysisReport } from './types.js';
+import { analyzeDynamics, repetitionScore } from './dynamics.js';
 
 export interface PlotData {
   specTimes: number[];
@@ -33,6 +35,10 @@ export interface PlotData {
   chromaTimes: number[];
   maskIds?: string[];
   maskMatrix?: number[][];
+  busShares: { id: string; share: number }[];
+  tailTimes: number[];
+  tailRatiosDb: number[];
+  hitTracks: { id: string; times: number[]; peaksDb: number[] }[];
 }
 
 export interface Analysis {
@@ -58,10 +64,11 @@ export function analyze(input: AnalyzeInput): Analysis {
   const loudness = measureLoudness(buffers, sampleRate);
   const stereo = analyzeStereo(buffers, sampleRate);
   const bpm = input.score?.bpm;
+  const trackStems = input.stems?.filter((s) => !s.id.startsWith('bus:'));
   let harmonySpec = spec;
-  if (input.stems && input.stems.length > 1) {
-    const pitched = input.stems.filter((s) => !/kick|hat|clap|shaker|riser/i.test(s.id));
-    if (pitched.length > 0 && pitched.length < input.stems.length) {
+  if (trackStems && trackStems.length > 1) {
+    const pitched = trackStems.filter((s) => !/kick|hat|clap|shaker|riser|ride/i.test(s.id));
+    if (pitched.length > 0 && pitched.length < trackStems.length) {
       const buf = new Float32Array(pitched[0].l.length);
       for (const stem of pitched) {
         for (let i = 0; i < buf.length; i++) buf[i] += (stem.l[i] + stem.r[i]) * 0.5;
@@ -71,8 +78,11 @@ export function analyze(input: AnalyzeInput): Analysis {
   }
   const harmony = analyzeHarmony(harmonySpec);
   const structure = analyzeStructure(mono, spec, sampleRate, duration, bpm);
-  const rhythm = analyzeRhythm(mono, sampleRate, spec, bpm, input.stems);
-  const masking = input.stems && input.stems.length > 0 ? analyzeMasking(input.stems, sampleRate) : undefined;
+  const rhythm = analyzeRhythm(mono, sampleRate, spec, bpm, trackStems);
+  const masking = trackStems && trackStems.length > 0 ? analyzeMasking(trackStems, sampleRate) : undefined;
+  const space = analyzeSpace(mono, sampleRate, rhythm.onsetTimes, input.stems);
+  const dynamics = analyzeDynamics(trackStems, sampleRate);
+  const warmth = bandShare(mono, sampleRate, 150, 500);
 
   const bandTotal = spec.bandPower.reduce((s, v) => s + v, 0) || 1;
   const bands = BANDS.map((b, i) => ({ name: b.name, share: spec.bandPower[i] / bandTotal }));
@@ -105,6 +115,18 @@ export function analyze(input: AnalyzeInput): Analysis {
       midCorrelation: stereo.midCorrelation,
       highCorrelation: stereo.highCorrelation,
       balanceDb: stereo.balanceDb,
+      bandSideMidDb: stereo.bandSideMidDb,
+    },
+    warmth,
+    space: {
+      wetShare: space.wetShare,
+      busShares: space.busShares,
+      tailRatioDb: space.tailRatioDb,
+    },
+    dynamics: {
+      hitVariationDb: dynamics.hitVariationDb,
+      repetition: repetitionScore(structure.ssm),
+      tracks: dynamics.tracks.map((t) => ({ id: t.id, variationDb: t.variationDb })),
     },
     rhythm: {
       tempo: rhythm.tempo,
@@ -171,6 +193,10 @@ export function analyze(input: AnalyzeInput): Analysis {
     chromaTimes: spec.times,
     maskIds: masking?.trackIds,
     maskMatrix: masking?.overlap,
+    busShares: space.busShares,
+    tailTimes: space.tailTimes,
+    tailRatiosDb: space.tailRatiosDb,
+    hitTracks: dynamics.tracks.map((t) => ({ id: t.id, times: t.times, peaksDb: t.peaksDb })),
   };
 
   return { report, plot, spec, masking };

@@ -29,6 +29,21 @@ export interface AnalysisReport {
     midCorrelation: number;
     highCorrelation: number;
     balanceDb: number;
+    bandSideMidDb: { low: number; mid: number; high: number };
+  };
+  /** 150–500 Hz share of the mix. The range the ear reads as body. */
+  warmth: number;
+  space: {
+    wetShare: number | null;
+    busShares: { id: string; share: number }[];
+    tailRatioDb: number | null;
+  };
+  dynamics: {
+    /** 25th percentile of per-track hit variation, dB. Null when no track has 16 hits. */
+    hitVariationDb: number | null;
+    /** Share of bar pairs, 4 or 8 bars apart, that match above 0.98. */
+    repetition: number;
+    tracks: { id: string; variationDb: number }[];
   };
   rhythm: {
     tempo: number | null;

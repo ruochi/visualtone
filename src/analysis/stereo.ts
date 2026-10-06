@@ -10,7 +10,22 @@ export interface StereoReport {
   highCorrelation: number;
   /** Same ratio, full band. */
   balanceDb: number;
+  /** Side/mid energy ratio per band, dB. Width lives in the mids and highs of a thick mix. */
+  bandSideMidDb: { low: number; mid: number; high: number };
   phase: { l: number; r: number }[];
+}
+
+function sideMid(l: ArrayLike<number>, r: ArrayLike<number>): number {
+  let em = 0;
+  let es = 0;
+  const n = Math.min(l.length, r.length);
+  for (let i = 0; i < n; i++) {
+    const m = (l[i] + r[i]) * 0.5;
+    const s = (l[i] - r[i]) * 0.5;
+    em += m * m;
+    es += s * s;
+  }
+  return 10 * Math.log10((es + 1e-12) / (em + 1e-12));
 }
 
 function energyRatioDb(l: ArrayLike<number>, r: ArrayLike<number>): number {
@@ -75,6 +90,7 @@ export function analyzeStereo(buffers: Float32Array[], sampleRate: number): Ster
       midCorrelation: 1,
       highCorrelation: 1,
       balanceDb: 0,
+      bandSideMidDb: { low: -80, mid: -80, high: -80 },
       phase: [],
     };
   }
@@ -110,6 +126,7 @@ export function analyzeStereo(buffers: Float32Array[], sampleRate: number): Ster
     midCorrelation: correlation(midL, midR),
     highCorrelation: correlation(hiL, hiR),
     balanceDb: energyRatioDb(l, r),
+    bandSideMidDb: { low: sideMid(lowL, lowR), mid: sideMid(midL, midR), high: sideMid(hiL, hiR) },
     phase,
   };
 }

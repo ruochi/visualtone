@@ -229,6 +229,74 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
     }
   }
 
+  if (profile && report.space.wetShare !== null && report.space.wetShare < profile.wetShareMin) {
+    push({
+      id: 'space.wet',
+      severity: 'high',
+      metric: 'space.wetShare',
+      value: report.space.wetShare,
+      target: `> ${(profile.wetShareMin * 100).toFixed(0)}%`,
+      message: `混响和延迟只占能量的 ${(report.space.wetShare * 100).toFixed(1)}%，听起来偏干`,
+      suggestion: '提高 pad 和 hook 的 space，给鼓加 room 发送；master.reverb 加大 size，并留 20ms 以上的 preDelayMs',
+    });
+  }
+
+  if (profile && report.space.tailRatioDb !== null && report.space.tailRatioDb < profile.tailRatioDbMin) {
+    push({
+      id: 'space.tail',
+      severity: 'medium',
+      metric: 'space.tailRatioDb',
+      value: report.space.tailRatioDb,
+      target: `> ${profile.tailRatioDbMin} dB`,
+      message: `起音之间的尾巴比音头低 ${Math.abs(report.space.tailRatioDb).toFixed(1)} dB，音符断得太干净`,
+      suggestion: '给 stab、pad、hook 加 release（150–400ms），并提高它们的 space 或 room',
+    });
+  }
+
+  if (profile && report.dynamics.hitVariationDb !== null && report.dynamics.hitVariationDb < profile.hitVariationMinDb) {
+    const flat = [...report.dynamics.tracks].sort((a, b) => a.variationDb - b.variationDb)[0];
+    push({
+      id: 'dynamics.variation',
+      severity: 'high',
+      metric: 'dynamics.hitVariationDb',
+      value: report.dynamics.hitVariationDb,
+      target: `> ${profile.hitVariationMinDb} dB`,
+      message: `偏死的轨每一下只差 ${report.dynamics.hitVariationDb.toFixed(2)} dB，听起来像 MIDI 直出`,
+      suggestion: flat
+        ? `给 ${flat.id} 等轨加 humanize.size（0.08–0.15）和 timbre.velocity（约 0.6），让重音更亮、弱音更暗`
+        : '给鼓和 stab 加 humanize.size，并打开 timbre.velocity',
+    });
+  }
+
+  if (profile && !inRange(report.warmth, profile.warmth)) {
+    const low = report.warmth < profile.warmth[0];
+    push({
+      id: 'warmth',
+      severity: low ? 'high' : 'medium',
+      metric: 'warmth',
+      value: report.warmth,
+      target: `${pct(profile.warmth[0])}-${pct(profile.warmth[1])}%`,
+      message: low
+        ? `150–500Hz 只占 ${(report.warmth * 100).toFixed(1)}%，中低频偏薄，不浑厚`
+        : `150–500Hz 占 ${(report.warmth * 100).toFixed(1)}%，中低频偏糊`,
+      suggestion: low
+        ? '少挖 200–400Hz：底鼓和贝斯的 peaks 负增益收到 -1.5dB 以内，pad 的 lowCut 降到 160Hz 左右，并加一层长音 keys'
+        : '给 pad 加 eq.peaks 在 300Hz 处 -2dB，或降低 pad 的 size',
+    });
+  }
+
+  if (profile && report.dynamics.repetition > profile.repetitionMax && report.structure.energyDb.length >= 8) {
+    push({
+      id: 'dynamics.repetition',
+      severity: 'medium',
+      metric: 'dynamics.repetition',
+      value: report.dynamics.repetition,
+      target: `< ${profile.repetitionMax}`,
+      message: `相隔 4 或 8 小节的段落有 ${(report.dynamics.repetition * 100).toFixed(0)}% 几乎一模一样`,
+      suggestion: '每 4 或 8 小节加一个过门：鼓的空拍、stab 换节奏，或让 hook 的乐句结尾不一样',
+    });
+  }
+
   const rank = { high: 0, medium: 1, low: 2 };
   out.sort((a, b) => rank[a.severity] - rank[b.severity]);
   return out;
