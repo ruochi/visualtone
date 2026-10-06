@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { writeWavFile } from './wav.js';
 import { Biquad, Compressor, StereoEq, lfoValue, keyframeAt } from './mix.js';
 import { swingTime, applyGroove } from './groove.js';
-import { lookaheadLimit, spectralCentroid } from './fx.js';
+import { FdnReverb, lookaheadLimit, spectralCentroid } from './fx.js';
 import { lightnessToCutoff } from './timbre.js';
 import { measureLoudness } from './analysis/loudness.js';
 import { render } from './renderer.js';
@@ -63,6 +63,94 @@ test('lightness opens the cutoff into the presence band', () => {
   assert.ok(lightnessToCutoff(0.5, c4) > 2000 && lightnessToCutoff(0.5, c4) < 2500);
   assert.ok(lightnessToCutoff(0.8, c4) > 6000);
   assert.equal(lightnessToCutoff(1, 2000), 18000);
+});
+
+test('fdn tail darkens, decorrelates, and stays silent through the pre-delay', () => {
+  const rev = new FdnReverb(SR, 'hall');
+  rev.setParams({ size: 0.85, decay: 0.85, preDelayMs: 30, damping: 0.75, width: 1 });
+  const n = SR * 2;
+  const l = new Float32Array(n);
+  const r = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = i === 0 ? 1 : 0;
+    const [a, b] = rev.processStereo(x, x * 0.25);
+    l[i] = a;
+    r[i] = b;
+  }
+  let leak = 0;
+  for (let i = 0; i < Math.round(0.02 * SR); i++) leak = Math.max(leak, Math.abs(l[i]), Math.abs(r[i]));
+  assert.ok(leak < 1e-8, `pre-delay leak ${leak}`);
+
+  const ratio = (buf: Float32Array, from: number, to: number) => {
+    const hp = new Biquad('highpass', SR, 2500);
+    const lp = new Biquad('lowpass', SR, 800);
+    let hi = 0;
+    let lo = 0;
+    for (let i = from; i < to; i++) {
+      const h = hp.process(buf[i]);
+      const o = lp.process(buf[i]);
+      hi += h * h;
+      lo += o * o;
+    }
+    return hi / (lo + 1e-12);
+  };
+  const early = ratio(l, Math.round(0.05 * SR), Math.round(0.18 * SR));
+  const late = ratio(l, Math.round(0.7 * SR), Math.round(1.3 * SR));
+  assert.ok(late < early * 0.75, `highs should die: early ${early.toFixed(3)} late ${late.toFixed(3)}`);
+
+  let lr = 0;
+  let l2 = 0;
+  let r2 = 0;
+  for (let i = Math.round(0.05 * SR); i < Math.round(1.2 * SR); i++) {
+    lr += l[i] * r[i];
+    l2 += l[i] * l[i];
+    r2 += r[i] * r[i];
+  }
+  const corr = lr / Math.sqrt(l2 * r2);
+  assert.ok(corr < 0.5, `stereo correlation ${corr}`);
+});
+
+test('release 0 stays cut off, release 200 ms keeps a tail', () => {
+  const note = [{ t: 0, y: 60, size: 0.6, duration: 0.12, ease: 'hold' as const }];
+  const cut = render(ScoreSchema.parse({
+    sampleRate: SR, duration: 0.5, master: { loudness: -20, drive: 0 },
+    tracks: [{ id: 'p', hue: 210, channel: [0, 1], release: 0, notes: note }],
+  })).buffers[0];
+  const tail = render(ScoreSchema.parse({
+    sampleRate: SR, duration: 0.5, master: { loudness: -20, drive: 0 },
+    tracks: [{ id: 'p', hue: 210, channel: [0, 1], release: 200, notes: note }],
+  })).buffers[0];
+  const after = Math.round(0.2 * SR);
+  assert.ok(rms(cut, after, after + 2000) < rms(tail, after, after + 2000) * 0.25);
+});
+
+test('velocity makes a louder note brighter', () => {
+  const one = (size: number) => {
+    const buf = render(ScoreSchema.parse({
+      sampleRate: SR, duration: 0.3, seed: 3, master: { loudness: -20, drive: 0 },
+      tracks: [{ id: 'p', hue: 90, channel: 0, timbre: { velocity: 1 }, notes: [{ t: 0, y: 64, size, duration: 0.2 }] }],
+    })).buffers[0];
+    return spectralCentroid(buf.slice(0, Math.round(0.08 * SR)), SR);
+  };
+  const loud = one(0.95);
+  const soft = one(0.25);
+  assert.ok(loud > soft * 1.15, `loud ${loud.toFixed(0)} soft ${soft.toFixed(0)}`);
+});
+
+test('drift is deterministic and moves the centroid between hits', () => {
+  const score = ScoreSchema.parse({
+    sampleRate: SR, duration: 0.8, seed: 9, master: { loudness: -20, drive: 0 },
+    tracks: [{
+      id: 'p', hue: 160, channel: 0, timbre: { drift: 1, unison: 3 },
+      notes: [0, 0.4].map((t) => ({ t, y: 64, size: 0.5, duration: 0.25 })),
+    }],
+  });
+  const a = render(score);
+  const b = render(score);
+  assert.equal(a.wav.equals(b.wav), true);
+  const c1 = spectralCentroid(a.buffers[0].slice(Math.round(0.02 * SR), Math.round(0.12 * SR)), SR);
+  const c2 = spectralCentroid(a.buffers[0].slice(Math.round(0.42 * SR), Math.round(0.52 * SR)), SR);
+  assert.ok(Math.abs(c1 - c2) > 20, `centroids ${c1.toFixed(0)} ${c2.toFixed(0)}`);
 });
 
 test('wav 24-bit PCM header and size', () => {

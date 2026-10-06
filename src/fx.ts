@@ -19,81 +19,175 @@ export class Ducker {
   }
 }
 
-export class Freeverb {
-  private combL: number[][] = [];
-  private combR: number[][] = [];
-  private apL: number[][] = [];
-  private apR: number[][] = [];
-  private idx: number[] = [];
-  private readonly sampleRate: number;
-  private roomSize = 0.7;
-  private damp = 0.4;
+export interface FdnParams {
+  /** 0–1, scales feedback. */
+  size?: number;
+  /** 0–1, how long the tail rings. */
+  decay?: number;
+  preDelayMs?: number;
+  /** 0–1, how fast the highs die in the tail. */
+  damping?: number;
+  /** 0–1, side energy of the return. */
+  width?: number;
+}
 
-  constructor(sampleRate: number) {
-    this.sampleRate = sampleRate;
-    const scales = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617];
+const HADAMARD_8: number[][] = (() => {
+  let h: number[][] = [[1]];
+  while (h.length < 8) {
+    const n = h.length;
+    const next: number[][] = [];
+    for (let i = 0; i < n * 2; i++) next.push(new Array(n * 2).fill(0));
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        next[i][j] = h[i][j];
+        next[i][j + n] = h[i][j];
+        next[i + n][j] = h[i][j];
+        next[i + n][j + n] = -h[i][j];
+      }
+    }
+    h = next;
+  }
+  const s = 1 / Math.sqrt(8);
+  return h.map((row) => row.map((v) => v * s));
+})();
+
+function readFrac(buf: Float32Array, pos: number): number {
+  const n = buf.length;
+  let p = pos % n;
+  if (p < 0) p += n;
+  const i = Math.floor(p);
+  const f = p - i;
+  return buf[i] * (1 - f) + buf[(i + 1) % n] * f;
+}
+
+/**
+ * 8-line feedback delay network. Each line is low-passed in the loop so the
+ * tail darkens, and its length drifts slowly so the tail is not metallic.
+ * Early reflections and the tail both sit behind the pre-delay.
+ */
+export class FdnReverb {
+  private readonly lines: Float32Array[];
+  private readonly baseLen: number[];
+  private readonly write: number[];
+  private readonly lp: number[];
+  private readonly phase: number[];
+  private readonly modInc: number[];
+  private readonly sampleRate: number;
+  private readonly preL: Float32Array;
+  private readonly preR: Float32Array;
+  private readonly early: Float32Array;
+  private readonly taps: { delay: number; gain: number; right: boolean }[];
+  private prePos = 0;
+  private earlyPos = 0;
+  private preSamples: number;
+  private feedback: number;
+  private dampMix: number;
+  private width: number;
+  private readonly modDepth: number;
+  private readonly outGain: number;
+
+  constructor(
+    sampleRate: number,
+    kind: 'hall' | 'room' = 'hall',
+  ) {
+    const scale = sampleRate / 44100;
+    const ms = kind === 'hall' ? [37, 47, 59, 71, 83, 97, 109, 127] : [11, 13, 17, 19, 23, 29, 31, 37];
+    this.modDepth = (kind === 'hall' ? 12 : 6) * scale;
+    this.outGain = kind === 'hall' ? 0.45 : 0.55;
+    this.lines = [];
+    this.baseLen = [];
+    this.write = [];
+    this.lp = [];
+    this.phase = [];
+    this.modInc = [];
     for (let i = 0; i < 8; i++) {
-      const lenL = Math.floor(scales[i] * (sampleRate / 44100));
-      const lenR = Math.floor((scales[i] + 23) * (sampleRate / 44100));
-      this.combL.push(new Array(lenL).fill(0));
-      this.combR.push(new Array(lenR).fill(0));
-      this.idx.push(0);
+      const base = Math.max(8, Math.round(ms[i] * 0.001 * sampleRate));
+      this.baseLen.push(base);
+      this.lines.push(new Float32Array(base + Math.ceil(this.modDepth) + 4));
+      this.write.push(0);
+      this.lp.push(0);
+      this.phase.push(i * 0.37);
+      this.modInc.push(((0.15 + i * 0.04) * 2 * Math.PI) / sampleRate);
     }
-    const apLens = [556, 441, 341, 225];
-    for (const len of apLens) {
-      const l = Math.floor(len * (sampleRate / 44100));
-      this.apL.push(new Array(l).fill(0));
-      this.apR.push(new Array(l + 13).fill(0));
-    }
-    this.apIdxL = new Array(4).fill(0);
-    this.apIdxR = new Array(4).fill(0);
+    this.sampleRate = sampleRate;
+    const preMax = Math.round(0.1 * sampleRate) + 2;
+    this.preL = new Float32Array(preMax);
+    this.preR = new Float32Array(preMax);
+    this.early = new Float32Array(Math.round(0.08 * sampleRate) + 2);
+    const tapMs = kind === 'hall' ? [7, 11, 16, 23, 31, 41] : [3, 5, 8, 12, 17, 22];
+    const tapGain = [0.42, 0.33, 0.26, 0.2, 0.15, 0.11];
+    this.taps = tapMs.map((t, i) => ({
+      delay: Math.round(t * 0.001 * sampleRate),
+      gain: tapGain[i],
+      right: i % 2 === 1,
+    }));
+    this.preSamples = Math.round((kind === 'hall' ? 0.025 : 0.008) * sampleRate);
+    this.feedback = kind === 'hall' ? 0.82 : 0.62;
+    this.dampMix = 0.35;
+    this.width = 0.85;
   }
 
-  private apIdxL: number[];
-  private apIdxR: number[];
-
-  setParams(size: number, decay: number) {
-    this.roomSize = 0.3 + size * 0.7;
-    this.damp = 0.2 + decay * 0.5;
+  setParams(params: FdnParams) {
+    const size = params.size ?? 0.6;
+    const decay = params.decay ?? 0.5;
+    this.feedback = Math.min(0.96, 0.45 + size * 0.25 + decay * 0.3);
+    this.dampMix = Math.max(0.02, Math.min(0.95, params.damping ?? 0.4));
+    this.width = Math.max(0, Math.min(1, params.width ?? this.width));
+    if (params.preDelayMs !== undefined) {
+      this.preSamples = Math.max(0, Math.min(this.preL.length - 2, Math.round((params.preDelayMs / 1000) * this.sampleRate)));
+    }
   }
 
   processStereo(inL: number, inR: number): [number, number] {
-    let outL = 0;
-    let outR = 0;
-    const feedback = this.roomSize;
-    const damp1 = this.damp;
+    const preRead = (this.prePos - this.preSamples + this.preL.length) % this.preL.length;
+    const dL = this.preSamples <= 0 ? inL : this.preL[preRead];
+    const dR = this.preSamples <= 0 ? inR : this.preR[preRead];
+    this.preL[this.prePos] = inL;
+    this.preR[this.prePos] = inR;
+    this.prePos = (this.prePos + 1) % this.preL.length;
+
+    this.early[this.earlyPos] = (dL + dR) * 0.5;
+    let erL = 0;
+    let erR = 0;
+    for (const tap of this.taps) {
+      const idx = (this.earlyPos - tap.delay + this.early.length) % this.early.length;
+      const v = this.early[idx] * tap.gain;
+      if (tap.right) erR += v;
+      else erL += v;
+    }
+    this.earlyPos = (this.earlyPos + 1) % this.early.length;
+
+    const damped = new Array<number>(8);
+    for (let i = 0; i < 8; i++) {
+      const buf = this.lines[i];
+      const mod = Math.sin(this.phase[i]) * this.modDepth;
+      this.phase[i] += this.modInc[i];
+      const x = readFrac(buf, this.write[i] - this.baseLen[i] + mod);
+      this.lp[i] += (x - this.lp[i]) * (1 - this.dampMix);
+      damped[i] = this.lp[i];
+    }
 
     for (let i = 0; i < 8; i++) {
-      const bufL = this.combL[i];
-      const bufR = this.combR[i];
-      let il = this.idx[i] % bufL.length;
-      let ir = this.idx[i] % bufR.length;
-      const cl = bufL[il];
-      const cr = bufR[ir];
-      bufL[il] = inL + cl * feedback;
-      bufR[ir] = inR + cr * feedback;
-      outL += cl * (1 - damp1) + bufL[il] * damp1;
-      outR += cr * (1 - damp1) + bufR[ir] * damp1;
-      this.idx[i]++;
+      let mixed = 0;
+      const row = HADAMARD_8[i];
+      for (let j = 0; j < 8; j++) mixed += row[j] * damped[j];
+      const inj = (i % 2 === 0 ? dL : dR) * 0.5;
+      const buf = this.lines[i];
+      buf[this.write[i]] = mixed * this.feedback + inj;
+      this.write[i] = (this.write[i] + 1) % buf.length;
     }
 
-    const apGain = 0.5;
-    for (let i = 0; i < 4; i++) {
-      const bufL = this.apL[i];
-      const bufR = this.apR[i];
-      let il = this.apIdxL[i] % bufL.length;
-      let ir = this.apIdxR[i] % bufR.length;
-      const vl = bufL[il];
-      const vr = bufR[ir];
-      outL = vl + apGain * (outL - vl);
-      outR = vr + apGain * (outR - vr);
-      bufL[il] = outL;
-      bufR[ir] = outR;
-      this.apIdxL[i]++;
-      this.apIdxR[i]++;
+    let outL = erL;
+    let outR = erR;
+    for (let i = 0; i < 8; i++) {
+      if (i % 2 === 0) outL += damped[i];
+      else outR += damped[i];
     }
-
-    return [outL * 0.06, outR * 0.06];
+    outL *= this.outGain;
+    outR *= this.outGain;
+    const mid = (outL + outR) * 0.5;
+    const side = (outL - outR) * 0.5 * this.width;
+    return [mid + side, mid - side];
   }
 }
 
@@ -137,6 +231,15 @@ export class StereoDelay {
 export function softClip(x: number, drive: number): number {
   const d = 1 + drive * 3;
   return Math.tanh(x * d) / Math.tanh(d);
+}
+
+/** Asymmetric soft clip. amount 0 is identity. Adds even harmonics, then the caller blocks DC. */
+export function saturate(x: number, amount: number): number {
+  if (amount <= 0) return x;
+  const bias = amount * 0.15;
+  const d = 1 + amount * 4;
+  const norm = Math.tanh(d);
+  return Math.tanh((x + bias) * d) / norm - Math.tanh(bias * d) / norm;
 }
 
 export function peakLimit(buffer: Float32Array, ceiling = 0.891): void {

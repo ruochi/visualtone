@@ -100,6 +100,18 @@ export class Voice {
   private pitchEnvTotal = 0;
   private attackLeft = 0;
   private transientLeft = 0;
+  private releaseSamples = 0;
+  private releaseLeft = 0;
+  private lastMidi = 60;
+  private lastLight = 0.5;
+  private lastSize = 0;
+  private notePeak = 0;
+  private onsetSize = 0.7;
+  private onsetCutoff = 1;
+  private readonly velocity: number;
+  private readonly driftAmount: number;
+  private readonly drift: number[];
+  private readonly driftCoeff: number;
 
   constructor(
     private readonly sampleRate: number,
@@ -107,9 +119,11 @@ export class Voice {
     seed: number,
     trackLightness = 0.5,
     saturation = 1,
-    override?: TimbreOverride,
+    override?: TimbreOverride & { velocity?: number; drift?: number },
   ) {
     this.vector = applyMacros(hueToTimbreVector(hue), trackLightness, saturation, override);
+    this.velocity = override?.velocity ?? 0;
+    this.driftAmount = override?.drift ?? 0;
     this.wt = buildWavetable(this.vector);
     this.rng = mulberry32(seed);
     this.gainSmoothCoeff = Math.exp(-1 / (sampleRate * 0.002));
@@ -120,6 +134,8 @@ export class Voice {
     this.unisonPhases = new Array(n).fill(0);
     this.unisonPanL = new Array(n);
     this.unisonPanR = new Array(n);
+    this.drift = new Array(n).fill(0);
+    this.driftCoeff = 1 - Math.exp((-2 * Math.PI * 0.3) / sampleRate);
     for (let i = 0; i < n; i++) {
       const pan = n === 1 ? 0 : (i / (n - 1) - 0.5) * 2 * this.vector.spread;
       const angle = (pan + 1) * 0.25 * Math.PI;
@@ -128,12 +144,22 @@ export class Voice {
     }
   }
 
-  private triggerOnset() {
+  setRelease(ms: number) {
+    this.releaseSamples = Math.max(0, (ms / 1000) * this.sampleRate);
+  }
+
+  private triggerOnset(size: number) {
     this.filterEnvLeft = Math.max(1, (this.vector.filterDecayMs / 1000) * this.sampleRate);
     this.pitchEnvTotal = Math.max(0, (this.vector.pitchEnvMs / 1000) * this.sampleRate);
     this.pitchEnvLeft = this.pitchEnvTotal;
     this.attackLeft = Math.max(1, (this.vector.attackMs / 1000) * this.sampleRate);
     this.transientLeft = Math.max(1, 0.008 * this.sampleRate);
+    this.onsetSize = size;
+    this.onsetCutoff = 1;
+    if (this.driftAmount > 0) {
+      this.onsetCutoff = 1 + (this.rng() * 2 - 1) * 0.15 * this.driftAmount;
+      for (let u = 0; u < this.unisonPhases.length; u++) this.unisonPhases[u] = this.rng() * 2 * Math.PI;
+    }
   }
 
   private softDrive(x: number): number {
@@ -143,16 +169,47 @@ export class Voice {
 
   /** Returns stereo sample before external gain. */
   processSample(midiY: number, size: number, lightness: number): [number, number] {
-    const silent = size <= 1e-6;
-    if (!silent && this.wasSilent) this.triggerOnset();
-    this.wasSilent = silent;
-
-    if (silent) {
+    let silent = size <= 1e-6;
+    // The note curve fades to zero in about 20 ms. Take over from the peak so the tail is audible.
+    if (!silent && this.releaseSamples > 0 && this.notePeak > 0.05 && size < this.notePeak * 0.25) silent = true;
+    let playMidi = midiY;
+    let playSize = size;
+    let playLight = lightness;
+    if (!silent) {
+      if (this.wasSilent) {
+        this.triggerOnset(size);
+        this.notePeak = 0;
+        this.releaseLeft = 0;
+      }
+      this.wasSilent = false;
+      this.lastMidi = midiY;
+      this.lastLight = lightness;
+      this.lastSize = size;
+      if (size > this.notePeak) this.notePeak = size;
+    } else if (this.releaseSamples > 0 && this.notePeak > 1e-3) {
+      if (this.releaseLeft <= 0) {
+        this.releaseLeft = this.releaseSamples;
+        this.lastSize = Math.max(this.lastSize, this.notePeak);
+      }
+      this.releaseLeft--;
+      if (this.releaseLeft <= 0) {
+        this.notePeak = 0;
+        this.wasSilent = true;
+        this.smoothGain *= this.gainSmoothCoeff;
+        return [0, 0];
+      }
+      playMidi = this.lastMidi;
+      playLight = this.lastLight;
+      playSize = this.lastSize * (this.releaseLeft / this.releaseSamples);
+    } else {
+      this.wasSilent = true;
+      this.releaseLeft = 0;
+      this.notePeak = 0;
       this.smoothGain *= this.gainSmoothCoeff;
       return [0, 0];
     }
 
-    let freq = midiToFrequency(midiY);
+    let freq = midiToFrequency(playMidi);
     if (this.pitchEnvLeft > 0 && this.pitchEnvTotal > 0) {
       const env = this.pitchEnvLeft / this.pitchEnvTotal;
       freq *= Math.pow(2, (this.vector.pitchEnvSemis * env * env) / 12);
@@ -169,10 +226,12 @@ export class Voice {
     let r = 0;
     const spread = this.vector.detuneCents;
     for (let u = 0; u < this.vector.unison; u++) {
+      if (this.driftAmount > 0) {
+        this.drift[u] += (this.rng() * 2 - 1 - this.drift[u]) * this.driftCoeff;
+      }
       const detune =
-        this.vector.unison === 1
-          ? 0
-          : spread * (u / (this.vector.unison - 1) - 0.5) * 2;
+        (this.vector.unison === 1 ? 0 : spread * (u / (this.vector.unison - 1) - 0.5) * 2) +
+        this.drift[u] * 6 * this.driftAmount;
       const f = freq * Math.pow(2, detune / 1200);
       const omega = (2 * Math.PI * f) / this.sampleRate;
       this.unisonPhases[u] += omega;
@@ -198,10 +257,11 @@ export class Voice {
       this.transientLeft--;
     }
 
-    let cutoff = lightnessToCutoff(lightness, freq);
+    const vel = Math.pow(2, this.velocity * (this.onsetSize - 0.7) * 2);
+    let cutoff = lightnessToCutoff(playLight, freq) * this.onsetCutoff * vel;
     if (this.filterEnvLeft > 0) {
       const envT = this.filterEnvLeft / ((this.vector.filterDecayMs / 1000) * this.sampleRate);
-      cutoff *= 1 + this.vector.filterEnv * envT * envT * 3;
+      cutoff *= 1 + this.vector.filterEnv * vel * envT * envT * 3;
       this.filterEnvLeft--;
     }
 
@@ -211,7 +271,7 @@ export class Voice {
     mixL = this.softDrive(mixL);
     mixR = this.softDrive(mixR);
 
-    this.smoothGain = this.smoothGain * this.gainSmoothCoeff + size * (1 - this.gainSmoothCoeff);
+    this.smoothGain = this.smoothGain * this.gainSmoothCoeff + playSize * (1 - this.gainSmoothCoeff);
     const g = this.smoothGain * attackGain;
     return [mixL * g, mixR * g];
   }

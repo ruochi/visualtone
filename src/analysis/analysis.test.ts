@@ -228,6 +228,61 @@ test('render stems follow score order and are omitted by default', () => {
   assert.deepEqual(ids.slice(2), ['bus:hall', 'bus:room', 'bus:delay']);
 });
 
+test('identical hits are flagged as mechanical, varied hits are not', () => {
+  const flat = ScoreSchema.parse({
+    sampleRate: SR,
+    bpm: 120,
+    duration: 2.2,
+    tracks: [{
+      id: 'hat',
+      hue: 335,
+      channel: [0, 1],
+      notes: Array.from({ length: 20 }, (_, i) => ({ t: i * 0.1, y: 96, size: 0.5, duration: 0.04, ease: 'exp' as const })),
+    }],
+  });
+  const flatRender = render(flat, { stems: true });
+  const flatReport = analyze({
+    buffers: flatRender.buffers,
+    sampleRate: SR,
+    stems: flatRender.stems,
+    score: flat,
+    profile: 'deep-house',
+  }).report;
+  assert.ok((flatReport.dynamics.hitVariationDb ?? 9) < 0.6, `variation ${flatReport.dynamics.hitVariationDb}`);
+  assert.ok(flatReport.findings.some((f) => f.id === 'dynamics.variation'));
+
+  const lived = ScoreSchema.parse({
+    sampleRate: SR,
+    bpm: 120,
+    duration: 2.2,
+    tracks: [{
+      id: 'hat',
+      hue: 335,
+      channel: [0, 1],
+      notes: Array.from({ length: 20 }, (_, i) => ({ t: i * 0.1, y: 96, size: i % 2 ? 0.25 : 0.85, duration: 0.04, ease: 'exp' as const })),
+    }],
+  });
+  const livedReport = analyze({
+    buffers: render(lived, { stems: true }).buffers,
+    sampleRate: SR,
+    stems: render(lived, { stems: true }).stems,
+    score: lived,
+    profile: 'deep-house',
+  }).report;
+  assert.ok(!livedReport.findings.some((f) => f.id === 'dynamics.variation'), `flagged ${livedReport.dynamics.hitVariationDb}`);
+});
+
+test('a hall send shows up as wet share', () => {
+  const score = ScoreSchema.parse({
+    sampleRate: SR,
+    duration: 0.8,
+    tracks: [{ id: 'pad', hue: 210, channel: [0, 1], space: 0.9, notes: [{ t: 0, y: 60, size: 0.4, duration: 0.5, ease: 'hold' }] }],
+  });
+  const rendered = render(score, { stems: true });
+  const report = analyze({ buffers: rendered.buffers, sampleRate: SR, stems: rendered.stems, score }).report;
+  assert.ok((report.space.wetShare ?? 0) > 0.05, `wet ${report.space.wetShare}`);
+});
+
 test('wav round-trip for 16, 24 and 32-bit float', () => {
   const src = sine(440, 0.05, 0.5);
   for (const bitDepth of [16, 24, 32] as const) {

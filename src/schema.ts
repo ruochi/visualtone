@@ -26,6 +26,8 @@ export const TimbreOverrideSchema = z
     pitchEnvSemis: z.number().optional(),
     pitchEnvMs: z.number().optional(),
     drive: z.number().optional(),
+    velocity: z.number().min(0).max(1).optional().describe('How much note size opens the filter'),
+    drift: z.number().min(0).max(1).optional().describe('Slow pitch drift and per-note randomness'),
   })
   .partial();
 
@@ -76,6 +78,12 @@ export const AutomationSchema = z.object({
   gain: z.array(KeyframeSchema).optional().describe('Gain multiplier (1 = unchanged), linear'),
 });
 
+export const ChorusSchema = z.object({
+  depth: z.number().min(0).max(1).default(0.4),
+  rateHz: z.number().positive().default(0.4),
+  mix: z.number().min(0).max(1).default(0.35),
+});
+
 export const HumanizeSchema = z.object({
   timeMs: z.number().min(0).default(0).describe('Max ± onset jitter in ms'),
   size: z.number().min(0).max(1).default(0).describe('Max ± relative size jitter'),
@@ -108,12 +116,26 @@ export const MasterSchema = z
   .object({
     loudness: z.number().default(-14).describe('Target integrated loudness approx (dBFS RMS)'),
     drive: z.number().min(0).max(1).default(0.15),
+    saturation: z.number().min(0).max(1).optional().describe('Even-harmonic tape saturation on the bus, 0 off'),
     reverb: z
       .object({
         size: z.number().min(0).max(1).default(0.6),
         decay: z.number().min(0).max(1).default(0.5),
+        preDelayMs: z.number().min(0).max(100).default(25),
+        damping: z.number().min(0).max(1).default(0.4).describe('How fast highs die in the tail'),
+        width: z.number().min(0).max(1).default(0.85),
       })
       .optional(),
+    room: z
+      .object({
+        size: z.number().min(0).max(1).default(0.4),
+        decay: z.number().min(0).max(1).default(0.3),
+        preDelayMs: z.number().min(0).max(100).default(8),
+        damping: z.number().min(0).max(1).default(0.3),
+        width: z.number().min(0).max(1).default(0.6),
+      })
+      .optional()
+      .describe('Short room bus fed by track.room'),
     delay: z
       .object({
         beats: z.number().positive().default(0.75).describe('Delay time in quarter-note beats'),
@@ -139,8 +161,11 @@ const TrackSchemaBase = z.object({
   channel: ChannelSchema.default(0).describe('Output channel index or stereo pair [0,1]'),
   lightness: z.number().min(0).max(1).default(0.5),
   saturation: z.number().min(0).max(1).default(1).optional(),
-  space: z.number().min(0).max(1).optional().describe('Reverb send 0-1'),
+  space: z.number().min(0).max(1).optional().describe('Hall reverb send 0-1'),
+  room: z.number().min(0).max(1).optional().describe('Short room send 0-1'),
   echo: z.number().min(0).max(1).optional().describe('Delay send 0-1'),
+  release: z.number().min(0).optional().describe('Tail after the note, milliseconds. 0 keeps the hard cut'),
+  chorus: ChorusSchema.optional(),
   duck: DuckSchema.optional(),
   timbre: TimbreOverrideSchema.optional(),
   eq: EqSchema.optional(),

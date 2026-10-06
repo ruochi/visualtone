@@ -172,6 +172,57 @@ export function lfoValue(shape: LfoShape, phase: number): number {
   }
 }
 
+/** Three modulated delays. depth is 0–1, mix is the wet amount. */
+export class Chorus {
+  private readonly bufL: Float32Array;
+  private readonly bufR: Float32Array;
+  private pos = 0;
+  private phase = 0;
+  private readonly base: number;
+  private readonly depthSamp: number;
+  private readonly inc: number;
+  private readonly wet: number;
+
+  constructor(sampleRate: number, cfg: { depth?: number; rateHz?: number; mix?: number }) {
+    this.base = Math.round(0.012 * sampleRate);
+    this.depthSamp = (0.002 + 0.006 * (cfg.depth ?? 0.4)) * sampleRate;
+    this.inc = ((cfg.rateHz ?? 0.4) * 2 * Math.PI) / sampleRate;
+    this.wet = cfg.mix ?? 0.35;
+    const n = this.base + Math.ceil(this.depthSamp) + 4;
+    this.bufL = new Float32Array(n);
+    this.bufR = new Float32Array(n);
+  }
+
+  process(l: number, r: number): [number, number] {
+    this.bufL[this.pos] = l;
+    this.bufR[this.pos] = r;
+    let wetL = 0;
+    let wetR = 0;
+    const n = this.bufL.length;
+    for (let v = 0; v < 3; v++) {
+      const d = this.base + Math.sin(this.phase * (1 + v * 0.3) + v * 2.1) * this.depthSamp;
+      const read = this.pos - d;
+      const i0 = Math.floor(read);
+      const frac = read - i0;
+      const a = (i0 % n + n) % n;
+      const b = (a + 1) % n;
+      const tapL = this.bufL[a] * (1 - frac) + this.bufL[b] * frac;
+      const tapR = this.bufR[a] * (1 - frac) + this.bufR[b] * frac;
+      if (v % 2 === 0) {
+        wetL += tapL;
+        wetR += tapR * 0.6 + tapL * 0.4;
+      } else {
+        wetL += tapL * 0.6 + tapR * 0.4;
+        wetR += tapR;
+      }
+    }
+    this.phase += this.inc;
+    this.pos = (this.pos + 1) % n;
+    const dry = 1 - this.wet;
+    return [l * dry + (wetL / 3) * this.wet, r * dry + (wetR / 3) * this.wet];
+  }
+}
+
 /** Linear keyframe lookup; holds first/last value outside the range. */
 export function keyframeAt(frames: { t: number; v: number }[], time: number): number {
   if (frames.length === 0) return 0;
