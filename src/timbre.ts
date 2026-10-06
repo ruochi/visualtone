@@ -291,11 +291,14 @@ export function applyMacros(
   return v;
 }
 
+/**
+ * Lowpass cutoff as a multiple of the fundamental: 1.5x at lightness 0, ~8.5x at 0.5,
+ * 48x at 1, capped at 18 kHz. Exponential so each step of lightness opens the same
+ * number of harmonics, and bright settings actually reach the presence band.
+ */
 export function lightnessToCutoff(lightness: number, baseFreq: number): number {
-  const L = 0.2 + 0.6 * Math.max(0, Math.min(1, lightness));
-  const minCut = baseFreq * 0.5;
-  const maxCut = Math.min(14000, baseFreq * 12);
-  return minCut + (maxCut - minCut) * L;
+  const L = Math.max(0, Math.min(1, lightness));
+  return Math.min(18000, baseFreq * 1.5 * Math.pow(32, L));
 }
 
 export function hashSeed(scoreSeed: number | undefined, trackIndex: number): number {

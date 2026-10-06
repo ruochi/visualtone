@@ -148,6 +148,113 @@ export function peakLimit(buffer: Float32Array, ceiling = 0.891): void {
   }
 }
 
+const TP_FACTOR = 4;
+const TP_HALF = 16;
+/** Polyphase Hann-windowed sinc taps for the 3 fractional positions between samples. */
+const TP_TAPS: Float64Array[] = (() => {
+  const phases: Float64Array[] = [];
+  for (let p = 1; p < TP_FACTOR; p++) {
+    const frac = p / TP_FACTOR;
+    const taps = new Float64Array(2 * TP_HALF);
+    let sum = 0;
+    for (let j = -TP_HALF + 1; j <= TP_HALF; j++) {
+      const u = j - frac;
+      const v = (Math.sin(Math.PI * u) / (Math.PI * u)) * 0.5 * (1 + Math.cos((Math.PI * u) / TP_HALF));
+      taps[j + TP_HALF - 1] = v;
+      sum += v;
+    }
+    for (let k = 0; k < taps.length; k++) taps[k] /= sum;
+    phases.push(taps);
+  }
+  return phases;
+})();
+
+/** Largest |value| of the 4x band-limited reconstruction between samples i and i+1 (excluding i itself). */
+export function interSamplePeak(x: Float32Array, i: number): number {
+  const n = x.length;
+  let peak = 0;
+  for (const taps of TP_TAPS) {
+    let acc = 0;
+    const j0 = Math.max(-TP_HALF + 1, -i);
+    const j1 = Math.min(TP_HALF, n - 1 - i);
+    for (let j = j0; j <= j1; j++) acc += x[i + j] * taps[j + TP_HALF - 1];
+    const v = Math.abs(acc);
+    if (v > peak) peak = v;
+  }
+  return peak;
+}
+
+export interface LimiterConfig {
+  /** Sample-peak ceiling in dBFS. */
+  ceiling?: number;
+  lookaheadMs?: number;
+  releaseMs?: number;
+}
+
+/**
+ * Stereo-linked lookahead true-peak limiter, in place. The required gain at each
+ * sample covers the 4x reconstruction up to the next sample, so inter-sample
+ * overs from bright noise are caught too. Gain is the box-smoothed running
+ * minimum of that requirement over the lookahead window: already down when a
+ * peak arrives, and samples never pass the ceiling.
+ * Returns the deepest gain reduction in dB (positive).
+ */
+export function lookaheadLimit(buffers: Float32Array[], sampleRate: number, cfg: LimiterConfig = {}): number {
+  const ceiling = Math.pow(10, (cfg.ceiling ?? -1) / 20);
+  const L = Math.max(1, Math.round(((cfg.lookaheadMs ?? 5) / 1000) * sampleRate));
+  const releaseCoeff = Math.exp(-1 / (((cfg.releaseMs ?? 60) / 1000) * sampleRate));
+  const n = buffers[0]?.length ?? 0;
+  if (n === 0) return 0;
+
+  const need = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let p = 0;
+    for (const b of buffers) {
+      const s = Math.abs(b[i]);
+      p = Math.max(p, s);
+      // Adjacent samples well under the ceiling cannot reconstruct above it in practice.
+      if (i + 1 < n && Math.max(s, Math.abs(b[i + 1])) > ceiling * 0.5) p = Math.max(p, interSamplePeak(b, i));
+    }
+    need[i] = p > ceiling ? ceiling / p : 1;
+  }
+  // An inter-sample peak between i and i+1 is shaped by both samples.
+  for (let i = n - 1; i > 0; i--) if (need[i - 1] < need[i]) need[i] = need[i - 1];
+
+  // Running min over [i, i+L] via a monotonic deque.
+  const ahead = new Float32Array(n);
+  const dq = new Int32Array(n + L + 1);
+  let head = 0;
+  let tail = 0;
+  let next = 0;
+  for (let i = 0; i < n; i++) {
+    const end = Math.min(n - 1, i + L);
+    while (next <= end) {
+      while (tail > head && need[dq[tail - 1]] >= need[next]) tail--;
+      dq[tail++] = next++;
+    }
+    while (dq[head] < i) head++;
+    ahead[i] = need[dq[head]];
+  }
+
+  // Box average over [i-L, i]: every term is a min over a window containing i, so gain <= need[i].
+  let sum = 0;
+  let prev = 1;
+  let deepest = 1;
+  for (let i = 0; i < n; i++) {
+    sum += ahead[i];
+    if (i > L) sum -= ahead[i - L - 1];
+    const box = sum / Math.min(i + 1, L + 1);
+    const g = box < prev ? box : Math.min(box, prev * releaseCoeff + box * (1 - releaseCoeff));
+    prev = g;
+    if (g < deepest) deepest = g;
+    for (const b of buffers) {
+      const v = b[i] * g;
+      b[i] = v > ceiling ? ceiling : v < -ceiling ? -ceiling : v;
+    }
+  }
+  return -20 * Math.log10(deepest);
+}
+
 export function measureRmsDb(buffer: Float32Array): number {
   let sum = 0;
   for (let i = 0; i < buffer.length; i++) sum += buffer[i] ** 2;

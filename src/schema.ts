@@ -120,7 +120,16 @@ export const MasterSchema = z
         feedback: z.number().min(0).max(0.95).default(0.35),
       })
       .optional(),
+    eq: EqSchema.optional().describe('EQ on the summed mix, before the glue compressor'),
     comp: CompSchema.optional().describe('Glue compressor on the summed mix'),
+    limiter: z
+      .object({
+        ceiling: z.number().max(0).default(-1).describe('Sample-peak ceiling, dBFS'),
+        lookaheadMs: z.number().min(0.5).max(20).default(5),
+        releaseMs: z.number().min(5).max(1000).default(60),
+      })
+      .optional()
+      .describe('Lookahead peak limiter at the end of the chain (always on; these override defaults)'),
   })
   .optional();
 

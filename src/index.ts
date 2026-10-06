@@ -43,7 +43,9 @@ export {
   spectralCentroid,
   stereoCorrelation,
   measureRmsDb,
+  lookaheadLimit,
 } from './fx.js';
+export type { LimiterConfig } from './fx.js';
 export { render } from './renderer.js';
 export type { RenderResult, RenderOptions } from './renderer.js';
 export { writeWavFile } from './wav.js';

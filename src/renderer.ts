@@ -10,7 +10,7 @@ import {
   Freeverb,
   StereoDelay,
   softClip,
-  peakLimit,
+  lookaheadLimit,
   applyLoudnessMatch,
   measureRmsDb,
   spectralCentroid,
@@ -38,6 +38,8 @@ export interface RenderResult {
     peak: number;
     loudnessDb: number;
     gainReductionDb: number;
+    /** Deepest lookahead-limiter gain reduction (dB, positive). */
+    limiterReductionDb: number;
   };
   wav: Buffer;
   /**
@@ -299,6 +301,17 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     buffers.push(mono);
   }
 
+  if (masterCfg.eq) {
+    const busEq = new StereoEq(sampleRate, masterCfg.eq);
+    const left = buffers[0];
+    const right = buffers[1];
+    for (let i = 0; i < numSamples; i++) {
+      const [el, er] = busEq.process(left[i], right ? right[i] : left[i]);
+      left[i] = el;
+      if (right) right[i] = er;
+    }
+  }
+
   let masterReduction = 0;
   if (masterCfg.comp) {
     // Threshold is relative to the target loudness, so normalise before compressing.
@@ -319,8 +332,12 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     for (let i = 0; i < b.length; i++) b[i] = softClip(b[i], drive);
   }
 
-  applyLoudnessMatch(buffers, masterCfg.loudness ?? -14);
-  for (const b of buffers) peakLimit(b, 0.891);
+  // Limiting lowers RMS a little, so match and limit twice to land near the target.
+  let limiterReduction = 0;
+  for (let pass = 0; pass < 2; pass++) {
+    applyLoudnessMatch(buffers, masterCfg.loudness ?? -14);
+    limiterReduction = Math.max(limiterReduction, lookaheadLimit(buffers, sampleRate, masterCfg.limiter));
+  }
 
   let masterPeak = 0;
   for (const b of buffers) {
@@ -359,7 +376,7 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     sampleRate,
     duration,
     eventReport,
-    master: { peak: masterPeak, loudnessDb, gainReductionDb: masterReduction },
+    master: { peak: masterPeak, loudnessDb, gainReductionDb: masterReduction, limiterReductionDb: limiterReduction },
     wav,
     stems: options.stems
       ? score.tracks.map((t) => {

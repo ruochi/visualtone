@@ -39,7 +39,7 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
       value: report.loudness.truePeakDbtp,
       target: '< -1 dBTP',
       message: `真峰值 ${report.loudness.truePeakDbtp.toFixed(1)} dBTP，有削波风险`,
-      suggestion: '降低 master.drive，或把各轨 size 整体缩小；峰值限幅目前是整段缩放，压不住个别尖峰就先降电平',
+      suggestion: '把 master.limiter.ceiling 设到 -1.5 或更低，或降低 master.drive',
     });
   }
 
@@ -122,7 +122,7 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
         ? `峰均比 ${report.loudness.plr.toFixed(1)} dB 偏大，听感不够密`
         : `峰均比 ${report.loudness.plr.toFixed(1)} dB 偏低，动态被压扁了`,
       suggestion: dynamic
-        ? '加强 master.comp（降低 threshold 或提高 ratio）。当前峰值处理是整段缩放，压不住瞬态，所以响度推不上去'
+        ? '把 master.loudness 提高 1–2 dB，让限幅器多压一点峰值；或加强 master.comp（降低 threshold、提高 ratio）'
         : '放宽 master.comp 的 ratio，或降低各轨 comp 的 makeup',
     });
   }

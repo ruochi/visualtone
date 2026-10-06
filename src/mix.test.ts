@@ -3,7 +3,9 @@ import { strict as assert } from 'node:assert';
 import { writeWavFile } from './wav.js';
 import { Biquad, Compressor, StereoEq, lfoValue, keyframeAt } from './mix.js';
 import { swingTime, applyGroove } from './groove.js';
-import { spectralCentroid } from './fx.js';
+import { lookaheadLimit, spectralCentroid } from './fx.js';
+import { lightnessToCutoff } from './timbre.js';
+import { measureLoudness } from './analysis/loudness.js';
 import { render } from './renderer.js';
 import { ScoreSchema } from './schema.js';
 
@@ -20,6 +22,48 @@ function rms(b: ArrayLike<number>, from = 0, to = b.length): number {
   for (let i = from; i < to; i++) s += b[i] ** 2;
   return Math.sqrt(s / Math.max(1, to - from));
 }
+
+test('lookahead limiter holds the ceiling without scaling the whole buffer', () => {
+  const l = sine(220, 1, 0.3);
+  const r = sine(220, 1, 0.3);
+  const spike = 22050;
+  l[spike] = 1.6;
+  r[spike] = -1.2;
+  const reduction = lookaheadLimit([l, r], SR, { ceiling: -1, lookaheadMs: 5, releaseMs: 50 });
+  const ceiling = Math.pow(10, -1 / 20);
+  for (let i = 0; i < l.length; i++) {
+    assert.ok(Math.abs(l[i]) <= ceiling + 1e-6 && Math.abs(r[i]) <= ceiling + 1e-6, `over at ${i}`);
+  }
+  assert.ok(reduction > 4.5 && reduction < 6, `reduction ${reduction}`);
+  // Quiet material far from the spike is untouched.
+  assert.ok(Math.abs(rms(l, 0, 11025) - 0.3 / Math.SQRT2) < 1e-3);
+  // Gain starts dropping inside the lookahead window, before the spike.
+  const before = sine(220, 1, 0.3);
+  const i = spike - 110;
+  assert.ok(Math.abs(l[i]) < Math.abs(before[i]) || Math.abs(before[i]) < 1e-3);
+});
+
+test('lookahead limiter also holds inter-sample peaks under the ceiling', () => {
+  // fs/4 sine at phase pi/4: samples sit at 0.707 of the true crest.
+  const amp = 1.2;
+  const make = () => {
+    const b = new Float32Array(SR / 2);
+    for (let i = 0; i < b.length; i++) b[i] = amp * Math.sin((Math.PI / 2) * i + Math.PI / 4);
+    return b;
+  };
+  const l = make();
+  const r = make();
+  lookaheadLimit([l, r], SR, { ceiling: -1 });
+  const measured = measureLoudness([l, r], SR);
+  assert.ok(measured.truePeakDbtp < -0.8, `true peak ${measured.truePeakDbtp}`);
+});
+
+test('lightness opens the cutoff into the presence band', () => {
+  const c4 = 261.63;
+  assert.ok(lightnessToCutoff(0.5, c4) > 2000 && lightnessToCutoff(0.5, c4) < 2500);
+  assert.ok(lightnessToCutoff(0.8, c4) > 6000);
+  assert.equal(lightnessToCutoff(1, 2000), 18000);
+});
 
 test('wav 24-bit PCM header and size', () => {
   const buf = writeWavFile([sine(440, 0.1), sine(440, 0.1)], SR, { bitDepth: 24 });
@@ -197,5 +241,5 @@ test('track and master comp report gain reduction', () => {
   const r = render(score);
   assert.ok(r.eventReport[0].gainReductionDb > 3);
   assert.ok(r.master.gainReductionDb > 0);
-  assert.ok(r.master.peak <= 0.891);
+  assert.ok(r.master.peak <= Math.pow(10, -1 / 20) + 1e-6);
 });

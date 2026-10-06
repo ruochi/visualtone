@@ -156,7 +156,7 @@ test('master peak and loudness', () => {
     tracks: [{ id: 'a', hue: 160, channel: 0, notes: [{ t: 0, y: 64, size: 0.5, duration: 0.15 }] }],
   });
   const r = render(score);
-  assert.ok(r.master.peak <= 0.891);
+  assert.ok(r.master.peak <= Math.pow(10, -1 / 20) + 1e-6);
   assert.ok(Math.abs(r.master.loudnessDb - -14) < 2);
 });
 
