@@ -69,7 +69,9 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 | `humanize` | 确定性微抖动：`timeMs`、`size` | `{ "timeMs": 4, "size": 0.25 }` |
 | `master.comp` | 总线胶水压缩，阈值相对目标响度 | `{ "threshold": -9, "ratio": 2 }` |
 
-完整示例见 `examples/deep-house-v5.json`（由 `examples/scripts/deep-house-v5.mjs` 生成）。
+完整示例见 `examples/deep-house-v5.json`（由 `examples/scripts/deep-house-v5.mjs` 生成）。`examples/deep-house-v6.json` 是 32 小节的完整版（前奏、铺垫、两段 drop、间奏、尾奏），按 `analyze` 的报告调到 deep-house 画像内，没有遗留问题。
+
+总线末端是前瞻真峰值限幅器（默认 −1 dBTP，5 ms 前瞻），`master.limiter` 可以改上限和释放时间；`master.eq` 在胶水压缩之前处理整条总线。`lightness` 按泛音倍数指数映射到截止频率（0.5 约为基频 8.5 倍，0.8 约 24 倍，上限 18 kHz），stab、hook 想进 2–6 kHz 的 presence 区，lightness 需要 0.6 以上。
 
 详见 `llms.txt`（面向 AI 作者的速查与示例）。
 

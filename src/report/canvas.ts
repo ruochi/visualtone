@@ -82,7 +82,7 @@ export class Canvas {
   /** Returns the width in pixels. Unknown characters are skipped. */
   text(x: number, y: number, s: string, c: RGB, scale = 1): number {
     let cx = x;
-    const up = s.toUpperCase();
+    const up = s.toUpperCase().replace(/[–—]/g, '-').replace(/…/g, '...');
     for (const ch of up) {
       const rows = glyph(ch);
       if (!rows) continue;

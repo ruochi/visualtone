@@ -23,6 +23,12 @@ function noteSizes(score: Score | undefined, fam: string): number | null {
   return median(sizes);
 }
 
+/** Share as a percent string: one decimal under 10%, none above. */
+function pct(share: number): string {
+  const v = share * 100;
+  return v < 10 ? String(Math.round(v * 10) / 10) : v.toFixed(0);
+}
+
 function inRange(v: number, range: [number, number]): boolean {
   return v >= range[0] && v <= range[1];
 }
@@ -138,10 +144,10 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
         severity: highBand && low ? 'high' : 'medium',
         metric: `bands.${band.name}`,
         value: band.share,
-        target: `${(range[0] * 100).toFixed(0)}–${(range[1] * 100).toFixed(0)}%`,
+        target: `${pct(range[0])}-${pct(range[1])}%`,
         message: low
-          ? `${band.name} 只占 ${(band.share * 100).toFixed(1)}%，低于 ${profile.name} 的 ${(range[0] * 100).toFixed(0)}%`
-          : `${band.name} 占 ${(band.share * 100).toFixed(1)}%，高于 ${profile.name} 的 ${(range[1] * 100).toFixed(0)}%`,
+          ? `${band.name} 只占 ${(band.share * 100).toFixed(1)}%，低于 ${profile.name} 的 ${pct(range[0])}%`
+          : `${band.name} 占 ${(band.share * 100).toFixed(1)}%，高于 ${profile.name} 的 ${pct(range[1])}%`,
         suggestion: suggestionForBand(band.name, low),
       });
     }
