@@ -111,7 +111,20 @@ export function sampleAt(
 ): SampledPoint | null {
   if (points.length === 0) return null;
   const sorted = sortPoints(points);
+  let i = 0;
+  while (i < sorted.length - 1 && sorted[i + 1].t < time) {
+    i++;
+  }
+  return sampleSorted(sorted, i, time, defaultLightness);
+}
 
+/** `i` is the count of points strictly before `time`, minus one, clamped to 0. */
+function sampleSorted(
+  sorted: Point[],
+  i: number,
+  time: number,
+  defaultLightness: number,
+): SampledPoint | null {
   if (time < sorted[0].t) {
     return null;
   }
@@ -126,11 +139,6 @@ export function sampleAt(
       };
     }
     return null;
-  }
-
-  let i = 0;
-  while (i < sorted.length - 1 && sorted[i + 1].t < time) {
-    i++;
   }
 
   if (time > sorted[sorted.length - 1].t) {
@@ -198,13 +206,13 @@ export function createTrackSampler(
 
   function sample(time: number): SampledPoint | null {
     if (sorted.length === 0) return null;
+    while (segIndex > 0 && sorted[segIndex].t >= time) {
+      segIndex--;
+    }
     while (segIndex < sorted.length - 1 && sorted[segIndex + 1].t < time) {
       segIndex++;
     }
-    while (segIndex > 0 && sorted[segIndex].t > time) {
-      segIndex--;
-    }
-    return sampleAt(sorted, time, defaultLightness);
+    return sampleSorted(sorted, segIndex, time, defaultLightness);
   }
 
   return { sample };
