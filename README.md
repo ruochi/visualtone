@@ -53,11 +53,11 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 | 300° | Snare / clap |
 | 335° | Hi-hat |
 
-轨道可选：`space`（混响）、`echo`（延迟）、`duck`（侧链）、`saturation`、`channel: [0,1]` 立体声路由；乐谱级 `bpm` 与 `master` 总线响度/效果。
+轨道可选：`space`（大厅混响发送）、`room`（短房间发送）、`echo`（延迟）、`release`（音符结束后的尾巴，毫秒，0 为硬切断）、`chorus`、`duck`（侧链）、`saturation`、`channel: [0,1]` 立体声路由；乐谱级 `bpm` 与 `master` 总线响度/效果。
 
 ### 混音、调制与律动
 
-信号链（每轨）：曲线 → 音色 Voice → `eq` → `comp` → 增益/声像 LFO 与自动化 → `duck` → 混响/延迟发送 → 主总线 `comp` → 软削波 → 响度对齐。
+信号链（每轨）：曲线 → Voice（`release`、力度联动、漂移）→ `eq` → `comp` → `chorus` → 增益/声像 LFO 与自动化 → `duck` → 立体声发送，汇总后进共享的 hall（`space`）、room（`room`）和延迟（`echo`）。主总线：`eq` → `saturation` → `comp` → 软削波 → 响度对齐 → 前瞻限幅。
 
 | 字段 | 作用 | 示例 |
 |------|------|------|
@@ -67,11 +67,19 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 | `automation` | 关键帧线性插值：`lightness`（加到亮度上的偏移）、`gain`（乘数） | `{ "gain": [{ "t": 0, "v": 0.6 }, { "t": 4, "v": 1 }] }` |
 | `swing` | 乐谱级（或轨道覆盖）0 = 平直，1 = 三连音；`swingGrid` 8 或 16 | `"swing": 0.42` |
 | `humanize` | 确定性微抖动：`timeMs`、`size` | `{ "timeMs": 4, "size": 0.25 }` |
+| `release` | 音符曲线结束后按这个毫秒数衰减；0 与以前一样立刻切断 | `250` |
+| `room` | 短房间混响发送 0–1，和 `space` 的长尾大厅分开 | `0.35` |
+| `chorus` | 三路调制延迟：`depth` `rateHz` `mix` | `{ "depth": 0.45, "rateHz": 0.35, "mix": 0.4 }` |
+| `timbre.velocity` | 0–1。重音把截止频率和滤波包络开得更亮，轻音更暗 | `0.6` |
+| `timbre.drift` | 0–1。缓慢的音高漂移、每次起音的截止偏移和齐奏起始相位。种子固定，渲染可复现 | `0.4` |
 | `master.comp` | 总线胶水压缩，阈值相对目标响度 | `{ "threshold": -9, "ratio": 2 }` |
+| `master.saturation` | 0–1。偶次谐波的不对称软饱和，后面隔直流；0 关闭 | `0.3` |
+| `master.room` | 短房间总线：`size` `decay` `preDelayMs` `damping` `width` | `{ "size": 0.45, "decay": 0.35, "preDelayMs": 8 }` |
+| `master.reverb` | 长尾大厅，同样带 `preDelayMs`、`damping`（尾巴高频衰减）、`width` | `{ "size": 0.78, "decay": 0.62, "preDelayMs": 25, "damping": 0.45 }` |
 
-完整示例见 `examples/deep-house-v5.json`（由 `examples/scripts/deep-house-v5.mjs` 生成）。`examples/deep-house-v6.json` 是 32 小节的完整版（前奏、铺垫、两段 drop、间奏、尾奏），按 `analyze` 的报告调到 deep-house 画像内，没有遗留问题。
+完整示例见 `examples/deep-house-v5.json`（由 `examples/scripts/deep-house-v5.mjs` 生成）。`examples/deep-house-v6.json` 是 32 小节的完整版（前奏、铺垫、两段 drop、间奏、尾奏）。`examples/deep-house-v7.json` 在同一编曲上加了房间总线、音符尾巴、力度联动和漂移、合唱、总线饱和，以及一层 keys 和中频贝斯，并用 `analyze --profile deep-house` 调到没有遗留问题。
 
-总线末端是前瞻真峰值限幅器（默认 −1 dBTP，5 ms 前瞻），`master.limiter` 可以改上限和释放时间；`master.eq` 在胶水压缩之前处理整条总线。`lightness` 按泛音倍数指数映射到截止频率（0.5 约为基频 8.5 倍，0.8 约 24 倍，上限 18 kHz），stab、hook 想进 2–6 kHz 的 presence 区，lightness 需要 0.6 以上。
+总线末端是前瞻真峰值限幅器（默认 −1 dBTP，5 ms 前瞻），`master.limiter` 可以改上限和释放时间。`master.eq` 在饱和和胶水压缩之前处理整条总线。大厅和房间是两条共享的立体声 FDN，带预延迟、早期反射和阻尼，不再是每轨一个混响。`lightness` 按泛音倍数指数映射到截止频率（0.5 约为基频 8.5 倍，0.8 约 24 倍，上限 18 kHz），stab、hook 想进 2–6 kHz 的 presence 区，lightness 需要 0.6 以上。
 
 详见 `llms.txt`（面向 AI 作者的速查与示例）。
 
@@ -90,8 +98,10 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 报告里的数字：
 
 - 响度：BS.1770 积分 LUFS、响度范围、4 倍过采样真峰值、峰均比
-- 频段能量：sub / bass / mid / presence / air
-- 立体声：相关性、侧中比、120Hz 以下的左右平衡
+- 频段能量：sub / bass / mid / presence / air，另有 150–500 Hz 的厚度 `warmth`
+- 空间：`wetShare`（混响和延迟总线能量占干声加湿声的比例，需要分轨）、`tailRatioDb`（起音尾巴相对音头）
+- 力度：`hitVariationDb`（至少 16 下的轨里，偏死那一档的局部峰值起伏）、`repetition`（相隔 4 或 8 小节且几乎相同的比例）
+- 立体声：相关性、侧中比、120Hz 以下的左右平衡，以及低/中/高频段的侧中比
 - 节奏：速度、swing、底鼓冲击力、侧链深度
 - 和声：色度 + Krumhansl 调性
 - 结构：按小节的能量、自相似、段落对比
@@ -99,7 +109,7 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 
 `--profile` 用 `deep-house`、`techno`、`pop-edm`、`ambient` 之一，或 `profile` 命令从参考曲生成的 JSON。内置画像是通用混音经验值，不是标准。差距会写成 findings，每条带严重度和一条指向乐谱字段的建议。
 
-PNG 面板（标签是英文）：乐谱曲线、对数频谱、分轨频谱、频段柱、短时响度、相位、底鼓包络、遮蔽矩阵、自相似和色度。
+PNG 面板（标签是英文）：乐谱曲线、对数频谱、分轨频谱、频段柱、短时响度、相位、底鼓包络、遮蔽矩阵、自相似和色度，以及空间（各总线湿声占比和尾巴）和力度（每一下的峰值点，排成直线就是 MIDI 感）。
 
 听完一轮可以记一条偏好，攒多了再看哪些指标跟你的分数相关。追加到 `feedback/ratings.jsonl`，一行一个 JSON：
 
@@ -132,7 +142,7 @@ npx visualtone schema
 # 听感报告：指标、问题清单、多面板 PNG
 npx visualtone analyze examples/deep-house-v5.json --profile deep-house --json report.json --png report.png
 
-# 只看某一块高清图：curves spectrogram stems bands loudness phase kick masking ssm
+# 只看某一块高清图：curves spectrogram stems bands loudness phase kick masking ssm space dynamics
 npx visualtone analyze examples/deep-house-v5.json --panel spectrogram --png spectrogram.png
 
 # 对比两次报告；从参考曲提取画像（WAV，不进仓库）

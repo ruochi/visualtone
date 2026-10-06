@@ -131,6 +131,11 @@ export function runDiff(args: string[]): void {
     { name: 'true peak', a: a.loudness.truePeakDbtp, b: b.loudness.truePeakDbtp },
     { name: 'low balance dB', a: a.stereo.lowBalanceDb, b: b.stereo.lowBalanceDb },
     { name: 'contrast dB', a: a.structure.contrastDb, b: b.structure.contrastDb },
+    { name: 'warmth', a: a.warmth ?? 0, b: b.warmth ?? 0 },
+    { name: 'wet share', a: a.space?.wetShare ?? 0, b: b.space?.wetShare ?? 0 },
+    { name: 'tail dB', a: a.space?.tailRatioDb ?? 0, b: b.space?.tailRatioDb ?? 0 },
+    { name: 'hit var dB', a: a.dynamics?.hitVariationDb ?? 0, b: b.dynamics?.hitVariationDb ?? 0 },
+    { name: 'repetition', a: a.dynamics?.repetition ?? 0, b: b.dynamics?.repetition ?? 0 },
   ];
   for (const band of a.bands) {
     const other = b.bands.find((x) => x.name === band.name);
