@@ -285,6 +285,64 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
     });
   }
 
+  const vo = profile?.voiceover;
+  if (vo && report.voiceover) {
+    if (report.voiceover.presenceGapDb === null) {
+      push({
+        id: 'voiceover.presence',
+        severity: 'high',
+        metric: 'voiceover.presenceGapDb',
+        value: 0,
+        target: `> ${vo.presenceGapMinDb} dB`,
+        message: '没有量到旁白和音乐在 1–4 kHz 的让出量',
+        suggestion: '给旁白轨写 role: "voice"，给音乐轨写 role: "music"',
+      });
+    } else if (report.voiceover.presenceGapDb < vo.presenceGapMinDb) {
+      push({
+        id: 'voiceover.presence',
+        severity: 'high',
+        metric: 'voiceover.presenceGapDb',
+        value: report.voiceover.presenceGapDb,
+        target: `> ${vo.presenceGapMinDb} dB`,
+        message: `有旁白时，音乐在 1–4 kHz 只低了 ${report.voiceover.presenceGapDb.toFixed(1)} dB`,
+        suggestion: '音乐轨加 duck: { by: "旁白轨 id", amount: 0.5, holdMs: 80, releaseMs: 280, band: [1000, 4000] }',
+      });
+    }
+    if (report.voiceover.sfxOverlap !== null && report.voiceover.sfxOverlap > vo.sfxOverlapMax) {
+      push({
+        id: 'voiceover.sfxMask',
+        severity: 'medium',
+        metric: 'voiceover.sfxOverlap',
+        value: report.voiceover.sfxOverlap,
+        target: `< ${vo.sfxOverlapMax}`,
+        message: `音效和音乐的时频重叠有 ${(report.voiceover.sfxOverlap * 100).toFixed(0)}%`,
+        suggestion: '错开音效和音乐的音高，或给音效加 eq.highCut / eq.lowCut，别和铺底占同一段',
+      });
+    }
+    if (report.voiceover.sfxPer10s !== null && report.voiceover.sfxPer10s > vo.sfxPer10sMax) {
+      push({
+        id: 'voiceover.sfxDensity',
+        severity: 'medium',
+        metric: 'voiceover.sfxPer10s',
+        value: report.voiceover.sfxPer10s,
+        target: `< ${vo.sfxPer10sMax} / 10s`,
+        message: `音效大约每 10 秒 ${report.voiceover.sfxPer10s.toFixed(1)} 下，太密`,
+        suggestion: '删掉可有可无的 tick 和 pop，把 whoosh 留给场景切换',
+      });
+    }
+    if (report.voiceover.sfxMinGapSec !== null && report.voiceover.sfxMinGapSec < vo.sfxMinGapSec) {
+      push({
+        id: 'voiceover.sfxGap',
+        severity: 'low',
+        metric: 'voiceover.sfxMinGapSec',
+        value: report.voiceover.sfxMinGapSec,
+        target: `> ${vo.sfxMinGapSec} s`,
+        message: `两下音效只隔了 ${(report.voiceover.sfxMinGapSec * 1000).toFixed(0)} ms`,
+        suggestion: '把靠得太近的音效合成一下，或挪开至少 120 ms',
+      });
+    }
+  }
+
   if (profile && report.dynamics.repetition > profile.repetitionMax && report.structure.energyDb.length >= 8) {
     push({
       id: 'dynamics.repetition',

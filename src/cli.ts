@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'fs';
-import { ScoreSchema } from './schema.js';
+import { writeFileSync } from 'fs';
 import { getJsonSchema } from './json-schema.js';
+import { loadScoreFile } from './load-score.js';
 import { render } from './renderer.js';
 import type { BitDepth } from './wav.js';
 import { runAnalyze, runDiff, runProfile } from './cli-listen.js';
@@ -31,6 +31,8 @@ Options:
   -o, --output       Output WAV file path (for render command)
   -b, --bit-depth    16 (default, TPDF dithered) | 24 | 32f (float)
       --no-dither    Disable dither for 16/24-bit output
+      --envelopes    Write per-track onset times and per-frame levels as JSON
+      --fps          Frame rate for --envelopes (default 30)
   -h, --help         Show this help message
 `);
   process.exit(0);
@@ -85,27 +87,24 @@ if (command === 'render') {
     process.exit(1);
   }
   const dither = !args.includes('--no-dither');
+  const envelopesPath = args.includes('--envelopes') ? args[args.indexOf('--envelopes') + 1] : undefined;
+  const fpsArg = args.includes('--fps') ? Number(args[args.indexOf('--fps') + 1]) : 30;
 
   try {
-    const scoreJson = readFileSync(scorePath, 'utf-8');
-    const scoreData = JSON.parse(scoreJson);
-    
-    const parseResult = ScoreSchema.safeParse(scoreData);
-    
-    if (!parseResult.success) {
-      console.error('Error: Invalid score format');
-      console.error(parseResult.error.format());
-      process.exit(1);
-    }
-    
-    const score = parseResult.data;
+    const loaded = loadScoreFile(scorePath);
+    for (const w of loaded.warnings) console.warn(`Warning: ${w}`);
+    const score = loaded.score;
     
     console.log('Rendering score...');
     console.log(`  Sample rate: ${score.sampleRate} Hz`);
     console.log(`  Tracks: ${score.tracks.length}`);
     console.log(`  Format: ${bitDepth === 32 ? '32-bit float' : `${bitDepth}-bit PCM${dither ? ' + TPDF dither' : ''}`}`);
 
-    const result = render(score, { wav: { bitDepth, dither } });
+    const result = render(score, {
+      wav: { bitDepth, dither },
+      clips: loaded.clips,
+      envelopes: envelopesPath ? { fps: fpsArg } : undefined,
+    });
     
     console.log(`\nRendered ${result.duration.toFixed(2)}s of audio`);
     console.log('\nTrack report:');
@@ -126,6 +125,28 @@ if (command === 'render') {
     
     writeFileSync(outputPath, result.wav);
     console.log(`\nWrote ${outputPath}`);
+    if (result.inputs?.length) {
+      for (const input of result.inputs) console.log(`  clip ${input.src}  sha256 ${input.sha256.slice(0, 12)}…`);
+    }
+    if (envelopesPath && result.envelopes) {
+      const tracks: Record<string, { onsets: number[]; level: number[] }> = {};
+      for (const [id, env] of Object.entries(result.envelopes.tracks)) {
+        tracks[id] = { onsets: env.onsets, level: Array.from(env.level) };
+      }
+      writeFileSync(
+        envelopesPath,
+        JSON.stringify(
+          {
+            fps: result.envelopes.fps,
+            tracks,
+            master: { level: Array.from(result.envelopes.master.level) },
+          },
+          null,
+          2,
+        ),
+      );
+      console.log(`Wrote ${envelopesPath}`);
+    }
     
   } catch (error) {
     console.error('Error:', error instanceof Error ? error.message : String(error));

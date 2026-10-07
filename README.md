@@ -14,7 +14,7 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 - **色调 (Hue)** → 音色 (0-360° 映射到连续的合成器参数)
 - **亮度 (Lightness)** → 明暗 (0–1，控制低通截止频率；轨道默认 0.5)
 
-### 曲线语法 (v0.2)
+### 曲线语法
 
 **points** 上可选字段：
 
@@ -39,7 +39,7 @@ visualtone 是一个 TypeScript 库，它将彩色曲线转换为音频。每条
 - `hold`（默认）：保持音量，结尾约 20ms 收掉
 - `exp`：在 `duration` 内指数衰减（鼓、镲）
 
-### Hue 音色环（v3 电子乐引擎）
+### Hue 音色环
 
 | Hue | 家族 |
 |-----|------|
@@ -125,6 +125,8 @@ PNG 面板（标签是英文）：乐谱曲线、对数频谱、分轨频谱、�
 npm install visualtone
 ```
 
+npm 注册表里目前没有这个包。仓库自带 `prepare` 脚本，用 git 地址安装时会先构建 `dist`。
+
 ## 快速开始
 
 ### 命令行使用
@@ -206,18 +208,18 @@ console.log('Track report:', result.eventReport);
 
 ### 字段说明
 
-- `sampleRate`: 音频采样率 (Hz)，默认 44100
+- `sampleRate`: 音频采样率 (Hz)，默认 48000。视频成片用 48000；仓库里的音乐示例仍显式写 44100
 - `duration`: 可选的显式持续时间 (秒)
 - `seed`: 可选的随机种子，用于确定性合成
 - `tracks`: 曲线轨道数组
   - `id`: 轨道唯一标识符
   - `hue`: 色调 (0-360°) 映射到音色
-  - `channel`: 通道索引 (0 = 单声道总线，1 = 第二通道，等等)
+  - `channel`: `0` 或 `1` 只进左或右声道；`[0,1]` 立体声。底鼓和贝斯用 `[0,1]`，否则在立体声成片里会偏到一边
   - `points`: 曲线控制点数组
     - `t`: 时间 (秒)
     - `y`: 音高 (MIDI 音符 0-127，连续浮点数)
     - `size`: 归一化大小 0-1，映射到增益
-    - `lightness`: 可选，保留供将来使用
+    - `lightness`: 可选，0–1，控制低通截止频率（默认 0.5）
 
 ### 音高说明
 
@@ -306,21 +308,27 @@ console.log('Track report:', result.eventReport);
 
 ## 音色映射
 
-色调 (0-360°) 被映射到连续的合成器参数：
+色调 (0-360°) 在波表引擎里映射到音色环上的家族，而不是一条从亮到暗的渐变：
 
-- **brightness (亮度)**: 控制滤波器截止频率和高频泛音
-- **thickness (厚度)**: 控制泛音的厚度和丰富度
-- **noise (噪声)**: 添加噪声纹理
+| Hue | 家族 |
+|-----|------|
+| 0° | Kick |
+| 30° | Bass |
+| 70° | Pluck / arp |
+| 110° | Bell / keys |
+| 160° | Supersaw lead |
+| 210° | Pad |
+| 260° | Vocal / breath |
+| 300° | Snare / clap |
+| 335° | Hi-hat |
 
-不同的色调产生不同的音色特征：
-
-- 红色 (0°): 明亮、清晰
-- 绿色 (120°): 柔和、温暖
-- 蓝色 (240°): 深沉、共鸣
+`lightness` 控制低通截止频率。`engine` 可以换成 `pluck`（拨弦）、`marimba`（马林巴）或 `epiano`（电钢）；这三种不跟波表插值，色调只改变材质和明暗。原声引擎按音符分配复音，一条轨可以叠和弦。
 
 ## API 参考
 
-### `render(score: Score, options?: { wav?: WavOptions }): RenderResult`
+### `render(score: Score, options?: RenderOptions): RenderResult`
+
+`RenderOptions` 还可以带 `stems: true`（分轨）、`clips`（外部音频，键是乐谱里的 `src`）和 `envelopes: { fps }`（按视频帧率采样的电平）。
 
 渲染乐谱为音频。`WavOptions = { bitDepth?: 16 | 24 | 32, dither?: boolean, seed?: number }`。
 
@@ -341,8 +349,11 @@ console.log('Track report:', result.eventReport);
     spectralCentroid: number;   // Hz，Hann 窗 FFT 帧按能量加权
     gainReductionDb: number;    // 轨道压缩最大增益衰减
   }>;
-  master: { peak: number; loudnessDb: number; gainReductionDb: number };
+  master: { peak: number; loudnessDb: number; gainReductionDb: number; limiterReductionDb: number };
   wav: Buffer;                  // WAV 文件数据
+  stems?: { id: string; l: Float32Array; r: Float32Array }[];
+  inputs?: { src: string; sha256: string; sampleRate: number; channels: number; frames: number }[];
+  envelopes?: { fps: number; tracks: Record<string, { onsets: number[]; level: Float32Array }>; master: { level: Float32Array } };
 }
 ```
 
@@ -351,10 +362,12 @@ console.log('Track report:', result.eventReport);
 - `ScoreSchema`: Zod schema，用于验证
 - `getJsonSchema()`: 返回 JSON Schema
 - `interpolateTrack()`: 曲线插值函数
-- `hueToSynthParams()`: 色调到合成器参数映射
+- `hueToTimbre()`: 色调到音色向量
 - `midiToFrequency()`: MIDI 音符到频率转换
-- `SimpleSynth`: 合成器类
-- `writeWavFile(buffers, sampleRate, options?)`: WAV 写入（16/24-bit PCM + TPDF 抖动，或 32-bit float）
+- `writeWavFile(buffers, sampleRate, options?)` / `readWavFile()`: WAV 读写（16/24-bit PCM、32-bit float；读入也支持 WAVE_FORMAT_EXTENSIBLE）
+- `mix()`: 把多段乐谱按本地时间合并
+- `chord()` / `pattern()`: 和弦与节奏型，不进 schema
+- `resampleBuffer()`: 采样轨用的重采样
 - `Biquad` / `StereoEq` / `Compressor` / `lfoValue` / `keyframeAt`: 混音构件
 - `swingTime()` / `applyGroove()`: swing 时间扭曲与 humanize
 
@@ -392,12 +405,72 @@ npm test
 npm run dev
 ```
 
+## 视频
+
+采样轨、音效、分段和按帧电平是给画面用的。TTS 不在这个库里：外面生成 WAV，再当采样轨交进来。
+
+### 采样轨
+
+```json
+{ "id": "voice", "role": "voice", "clips": [{ "src": "tts/scene2.wav", "at": 3.2, "gain": 1, "fadeIn": 0.05, "fadeOut": 0.05, "trim": [0, 4.1] }] }
+```
+
+`clip` 是只有一个片段时的简写。`render` 不读文件，调用方把解码后的音频放进 `options.clips`，键是 `src`。命令行会按乐谱所在目录读取，并把 sha256 记进 `result.inputs` 和分析报告。采样率不同时用加窗 sinc 重采样。
+
+其他轨可以写 `duck: { "by": "voice", "amount": 0.5, "holdMs": 80, "releaseMs": 280, "band": [1000, 4000] }`。`holdMs` 避免字与字之间抽动，`band` 只压这一段频率。
+
+### 音效
+
+```json
+{ "id": "fx", "sfx": [{ "sfx": "whoosh", "t": 4.0, "duration": 0.4, "size": 0.7, "direction": 0.6 }] }
+```
+
+`whoosh`、`riser`、`swell`、`impact`、`pop`、`tick`、`key`、`shimmer` 会展开成现有的曲线轨。参数见 `llms.txt`。
+
+### 分段
+
+```typescript
+import { mix } from 'visualtone';
+
+const { score, warnings } = mix([
+  { score: scene1, at: 0 },
+  { score: scene2, at: 4.0, fadeIn: 0.2, fadeOut: 0.3, prefix: 's2/' },
+], master);
+```
+
+每段先在自己的时间里展开写法和 swing，再平移。子段的 `master` 被忽略。JSON 可以写 `{ "segments": [{ "src": "scene2.json", "at": 4.0 }] }`，由命令行读取。
+
+轨道 `offset` 是单轨平移。`seed` 固定这条轨的噪声，合并后不会因为序号变化而变音色。
+
+### 交给画面
+
+```typescript
+const result = render(score, { envelopes: { fps: 30 } });
+result.envelopes.tracks.kick.onsets; // 秒
+result.envelopes.tracks.kick.level;  // 第 i 帧覆盖 [i/fps, (i+1)/fps)
+result.envelopes.master.level;
+```
+
+命令行：`visualtone render score.json -o out.wav --envelopes env.json --fps 30`。
+
+### 音乐单位
+
+有 `bpm` 时，点和音符可以写 `at: "4:2"`（第 4 小节第 2 拍，从 1 起）、`pitch: "A3"`、`len: "1/8"`。`meter` 默认 `[4, 4]`。`chord("Am7", "A3")` 和 `pattern("x...x...x.x.", { bpm, y })` 是函数，不进 schema。
+
+### 原声引擎
+
+`engine` 为 `pluck`、`marimba` 或 `epiano` 时按音符分配复音，重叠的音符不会被截短。色调不跟波表插值。
+
+### 旁白画像
+
+`visualtone analyze score.json --profile voiceover-bed` 检查：有旁白时音乐有没有让出 1–4 kHz、音效是否挡住音乐、音效是否太密。轨上写 `role: "voice" | "sfx" | "music"`。`master.lufs` 用 BS.1770 对齐目标响度，设置后不再用 RMS 的 `master.loudness`。
+
 ## 技术细节
 
 - **插值**: 按 ease 规则在曲线控制点之间过渡
 - **合成**: 带限 mip 波表 + 齐奏 + 共振 SVF（左右声道独立状态）+ 噪声/瞬态/音高包络
-- **混音**: 每轨 EQ/压缩、LFO、自动化；每轨独立混响/延迟实例（尾音不串轨）
-- **主总线**: 胶水压缩 → 软削波 → 响度对齐 → 峰值上限 0.891
+- **混音**: 每轨 EQ/压缩、LFO、自动化；大厅和房间是两条共享的立体声 FDN，延迟也是共享的
+- **主总线**: EQ → 饱和 → 胶水压缩 → 软削波 → 响度对齐 → 前瞻真峰值限幅（默认 −1 dBTP，5 ms 前瞻）
 - **输出**: 内部浮点，写出时一次量化；16/24-bit 默认 TPDF 抖动
 - **确定性**: 相同的乐谱和种子产生逐字节相同的 WAV（抖动噪声也由种子决定）
 
@@ -406,9 +479,11 @@ npm run dev
 - ✅ 曲线到音频渲染、多轨立体声
 - ✅ hue 音色环 + 参数覆盖
 - ✅ 混响、延迟、侧链、EQ、压缩、LFO、自动化、swing
-- ✅ 听感分析（LUFS、遮蔽、画像对比、PNG 报告）
-- ⏳ 采样鼓 / 采样音色（尚未引入）
-- ⏳ 前瞻式限幅器（目前峰值上限是整体缩放）
+- ✅ 听感分析（LUFS、遮蔽、画像对比、PNG 报告），含 `voiceover-bed`
+- ✅ 前瞻真峰值限幅器
+- ✅ 采样轨（引用外部 WAV）、音效预设、分段合并、按帧电平
+- ✅ 拨弦 / 马林巴 / 电钢
+- ⏳ SF2 采样音色
 - ⏳ Remotion 集成
 
 ## 许可证

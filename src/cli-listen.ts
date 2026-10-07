@@ -3,9 +3,10 @@ import { analyze, reportToJson } from './analysis/index.js';
 import { diffFindings } from './analysis/findings.js';
 import { getProfile, profileFromReports } from './analysis/profiles.js';
 import type { AnalysisReport } from './analysis/types.js';
+import { loadScoreFile } from './load-score.js';
 import { render } from './renderer.js';
 import { renderReport } from './report/panels.js';
-import { ScoreSchema, type Score } from './schema.js';
+import type { Score } from './schema.js';
 import { readWavFile } from './wav.js';
 
 function flag(name: string, args: string[]): string | undefined {
@@ -19,18 +20,21 @@ function loadMix(path: string): {
   sampleRate: number;
   score?: Score;
   stems?: { id: string; l: Float32Array; r: Float32Array }[];
+  inputs?: AnalysisReport['inputs'];
 } {
   if (path.endsWith('.wav')) {
     const decoded = readWavFile(readFileSync(path));
     return { buffers: decoded.buffers, sampleRate: decoded.sampleRate };
   }
-  const score = ScoreSchema.parse(JSON.parse(readFileSync(path, 'utf8')));
-  const rendered = render(score, { stems: true });
+  const loaded = loadScoreFile(path);
+  for (const w of loaded.warnings) console.warn(`Warning: ${w}`);
+  const rendered = render(loaded.score, { stems: true, clips: loaded.clips });
   return {
     buffers: rendered.buffers,
     sampleRate: rendered.sampleRate,
-    score,
+    score: loaded.score,
     stems: rendered.stems,
+    inputs: rendered.inputs,
   };
 }
 
@@ -55,6 +59,7 @@ export function runAnalyze(args: string[]): void {
     stems: loaded.stems,
     score: loaded.score,
     profile,
+    inputs: loaded.inputs,
   });
   const jsonPath = flag('--json', args);
   const pngPath = flag('--png', args);

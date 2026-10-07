@@ -13,15 +13,17 @@ const Comp = z.object({
 const Keyframes = z.array(z.object({ t: z.number(), v: z.number() }));
 
 const JsonScoreSchema = z.object({
-  sampleRate: z.number().int().positive().default(44100),
+  sampleRate: z.number().int().positive().default(48000),
   duration: z.number().positive().optional(),
   seed: z.number().int().optional(),
   bpm: z.number().positive().optional(),
+  meter: z.tuple([z.number().int().positive(), z.number().int().positive()]).optional(),
   swing: z.number().min(0).max(1).optional().describe('0 straight, 1 triplet; needs bpm'),
   swingGrid: z.union([z.literal(8), z.literal(16)]).optional(),
   master: z
     .object({
       loudness: z.number().default(-14),
+      lufs: z.number().optional().describe('BS.1770 target. When set, replaces the RMS match'),
       drive: z.number().min(0).max(1).default(0.15),
       reverb: z.object({ size: z.number(), decay: z.number() }).optional(),
       delay: z.object({ beats: z.number(), feedback: z.number() }).optional(),
@@ -31,13 +33,21 @@ const JsonScoreSchema = z.object({
   tracks: z.array(
     z.object({
       id: z.string(),
-      hue: z.number().min(0).max(360),
+      hue: z.number().min(0).max(360).optional(),
       channel: z.union([z.number().int().min(0), z.array(z.number().int().min(0))]).default(0),
       lightness: z.number().min(0).max(1).default(0.5),
       saturation: z.number().min(0).max(1).optional(),
       space: z.number().min(0).max(1).optional(),
       echo: z.number().min(0).max(1).optional(),
-      duck: z.object({ by: z.string(), amount: z.number().min(0).max(1) }).optional(),
+      duck: z
+        .object({
+          by: z.string(),
+          amount: z.number().min(0).max(1),
+          holdMs: z.number().optional(),
+          releaseMs: z.number().optional(),
+          band: z.tuple([z.number(), z.number()]).optional(),
+        })
+        .optional(),
       timbre: z.record(z.number()).optional(),
       eq: z
         .object({
@@ -63,7 +73,7 @@ const JsonScoreSchema = z.object({
           }),
         )
         .optional(),
-      automation: z.object({ lightness: Keyframes.optional(), gain: Keyframes.optional() }).optional(),
+      automation: z.object({ lightness: Keyframes.optional(), gain: Keyframes.optional(), pan: Keyframes.optional() }).optional(),
       swing: z.number().min(0).max(1).optional(),
       humanize: z.object({ timeMs: z.number().min(0).default(0), size: z.number().min(0).max(1).default(0) }).optional(),
       points: z
@@ -81,12 +91,55 @@ const JsonScoreSchema = z.object({
       notes: z
         .array(
           z.object({
-            t: z.number(),
-            y: z.number(),
+            t: z.number().optional(),
+            at: z.string().optional(),
+            y: z.number().optional(),
+            pitch: z.string().optional(),
             size: z.number().min(0).max(1),
-            duration: z.number().positive(),
+            duration: z.number().positive().optional(),
+            len: z.string().optional(),
             ease: z.enum(['hold', 'exp']).optional(),
             lightness: z.number().min(0).max(1).optional(),
+          }),
+        )
+        .optional(),
+      role: z.enum(['voice', 'sfx', 'music']).optional(),
+      engine: z.enum(['wavetable', 'pluck', 'marimba', 'epiano']).optional(),
+      pan: z.number().min(-1).max(1).optional(),
+      offset: z.number().optional(),
+      seed: z.number().int().optional(),
+      clip: z
+        .object({
+          src: z.string(),
+          at: z.number().default(0),
+          gain: z.number().default(1),
+          fadeIn: z.number().default(0),
+          fadeOut: z.number().default(0),
+          trim: z.tuple([z.number(), z.number()]).optional(),
+        })
+        .optional(),
+      clips: z
+        .array(
+          z.object({
+            src: z.string(),
+            at: z.number().default(0),
+            gain: z.number().default(1),
+            fadeIn: z.number().default(0),
+            fadeOut: z.number().default(0),
+            trim: z.tuple([z.number(), z.number()]).optional(),
+          }),
+        )
+        .optional(),
+      sfx: z
+        .array(
+          z.object({
+            sfx: z.enum(['whoosh', 'riser', 'swell', 'impact', 'pop', 'tick', 'key', 'shimmer']),
+            t: z.number().optional(),
+            duration: z.number().optional(),
+            size: z.number().optional(),
+            pan: z.number().optional(),
+            direction: z.number().optional(),
+            brightness: z.number().optional(),
           }),
         )
         .optional(),

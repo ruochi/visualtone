@@ -75,5 +75,16 @@ export interface AnalysisReport {
     lowEnergy: number[];
   };
   profile?: { name: string; note: string };
+  /** External clips mixed into the render, when the caller passed them through. */
+  inputs?: { src: string; sha256: string; sampleRate: number; channels: number; frames: number }[];
+  /** Set when the score has a voice or the voiceover-bed profile is used. */
+  voiceover?: {
+    /** Median dB of voice minus music inside 1–4 kHz while the voice is active. */
+    presenceGapDb: number | null;
+    /** Worst masking overlap between an sfx stem and a music stem. */
+    sfxOverlap: number | null;
+    sfxPer10s: number | null;
+    sfxMinGapSec: number | null;
+  };
   findings: Finding[];
 }

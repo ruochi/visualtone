@@ -2,19 +2,29 @@
 
 export class Ducker {
   private env = 0;
+  private holdLeft = 0;
   private readonly attackCoeff: number;
   private readonly releaseCoeff: number;
+  private readonly holdSamples: number;
 
-  constructor(sampleRate: number) {
+  constructor(sampleRate: number, opts?: { holdMs?: number; releaseMs?: number }) {
     this.attackCoeff = Math.exp(-1 / (sampleRate * 0.001));
-    this.releaseCoeff = Math.exp(-1 / (sampleRate * 0.12));
+    const releaseMs = opts?.releaseMs ?? 120;
+    this.releaseCoeff = Math.exp(-1 / (sampleRate * (releaseMs / 1000)));
+    this.holdSamples = Math.round(((opts?.holdMs ?? 0) / 1000) * sampleRate);
   }
 
   /** Follow source envelope 0-1, return gain multiplier. */
   process(sourceLevel: number, amount: number): number {
     const target = sourceLevel;
-    const coeff = target > this.env ? this.attackCoeff : this.releaseCoeff;
-    this.env = target + (this.env - target) * coeff;
+    if (target > this.env) {
+      this.env = target + (this.env - target) * this.attackCoeff;
+      this.holdLeft = this.holdSamples;
+    } else if (this.holdLeft > 0) {
+      this.holdLeft--;
+    } else {
+      this.env = target + (this.env - target) * this.releaseCoeff;
+    }
     return 1 - this.env * amount;
   }
 }
