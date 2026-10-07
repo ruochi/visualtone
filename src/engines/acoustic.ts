@@ -145,29 +145,110 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
 /** Modal mallet. Hue picks the bar: marimba, xylophone, vibraphone, glockenspiel. */
 interface MalletSpec {
   ratios: number[];
-  /** Seconds at 220 Hz. Higher notes are shorter. */
+  /** Seconds at 220 Hz. Higher notes are shorter. The held fundamental is not replaced by release. */
   decays: number[];
-  /** Upper-mode levels relative to the fundamental, before the strike opens them. */
+  /** Upper-mode levels at a hard strike, before the pitch roll-off. */
   gains: number[];
   tremHz: number;
+  /** Decay shortens as (f/220)^pitchPow. */
+  pitchPow: number;
+  /** First upper mode holds until this MIDI, then fades out by rollEnd. */
+  rollStart: number;
+  rollEnd: number;
+  /** Extra level on the ~9–10× mode, full at lowMidi and gone lowWidth semitones higher. */
+  lowMode: number;
+  lowMidi: number;
+  lowWidth: number;
+  /** Short mallet tick, so the bar is not a pure sine. */
+  noise: number;
+  /** Highpassed knock, Hz. 0 skips it. Fades out by hissUntil. */
+  hissHz: number;
+  hissUntil: number;
+  /** Metal bars: the second mode grows with pitch and the fifth shrinks. */
+  glock: boolean;
 }
 
 function malletSpec(hue: number): MalletSpec {
   const h = ((hue % 360) + 360) % 360;
   if (h < 120) {
-    return { ratios: [1, 3.92, 9.15, 15.8], decays: [0.9, 0.36, 0.14, 0.06], gains: [0.7, 0.38, 0.16], tremHz: 0 };
+    // Rosewood: the ~4× mode sits under the fundamental, and the ~10× mode is only on the long bars.
+    return {
+      ratios: [1, 3.92, 10.08, 15.8],
+      decays: [1.2, 0.36, 0.14, 0.06],
+      gains: [0.55, 0.02, 0.05],
+      tremHz: 0,
+      pitchPow: 1.35,
+      rollStart: 70,
+      rollEnd: 77,
+      lowMode: 1.05,
+      lowMidi: 46,
+      lowWidth: 10,
+      noise: 0.4,
+      hissHz: 1200,
+      hissUntil: 96,
+      glock: false,
+    };
   }
   if (h < 200) {
-    return { ratios: [1, 3, 6.05, 9.4], decays: [0.38, 0.16, 0.07, 0.035], gains: [0.85, 0.5, 0.22], tremHz: 0 };
+    // Hardwood: a quiet third, fading to a sine at the top of the instrument.
+    return {
+      ratios: [1, 3, 6.05, 9.4],
+      decays: [0.7, 0.22, 0.1, 0.05],
+      gains: [0.16, 0.07, 0.03],
+      tremHz: 0,
+      pitchPow: 1.05,
+      rollStart: 86,
+      rollEnd: 98,
+      lowMode: 0,
+      lowMidi: 0,
+      lowWidth: 0,
+      noise: 0.28,
+      hissHz: 600,
+      hissUntil: 120,
+      glock: false,
+    };
   }
   if (h < 280) {
-    return { ratios: [1, 3.97, 9.2, 14.6], decays: [1.8, 0.75, 0.28, 0.11], gains: [0.5, 0.22, 0.1], tremHz: 5.5 };
+    // No recording in the catalog. Gains make up for the softer strike opening so the tremolo bar stays bright.
+    return {
+      ratios: [1, 3.97, 9.2, 14.6],
+      decays: [1.8, 0.75, 0.28, 0.11],
+      gains: [1.05, 0.46, 0.2],
+      tremHz: 5.5,
+      pitchPow: 0.75,
+      rollStart: 96,
+      rollEnd: 120,
+      lowMode: 0,
+      lowMidi: 0,
+      lowWidth: 0,
+      noise: 0.12,
+      hissHz: 1600,
+      hissUntil: 96,
+      glock: false,
+    };
   }
-  return { ratios: [1, 2.76, 5.4, 8.93], decays: [1.5, 0.85, 0.36, 0.15], gains: [0.95, 0.58, 0.32], tremHz: 0 };
+  // Steel: long ring. The 2.76 mode catches up to the fundamental as the bar shortens; 5.4 does the opposite.
+  return {
+    ratios: [1, 2.76, 5.4, 8.93],
+    decays: [2.4, 1.6, 1.8, 0.6],
+    gains: [0.85, 0.7, 0.2],
+    tremHz: 0,
+    pitchPow: 0.45,
+    rollStart: 90,
+    rollEnd: 108,
+    lowMode: 0,
+    lowMidi: 0,
+    lowWidth: 0,
+    noise: 0.22,
+    hissHz: 0,
+    hissUntil: 0,
+    glock: true,
+  };
 }
 
-export function createMarimba(sampleRate: number, hue: number, _seed: number): Engine {
+export function createMarimba(sampleRate: number, hue: number, seed: number): Engine {
   const spec = malletSpec(hue);
+  const rng = mulberry32(seed || 1);
   const n = spec.ratios.length;
   const phases = new Array(n).fill(0);
   const amps = new Array(n).fill(0);
@@ -177,6 +258,16 @@ export function createMarimba(sampleRate: number, hue: number, _seed: number): E
   let alive = 0;
   let releaseSec = 0.18;
   let trem = 0;
+  let tickLeft = 0;
+  let tickTotal = 1;
+  let tickAmp = 0;
+  let tickLp = 0;
+  let tickPole = 0.5;
+  let hiss = 0;
+  let hissTau = 0.05;
+  let hissAmp = 0;
+  let hissPole = 0.5;
+  let hissHp = 0;
 
   return {
     setRelease(ms: number) {
@@ -186,17 +277,54 @@ export function createMarimba(sampleRate: number, hue: number, _seed: number): E
       const on = size > 1e-5;
       if (on && !wasOn) {
         freq = Math.max(40, midiToFrequency(midi));
-        const pitchScale = Math.pow(freq / 220, 0.75);
+        const pitchScale = Math.pow(freq / 220, spec.pitchPow);
         const strike = Math.min(1, Math.max(0, size));
-        const open = 0.22 + strike * 1.45 + Math.min(1, Math.max(0, lightness)) * 0.3;
-        // A harder strike keeps the upper modes ringing, so the note stays brighter.
+        const light = Math.min(1, Math.max(0, lightness));
+        // Soft hits lose the upper modes. The old linear open left them louder than the fundamental.
+        const open = Math.pow(strike, 1.4) * (0.7 + light * 0.4);
+        const span = Math.max(1, spec.rollEnd - spec.rollStart);
+        const rollT = Math.min(1, Math.max(0, (midi - spec.rollStart) / span));
+        const roll = 1 - Math.pow(rollT, 1.4);
         const hang = 0.35 + strike * 1.35;
+        const high = Math.min(1, Math.max(0, (midi - 79) / 17));
         for (let m = 0; m < n; m++) {
-          phases[m] = 0;
           taus[m] = Math.max(0.025, (spec.decays[m] * (m === 0 ? 1 : hang)) / pitchScale);
-          amps[m] = size * (m === 0 ? 1 : spec.gains[m - 1] * open);
+          let rel = 1;
+          if (m > 0) {
+            const fade = m === 1 ? roll : roll * roll;
+            rel = spec.gains[m - 1] * open * fade;
+            if (m === 2 && spec.lowWidth > 0) {
+              const low = Math.min(1, Math.max(0, (spec.lowMidi + spec.lowWidth - midi) / spec.lowWidth));
+              rel += low * spec.lowMode;
+            }
+            if (spec.glock) {
+              // 2.76 catches the fundamental on the short bars. 5.4 stays under it.
+              // Below the recorded range both stay quiet: a hard low bar was locking to f/5.
+              const strikeScale = Math.pow(Math.min(1.35, strike / 0.7), 1.2);
+              const safe = Math.min(1, Math.max(0, (midi - 68) / 16));
+              if (m === 1) rel = (0.1 + safe * (0.42 + high * high * 0.38)) * strikeScale;
+              else if (m === 2) rel = (0.05 + safe * 0.12 * (1 - high)) * strikeScale;
+              else rel = 0.05 * safe * (1 - high) * strikeScale;
+            }
+          }
+          phases[m] = m === 0 ? 0 : rng() * 2 * Math.PI;
+          amps[m] = size * rel;
         }
-        alive = Math.ceil(sampleRate * 4);
+        tickTotal = Math.max(1, Math.round(0.012 * sampleRate));
+        tickLeft = tickTotal;
+        tickAmp = spec.noise * (0.25 + strike * 0.55);
+        tickPole = Math.exp((-2 * Math.PI * (1600 + strike * 6000)) / sampleRate);
+        tickLp = 0;
+        // Low bars in the recordings carry a noisy knock for a few hundred milliseconds.
+        const low = Math.min(1, Math.max(0, (58 - midi) / 14));
+        const hissFade = Math.min(1, Math.max(0, (spec.hissUntil - midi) / 12));
+        hiss = 1;
+        hissTau = 0.025 + low * 0.05;
+        hissAmp = spec.hissHz > 0 ? spec.noise * Math.pow(strike, 1.8) * (0.15 + low * 0.7) * hissFade : 0;
+        const hissCut = spec.hissHz > 0 ? spec.hissHz + strike * 800 : 1000;
+        hissPole = Math.exp((-2 * Math.PI * hissCut) / sampleRate);
+        hissHp = 0;
+        alive = Math.ceil(sampleRate * (spec.glock ? 8 : 4));
         trem = 0;
       }
       if (!on && wasOn) {
@@ -224,7 +352,27 @@ export function createMarimba(sampleRate: number, hue: number, _seed: number): E
         l += s * side;
         r += s * (2 - side);
       }
-      if (peakAmp < 1e-5) {
+      if (tickLeft > 0 || hiss > 1e-4) {
+        const white = rng() * 2 - 1;
+        if (tickLeft > 0) {
+          const u = tickLeft / tickTotal;
+          tickLeft--;
+          const env = Math.sin(Math.PI * (1 - u));
+          tickLp = white * (1 - tickPole) + tickLp * tickPole;
+          const hit = tickLp * env * tickAmp;
+          l += hit;
+          r += hit * 0.9;
+        }
+        if (hiss > 1e-4) {
+          hiss *= Math.exp(-1 / (hissTau * sampleRate));
+          const lp = white * (1 - hissPole) + hissHp * hissPole;
+          hissHp = lp;
+          const knock = (white - lp) * hiss * hissAmp;
+          l += knock;
+          r += knock * 0.92;
+        }
+      }
+      if (peakAmp < 1e-5 && tickLeft <= 0 && hiss <= 1e-4) {
         alive = 0;
         return [0, 0];
       }
@@ -453,6 +601,8 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
   let beaterLp = 0;
   let nz = 0;
   let nh = 0;
+  let wireLp = 0;
+  let wirePole = 0.5;
   let noiseLeak = 0.82;
   let strikeNow = 0.5;
 
@@ -463,7 +613,7 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
     processSample(midi, size, lightness) {
       const on = size > 1e-5;
       if (on && !wasOn) {
-        freq = Math.max(30, midiToFrequency(midi));
+        freq = Math.max(20, midiToFrequency(midi));
         const strike = Math.min(1, Math.max(0, size));
         const center = Math.min(1, Math.max(0, lightness));
         const pitchScale = Math.pow(freq / 180, 0.72);
@@ -480,15 +630,19 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
         }
         bendTotal = spec.bend > 0 ? Math.round(0.018 * sampleRate) : 0;
         bendLeft = bendTotal;
-        clickAmp = spec.click * Math.pow(strike, 1.55);
-        clickLeft = Math.round(0.004 * sampleRate);
-        beaterTotal = Math.max(1, Math.round((0.008 + strike * 0.032) * sampleRate));
+        clickAmp = spec.click * Math.pow(strike, 1.7) * 0.28;
+        clickLeft = Math.round(0.006 * sampleRate);
+        beaterTotal = Math.max(1, Math.round((0.012 + strike * 0.04) * sampleRate));
         beaterLeft = beaterTotal;
         // A soft hit stays dark. Linear beater mix left the quiet note brighter than the loud one.
-        beaterMix = 0.03 + Math.pow(strike, 1.65) * 1.15;
+        beaterMix = 0.04 + Math.pow(strike, 1.65) * 0.85;
         strikeNow = strike;
-        noiseLeak = 0.97 - strike * 0.58;
-        const cut = 500 + strike * 11000 + (1 - center) * 1800;
+        noiseLeak = 0.94 - strike * 0.45;
+        // The beater is a thud, not a bright tick. Snare noise opens the cutoff; a kick stays near the shell.
+        let cut = 180 + strike * (650 + spec.noise * 5200) + (1 - center) * 350;
+        if (spec.bend > 0) cut *= 0.48;
+        wirePole = Math.exp((-2 * Math.PI * (1600 + strike * 1800)) / sampleRate);
+        wireLp = 0;
         beaterPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         beaterLp = 0;
         alive = Math.ceil(sampleRate * 3);
@@ -532,21 +686,23 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
       const white = rng() * 2 - 1;
       nh = white - nz + noiseLeak * nh;
       nz = white;
+      beaterLp = white * (1 - beaterPole) + beaterLp * beaterPole;
       if (clickLeft > 0) {
         clickLeft--;
-        const c = white * clickAmp * (clickLeft / Math.max(1, 0.004 * sampleRate));
+        const c = beaterLp * clickAmp * (clickLeft / Math.max(1, 0.006 * sampleRate));
         l += c;
         r += c;
       }
       if (beaterLeft > 0) {
         beaterLeft--;
         const envB = beaterLeft / beaterTotal;
-        beaterLp = white * (1 - beaterPole) + beaterLp * beaterPole;
         const b = beaterLp * envB * envB * beaterMix;
         l += b;
         r += b;
       }
-      const buzz = nh * spec.noise * (0.28 + strikeNow * 1.25) * peakAmp * 0.9;
+      wireLp = nh * (1 - wirePole) + wireLp * wirePole;
+      const wires = spec.noise > 0.15 ? wireLp : beaterLp;
+      const buzz = wires * spec.noise * (0.22 + strikeNow * 0.7) * (0.25 + peakAmp);
       l += buzz;
       r += buzz * 0.92;
 

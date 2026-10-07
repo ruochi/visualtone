@@ -414,12 +414,12 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 2.24,
-      "passed": 4,
+      "distance": 2.26,
+      "passed": 6,
       "total": 16,
-      "oursCents": 0.24130864393966753,
+      "oursCents": 0.2420126196641697,
       "refCents": -4.205397854797629,
-      "worst": "谐噪比 10.16"
+      "worst": "奇偶泛音比 7.62"
     },
     {
       "id": "vsco-marimba",
@@ -428,12 +428,12 @@
       "midi": 59,
       "note": "B3",
       "size": 0.9,
-      "distance": 2.39,
-      "passed": 4,
-      "total": 17,
-      "oursCents": 0.09652703585731655,
+      "distance": 2.26,
+      "passed": 3,
+      "total": 15,
+      "oursCents": 0.09670422553094266,
       "refCents": -6.238836131876466,
-      "worst": "奇偶泛音比 10.93"
+      "worst": "起音 10–90% 9.68"
     },
     {
       "id": "vsco-marimba",
@@ -442,12 +442,12 @@
       "midi": 65,
       "note": "F4",
       "size": 0.9,
-      "distance": 2.06,
-      "passed": 6,
-      "total": 17,
-      "oursCents": -0.16153373575311095,
+      "distance": 2.23,
+      "passed": 3,
+      "total": 15,
+      "oursCents": -0.1610257771044616,
       "refCents": -4.421474941071032,
-      "worst": "时频图 4.10"
+      "worst": "奇偶泛音比 9.61"
     },
     {
       "id": "vsco-marimba",
@@ -456,12 +456,12 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 2.25,
-      "passed": 6,
-      "total": 19,
-      "oursCents": 0.24124587241671763,
+      "distance": 1.79,
+      "passed": 8,
+      "total": 17,
+      "oursCents": 0.2378960370435621,
       "refCents": 2.127757871852716,
-      "worst": "奇偶泛音比 10.74"
+      "worst": "泛音比例 3.56"
     },
     {
       "id": "vsco-marimba",
@@ -470,12 +470,12 @@
       "midi": 79,
       "note": "G5",
       "size": 0.9,
-      "distance": 2.15,
+      "distance": 1.93,
       "passed": 6,
-      "total": 15,
-      "oursCents": 0.0730699628652463,
+      "total": 14,
+      "oursCents": 0.06806971382688877,
       "refCents": -1.8083771118290428,
-      "worst": "泛音比例 9.86"
+      "worst": "起音噪声感 4.45"
     },
     {
       "id": "vsco-xylophone",
@@ -484,12 +484,12 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 2.33,
-      "passed": 2,
+      "distance": 2.31,
+      "passed": 5,
       "total": 18,
-      "oursCents": 0.24112602941321928,
+      "oursCents": 0.2387263576372565,
       "refCents": 10.384837493876557,
-      "worst": "奇偶泛音比 10.39"
+      "worst": "非谐性 B 10.23"
     },
     {
       "id": "vsco-xylophone",
@@ -498,10 +498,10 @@
       "midi": 79,
       "note": "G5",
       "size": 0.9,
-      "distance": 2.37,
-      "passed": 3,
+      "distance": 2.06,
+      "passed": 6,
       "total": 18,
-      "oursCents": 0.07298295606304098,
+      "oursCents": 0.0690862712720927,
       "refCents": 13.901606765545495,
       "worst": "非谐性 B 10.23"
     },
@@ -512,12 +512,12 @@
       "midi": 84,
       "note": "C6",
       "size": 0.9,
-      "distance": 2.19,
-      "passed": 3,
+      "distance": 1.8,
+      "passed": 8,
       "total": 15,
-      "oursCents": -0.11491049785199618,
+      "oursCents": -0.11333058236779393,
       "refCents": 15.111655694241291,
-      "worst": "泛音比例 8.06"
+      "worst": "谐噪比 4.06"
     },
     {
       "id": "vsco-xylophone",
@@ -526,12 +526,12 @@
       "midi": 96,
       "note": "C7",
       "size": 0.9,
-      "distance": 2.19,
-      "passed": 7,
-      "total": 17,
-      "oursCents": 0.06145579478614681,
+      "distance": 1.46,
+      "passed": 8,
+      "total": 15,
+      "oursCents": 0.060538113785303646,
       "refCents": 16.65423491917577,
-      "worst": "泛音斜率 9.94"
+      "worst": "音高 3.32"
     },
     {
       "id": "vsco-glock",
@@ -540,10 +540,10 @@
       "midi": 79,
       "note": "G5",
       "size": 0.7,
-      "distance": 2.35,
+      "distance": 2.38,
       "passed": 4,
-      "total": 18,
-      "oursCents": 0.07307391020397563,
+      "total": 15,
+      "oursCents": 0.07110031611934575,
       "refCents": 8.392614202188833,
       "worst": "奇偶泛音比 12.43"
     },
@@ -554,12 +554,12 @@
       "midi": 84,
       "note": "C6",
       "size": 0.7,
-      "distance": 2.22,
-      "passed": 4,
-      "total": 18,
-      "oursCents": -0.11506767813904639,
+      "distance": 2.37,
+      "passed": 3,
+      "total": 15,
+      "oursCents": -0.11432312531454003,
       "refCents": 11.316945303279086,
-      "worst": "泛音比例 6.61"
+      "worst": "泛音比例 5.71"
     },
     {
       "id": "vsco-glock",
@@ -568,12 +568,12 @@
       "midi": 91,
       "note": "G6",
       "size": 0.7,
-      "distance": 2.14,
-      "passed": 6,
-      "total": 18,
-      "oursCents": -0.04097984934149935,
+      "distance": 2.47,
+      "passed": 2,
+      "total": 15,
+      "oursCents": -0.04139684592706976,
       "refCents": 11.97936922381601,
-      "worst": "泛音比例 7.27"
+      "worst": "奇偶泛音比 7.05"
     },
     {
       "id": "vsco-glock",
@@ -582,12 +582,12 @@
       "midi": 96,
       "note": "C7",
       "size": 0.7,
-      "distance": 2.54,
-      "passed": 3,
-      "total": 15,
-      "oursCents": 0.06168127338967847,
+      "distance": 2.18,
+      "passed": 4,
+      "total": 13,
+      "oursCents": 0.0616863640374433,
       "refCents": 15.927188421979398,
-      "worst": "泛音比例 4.66"
+      "worst": "泛音比例 4.77"
     },
     {
       "id": "vsco-harp",
@@ -722,12 +722,12 @@
       "midi": 22,
       "note": "A#0",
       "size": 0.85,
-      "distance": 2.54,
+      "distance": 2.29,
       "passed": 2,
-      "total": 15,
-      "oursCents": 50.70861552971501,
+      "total": 13,
+      "oursCents": 0.03806243328988958,
       "refCents": 6.304924921077241,
-      "worst": "亮度（质心） 12.41"
+      "worst": "泛音比例 13.59"
     },
     {
       "id": "vsco-snare",
@@ -736,12 +736,12 @@
       "midi": 60,
       "note": "C4",
       "size": 0.75,
-      "distance": 2.48,
+      "distance": 2.3,
       "passed": 1,
       "total": 12,
-      "oursCents": 0.23929506112154056,
+      "oursCents": 0.248136049555806,
       "refCents": null,
-      "worst": "泛音比例 11.80"
+      "worst": "泛音比例 11.81"
     },
     {
       "id": "vsco-conga",
@@ -750,12 +750,12 @@
       "midi": 52,
       "note": "E3",
       "size": 0.7,
-      "distance": 2.35,
-      "passed": 2,
+      "distance": 2.11,
+      "passed": 3,
       "total": 16,
-      "oursCents": 0.12246006660512235,
+      "oursCents": 0.12245567087629555,
       "refCents": -12.293195961032783,
-      "worst": "非谐性 B 10.26"
+      "worst": "非谐性 B 10.25"
     },
     {
       "id": "vsco-timpani",
@@ -764,12 +764,12 @@
       "midi": 30,
       "note": "F#1",
       "size": 0.8,
-      "distance": 2.55,
+      "distance": 2.44,
       "passed": 3,
       "total": 15,
-      "oursCents": -0.05637603461241013,
+      "oursCents": -0.05820753248149259,
       "refCents": -19.68984943976918,
-      "worst": "起音噪声感 11.07"
+      "worst": "泛音比例 7.37"
     },
     {
       "id": "vsco-timpani",
@@ -778,12 +778,12 @@
       "midi": 34,
       "note": "A#1",
       "size": 0.8,
-      "distance": 2.79,
-      "passed": 1,
+      "distance": 2.62,
+      "passed": 2,
       "total": 16,
-      "oursCents": -0.1513773459719881,
+      "oursCents": -0.15574950534139897,
       "refCents": 44.21445193061527,
-      "worst": "泛音比例 10.58"
+      "worst": "泛音比例 10.59"
     },
     {
       "id": "vsco-timpani",
@@ -792,12 +792,12 @@
       "midi": 37,
       "note": "C#2",
       "size": 0.8,
-      "distance": 2.59,
-      "passed": 2,
+      "distance": 2.45,
+      "passed": 3,
       "total": 16,
-      "oursCents": -0.218487539982627,
+      "oursCents": -0.2092295445932976,
       "refCents": 30.868619253403086,
-      "worst": "起音噪声感 10.01"
+      "worst": "泛音比例 8.09"
     },
     {
       "id": "vsco-timpani",
@@ -806,12 +806,12 @@
       "midi": 40,
       "note": "E2",
       "size": 0.8,
-      "distance": 2.54,
+      "distance": 2.48,
       "passed": 2,
       "total": 16,
-      "oursCents": 0.12190878084813193,
+      "oursCents": 0.12113223286795669,
       "refCents": -17.021534409042776,
-      "worst": "起音噪声感 9.71"
+      "worst": "泛音比例 9.11"
     },
     {
       "id": "vsco-timpani",
@@ -820,12 +820,12 @@
       "midi": 46,
       "note": "A#2",
       "size": 0.8,
-      "distance": 2.66,
+      "distance": 2.62,
       "passed": 4,
-      "total": 18,
-      "oursCents": -0.1513580269901086,
+      "total": 16,
+      "oursCents": -0.15506536641922625,
       "refCents": -38.08902678913209,
-      "worst": "泛音比例 9.64"
+      "worst": "泛音比例 9.63"
     },
     {
       "id": "salamander-piano",
