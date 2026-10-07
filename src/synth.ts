@@ -201,6 +201,13 @@ export class Voice {
       playMidi = this.lastMidi;
       playLight = this.lastLight;
       playSize = this.lastSize * (this.releaseLeft / this.releaseSamples);
+    } else if (this.smoothGain > 5e-5 && (this.notePeak > 1e-3 || !this.wasSilent)) {
+      // The 20 ms hold tail is already at zero, but the 2 ms gain smoother is still
+      // up by about a tenth of the note. Stepping to 0 here is the end-of-note click.
+      this.wasSilent = true;
+      playMidi = this.lastMidi;
+      playLight = this.lastLight;
+      playSize = 0;
     } else {
       this.wasSilent = true;
       this.releaseLeft = 0;

@@ -125,7 +125,15 @@ With `bpm` (and optional `meter`, default `[4, 4]`): point/note `at: "4:2"` (bar
 
 ## Acoustic engines
 
-`engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal) | `epiano` (FM). The three acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring; it changes brightness or inharmonicity.
+`engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal bar) | `epiano` (FM) | `organ` (drawbar additive). The acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring.
+
+`pluck` is a Karplus–Strong string with a fractional delay. The loop length compensates the averaging filter and the dispersion allpass, so high notes stay in tune. `size` moves the pluck toward the bridge (brighter); hue darkens the excitation; `lightness` lengthens the ring. A light body resonance sits at 118 Hz.
+
+`marimba` hue selects the bar: 0°–119° marimba (modes 1, 3.92, 9.15, 15.8), 120°–199° xylophone, 200°–279° vibraphone (slow tremolo), 280°–360° glockenspiel. Decay time shortens as pitch rises. `size` raises both the level and the hang time of the upper modes, so a harder strike stays brighter. While held, the bar rings at its own rate; `release` is the damping after note-off.
+
+`organ` uses the nine Hammond drawbars (16′, 5⅓′, 8′, 4′, 2⅔′, 2′, 1⅗′, 1⅓′, 1′). Hue 0° and 360° are the dark 16′+8′ registration, 180° is the full mixture, with a flute stop in between. `size` and `lightness` open the upper stops, so a harder note is brighter as well as louder. `release` (default 180 ms) is the time to about −60 dB. The 16′ stop stays under the 8′ so the key you play is the pitch you hear. No Leslie yet, so pitch stays steady.
+
+A wavetable note no longer steps to zero when the curve reaches silence. The 2 ms gain smoother finishes first (that step was a click on every held note). `release` is an additional tail on top of that fade.
 
 ## Voiceover profile
 

@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { analyzeNote } from './analysis/timbre.js';
 import { buildWavetable, clearWavetableCache } from './wavetable.js';
 import { hueToTimbreVector } from './timbre.js';
 import { spectralCentroid, stereoCorrelation, measureRmsDb } from './fx.js';
@@ -170,6 +171,86 @@ test('deterministic render hash', () => {
   const h1 = createHash('sha256').update(render(score).wav).digest('hex');
   const h2 = createHash('sha256').update(render(score).wav).digest('hex');
   assert.equal(h1, h2);
+});
+
+test('held wavetable note does not step to zero', () => {
+  const sr = 48000;
+  const score = ScoreSchema.parse({
+    sampleRate: sr,
+    duration: 0.45,
+    seed: 1,
+    master: { loudness: -18, drive: 0 },
+    tracks: [{ id: 'p', hue: 110, channel: [0, 1], notes: [{ t: 0.05, y: 60, size: 0.7, duration: 0.25, ease: 'hold' }] }],
+  });
+  const stem = render(score, { stems: true }).stems![0].l;
+  const off = Math.round(0.3 * sr);
+  const step = Math.abs(stem[off] - stem[off - 1]);
+  let body = 0;
+  const mid = Math.round(0.16 * sr);
+  for (let i = mid; i < mid + sr / 50; i++) body = Math.max(body, Math.abs(stem[i] - stem[i - 1]));
+  assert.ok(step < body * 1.5, `note-off step ${step.toFixed(4)} vs body ${body.toFixed(4)}`);
+  const features = analyzeNote(stem, sr, { start: 0, stop: 0.45, noteOff: 0.3, midi: 60 });
+  assert.equal(features.artifacts.clicks, 0);
+});
+
+test('organ stays in tune, gets louder and brighter with size, and does not click', () => {
+  const sr = 48000;
+  const one = (size: number) => {
+    const score = ScoreSchema.parse({
+      sampleRate: sr,
+      duration: 1.1,
+      seed: 2,
+      master: { loudness: -18, drive: 0 },
+      tracks: [
+        {
+          id: 'organ',
+          hue: 40,
+          engine: 'organ',
+          channel: [0, 1],
+          notes: [{ t: 0.05, y: 60, size, duration: 0.7, ease: 'hold' }],
+        },
+      ],
+    });
+    const stem = render(score, { stems: true }).stems![0];
+    const mono = new Float32Array(stem.l.length);
+    for (let i = 0; i < mono.length; i++) mono[i] = (stem.l[i] + stem.r[i]) * 0.5;
+    return analyzeNote(mono, sr, { start: 0, stop: 1.1, noteOff: 0.75, midi: 60 });
+  };
+  const soft = one(0.3);
+  const hard = one(0.9);
+  assert.ok(hard.centsOff !== null && Math.abs(hard.centsOff) < 5, `cents ${hard.centsOff}`);
+  assert.equal(hard.artifacts.clicks, 0);
+  assert.equal(soft.artifacts.clicks, 0);
+  assert.ok(hard.envelope.peakDb - soft.envelope.peakDb > 3, `level span ${hard.envelope.peakDb - soft.envelope.peakDb}`);
+  assert.ok(
+    soft.spectrum.centroidHz > 0 && Math.log2(hard.spectrum.centroidHz / soft.spectrum.centroidHz) > 0.1,
+    `centroid ${soft.spectrum.centroidHz.toFixed(0)} -> ${hard.spectrum.centroidHz.toFixed(0)}`,
+  );
+});
+
+test('pluck stays in tune at C6', () => {
+  const sr = 48000;
+  const score = ScoreSchema.parse({
+    sampleRate: sr,
+    duration: 0.8,
+    seed: 1,
+    master: { loudness: -18, drive: 0 },
+    tracks: [
+      {
+        id: 'p',
+        hue: 70,
+        engine: 'pluck',
+        channel: [0, 1],
+        notes: [{ t: 0.05, y: 84, size: 0.7, duration: 0.45, ease: 'hold' }],
+      },
+    ],
+  });
+  const stem = render(score, { stems: true }).stems![0];
+  const mono = new Float32Array(stem.l.length);
+  for (let i = 0; i < mono.length; i++) mono[i] = (stem.l[i] + stem.r[i]) * 0.5;
+  const features = analyzeNote(mono, sr, { start: 0, stop: 0.8, noteOff: 0.5, midi: 84 });
+  assert.ok(features.centsOff !== null && Math.abs(features.centsOff) < 5, `cents ${features.centsOff}`);
+  assert.equal(features.artifacts.clicks, 0);
 });
 
 test('json schema has bpm and master', () => {

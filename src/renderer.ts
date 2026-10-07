@@ -1,5 +1,5 @@
 import { measureLoudness } from './analysis/loudness.js';
-import { createEngine, type Engine } from './engines/acoustic.js';
+import { createEngine, isAcousticEngine, type Engine } from './engines/acoustic.js';
 import {
   Ducker,
   FdnReverb,
@@ -220,7 +220,9 @@ function activityBounds(
     t1 = Math.max(t1, c.at + clipLengthSec(c, clipAudio?.[c.src]));
   }
   if (!any || !Number.isFinite(t0)) return [0, 0];
-  const releaseSec = (track.release ?? 0) / 1000;
+  // Acoustic engines sustain into setRelease (default 180 ms). The window has to
+  // include that tail, or a held organ is cut while it is still loud.
+  const releaseSec = (track.release ?? (isAcousticEngine(track.engine) ? 180 : 0)) / 1000;
   const start = Math.max(0, Math.floor(t0 * sampleRate) - 1);
   const end = Math.min(numSamples, Math.ceil((t1 + releaseSec + 0.05) * sampleRate));
   return [start, Math.max(start, end)];
@@ -267,13 +269,12 @@ function renderTrackDry(
   const wantPan = staticPan !== 0 || lfoPan || !!autoPan;
 
   const voiceSeed = placed.seed ?? hashSeed(score.seed, trackIndex);
-  const acoustic = placed.engine === 'pluck' || placed.engine === 'marimba' || placed.engine === 'epiano';
   const sampler = createTrackSampler(points, defaultLightness);
   let voice: Voice | null = null;
   let poly: { sampler: ReturnType<typeof createTrackSampler>; eng: Engine }[] | null = null;
 
-  if (acoustic && ((placed.notes?.length ?? 0) > 0 || (placed.points?.length ?? 0) > 0)) {
-    const engineName = placed.engine as 'pluck' | 'marimba' | 'epiano';
+  if (isAcousticEngine(placed.engine) && ((placed.notes?.length ?? 0) > 0 || (placed.points?.length ?? 0) > 0)) {
+    const engineName = placed.engine;
     poly = (placed.notes ?? []).map((n, i) => {
       const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed + i + 1);
       eng.setRelease(placed.release ?? 180);

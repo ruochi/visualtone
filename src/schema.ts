@@ -212,7 +212,7 @@ export const SfxEventSchema = z.object({
   y: z.number().optional(),
 });
 
-export const EngineSchema = z.enum(['wavetable', 'pluck', 'marimba', 'epiano']);
+export const EngineSchema = z.enum(['wavetable', 'pluck', 'marimba', 'epiano', 'organ']);
 export const RoleSchema = z.enum(['voice', 'sfx', 'music']);
 
 const TrackSchemaBase = z.object({
@@ -220,7 +220,7 @@ const TrackSchemaBase = z.object({
   hue: z.number().min(0).max(360).optional().describe('Hue in degrees (0-360) mapping to timbre family'),
   channel: ChannelSchema.default(0).describe('Output channel index or stereo pair [0,1]'),
   role: RoleSchema.optional().describe('voice, sfx, or music. Analysis prefers this over the track id'),
-  engine: EngineSchema.optional().describe('Default wavetable. pluck, marimba and epiano are polyphonic'),
+  engine: EngineSchema.optional().describe('Default wavetable. pluck, marimba, epiano and organ are polyphonic. marimba hue selects marimba, xylophone, vibraphone or glockenspiel'),
   lightness: z.number().min(0).max(1).default(0.5),
   saturation: z.number().min(0).max(1).default(1).optional(),
   pan: z.number().min(-1).max(1).optional().describe('Static pan, -1 left to 1 right. 0 is center'),
@@ -229,7 +229,7 @@ const TrackSchemaBase = z.object({
   space: z.number().min(0).max(1).optional().describe('Hall reverb send 0-1'),
   room: z.number().min(0).max(1).optional().describe('Short room send 0-1'),
   echo: z.number().min(0).max(1).optional().describe('Delay send 0-1'),
-  release: z.number().min(0).optional().describe('Tail after the note, milliseconds. 0 keeps the hard cut'),
+  release: z.number().min(0).optional().describe('Extra tail after the note, milliseconds. 0 keeps only the short de-click fade'),
   chorus: ChorusSchema.optional(),
   duck: DuckSchema.optional(),
   timbre: TimbreOverrideSchema.optional(),

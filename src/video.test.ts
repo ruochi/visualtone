@@ -272,8 +272,8 @@ test('sfx names expand to sounding tracks', () => {
   }
 });
 
-test('pluck, marimba and epiano overlap instead of cutting the previous note', () => {
-  for (const engine of ['pluck', 'marimba', 'epiano'] as const) {
+test('pluck, marimba, epiano and organ overlap instead of cutting the previous note', () => {
+  for (const engine of ['pluck', 'marimba', 'epiano', 'organ'] as const) {
     const score = ScoreSchema.parse({
       sampleRate: 22050,
       duration: 0.5,
