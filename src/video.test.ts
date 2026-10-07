@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { analyze } from './analysis/index.js';
+import { BANDS, spectrogram } from './analysis/stft.js';
 import { readWavFile, writeWavFile } from './wav.js';
 import { render } from './renderer.js';
 import { mix } from './segments.js';
 import { expandSfx } from './sfx.js';
 import { ScoreSchema } from './schema.js';
+import { BandDuck } from './mix.js';
 import { chord, parseAt, parsePitch, pattern } from './units.js';
 import { resampleBuffer } from './resample.js';
 import { hashSeed } from './timbre.js';
@@ -331,4 +333,132 @@ test('master.lufs lands near the target', () => {
   const rendered = render(score);
   const lufs = analyze({ buffers: rendered.buffers, sampleRate: rendered.sampleRate }).report.loudness.integratedLufs;
   assert.ok(Math.abs(lufs + 20) < 1.5, `lufs ${lufs}`);
+  assert.ok(Math.abs(rendered.master.loudnessDb - lufs) < 0.05, `reported ${rendered.master.loudnessDb} measured ${lufs}`);
+});
+
+/** Steady-state amplitude ratio of a sine through BandDuck. */
+function steadyGain(freq: number, g: number, sr = 48000): number {
+  const duck = new BandDuck(sr, [1000, 4000]);
+  const n = sr;
+  const skip = Math.floor(0.2 * sr);
+  let inSum = 0;
+  let outSum = 0;
+  for (let i = 0; i < n; i++) {
+    const x = Math.sin((2 * Math.PI * freq * i) / sr);
+    const [y] = duck.process(x, x, g);
+    if (i >= skip) {
+      inSum += x * x;
+      outSum += y * y;
+    }
+  }
+  return Math.sqrt(outSum / inSum);
+}
+
+test('band duck center gain equals g and deeper duck cuts more', () => {
+  const open = steadyGain(2000, 1);
+  const mid = steadyGain(2000, 0.6);
+  const shallow = steadyGain(2000, 0.4);
+  const full = steadyGain(2000, 0);
+  assert.ok(Math.abs(open - 1) < 0.02, `g=1 ${open}`);
+  assert.ok(Math.abs(mid - 0.6) < 0.05, `g=0.6 ${mid}`);
+  assert.ok(full < 0.02, `g=0 ${full}`);
+  assert.ok(full < shallow && shallow < mid && mid < open, `gains ${full} ${shallow} ${mid} ${open}`);
+  assert.ok(steadyGain(100, 0) > 0.7, `100 Hz ${steadyGain(100, 0)}`);
+});
+
+test('rendered band duck at 2 kHz follows the sidechain amount', () => {
+  const sr = 48000;
+  const n = Math.floor(0.5 * sr);
+  const bed = new Float32Array(n);
+  for (let i = 0; i < n; i++) bed[i] = Math.sin((2 * Math.PI * 2000 * i) / sr);
+  const voice = new Float32Array(n).fill(0.5);
+  const rms = (buf: Float32Array) => {
+    const a = Math.floor(0.2 * sr);
+    let s = 0;
+    for (let i = a; i < buf.length; i++) s += buf[i] * buf[i];
+    return Math.sqrt(s / (buf.length - a));
+  };
+  const renderBed = (amount: number) => {
+    const score = ScoreSchema.parse({
+      sampleRate: sr,
+      duration: 0.5,
+      seed: 1,
+      master: { loudness: -20, drive: 0 },
+      tracks: [
+        {
+          id: 'bed',
+          role: 'music',
+          channel: 0,
+          duck: { by: 'voice', amount, band: [1000, 4000] },
+          clip: { src: 'bed.wav', at: 0, gain: 1 },
+        },
+        { id: 'voice', role: 'voice', channel: 0, clip: { src: 'voice.wav', at: 0, gain: 1 } },
+      ],
+    });
+    const stem = render(score, {
+      stems: true,
+      clips: {
+        'bed.wav': { sampleRate: sr, buffers: [bed] },
+        'voice.wav': { sampleRate: sr, buffers: [voice] },
+      },
+    }).stems!.find((s) => s.id === 'bed')!;
+    return rms(stem.l);
+  };
+  const dry = rms(bed);
+  const full = renderBed(1);
+  const partial = renderBed(0.6);
+  assert.ok(full / dry < 0.05, `amount 1 ratio ${full / dry}`);
+  assert.ok(Math.abs(partial / dry - 0.4) < 0.08, `amount 0.6 ratio ${partial / dry}`);
+  assert.ok(full < partial, `full ${full} partial ${partial}`);
+});
+
+test('voiceover-bed band shares count music only and name real tracks', () => {
+  const sr = 22050;
+  const n = Math.floor(sr * 1.2);
+  const voice = new Float32Array(n);
+  const bed = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    voice[i] = Math.sin((2 * Math.PI * 3000 * i) / sr);
+    bed[i] = Math.sin((2 * Math.PI * 100 * i) / sr);
+  }
+  const mixL = new Float32Array(n);
+  for (let i = 0; i < n; i++) mixL[i] = voice[i] + bed[i];
+  const share = (buf: Float32Array, name: string) => {
+    const spec = spectrogram(buf, sr, 4096, 512, 64);
+    const total = spec.bandPower.reduce((s, v) => s + v, 0) || 1;
+    const i = BANDS.findIndex((b) => b.name === name);
+    return spec.bandPower[i] / total;
+  };
+  const score = ScoreSchema.parse({
+    sampleRate: sr,
+    duration: n / sr,
+    tracks: [
+      { id: 'voice', role: 'voice', hue: 260, channel: 0, notes: [{ t: 0, y: 72, size: 0.4, duration: 0.2 }] },
+      { id: 'bed', role: 'music', hue: 210, channel: 0, notes: [{ t: 0, y: 43, size: 0.4, duration: 0.2 }] },
+    ],
+  });
+  const report = analyze({
+    buffers: [mixL],
+    sampleRate: sr,
+    stems: [
+      { id: 'voice', l: voice, r: voice },
+      { id: 'bed', l: bed, r: bed },
+    ],
+    score,
+    profile: 'voiceover-bed',
+  }).report;
+  const bass = report.bands.find((b) => b.name === 'bass')!.share;
+  const musicBass = share(bed, 'bass');
+  const mixBass = share(mixL, 'bass');
+  assert.ok(Math.abs(bass - musicBass) < 0.02, `reported ${bass} music ${musicBass}`);
+  assert.ok(mixBass < musicBass - 0.15, `mix ${mixBass} music ${musicBass}`);
+  const bandFindings = report.findings.filter((f) => f.id.startsWith('band.'));
+  assert.ok(bandFindings.length > 0);
+  for (const f of bandFindings) {
+    assert.match(f.suggestion, /bed/);
+    assert.doesNotMatch(f.suggestion, /stab|hat|hook/);
+  }
+  const presence = bandFindings.find((f) => f.id === 'band.presence');
+  assert.ok(presence);
+  assert.match(presence.suggestion, /不要加 highShelf/);
 });

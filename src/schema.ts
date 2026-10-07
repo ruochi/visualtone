@@ -40,7 +40,7 @@ export const DuckSchema = z.object({
   band: z
     .tuple([z.number().positive(), z.number().positive()])
     .optional()
-    .describe('Duck only this Hz range (dynamic EQ). Omit to duck the whole signal'),
+    .describe('Duck only this Hz range: out = x − (1−g)·bandpass(x). Omit to duck the whole signal'),
 });
 
 export const EqSchema = z.object({

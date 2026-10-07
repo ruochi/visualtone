@@ -350,6 +350,7 @@ console.log('Track report:', result.eventReport);
     gainReductionDb: number;    // 轨道压缩最大增益衰减
   }>;
   master: { peak: number; loudnessDb: number; gainReductionDb: number; limiterReductionDb: number };
+  // loudnessDb：设了 master.lufs 时是实测 LUFS，否则是左声道 RMS dBFS
   wav: Buffer;                  // WAV 文件数据
   stems?: { id: string; l: Float32Array; r: Float32Array }[];
   inputs?: { src: string; sha256: string; sampleRate: number; channels: number; frames: number }[];

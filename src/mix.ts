@@ -1,6 +1,6 @@
 /** Per-track channel strip: RBJ biquad EQ, stereo-linked compressor, LFO shapes. */
 
-export type BiquadType = 'highpass' | 'lowpass' | 'lowshelf' | 'highshelf' | 'peak';
+export type BiquadType = 'highpass' | 'lowpass' | 'lowshelf' | 'highshelf' | 'peak' | 'bandpass';
 
 export class Biquad {
   private b0 = 1;
@@ -25,6 +25,15 @@ export class Biquad {
       b1 = type === 'highpass' ? -(1 + cos) : 1 - cos;
       b0 = (1 - sign * cos) / 2;
       b2 = b0;
+      a0 = 1 + alpha;
+      a1 = -2 * cos;
+      a2 = 1 - alpha;
+    } else if (type === 'bandpass') {
+      // RBJ constant 0 dB peak gain. Center gain is 1, phase is 0.
+      const alpha = sin / (2 * q);
+      b0 = alpha;
+      b1 = 0;
+      b2 = -alpha;
       a0 = 1 + alpha;
       a1 = -2 * cos;
       a2 = 1 - alpha;
@@ -67,6 +76,30 @@ export class Biquad {
     this.z1 = this.b1 * x - this.a1 * y + this.z2;
     this.z2 = this.b2 * x - this.a2 * y;
     return y;
+  }
+}
+
+/**
+ * Duck one band: `out = x − (1−g)·bandpass(x)`.
+ * The bandpass peaks at 0 dB, so the center gain equals `g`. `g = 1` is dry.
+ * f0 = √(f1·f2), Q = f0/(f2−f1).
+ */
+export class BandDuck {
+  private readonly bpL: Biquad;
+  private readonly bpR: Biquad;
+
+  constructor(sampleRate: number, band: [number, number]) {
+    const f1 = Math.min(band[0], band[1]);
+    const f2 = Math.max(band[0], band[1]);
+    const f0 = Math.sqrt(Math.max(f1, 1) * Math.max(f2, 1));
+    const q = f0 / Math.max(1, f2 - f1);
+    this.bpL = new Biquad('bandpass', sampleRate, f0, q);
+    this.bpR = new Biquad('bandpass', sampleRate, f0, q);
+  }
+
+  process(l: number, r: number, g: number): [number, number] {
+    const wet = 1 - g;
+    return [l - wet * this.bpL.process(l), r - wet * this.bpR.process(r)];
   }
 }
 

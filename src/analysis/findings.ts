@@ -112,7 +112,9 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
       value: report.loudness.integratedLufs,
       target: `${profile.lufs[0]}..${profile.lufs[1]} LUFS`,
       message: `积分响度 ${report.loudness.integratedLufs.toFixed(1)} LUFS，不在 ${profile.name} 的范围内`,
-      suggestion: `把 master.loudness 调到 ${profile.lufs[0]} 和 ${profile.lufs[1]} 之间`,
+      suggestion: profile.voiceover
+        ? `把 master.lufs 调到 ${profile.lufs[0]} 和 ${profile.lufs[1]} 之间`
+        : `把 master.loudness 调到 ${profile.lufs[0]} 和 ${profile.lufs[1]} 之间`,
     });
   }
 
@@ -148,7 +150,7 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
         message: low
           ? `${band.name} 只占 ${(band.share * 100).toFixed(1)}%，低于 ${profile.name} 的 ${pct(range[0])}%`
           : `${band.name} 占 ${(band.share * 100).toFixed(1)}%，高于 ${profile.name} 的 ${pct(range[1])}%`,
-        suggestion: suggestionForBand(band.name, low),
+        suggestion: suggestionForBand(band.name, low, profile, score),
       });
     }
   }
@@ -279,9 +281,13 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
       message: low
         ? `150–500Hz 只占 ${(report.warmth * 100).toFixed(1)}%，中低频偏薄，不浑厚`
         : `150–500Hz 占 ${(report.warmth * 100).toFixed(1)}%，中低频偏糊`,
-      suggestion: low
-        ? '少挖 200–400Hz：底鼓和贝斯的 peaks 负增益收到 -1.5dB 以内，pad 的 lowCut 降到 160Hz 左右，并加一层长音 keys'
-        : '给 pad 加 eq.peaks 在 300Hz 处 -2dB，或降低 pad 的 size',
+      suggestion: profile.voiceover
+        ? low
+          ? `${bedLabel(score)} 的 150–500Hz 偏少。可以少挖这一段，不要去填 1–4 kHz`
+          : `给 ${bedLabel(score)} 加 eq.peaks 在 300Hz 处 -2dB，或降低它们的 size`
+        : low
+          ? '少挖 200–400Hz：底鼓和贝斯的 peaks 负增益收到 -1.5dB 以内，pad 的 lowCut 降到 160Hz 左右，并加一层长音 keys'
+          : '给 pad 加 eq.peaks 在 300Hz 处 -2dB，或降低 pad 的 size',
     });
   }
 
@@ -360,7 +366,20 @@ export function buildFindings(report: AnalysisReport, profile: Profile | undefin
   return out;
 }
 
-function suggestionForBand(name: string, low: boolean): string {
+function bedIds(score?: Score): string[] {
+  if (!score) return [];
+  const music = score.tracks.filter((t) => t.role === 'music').map((t) => t.id);
+  if (music.length) return music;
+  return score.tracks.filter((t) => t.role !== 'voice' && t.role !== 'sfx').map((t) => t.id);
+}
+
+function bedLabel(score?: Score): string {
+  const ids = bedIds(score);
+  return ids.length ? ids.join('、') : '音乐轨';
+}
+
+function suggestionForBand(name: string, low: boolean, profile?: Profile, score?: Score): string {
+  if (profile?.voiceover) return voiceoverBandSuggestion(name, low, score);
   if (name === 'presence' || name === 'air') {
     return low
       ? '降低 hat 的 eq.lowCut，给 stab 和 hook 加 highShelf（+3dB @ 6kHz 左右）；pad 的 highShelf 如果是负的就收回来'
@@ -374,6 +393,23 @@ function suggestionForBand(name: string, low: boolean): string {
   return low
     ? '中频偏少：提高 stab 或 hook 的 size，或把 pad 的 lowCut 降一点'
     : '中频糊：给 pad 加 eq.peaks 在 400–800Hz 处 -3dB，并把 pad 的 size 降下来';
+}
+
+function voiceoverBandSuggestion(name: string, low: boolean, score?: Score): string {
+  const who = bedLabel(score);
+  if (name === 'presence' || name === 'air') {
+    return low
+      ? `${who} 的高频偏少。不要加 highShelf 去填 2–6 kHz，那会占旁白的 1–4 kHz。空隙里如果发闷，用 automation.gain 只在没人声的段落抬一点`
+      : `给 ${who} 加 duck.band [1000, 4000]，或降低它们的 highShelf，把 1–4 kHz 让给旁白`;
+  }
+  if (name === 'sub' || name === 'bass') {
+    return low
+      ? `把 ${who} 的 size 抬一点补低频，不要去抬 1–4 kHz`
+      : `降低 ${who} 的 size，或给它们加负的 lowShelf，不要动旁白`;
+  }
+  return low
+    ? `${who} 的中频偏少。可以略抬它们的 size，不要去填 2–6 kHz`
+    : `给 ${who} 加 eq.peaks 在 400–800Hz 处 -3dB，或降低它们的 size，把 1–4 kHz 留给旁白`;
 }
 
 export function diffFindings(before: Finding[], after: Finding[]): { resolved: Finding[]; added: Finding[] } {

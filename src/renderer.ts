@@ -13,7 +13,7 @@ import {
 } from './fx.js';
 import { applyGroove } from './groove.js';
 import { createTrackSampler, getTrackDuration, prepareTrackPoints } from './interpolator.js';
-import { Biquad, Chorus, Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
+import { BandDuck, Chorus, Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
 import { expandNotes } from './notes.js';
 import { resampleChannels } from './resample.js';
 import { type Score, type Track, getChannelIndices, trackClips, type Clip } from './schema.js';
@@ -46,6 +46,7 @@ export interface RenderResult {
   }[];
   master: {
     peak: number;
+    /** RMS dBFS of the left bus. When `master.lufs` is set, this is the measured integrated LUFS. */
     loudnessDb: number;
     gainReductionDb: number;
     /** Deepest lookahead-limiter gain reduction (dB, positive). */
@@ -151,29 +152,6 @@ function inferDuration(score: Score, clips: RenderOptions['clips']): number {
     }
   });
   return duration;
-}
-
-class BandSplit {
-  private readonly lowL: Biquad;
-  private readonly lowR: Biquad;
-  private readonly highL: Biquad;
-  private readonly highR: Biquad;
-
-  constructor(sampleRate: number, band: [number, number]) {
-    this.lowL = new Biquad('lowpass', sampleRate, band[0]);
-    this.lowR = new Biquad('lowpass', sampleRate, band[0]);
-    this.highL = new Biquad('highpass', sampleRate, band[1]);
-    this.highR = new Biquad('highpass', sampleRate, band[1]);
-  }
-
-  /** Gain `g` on the band, dry outside it. g = 1 leaves the sample unchanged. */
-  process(l: number, r: number, g: number): [number, number] {
-    const lowL = this.lowL.process(l);
-    const lowR = this.lowR.process(r);
-    const highL = this.highL.process(l);
-    const highR = this.highR.process(r);
-    return [g * l + (1 - g) * (lowL + highL), g * r + (1 - g) * (lowR + highR)];
-  }
 }
 
 function placeClips(
@@ -503,10 +481,10 @@ export function render(scoreIn: Score, options: RenderOptions = {}): RenderResul
   }
 
   const duckers = new Map<string, Ducker>();
-  const bands = new Map<string, BandSplit>();
+  const bands = new Map<string, BandDuck>();
   for (const t of score.tracks) {
     duckers.set(t.id, new Ducker(sampleRate, { holdMs: t.duck?.holdMs, releaseMs: t.duck?.releaseMs }));
-    if (t.duck?.band) bands.set(t.id, new BandSplit(sampleRate, t.duck.band));
+    if (t.duck?.band) bands.set(t.id, new BandDuck(sampleRate, t.duck.band));
   }
 
   for (const tr of rendered) {
@@ -674,7 +652,10 @@ export function render(scoreIn: Score, options: RenderOptions = {}): RenderResul
   for (const b of buffers) {
     for (let i = 0; i < b.length; i++) masterPeak = Math.max(masterPeak, Math.abs(b[i]));
   }
-  const loudnessDb = measureRmsDb(buffers[0]);
+  const loudnessDb =
+    typeof masterCfg.lufs === 'number'
+      ? measureLoudness(buffers, sampleRate).integratedLufs
+      : measureRmsDb(buffers[0]);
 
   const eventReport: RenderResult['eventReport'] = rendered.map((tr) => {
     let peak = 0;

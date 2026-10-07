@@ -88,15 +88,29 @@ export function analyze(input: AnalyzeInput): Analysis {
   const masking = trackStems && trackStems.length > 0 ? analyzeMasking(trackStems, sampleRate) : undefined;
   const space = analyzeSpace(mono, sampleRate, rhythm.onsetTimes, input.stems);
   const dynamics = analyzeDynamics(trackStems, sampleRate);
-  const warmth = bandShare(mono, sampleRate, 150, 500);
-
-  const bandTotal = spec.bandPower.reduce((s, v) => s + v, 0) || 1;
-  const bands = BANDS.map((b, i) => ({ name: b.name, share: spec.bandPower[i] / bandTotal }));
 
   const profile = typeof input.profile === 'string' ? getProfile(input.profile) : input.profile;
   if (typeof input.profile === 'string' && !profile) {
     throw new Error(`Unknown profile "${input.profile}". Use deep-house, techno, pop-edm, ambient, or voiceover-bed.`);
   }
+
+  // voiceover-bed band shares describe the bed, not the voice sitting on top of it.
+  let bandMono = mono;
+  if (profile?.voiceover && trackStems) {
+    const music = trackStems.filter((s) => roleOf(input.score, s.id) === 'music');
+    if (music.length > 0) {
+      const buf = new Float32Array(music[0].l.length);
+      for (const stem of music) {
+        const n = Math.min(buf.length, stem.l.length, stem.r.length);
+        for (let i = 0; i < n; i++) buf[i] += (stem.l[i] + stem.r[i]) * 0.5;
+      }
+      bandMono = buf;
+    }
+  }
+  const bandSpec = bandMono === mono ? spec : spectrogram(bandMono, sampleRate, 4096, 512, 64);
+  const bandTotal = bandSpec.bandPower.reduce((s, v) => s + v, 0) || 1;
+  const bands = BANDS.map((b, i) => ({ name: b.name, share: bandSpec.bandPower[i] / bandTotal }));
+  const warmth = bandShare(bandMono, sampleRate, 150, 500);
 
   const report: AnalysisReport = {
     duration,

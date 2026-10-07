@@ -57,7 +57,7 @@ export { loadScoreFile } from './load-score.js';
 export { trackClips } from './schema.js';
 export { writeWavFile } from './wav.js';
 export type { BitDepth, WavOptions } from './wav.js';
-export { Biquad, StereoEq, Compressor, lfoValue, keyframeAt } from './mix.js';
+export { Biquad, BandDuck, StereoEq, Compressor, lfoValue, keyframeAt } from './mix.js';
 export type { EqConfig, CompConfig, LfoShape } from './mix.js';
 export { swingTime, applyGroove } from './groove.js';
 export { readWavFile } from './wav.js';
