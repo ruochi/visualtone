@@ -151,5 +151,14 @@ The way to hear a render without ears: render, analyze, read the PNG, edit the s
 
 What the pictures show: score curves (pitch vs time), log spectrogram, one row per stem, band shares, short-term LUFS, phase scatter, kick envelope, masking matrix, self-similarity + chroma, space (bus wet bars and the tail curve), dynamics (one dot per hit; a straight row is a mechanical part).
 
+## Timbre measurement
+
+For tuning one instrument, not a mix.
+
+- `npx visualtone timbre note.wav --midi 60 [--ref ref.wav] [--json out.json]` measures one note: f0 and cents, pitch stability, glide, vibrato; attack 10–90%, decay dB/s (overall, early, late), T60, release after `--note-off`; partials 1–16 in dB, slope dB/oct, odd/even, inharmonicity B (f_n = n·f0·√(1+B·n²)), HNR, spurious peaks off the partial series (aliasing), per-partial decay for 1–8; centroid, flatness, log-mel, MFCC; clicks, DC, NaN. A score input renders first; `--track id` picks a stem.
+- With `--ref`, `compareTimbre` scores each metric against a tolerance (error ≤ 1 passes) and turns the misses into findings, worst first. The reference must be a single note at the same pitch, 44.1 kHz or more.
+- `npx visualtone probe track.json [--pitches 36,48,60,72,84] [--sizes 0.3,0.6,0.9] [--note 1.5] [--tail 2] [--ref dir] [--wav probe.wav]` plays one track template over a pitch × size grid and measures the dry stem. Findings check habits most acoustic instruments share: in tune, louder and brighter with size, higher notes decay sooner, no clicks. Reference files are named `60.wav` or `60_0.9.wav`.
+- Library: `analyzeNote(buffer, sampleRate, { start, stop, noteOff, midi })`, `compareTimbre(ours, ref)`, `probeTrack(track, opts)`, `analyzeProbe(mono, sampleRate, cells)`.
+
 CLI: `npx visualtone render score.json -o out.wav`
 Schema: `npx visualtone schema`

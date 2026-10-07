@@ -6,6 +6,7 @@ import { loadScoreFile } from './load-score.js';
 import { render } from './renderer.js';
 import type { BitDepth } from './wav.js';
 import { runAnalyze, runDiff, runProfile } from './cli-listen.js';
+import { runProbe, runTimbre } from './cli-timbre.js';
 
 const args = process.argv.slice(2);
 
@@ -18,6 +19,8 @@ Usage:
   visualtone analyze <score.json|mix.wav> [--profile deep-house] [--json report.json] [--png report.png] [--panel name]
   visualtone diff a.report.json b.report.json
   visualtone profile <ref.wav> [more.wav ...] -o profile.json
+  visualtone timbre <note.wav|score.json> [--midi 60] [--ref ref.wav] [--json out.json]
+  visualtone probe <track.json|score.json> [--pitches 36,48,60,72,84] [--sizes 0.3,0.6,0.9] [--ref dir]
   visualtone schema
 
 Commands:
@@ -25,6 +28,8 @@ Commands:
   analyze    Measure a score or WAV and write a listening report
   diff       Compare two analysis reports
   profile    Build a target profile from reference WAVs
+  timbre     Measure one note (pitch, envelope, partials) and compare it with a reference
+  probe      Play one track over a pitch × size grid and measure every note
   schema     Print the JSON Schema for score files
 
 Options:
@@ -58,6 +63,17 @@ if (command === 'diff') {
 
 if (command === 'profile') {
   runProfile(args);
+  process.exit(0);
+}
+
+if (command === 'timbre' || command === 'probe') {
+  try {
+    if (command === 'timbre') runTimbre(args);
+    else runProbe(args);
+  } catch (error) {
+    console.error('Error:', error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
   process.exit(0);
 }
 
