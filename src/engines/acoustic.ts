@@ -386,15 +386,519 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
   };
 }
 
-export type AcousticEngine = 'pluck' | 'marimba' | 'epiano' | 'organ';
+/** Ideal circular-membrane modes, as multiples of the first Bessel zero. `order` is the angular index. */
+const DRUM_MODES: { ratio: number; order: number }[] = [
+  { ratio: 1, order: 0 },
+  { ratio: 1.593, order: 1 },
+  { ratio: 2.136, order: 2 },
+  { ratio: 2.295, order: 0 },
+  { ratio: 2.654, order: 3 },
+  { ratio: 2.917, order: 1 },
+  { ratio: 3.155, order: 4 },
+  { ratio: 3.5, order: 2 },
+  { ratio: 3.598, order: 0 },
+  { ratio: 4.059, order: 3 },
+  { ratio: 4.832, order: 1 },
+  { ratio: 5.54, order: 0 },
+  { ratio: 6.25, order: 2 },
+];
+
+interface DrumSpec {
+  /** Fundamental decay in seconds at 180 Hz. */
+  tau: number;
+  noise: number;
+  click: number;
+  /** Beater pitch drop, semitones, finished in about 30 ms. */
+  bend: number;
+}
+
+function drumSpec(hue: number): DrumSpec {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 45) return { tau: 0.18, noise: 0.08, click: 0.7, bend: 4 };
+  if (h < 140) return { tau: 0.42, noise: 0.015, click: 0.35, bend: 0 };
+  if (h < 230) return { tau: 0.22, noise: 0.28, click: 0.45, bend: 0 };
+  if (h < 310) return { tau: 0.55, noise: 0.03, click: 0.3, bend: 0 };
+  return { tau: 0.7, noise: 0.05, click: 0.25, bend: 0 };
+}
+
+/** Modal drum. Hue picks kick, tom, snare, conga, or frame drum. */
+export function createDrum(sampleRate: number, hue: number, seed: number): Engine {
+  const spec = drumSpec(hue);
+  const rng = mulberry32(seed || 1);
+  const n = DRUM_MODES.length;
+  const phases = new Array(n).fill(0);
+  const amps = new Array(n).fill(0);
+  const taus = new Array(n).fill(0.1);
+  let freq = 180;
+  let wasOn = false;
+  let alive = 0;
+  let releaseSec = 0.18;
+  let bendLeft = 0;
+  let bendTotal = 0;
+  let clickLeft = 0;
+  let clickAmp = 0;
+  let beaterLeft = 0;
+  let beaterTotal = 1;
+  let beaterMix = 0;
+  let beaterPole = 0.5;
+  let beaterLp = 0;
+  let nz = 0;
+  let nh = 0;
+  let noiseLeak = 0.82;
+  let strikeNow = 0.5;
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.04, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        freq = Math.max(30, midiToFrequency(midi));
+        const strike = Math.min(1, Math.max(0, size));
+        const center = Math.min(1, Math.max(0, lightness));
+        const pitchScale = Math.pow(freq / 180, 0.72);
+        for (let i = 0; i < n; i++) {
+          const mode = DRUM_MODES[i];
+          phases[i] = 0;
+          const fund = mode.ratio === 1;
+          // Overtones stay well under the fundamental, or the pitch tracker locks to a subharmonic.
+          const edge = mode.order === 0 ? 1 : 0.45 + (1 - center) * 0.7;
+          const over = fund ? 1 : (0.12 + strike * 0.16) * edge * Math.exp(-0.62 * (mode.ratio - 1));
+          amps[i] = size * over;
+          const hang = fund ? 1 : (0.18 + strike * 0.16) / Math.pow(mode.ratio, 0.35);
+          taus[i] = Math.max(0.008, (spec.tau * hang) / pitchScale);
+        }
+        bendTotal = spec.bend > 0 ? Math.round(0.018 * sampleRate) : 0;
+        bendLeft = bendTotal;
+        clickAmp = spec.click * Math.pow(strike, 1.55);
+        clickLeft = Math.round(0.004 * sampleRate);
+        beaterTotal = Math.max(1, Math.round((0.008 + strike * 0.032) * sampleRate));
+        beaterLeft = beaterTotal;
+        // A soft hit stays dark. Linear beater mix left the quiet note brighter than the loud one.
+        beaterMix = 0.03 + Math.pow(strike, 1.65) * 1.15;
+        strikeNow = strike;
+        noiseLeak = 0.97 - strike * 0.58;
+        const cut = 500 + strike * 11000 + (1 - center) * 1800;
+        beaterPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
+        beaterLp = 0;
+        alive = Math.ceil(sampleRate * 3);
+        nz = 0;
+        nh = 0;
+      }
+      if (!on && wasOn) {
+        const cap = releaseSec / 6;
+        for (let i = 0; i < n; i++) taus[i] = Math.min(taus[i], cap);
+      }
+      wasOn = on;
+      if (alive <= 0) return [0, 0];
+      alive--;
+
+      let f0 = freq;
+      if (bendLeft > 0 && bendTotal > 0) {
+        const e = bendLeft / bendTotal;
+        f0 *= Math.pow(2, (spec.bend * e * e) / 12);
+        bendLeft--;
+      }
+
+      let l = 0;
+      let r = 0;
+      let peakAmp = 0;
+      for (let i = 0; i < n; i++) {
+        const f = f0 * DRUM_MODES[i].ratio;
+        if (f >= sampleRate * 0.45) {
+          amps[i] = 0;
+          continue;
+        }
+        phases[i] += (2 * Math.PI * f) / sampleRate;
+        if (phases[i] > 2 * Math.PI) phases[i] -= 2 * Math.PI;
+        amps[i] *= Math.exp(-1 / (taus[i] * sampleRate));
+        peakAmp = Math.max(peakAmp, Math.abs(amps[i]));
+        const s = Math.sin(phases[i]) * amps[i];
+        const side = i % 2 === 0 ? 1.04 : 0.96;
+        l += s * side;
+        r += s * (2 - side);
+      }
+
+      const white = rng() * 2 - 1;
+      nh = white - nz + noiseLeak * nh;
+      nz = white;
+      if (clickLeft > 0) {
+        clickLeft--;
+        const c = white * clickAmp * (clickLeft / Math.max(1, 0.004 * sampleRate));
+        l += c;
+        r += c;
+      }
+      if (beaterLeft > 0) {
+        beaterLeft--;
+        const envB = beaterLeft / beaterTotal;
+        beaterLp = white * (1 - beaterPole) + beaterLp * beaterPole;
+        const b = beaterLp * envB * envB * beaterMix;
+        l += b;
+        r += b;
+      }
+      const buzz = nh * spec.noise * (0.28 + strikeNow * 1.25) * peakAmp * 0.9;
+      l += buzz;
+      r += buzz * 0.92;
+
+      if (peakAmp < 1e-5 && clickLeft <= 0) {
+        alive = 0;
+        return [0, 0];
+      }
+      return [l * 0.38, r * 0.38];
+    },
+  };
+}
+
+/**
+ * Blown bore. Hue below 180 is a flute (open pipe, all harmonics).
+ * From 180 it is a clarinet: half-period delay and a sign flip, so only odd harmonics.
+ * An odd saturation sits in the loop, so the zeros — and the pitch — stay on the delay.
+ */
+export function createWind(sampleRate: number, hue: number, seed: number): Engine {
+  const clarinet = ((hue % 360) + 360) % 360 >= 180;
+  const rng = mulberry32(seed || 1);
+  const buf = new Float32Array(4096);
+  let w = 0;
+  let prev = 0;
+  let delaySamp = 32;
+  let frac = 0;
+  let avg = 0.3;
+  let env = 0;
+  let wasOn = false;
+  let releaseSec = 0.18;
+  let attackCoeff = 0.02;
+  let releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+  let nz = 0;
+  let noisePole = 0.5;
+  let strike = 0.5;
+  let jet = 1.4;
+  let even = 0;
+  let sqAvg = 0;
+  let alive = 0;
+  let smoothPole = 0.5;
+  const smooth = [0, 0, 0, 0];
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.02, ms / 1000);
+      releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        const freq = Math.min(sampleRate * 0.2, Math.max(50, midiToFrequency(midi)));
+        const period = sampleRate / freq;
+        strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        avg = Math.min(0.72, Math.max(0.04, 0.52 - strike * 0.38 - (light - 0.5) * 0.1));
+        // A hard, short clarinet overblows to the twelfth. Extra loop loss keeps the written note.
+        if (clarinet) avg = Math.min(0.7, Math.max(avg, Math.min(0.62, 28 / period)));
+        const cos0 = Math.cos((2 * Math.PI) / period);
+        const b0 = 1 - avg;
+        const b1 = avg;
+        const avgDelay = (b1 * (b1 + b0 * cos0)) / (b0 * b0 + b1 * b1 + 2 * b0 * b1 * cos0);
+        const loop = clarinet ? period / 2 : period;
+        // A hard jet on a long clarinet bore sounds sharp. Lengthen that loop a little.
+        const lowTube = clarinet ? Math.max(0, Math.min(1, (period - 400) / 350)) : 0;
+        const pull = 1 + strike * strike * 0.0021 * lowTube;
+        delaySamp = Math.max(2, loop * pull - avgDelay);
+        frac = delaySamp - Math.floor(delaySamp);
+        buf.fill(0);
+        w = 0;
+        prev = 0;
+        sqAvg = 0;
+        const seeded = buf.length;
+        for (let i = 0; i < seeded; i++) buf[i] = Math.sin((2 * Math.PI * i) / period) * 0.25;
+        // Heavy saturation on a long flute pulls the pitch flat and grows a sharp edge.
+        jet = (clarinet ? 1.12 : 1.15) + strike * (clarinet ? 0.22 : 0.4);
+        even = clarinet ? 0 : 0.04 + strike * 0.05;
+        noisePole = Math.exp((-2 * Math.PI * (450 + strike * 1800 + light * 300)) / sampleRate);
+        nz = 0;
+        const cut = 900 + strike * 1600 + (clarinet ? 250 : 0);
+        smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
+        smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
+        attackCoeff = Math.exp(-1 / ((clarinet ? 0.016 : 0.04) * sampleRate));
+        releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+        env = 0;
+        alive = Math.ceil(sampleRate * 3);
+      }
+      wasOn = on;
+      if (alive <= 0 && env < 1e-5) return [0, 0];
+
+      const dest = on ? size : 0;
+      env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      if (!on && env < 1e-5) {
+        alive = 0;
+        return [0, 0];
+      }
+
+      const L = buf.length;
+      const age0 = Math.max(1, Math.floor(delaySamp));
+      const i0 = (w - age0 + L * 4) % L;
+      const i1 = (w - age0 - 1 + L * 4) % L;
+      const delayed = buf[i0] * (1 - frac) + buf[i1] * frac;
+      const filtered = (1 - avg) * delayed + avg * prev;
+      prev = delayed;
+
+      const white = rng() * 2 - 1;
+      nz = white * (1 - noisePole) + nz * noisePole;
+      const breath = nz * env * 0.0012;
+
+      const shaped = Math.tanh(jet * filtered);
+      const sq = shaped * shaped;
+      sqAvg = sqAvg * 0.999 + sq * 0.001;
+      let flow = shaped + even * (sq - sqAvg);
+      if (flow > 1.8) flow = 1.8;
+      if (flow < -1.8) flow = -1.8;
+      const reflected = (clarinet ? -flow : flow) * 1.02;
+      buf[w] = reflected + breath;
+      w = (w + 1) % L;
+
+      let out = filtered;
+      const a = 1 - smoothPole;
+      for (let i = 0; i < 4; i++) {
+        smooth[i] = out * a + smooth[i] * smoothPole;
+        out = smooth[i];
+      }
+      out *= env * 0.9;
+      const air = nz * env * (0.008 + strike * 0.02);
+      return [out + air, out + air * 0.9];
+    },
+  };
+}
+
+interface BowSpec {
+  dark: number;
+  attackSec: number;
+  bodyHz: number;
+}
+
+function bowSpec(hue: number): BowSpec {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 120) return { dark: 0, attackSec: 0.028, bodyHz: 290 };
+  if (h < 240) return { dark: 0.15, attackSec: 0.04, bodyHz: 210 };
+  return { dark: 0.34, attackSec: 0.055, bodyHz: 125 };
+}
+
+/** Helmholtz motion: harmonic partials of a bowed string. Hue picks violin, viola, or cello. */
+export function createBow(sampleRate: number, hue: number, seed: number): Engine {
+  const spec = bowSpec(hue);
+  const rng = mulberry32(seed || 1);
+  const N = 28;
+  const phases = new Float64Array(N);
+  const gains = new Float64Array(N);
+  let freq = 440;
+  let env = 0;
+  let wasOn = false;
+  let releaseSec = 0.18;
+  const attackCoeff = Math.exp(-1 / (spec.attackSec * sampleRate));
+  let nz = 0;
+  let noisePole = 0.8;
+  let noiseAmp = 0.02;
+  const bodyW = (2 * Math.PI * spec.bodyHz) / sampleRate;
+  const bodyAlpha = Math.sin(bodyW) / 8;
+  const bodyA0 = 1 + bodyAlpha;
+  const bodyB0 = bodyAlpha / bodyA0;
+  const bodyB2 = -bodyAlpha / bodyA0;
+  const bodyA1 = (-2 * Math.cos(bodyW)) / bodyA0;
+  const bodyA2 = (1 - bodyAlpha) / bodyA0;
+  let bz1 = 0;
+  let bz2 = 0;
+  let smoothPole = 0.5;
+  const smooth = [0, 0, 0, 0];
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.02, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        freq = Math.min(sampleRate * 0.22, Math.max(40, midiToFrequency(midi)));
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        // A 1/n saw's flyback trips the click detector. An exponential slope stays rounded.
+        const tilt = Math.max(0.12, spec.dark * 0.4 + 0.66 - strike * 0.5 - (light - 0.5) * 0.08);
+        const cut = Math.max(280, 480 + strike * 1500 - spec.dark * 220 + (light - 0.5) * 160);
+        smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
+        smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
+        let energy = 0;
+        for (let n = 1; n <= N; n++) {
+          const f = freq * n;
+          const g = f >= sampleRate * 0.45 ? 0 : Math.exp(-tilt * (n - 1));
+          gains[n - 1] = g;
+          energy += g * g;
+          phases[n - 1] = 0;
+        }
+        const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
+        for (let n = 0; n < N; n++) gains[n] *= norm;
+        nz = 0;
+        noisePole = Math.exp((-2 * Math.PI * (350 + strike * 2800)) / sampleRate);
+        noiseAmp = 0.01 + strike * 0.045;
+        bz1 = 0;
+        bz2 = 0;
+        env = 0;
+      }
+      wasOn = on;
+      if (!on && env < 1e-5) return [0, 0];
+      const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+      const dest = on ? size : 0;
+      env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+
+      let s = 0;
+      for (let n = 0; n < N; n++) {
+        if (gains[n] === 0) continue;
+        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
+        s += Math.sin(phases[n]) * gains[n];
+      }
+      const white = rng() * 2 - 1;
+      nz = white * (1 - noisePole) + nz * noisePole;
+      let bowed = s + nz * noiseAmp;
+      const a = 1 - smoothPole;
+      for (let i = 0; i < 4; i++) {
+        smooth[i] = bowed * a + smooth[i] * smoothPole;
+        bowed = smooth[i];
+      }
+      const body = bodyB0 * bowed + bz1;
+      bz1 = -bodyA1 * body + bz2;
+      bz2 = bodyB2 * bowed - bodyA2 * body;
+      const out = (bowed + body * 0.16) * env * 0.55;
+      return [out * 1.03, out * 0.97];
+    },
+  };
+}
+
+/** Struck string. Partials follow f·n·√(1+B·n²), and higher notes and partials die sooner. Hue darkens the hammer. */
+export function createPiano(sampleRate: number, hue: number, seed: number): Engine {
+  const dark = ((hue % 360) + 360) % 360 / 360;
+  const rng = mulberry32(seed || 1);
+  const N = 24;
+  const phases = new Float64Array(N);
+  const phases2 = new Float64Array(N);
+  const amps = new Float64Array(N);
+  const taus = new Float64Array(N);
+  const partialHz = new Float64Array(N);
+  let wasOn = false;
+  let alive = 0;
+  let releaseSec = 0.18;
+  let hammerLeft = 0;
+  let hammerTotal = 1;
+  let hammerMix = 0;
+  let hammerPole = 0.5;
+  let hammerLp = 0;
+  let attack = 0;
+  let attackInc = 1;
+  const detune = Math.pow(2, 0.7 / 1200);
+  const stiffness = 0.00004 * (0.55 + dark);
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.04, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        const freq = Math.min(sampleRate * 0.2, Math.max(27, midiToFrequency(midi)));
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        const slope = Math.max(0.16, 0.64 + dark * 0.28 - strike * 0.3 - (light - 0.5) * 0.08);
+        const pitchScale = Math.pow(freq / 220, 0.82);
+        const hang = 0.3 + strike * 1.2;
+        let energy = 0;
+        const raw = new Float64Array(N);
+        for (let i = 0; i < N; i++) {
+          const n = i + 1;
+          const fn = n * freq * Math.sqrt(1 + stiffness * n * n);
+          partialHz[i] = fn;
+          raw[i] = fn >= sampleRate * 0.45 ? 0 : Math.exp(-slope * (n - 1));
+          energy += raw[i] * raw[i];
+        }
+        const norm = energy > 1e-12 ? size / Math.sqrt(energy) : 0;
+        for (let i = 0; i < N; i++) {
+          const n = i + 1;
+          amps[i] = raw[i] * norm;
+          const hold = n === 1 ? 1 : hang;
+          taus[i] = Math.max(0.03, (2.4 * hold) / (pitchScale * Math.pow(n, 0.9)));
+          phases[i] = 0;
+          phases2[i] = 0.15;
+        }
+        hammerTotal = Math.max(1, Math.round((0.004 + strike * 0.007) * sampleRate));
+        hammerLeft = hammerTotal;
+        hammerMix = Math.pow(strike, 1.5) * 0.28;
+        const cut = 400 + strike * 5500 + (1 - light) * 800;
+        hammerPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
+        hammerLp = 0;
+        attack = 0;
+        attackInc = 1 / Math.max(1, 0.012 * sampleRate);
+        alive = Math.ceil(sampleRate * 6);
+      }
+      if (!on && wasOn) {
+        const cap = releaseSec / 6;
+        for (let i = 0; i < N; i++) taus[i] = Math.min(taus[i], cap);
+      }
+      wasOn = on;
+      if (alive <= 0) return [0, 0];
+      alive--;
+
+      let mix = 0;
+      let peakAmp = 0;
+      for (let i = 0; i < N; i++) {
+        const fn = partialHz[i];
+        if (fn <= 0 || fn >= sampleRate * 0.45) {
+          amps[i] = 0;
+          continue;
+        }
+        const step = (2 * Math.PI * fn) / sampleRate;
+        phases[i] += step;
+        phases2[i] += step * detune;
+        if (phases[i] > Math.PI * 2) phases[i] -= Math.PI * 2;
+        if (phases2[i] > Math.PI * 2) phases2[i] -= Math.PI * 2;
+        amps[i] *= Math.exp(-1 / (taus[i] * sampleRate));
+        peakAmp = Math.max(peakAmp, Math.abs(amps[i]));
+        mix += Math.sin(phases[i]) * amps[i] + Math.sin(phases2[i]) * amps[i] * 0.7;
+      }
+      if (hammerLeft > 0) {
+        hammerLeft--;
+        const white = rng() * 2 - 1;
+        const envB = hammerLeft / hammerTotal;
+        hammerLp = white * (1 - hammerPole) + hammerLp * hammerPole;
+        mix += hammerLp * envB * envB * hammerMix;
+      }
+      mix *= attack;
+      attack = Math.min(1, attack + attackInc);
+      if (peakAmp < 1e-5 && hammerLeft <= 0) {
+        alive = 0;
+        return [0, 0];
+      }
+      return [mix * 0.34, mix * 0.34];
+    },
+  };
+}
+
+export type AcousticEngine = 'pluck' | 'marimba' | 'epiano' | 'organ' | 'drum' | 'wind' | 'bow' | 'piano';
 
 export function isAcousticEngine(name: string | undefined): name is AcousticEngine {
-  return name === 'pluck' || name === 'marimba' || name === 'epiano' || name === 'organ';
+  return (
+    name === 'pluck' ||
+    name === 'marimba' ||
+    name === 'epiano' ||
+    name === 'organ' ||
+    name === 'drum' ||
+    name === 'wind' ||
+    name === 'bow' ||
+    name === 'piano'
+  );
 }
 
 export function createEngine(name: AcousticEngine, sampleRate: number, hue: number, seed: number): Engine {
   if (name === 'pluck') return createPluck(sampleRate, hue, seed);
   if (name === 'marimba') return createMarimba(sampleRate, hue, seed);
   if (name === 'organ') return createOrgan(sampleRate, hue, seed);
+  if (name === 'drum') return createDrum(sampleRate, hue, seed);
+  if (name === 'wind') return createWind(sampleRate, hue, seed);
+  if (name === 'bow') return createBow(sampleRate, hue, seed);
+  if (name === 'piano') return createPiano(sampleRate, hue, seed);
   return createEpiano(sampleRate, hue, seed);
 }

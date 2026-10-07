@@ -228,6 +228,58 @@ test('organ stays in tune, gets louder and brighter with size, and does not clic
   );
 });
 
+test('drum, wind, bow, and piano stay in tune and get brighter', () => {
+  const sr = 48000;
+  const cases = [
+    { engine: 'drum', hue: 80 },
+    { engine: 'wind', hue: 40 },
+    { engine: 'wind', hue: 220 },
+    { engine: 'bow', hue: 40 },
+    { engine: 'piano', hue: 30 },
+  ] as const;
+  const measure = (engine: string, hue: number, midi: number, size: number) => {
+    const score = ScoreSchema.parse({
+      sampleRate: sr,
+      duration: 1.15,
+      seed: 3,
+      master: { loudness: -18, drive: 0 },
+      tracks: [
+        {
+          id: engine,
+          hue,
+          engine,
+          channel: [0, 1],
+          notes: [{ t: 0.05, y: midi, size, duration: 0.7, ease: 'hold' }],
+        },
+      ],
+    });
+    const stem = render(score, { stems: true }).stems![0];
+    const mono = new Float32Array(stem.l.length);
+    for (let i = 0; i < mono.length; i++) mono[i] = (stem.l[i] + stem.r[i]) * 0.5;
+    return analyzeNote(mono, sr, { start: 0, stop: 1.15, noteOff: 0.75, midi });
+  };
+  for (const c of cases) {
+    const soft = measure(c.engine, c.hue, 60, 0.3);
+    const hard = measure(c.engine, c.hue, 60, 0.9);
+    assert.ok(hard.centsOff !== null && Math.abs(hard.centsOff) < 8, `${c.engine}@${c.hue} cents ${hard.centsOff}`);
+    assert.equal(hard.artifacts.clicks, 0, `${c.engine}@${c.hue} clicks`);
+    assert.equal(soft.artifacts.clicks, 0, `${c.engine}@${c.hue} soft clicks`);
+    assert.ok(hard.envelope.peakDb - soft.envelope.peakDb > 3, `${c.engine} level`);
+    assert.ok(
+      soft.spectrum.centroidHz > 0 && Math.log2(hard.spectrum.centroidHz / soft.spectrum.centroidHz) > 0.1,
+      `${c.engine}@${c.hue} centroid ${soft.spectrum.centroidHz.toFixed(0)} -> ${hard.spectrum.centroidHz.toFixed(0)}`,
+    );
+  }
+  const low = measure('piano', 30, 48, 0.6);
+  const high = measure('piano', 30, 84, 0.6);
+  assert.ok(
+    low.envelope.decayDbPerSec !== null &&
+      high.envelope.decayDbPerSec !== null &&
+      high.envelope.decayDbPerSec > low.envelope.decayDbPerSec,
+    `piano decay ${low.envelope.decayDbPerSec} -> ${high.envelope.decayDbPerSec}`,
+  );
+});
+
 test('pluck stays in tune at C6', () => {
   const sr = 48000;
   const score = ScoreSchema.parse({

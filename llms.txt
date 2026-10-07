@@ -125,9 +125,17 @@ With `bpm` (and optional `meter`, default `[4, 4]`): point/note `at: "4:2"` (bar
 
 ## Acoustic engines
 
-`engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal bar) | `epiano` (FM) | `organ` (drawbar additive). The acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring.
+`engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal bar) | `epiano` (FM) | `organ` (drawbar additive) | `drum` (modal membrane) | `wind` (flute or clarinet bore) | `bow` (bowed string) | `piano` (struck string). The acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring.
 
 `pluck` is a Karplus–Strong string with a fractional delay. The loop length compensates the averaging filter and the dispersion allpass, so high notes stay in tune. `size` moves the pluck toward the bridge (brighter); hue darkens the excitation; `lightness` lengthens the ring. A light body resonance sits at 118 Hz.
+
+`drum` is a circular membrane: mode ratios are the Bessel zeros. Hue 0°–44° kick (a short beater pitch drop), 45°–139° tom, 140°–229° snare (membrane plus snare noise), 230°–309° conga, 310°–360° frame drum. Higher pitches decay faster. `size` excites the upper modes and the beater; a soft hit stays dark. `lightness` near 1 is a center strike.
+
+`wind` is a blown bore. Hue 0°–179° is a flute: open pipe, one-period delay, a little even-harmonic jet. Hue 180°–360° is a clarinet: closed pipe, half-period delay and a sign flip, so the tone is mostly odd harmonics. An odd saturation feeds the loop, and the zero crossings stay on the delay, so the pitch stays on the note. `size` raises the breath and opens the loop filter.
+
+`bow` is Helmholtz motion of a bowed string, built from exponentially sloped harmonics so the flyback stays rounded. Hue 0°–119° violin, 120°–239° viola, 240°–360° cello. `size` slows the spectral rolloff and opens the lowpass in front of the body resonance.
+
+`piano` is a struck string. Partials sit at `n·√(1+B·n²)`, and higher notes and higher partials die sooner. A second string is detuned by about 0.7 cents. `size` hardens the hammer so upper partials are louder and hang longer. Hue toward 360° darkens the hammer.
 
 `marimba` hue selects the bar: 0°–119° marimba (modes 1, 3.92, 9.15, 15.8), 120°–199° xylophone, 200°–279° vibraphone (slow tremolo), 280°–360° glockenspiel. Decay time shortens as pitch rises. `size` raises both the level and the hang time of the upper modes, so a harder strike stays brighter. While held, the bar rings at its own rate; `release` is the damping after note-off.
 
