@@ -272,11 +272,11 @@ export function createEpiano(sampleRate: number, hue: number, _seed: number): En
   };
 }
 
-/** Hammond-style drawbar organ. Hue walks the registration; size and lightness open the upper stops. */
+/** Drawbar organ. Hue walks the registration; size and lightness open the upper stops. */
 const ORGAN_RATIOS = [0.5, 1.5, 1, 2, 3, 4, 5, 6, 8];
-// Dark 16'+8', flute 8'+4'+2', full mixture. Hue 0 and 360 are dark; 180 is full.
+// Stopped flute (8' + odd partials), open flute 8'+4'+2', full mixture. Hue 0 and 360 are dark; 180 is full.
 const ORGAN_REG = [
-  [0.42, 0.08, 1, 0.18, 0.05, 0.06, 0, 0, 0],
+  [0.04, 0.015, 1, 0.006, 0.32, 0.004, 0.08, 0, 0],
   [0.16, 0.06, 1, 0.78, 0.12, 0.62, 0.04, 0.08, 0.2],
   [0.34, 0.28, 0.9, 0.74, 0.58, 0.68, 0.36, 0.3, 0.46],
 ];
@@ -284,7 +284,8 @@ const ORGAN_REG = [
 function organRegistration(hue: number): number[] {
   const wrapped = ((hue % 360) + 360) % 360;
   const x = (1 - Math.cos((wrapped * Math.PI) / 180)) / 2;
-  const pos = x * 2;
+  // Stay on the stopped flute through the first part of the hue walk.
+  const pos = Math.pow(x, 2.4) * 2;
   const i = Math.min(1, Math.floor(pos));
   const f = pos - i;
   const out = new Array<number>(ORGAN_RATIOS.length);
@@ -304,18 +305,23 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
   let heldSize = 0.5;
   let heldLight = 0.5;
   let releaseSec = 0.18;
-  const attackCoeff = Math.exp(-1 / (0.004 * sampleRate));
+  let attackCoeff = Math.exp(-1 / (0.03 * sampleRate));
   const ampCoeff = Math.exp(-1 / (0.015 * sampleRate));
+  const stopBright = base[3] + base[5] + base[8];
   const percDecay = Math.exp(-1 / (0.16 * sampleRate));
 
   const shape = (size: number, lightness: number, f0: number): number[] => {
     const open = Math.min(1.65, 0.15 + lightness * 0.7 + size * 1.05);
     const tilt = open * 0.9 - 0.55;
+    // A stopped flute loses its upper odd partials as the pipe gets short.
+    const stopped = base[3] + base[5] < 0.12;
+    const high = Math.max(0, Math.min(1, (f0 - 90) / 700));
     const raw = new Array<number>(ORGAN_RATIOS.length);
     for (let i = 0; i < ORGAN_RATIOS.length; i++) {
       const ratio = ORGAN_RATIOS[i];
       const partial = f0 * ratio;
-      raw[i] = partial >= sampleRate * 0.45 ? 0 : base[i] * Math.pow(ratio, tilt);
+      const air = stopped ? Math.pow(0.22, high * Math.max(0, ratio - 1)) : 1;
+      raw[i] = partial >= sampleRate * 0.45 ? 0 : base[i] * Math.pow(ratio, tilt) * air;
     }
     // The key's pitch is the 8' stop. A louder 16' makes the note read an octave low.
     if (raw[2] > 0 && raw[0] > raw[2] * 0.12) raw[0] = raw[2] * 0.12;
@@ -346,7 +352,10 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
           phases.fill(0);
           percPhase = 0;
         }
-        perc = 0.55;
+        perc = Math.min(0.55, 0.06 + stopBright * 0.4);
+        // A long pipe speaks more slowly than a short one.
+        const low = Math.max(0, Math.min(1, (84 - midi) / 60));
+        attackCoeff = Math.exp(-1 / ((0.016 + low * 0.055) * sampleRate));
       }
       wasOn = on;
       if (!on && env < 1e-5 && perc < 1e-4) return [0, 0];
@@ -552,7 +561,8 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
 
 /**
  * Blown bore. Hue below 180 is a flute (open pipe, all harmonics).
- * From 180 it is a clarinet: half-period delay and a sign flip, so only odd harmonics.
+ * From 180 it is a clarinet: half-period delay and a sign flip, so the bore is odd.
+ * Even partials are added after the bore: a little in the chalumeau, a lot above the break.
  * An odd saturation sits in the loop, so the zeros — and the pitch — stay on the delay.
  */
 export function createWind(sampleRate: number, hue: number, seed: number): Engine {
@@ -574,6 +584,11 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   let strike = 0.5;
   let jet = 1.4;
   let even = 0;
+  let evenMix = 0;
+  let evenDc = 0;
+  let evenArm = false;
+  let octPole = 0.2;
+  let octState = 0;
   let sqAvg = 0;
   let alive = 0;
   let smoothPole = 0.5;
@@ -592,8 +607,11 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
         avg = Math.min(0.72, Math.max(0.04, 0.52 - strike * 0.38 - (light - 0.5) * 0.1));
+        // Sounding chalumeau stays nearly closed-pipe. Clarion and altissimo open even partials.
+        const register = clarinet ? Math.max(0, Math.min(1, (midi - 62) / 22)) : 0;
+        if (clarinet) avg = Math.min(0.8, avg + (1 - strike) * (1 - register) * 0.22);
         // A hard, short clarinet overblows to the twelfth. Extra loop loss keeps the written note.
-        if (clarinet) avg = Math.min(0.7, Math.max(avg, Math.min(0.62, 28 / period)));
+        if (clarinet) avg = Math.min(0.8, Math.max(avg, Math.min(0.62, 28 / period)));
         const cos0 = Math.cos((2 * Math.PI) / period);
         const b0 = 1 - avg;
         const b1 = avg;
@@ -611,11 +629,23 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         const seeded = buf.length;
         for (let i = 0; i < seeded; i++) buf[i] = Math.sin((2 * Math.PI * i) / period) * 0.25;
         // Heavy saturation on a long flute pulls the pitch flat and grows a sharp edge.
-        jet = (clarinet ? 1.12 : 1.15) + strike * (clarinet ? 0.22 : 0.4);
+        // A soft clarinet stays near the linear part of the reed; a hard one squares off.
+        jet = clarinet ? 1.12 + strike * 0.22 + register * 0.08 : 1.15 + strike * 0.4;
         even = clarinet ? 0 : 0.04 + strike * 0.05;
+        // The inverting bore rejects even modes, so the octave is added on the way out.
+        // Soft altissimo needs more mix: squaring gets quieter as the bore gets quieter.
+        const altissimo = clarinet ? Math.max(0, Math.min(1, (midi - 70) / 14)) : 0;
+        evenMix = clarinet ? 0.08 + strike * 0.1 + altissimo * 7.5 * (1 - strike * 0.55) : 0;
+        evenDc = 0;
+        evenArm = evenMix > 0;
+        octPole = Math.exp((-2 * Math.PI * freq * 1.5) / sampleRate);
+        octState = 0;
         noisePole = Math.exp((-2 * Math.PI * (450 + strike * 1800 + light * 300)) / sampleRate);
         nz = 0;
-        const cut = 900 + strike * 1600 + (clarinet ? 250 : 0);
+        const open = strike * strike * (0.55 + 0.45 * strike);
+        const cut = clarinet
+          ? 180 + open * 2500 + register * (900 + strike * 1800)
+          : 900 + strike * 1600;
         smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
         attackCoeff = Math.exp(-1 / ((clarinet ? 0.016 : 0.04) * sampleRate));
@@ -662,6 +692,15 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         out = smooth[i];
       }
       out *= env * 0.9;
+      if (evenMix > 0) {
+        octState += (out - octState) * (1 - octPole);
+        const sq = octState * octState;
+        if (evenArm) {
+          evenDc = sq;
+          evenArm = false;
+        } else evenDc += (sq - evenDc) * 0.002;
+        out += evenMix * (sq - evenDc);
+      }
       const air = nz * env * (0.008 + strike * 0.02);
       return [out + air, out + air * 0.9];
     },
@@ -719,8 +758,9 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
         const strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
         // A 1/n saw's flyback trips the click detector. An exponential slope stays rounded.
-        const tilt = Math.max(0.12, spec.dark * 0.4 + 0.66 - strike * 0.5 - (light - 0.5) * 0.08);
-        const cut = Math.max(280, 480 + strike * 1500 - spec.dark * 220 + (light - 0.5) * 160);
+        // Real bows keep energy into the bridge hill, so the slope is shallower than a dark saw.
+        const tilt = Math.max(0.08, spec.dark * 0.28 + 0.3 - strike * 0.2 - (light - 0.5) * 0.05);
+        const cut = Math.max(500, 2200 + strike * 2400 - spec.dark * 800 + (light - 0.5) * 240);
         smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
         let energy = 0;
@@ -729,13 +769,14 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
           const g = f >= sampleRate * 0.45 ? 0 : Math.exp(-tilt * (n - 1));
           gains[n - 1] = g;
           energy += g * g;
-          phases[n - 1] = 0;
+          // Spread partial phases so a bright spectrum does not line up into a sawtooth corner.
+          phases[n - 1] = n * n * 0.47;
         }
         const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
         for (let n = 0; n < N; n++) gains[n] *= norm;
         nz = 0;
         noisePole = Math.exp((-2 * Math.PI * (350 + strike * 2800)) / sampleRate);
-        noiseAmp = 0.01 + strike * 0.045;
+        noiseAmp = 0.04 + strike * 0.09;
         bz1 = 0;
         bz2 = 0;
         env = 0;
@@ -788,10 +829,12 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
   let hammerMix = 0;
   let hammerPole = 0.5;
   let hammerLp = 0;
+  let noiseAmp = 0;
+  let noiseLp = 0;
+  let noisePole = 0.8;
   let attack = 0;
   let attackInc = 1;
   const detune = Math.pow(2, 0.7 / 1200);
-  const stiffness = 0.00004 * (0.55 + dark);
 
   return {
     setRelease(ms: number) {
@@ -804,6 +847,8 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
         const strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
         const slope = Math.max(0.16, 0.64 + dark * 0.28 - strike * 0.3 - (light - 0.5) * 0.08);
+        // Salamander's Yamaha C5: B rises from about 9e-5 at C2 to about 2.5e-3 at C6.
+        const stiffness = 0.000088 * Math.pow(freq / 65.406, 1.15) * (0.9 + dark * 0.25);
         const pitchScale = Math.pow(freq / 220, 0.82);
         const hang = 0.3 + strike * 1.2;
         let energy = 0;
@@ -830,6 +875,9 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
         const cut = 400 + strike * 5500 + (1 - light) * 800;
         hammerPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         hammerLp = 0;
+        noiseAmp = 0.04 + strike * 0.045;
+        noisePole = Math.exp((-2 * Math.PI * (700 + strike * 1800)) / sampleRate);
+        noiseLp = 0;
         attack = 0;
         attackInc = 1 / Math.max(1, 0.012 * sampleRate);
         alive = Math.ceil(sampleRate * 6);
@@ -859,13 +907,15 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
         peakAmp = Math.max(peakAmp, Math.abs(amps[i]));
         mix += Math.sin(phases[i]) * amps[i] + Math.sin(phases2[i]) * amps[i] * 0.7;
       }
+      const white = rng() * 2 - 1;
       if (hammerLeft > 0) {
         hammerLeft--;
-        const white = rng() * 2 - 1;
         const envB = hammerLeft / hammerTotal;
         hammerLp = white * (1 - hammerPole) + hammerLp * hammerPole;
         mix += hammerLp * envB * envB * hammerMix;
       }
+      noiseLp = white * (1 - noisePole) + noiseLp * noisePole;
+      mix += noiseLp * noiseAmp * (peakAmp + 0.015);
       mix *= attack;
       attack = Math.min(1, attack + attackInc);
       if (peakAmp < 1e-5 && hammerLeft <= 0) {
