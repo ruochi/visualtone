@@ -499,6 +499,8 @@ result.envelopes.master.level;
 
 波表音符在曲线收到静音后，会把大约 2 ms 的增益平滑走完，不再在结尾阶跃到零。`release` 仍是在这之后另加的尾巴。
 
+音色对照用的是录音，不是 FluidSynth 或 GM 音色库。`node scripts/fetch-references.mjs` 拉取这三套单音：TinySOL（Ircam 录音，CC BY 4.0，长笛、单簧管、小提琴、中提琴、大提琴，铜管和萨克斯先存着）、VSCO 2 社区版（CC0，马林巴、木琴、钟琴、竖琴、管风琴、底鼓、军鼓、康加、定音鼓）、Salamander Grand Piano V3（雅马哈 C5，CC BY 3.0）。`node scripts/compare-references.mjs` 把现有引擎和这些录音比，结果写到 `references/gap.json`。音频不进仓库。距离 0 表示和录音一样，单项误差封顶 3。目前各套平均距离大约在 2.2 到 2.7 之间，引擎还没有按这些录音重调。样本标注的音高如果和录音相差至少六个半音，对照时改用录音里实际的音高。
+
 ### 旁白画像
 
 `visualtone analyze score.json --profile voiceover-bed` 检查：有旁白时音乐有没有让出 1–4 kHz、音效是否挡住音乐、音效是否太密。轨上写 `role: "voice" | "sfx" | "music"`。`master.lufs` 用 BS.1770 对齐目标响度，设置后不再用 RMS 的 `master.loudness`。
