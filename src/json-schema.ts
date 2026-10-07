@@ -104,7 +104,7 @@ const JsonScoreSchema = z.object({
         )
         .optional(),
       role: z.enum(['voice', 'sfx', 'music']).optional(),
-      engine: z.enum(['wavetable', 'pluck', 'marimba', 'epiano', 'organ', 'drum', 'wind', 'bow', 'piano']).optional(),
+      engine: z.enum(['wavetable', 'pluck', 'marimba', 'epiano', 'organ', 'drum', 'wind', 'bow', 'piano', 'brass']).optional(),
       pan: z.number().min(-1).max(1).optional(),
       offset: z.number().optional(),
       seed: z.number().int().optional(),

@@ -236,6 +236,9 @@ test('drum, wind, bow, and piano stay in tune and get brighter', () => {
     { engine: 'wind', hue: 220 },
     { engine: 'bow', hue: 40 },
     { engine: 'piano', hue: 30 },
+    { engine: 'brass', hue: 40 },
+    { engine: 'brass', hue: 140 },
+    { engine: 'brass', hue: 300 },
   ] as const;
   const measure = (engine: string, hue: number, midi: number, size: number) => {
     const score = ScoreSchema.parse({

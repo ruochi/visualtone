@@ -746,6 +746,8 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   let octPole = 0.2;
   let octState = 0;
   let sqAvg = 0;
+  let evenLp = 0;
+  let evenPole = 0.4;
   let alive = 0;
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
@@ -763,6 +765,10 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
         avg = Math.min(0.72, Math.max(0.04, 0.52 - strike * 0.38 - (light - 0.5) * 0.1));
+        // A high flute with the low-note loop loss never grows an octave, so the note stays dark.
+        const fluteHigh = clarinet ? 0 : Math.max(0, Math.min(1, (midi - 70) / 18));
+        const fluteLow = clarinet ? 0 : Math.max(0, Math.min(1, (64 - midi) / 28));
+        if (!clarinet) avg = Math.min(0.62, Math.max(0.08, (0.36 - strike * 0.2) * (1 - fluteHigh * 0.5) + fluteLow * 0.2));
         // Sounding chalumeau stays nearly closed-pipe. Clarion and altissimo open even partials.
         const register = clarinet ? Math.max(0, Math.min(1, (midi - 62) / 22)) : 0;
         if (clarinet) avg = Math.min(0.8, avg + (1 - strike) * (1 - register) * 0.22);
@@ -786,14 +792,19 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         for (let i = 0; i < seeded; i++) buf[i] = Math.sin((2 * Math.PI * i) / period) * 0.25;
         // Heavy saturation on a long flute pulls the pitch flat and grows a sharp edge.
         // A soft clarinet stays near the linear part of the reed; a hard one squares off.
-        jet = clarinet ? 1.12 + strike * 0.22 + register * 0.08 : 1.15 + strike * 0.4;
-        even = clarinet ? 0 : 0.04 + strike * 0.05;
+        jet = clarinet ? 1.12 + strike * 0.22 + register * 0.08 : 1.06 + strike * 0.22 + fluteHigh * 0.04;
+        // tanh is an odd function, so the open pipe needs an explicit even term.
+        // A hard mid-register flute's octave is about as loud as the fundamental.
+        // Low notes stay milder: a strong even jet there grows a click every period.
+        even = clarinet ? 0 : (0.035 + strike * strike * 0.34) * (1 - fluteHigh * 0.5) * (1 - fluteLow * 0.5);
         // The inverting bore rejects even modes, so the octave is added on the way out.
         // Soft altissimo needs more mix: squaring gets quieter as the bore gets quieter.
         const altissimo = clarinet ? Math.max(0, Math.min(1, (midi - 70) / 14)) : 0;
         evenMix = clarinet ? 0.08 + strike * 0.1 + altissimo * 7.5 * (1 - strike * 0.55) : 0;
         evenDc = 0;
         evenArm = evenMix > 0;
+        evenLp = 0;
+        evenPole = Math.exp((-2 * Math.PI * freq * 5) / sampleRate);
         octPole = Math.exp((-2 * Math.PI * freq * 1.5) / sampleRate);
         octState = 0;
         noisePole = Math.exp((-2 * Math.PI * (450 + strike * 1800 + light * 300)) / sampleRate);
@@ -801,10 +812,10 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         const open = strike * strike * (0.55 + 0.45 * strike);
         const cut = clarinet
           ? 180 + open * 2500 + register * (900 + strike * 1800)
-          : 900 + strike * 1600;
+          : 1400 + strike * 2600 + fluteHigh * 2000 - fluteLow * 500;
         smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
-        attackCoeff = Math.exp(-1 / ((clarinet ? 0.016 : 0.04) * sampleRate));
+        attackCoeff = Math.exp(-1 / ((clarinet ? 0.016 : 0.028 + (1 - fluteHigh) * 0.02) * sampleRate));
         releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
         env = 0;
         alive = Math.ceil(sampleRate * 3);
@@ -834,7 +845,9 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
       const shaped = Math.tanh(jet * filtered);
       const sq = shaped * shaped;
       sqAvg = sqAvg * 0.999 + sq * 0.001;
-      let flow = shaped + even * (sq - sqAvg);
+      const evenRaw = sq - sqAvg;
+      evenLp = evenRaw * (1 - evenPole) + evenLp * evenPole;
+      let flow = shaped + even * evenLp;
       if (flow > 1.8) flow = 1.8;
       if (flow < -1.8) flow = -1.8;
       const reflected = (clarinet ? -flow : flow) * 1.02;
@@ -1083,7 +1096,113 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
   };
 }
 
-export type AcousticEngine = 'pluck' | 'marimba' | 'epiano' | 'organ' | 'drum' | 'wind' | 'bow' | 'piano';
+interface BrassSpec {
+  /** Harmonic tilt at a soft note. About 8.7 dB per octave per unit. */
+  soft: number;
+  /** Tilt at a hard note. Loud trumpet is nearly flat. */
+  loud: number;
+  /** High notes stay darker by this much, even when loud. Horn does this; trumpet does not. */
+  register: number;
+  attackSec: number;
+  bellHz: number;
+  noise: number;
+}
+
+function brassSpec(hue: number): BrassSpec {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 90) return { soft: 2.55, loud: 0.05, register: 0.02, attackSec: 0.05, bellHz: 1800, noise: 0.16 };
+  if (h < 180) return { soft: 2.5, loud: 0.85, register: 1.15, attackSec: 0.06, bellHz: 480, noise: 0.05 };
+  if (h < 270) return { soft: 2.05, loud: 0.32, register: 0.35, attackSec: 0.042, bellHz: 620, noise: 0.07 };
+  return { soft: 3.1, loud: 0.42, register: 0.25, attackSec: 0.038, bellHz: 1700, noise: 0.1 };
+}
+
+/**
+ * Lip reed, as harmonics whose slope opens with loudness.
+ * Hue: 0°–89° trumpet, 90°–179° horn, 180°–269° trombone, 270°–360° saxophone.
+ */
+export function createBrass(sampleRate: number, hue: number, seed: number): Engine {
+  const spec = brassSpec(hue);
+  const rng = mulberry32(seed || 1);
+  const N = 28;
+  const phases = new Float64Array(N);
+  const gains = new Float64Array(N);
+  let freq = 440;
+  let env = 0;
+  let wasOn = false;
+  let releaseSec = 0.18;
+  const attackCoeff = Math.exp(-1 / (spec.attackSec * sampleRate));
+  let nz = 0;
+  let noisePole = 0.8;
+  let noiseAmp = 0.02;
+  const bodyW = (2 * Math.PI * spec.bellHz) / sampleRate;
+  const bodyAlpha = Math.sin(bodyW) / 7;
+  const bodyA0 = 1 + bodyAlpha;
+  const bodyB0 = bodyAlpha / bodyA0;
+  const bodyB2 = -bodyAlpha / bodyA0;
+  const bodyA1 = (-2 * Math.cos(bodyW)) / bodyA0;
+  const bodyA2 = (1 - bodyAlpha) / bodyA0;
+  let bz1 = 0;
+  let bz2 = 0;
+  let bellMix = 0.12;
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.02, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        freq = Math.min(sampleRate * 0.22, Math.max(40, midiToFrequency(midi)));
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        const high = Math.max(0, Math.min(1, (midi - 48) / 24));
+        const shade = Math.pow(1 - strike, 1.35);
+        const tilt = Math.max(
+          0.045,
+          spec.loud + spec.register * high * 1.15 + (spec.soft + high * 0.25) * shade - (light - 0.5) * 0.06,
+        );
+        let energy = 0;
+        for (let n = 1; n <= N; n++) {
+          const f = freq * n;
+          const g = f >= sampleRate * 0.45 ? 0 : Math.exp(-tilt * (n - 1));
+          gains[n - 1] = g;
+          energy += g * g;
+          phases[n - 1] = n * n * 0.41;
+        }
+        const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
+        for (let n = 0; n < N; n++) gains[n] *= norm;
+        nz = 0;
+        noisePole = Math.exp((-2 * Math.PI * (500 + strike * 3500)) / sampleRate);
+        noiseAmp = (0.02 + strike * strike * spec.noise) * (0.7 + high * 0.3);
+        bellMix = 0.08 + strike * 0.18;
+        bz1 = 0;
+        bz2 = 0;
+        env = 0;
+      }
+      wasOn = on;
+      if (!on && env < 1e-5) return [0, 0];
+      const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+      const dest = on ? size : 0;
+      env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      let s = 0;
+      for (let n = 0; n < N; n++) {
+        if (gains[n] === 0) continue;
+        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
+        s += Math.sin(phases[n]) * gains[n];
+      }
+      const white = rng() * 2 - 1;
+      nz = white * (1 - noisePole) + nz * noisePole;
+      const body = bodyB0 * s + bz1;
+      bz1 = -bodyA1 * body + bz2;
+      bz2 = bodyB2 * s - bodyA2 * body;
+      const out = (s + body * bellMix + nz * noiseAmp) * env * 0.48;
+      return [out * 1.02, out * 0.98];
+    },
+  };
+}
+
+export type AcousticEngine = 'pluck' | 'marimba' | 'epiano' | 'organ' | 'drum' | 'wind' | 'bow' | 'piano' | 'brass';
 
 export function isAcousticEngine(name: string | undefined): name is AcousticEngine {
   return (
@@ -1094,7 +1213,8 @@ export function isAcousticEngine(name: string | undefined): name is AcousticEngi
     name === 'drum' ||
     name === 'wind' ||
     name === 'bow' ||
-    name === 'piano'
+    name === 'piano' ||
+    name === 'brass'
   );
 }
 
@@ -1106,5 +1226,6 @@ export function createEngine(name: AcousticEngine, sampleRate: number, hue: numb
   if (name === 'wind') return createWind(sampleRate, hue, seed);
   if (name === 'bow') return createBow(sampleRate, hue, seed);
   if (name === 'piano') return createPiano(sampleRate, hue, seed);
+  if (name === 'brass') return createBrass(sampleRate, hue, seed);
   return createEpiano(sampleRate, hue, seed);
 }

@@ -241,8 +241,8 @@
       "license": "CC-BY-4.0",
       "url": "https://zenodo.org/records/3685367",
       "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
-      "engine": null,
-      "hue": null,
+      "engine": "brass",
+      "hue": 40,
       "kind": "sustain",
       "notes": [
         {
@@ -283,8 +283,8 @@
       "license": "CC-BY-4.0",
       "url": "https://zenodo.org/records/3685367",
       "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
-      "engine": null,
-      "hue": null,
+      "engine": "brass",
+      "hue": 130,
       "kind": "sustain",
       "notes": [
         {
@@ -325,8 +325,8 @@
       "license": "CC-BY-4.0",
       "url": "https://zenodo.org/records/3685367",
       "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
-      "engine": null,
-      "hue": null,
+      "engine": "brass",
+      "hue": 210,
       "kind": "sustain",
       "notes": [
         {
@@ -355,8 +355,8 @@
       "license": "CC-BY-4.0",
       "url": "https://zenodo.org/records/3685367",
       "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
-      "engine": null,
-      "hue": null,
+      "engine": "brass",
+      "hue": 300,
       "kind": "sustain",
       "notes": [
         {
