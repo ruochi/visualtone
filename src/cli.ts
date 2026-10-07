@@ -118,7 +118,10 @@ if (command === 'render') {
       console.log(`    Onsets: ${event.onsets}`);
       if (event.gainReductionDb > 0) console.log(`    Comp GR: -${event.gainReductionDb.toFixed(1)} dB max`);
     }
-    console.log(`\nMaster peak: ${result.master.peak.toFixed(4)}, loudness ~${result.master.loudnessDb.toFixed(1)} dBFS`);
+    const loudnessUnit = typeof score.master?.lufs === 'number' ? 'LUFS' : 'dBFS';
+    console.log(
+      `\nMaster peak: ${result.master.peak.toFixed(4)}, loudness ~${result.master.loudnessDb.toFixed(1)} ${loudnessUnit}`,
+    );
     if (result.master.gainReductionDb > 0) {
       console.log(`Master glue comp: -${result.master.gainReductionDb.toFixed(1)} dB max`);
     }

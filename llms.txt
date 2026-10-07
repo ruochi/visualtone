@@ -88,7 +88,7 @@ TTS stays outside visualtone. Render WAV, then:
 
 `clips` is the same shape as an array. The library does not read files: pass decoded audio as `render(score, { clips: { "tts/scene2.wav": { sampleRate, buffers, sha256 } } })`. The CLI loads paths relative to the score and records sha256 on `result.inputs` and on the analysis report.
 
-Duck a bed under speech: `{ "by": "voice", "amount": 0.5, "holdMs": 80, "releaseMs": 280, "band": [1000, 4000] }`. `band` ducks only that range. `holdMs` stops the music pumping between words.
+Duck a bed under speech: `{ "by": "voice", "amount": 0.5, "holdMs": 80, "releaseMs": 280, "band": [1000, 4000] }`. `band` ducks only that range with `out = x − (1−g)·bandpass(x)` (0 dB-peak RBJ bandpass, f0 = √(f1·f2), Q = f0/(f2−f1)); the center gain equals the duck gain. `holdMs` stops the music pumping between words.
 
 ## Sound effects
 
@@ -129,7 +129,7 @@ With `bpm` (and optional `meter`, default `[4, 4]`): point/note `at: "4:2"` (bar
 
 ## Voiceover profile
 
-`analyze --profile voiceover-bed`. Set track `role` to `voice`, `sfx`, or `music`. Checks: music yields 1–4 kHz while the voice is active, sfx does not mask the music, sfx is not too dense. `master.lufs` is a BS.1770 target and replaces the RMS `master.loudness` match when set. Default `sampleRate` is 48000; existing examples that write 44100 stay 44100.
+`analyze --profile voiceover-bed`. Set track `role` to `voice`, `sfx`, or `music`. Checks: music yields 1–4 kHz while the voice is active, sfx does not mask the music, sfx is not too dense. Band shares and warmth count only `role: "music"` tracks, and suggestions name those track ids. `master.lufs` is a BS.1770 target and replaces the RMS `master.loudness` match when set; `render().master.loudnessDb` and the CLI line then report the measured LUFS. Default `sampleRate` is 48000; existing examples that write 44100 stay 44100.
 
 ## Static pan
 
