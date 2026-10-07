@@ -1,5 +1,6 @@
 import type { Point, Track } from './schema.js';
 import type { Ease } from './schema.js';
+import { trackClips } from './schema.js';
 import { expandNotes } from './notes.js';
 
 export interface SampledPoint {
@@ -189,7 +190,15 @@ export function getTrackDurationFromPoints(points: Point[]): number {
 }
 
 export function getTrackDuration(track: Track): number {
-  return getTrackDurationFromPoints(prepareTrackPoints(track));
+  let end = getTrackDurationFromPoints(prepareTrackPoints(track));
+  for (const c of trackClips(track)) {
+    const len = c.trim ? Math.max(0, c.trim[1] - c.trim[0]) : 0;
+    end = Math.max(end, c.at + len);
+  }
+  for (const e of track.sfx ?? []) {
+    end = Math.max(end, (e.t ?? 0) + (e.duration ?? 0));
+  }
+  return end;
 }
 
 export interface TrackSampler {

@@ -47,7 +47,14 @@ export {
 } from './fx.js';
 export type { LimiterConfig } from './fx.js';
 export { render } from './renderer.js';
-export type { RenderResult, RenderOptions } from './renderer.js';
+export type { RenderResult, RenderOptions, ClipAudio } from './renderer.js';
+export { mix } from './segments.js';
+export type { MixSegment, MixResult } from './segments.js';
+export { expandSfx, sfxToTracks } from './sfx.js';
+export { chord, pattern, parsePitch, parseAt, parseLen, expandUnits } from './units.js';
+export { resampleBuffer } from './resample.js';
+export { loadScoreFile } from './load-score.js';
+export { trackClips } from './schema.js';
 export { writeWavFile } from './wav.js';
 export type { BitDepth, WavOptions } from './wav.js';
 export { Biquad, StereoEq, Compressor, lfoValue, keyframeAt } from './mix.js';

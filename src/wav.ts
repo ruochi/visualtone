@@ -111,6 +111,10 @@ export function readWavFile(data: Buffer): DecodedWav {
       channels = data.readUInt16LE(body + 2);
       sampleRate = data.readUInt32LE(body + 4);
       bits = data.readUInt16LE(body + 14);
+      // WAVE_FORMAT_EXTENSIBLE: the real format is the first field of the sub-GUID.
+      if (audioFormat === 0xfffe && body + 26 <= data.length) {
+        audioFormat = data.readUInt16LE(body + 24);
+      }
     } else if (id === 'data') {
       dataOff = body;
       dataSize = Math.min(size, data.length - body);

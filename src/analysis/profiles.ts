@@ -27,6 +27,14 @@ export interface Profile {
   warmth: [number, number];
   /** Fraction of 4- and 8-bar repeats allowed before the arrangement is a loop. */
   repetitionMax: number;
+  /** Only voiceover-bed sets this. Music profiles leave it unset. */
+  voiceover?: {
+    /** Voice should be at least this many dB above the music in 1–4 kHz. */
+    presenceGapMinDb: number;
+    sfxOverlapMax: number;
+    sfxPer10sMax: number;
+    sfxMinGapSec: number;
+  };
 }
 
 const EXPERIENCE = '通用混音经验值，不是测量标准';
@@ -127,6 +135,36 @@ export const PROFILES: Record<string, Profile> = {
     hitVariationMinDb: 0.8,
     warmth: [0.15, 0.55],
     repetitionMax: 0.7,
+  },
+  'voiceover-bed': {
+    name: 'voiceover-bed',
+    note: '旁白底下的音乐和音效。音乐让出 1–4 kHz，音效别太密。' + EXPERIENCE,
+    lufs: [-20, -13],
+    plr: [8, 16],
+    bands: {
+      sub: [0.02, 0.14],
+      bass: [0.08, 0.3],
+      mid: [0.22, 0.55],
+      presence: [0.05, 0.22],
+      air: [0.008, 0.08],
+    },
+    lowCorrelationMin: 0.5,
+    lowBalanceMaxDb: 3,
+    sideMidDb: [-14, -2],
+    contrastMinDb: 0.4,
+    maskOverlapMax: 0.55,
+    trackShareMax: 0.6,
+    wetShareMin: 0.02,
+    tailRatioDbMin: -24,
+    hitVariationMinDb: 0.3,
+    warmth: [0.1, 0.45],
+    repetitionMax: 0.9,
+    voiceover: {
+      presenceGapMinDb: 6,
+      sfxOverlapMax: 0.35,
+      sfxPer10sMax: 8,
+      sfxMinGapSec: 0.12,
+    },
   },
 };
 

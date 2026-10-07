@@ -1,10 +1,5 @@
-import { Score, Track, getChannelIndices } from './schema.js';
-import {
-  createTrackSampler,
-  getTrackDuration,
-  prepareTrackPoints,
-} from './interpolator.js';
-import { Voice, hashSeed } from './synth.js';
+import { measureLoudness } from './analysis/loudness.js';
+import { createEngine, type Engine } from './engines/acoustic.js';
 import {
   Ducker,
   FdnReverb,
@@ -16,9 +11,23 @@ import {
   measureRmsDb,
   spectralCentroid,
 } from './fx.js';
-import { Chorus, Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
 import { applyGroove } from './groove.js';
+import { createTrackSampler, getTrackDuration, prepareTrackPoints } from './interpolator.js';
+import { Biquad, Chorus, Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
+import { expandNotes } from './notes.js';
+import { resampleChannels } from './resample.js';
+import { type Score, type Track, getChannelIndices, trackClips, type Clip } from './schema.js';
+import { expandSfx } from './sfx.js';
+import { Voice, hashSeed } from './synth.js';
+import { expandUnits } from './units.js';
 import { writeWavFile, type WavOptions } from './wav.js';
+
+export interface ClipAudio {
+  sampleRate: number;
+  buffers: Float32Array[];
+  /** sha256 of the file bytes. Recorded on the render so a later render can be checked. */
+  sha256?: string;
+}
 
 export interface RenderResult {
   buffers: Float32Array[];
@@ -49,6 +58,17 @@ export interface RenderResult {
    * Arrays are the renderer's own buffers; do not mutate them.
    */
   stems?: { id: string; l: Float32Array; r: Float32Array }[];
+  /** External audio that was mixed in. */
+  inputs?: { src: string; sha256: string; sampleRate: number; channels: number; frames: number }[];
+  /**
+   * Frame 0 covers [0, 1/fps). `level` is RMS after the channel strip and ducking,
+   * before reverb sends. `master.level` is after the limiter.
+   */
+  envelopes?: {
+    fps: number;
+    tracks: Record<string, { onsets: number[]; level: Float32Array }>;
+    master: { level: Float32Array };
+  };
 }
 
 interface TrackRender {
@@ -58,8 +78,18 @@ interface TrackRender {
   envelope: Float32Array;
   track: Track;
   onsets: number;
+  onsetTimes: number[];
   samplesRendered: number;
   gainReductionDb: number;
+}
+
+export interface RenderOptions {
+  wav?: WavOptions;
+  /** Keep per-track buffers (post channel-strip, pre send) for analysis. */
+  stems?: boolean;
+  /** Decoded audio keyed by the `src` string written in the score. */
+  clips?: Record<string, ClipAudio>;
+  envelopes?: { fps: number };
 }
 
 function sortTracksForDuck(tracks: Track[]): Track[] {
@@ -78,27 +108,172 @@ function sortTracksForDuck(tracks: Track[]): Track[] {
   return sorted;
 }
 
+function shiftTrack(track: Track, dt: number): Track {
+  if (!dt) return track;
+  const shiftKeys = (keys?: { t: number; v: number }[]) => keys?.map((k) => ({ ...k, t: k.t + dt }));
+  return {
+    ...track,
+    offset: undefined,
+    points: track.points?.map((p) => ({ ...p, t: p.t + dt })),
+    notes: track.notes?.map((n) => ({ ...n, t: n.t + dt })),
+    clips: track.clips?.map((c) => ({ ...c, at: c.at + dt })),
+    clip: track.clip ? { ...track.clip, at: track.clip.at + dt } : undefined,
+    automation: track.automation
+      ? {
+          lightness: shiftKeys(track.automation.lightness),
+          gain: shiftKeys(track.automation.gain),
+          pan: shiftKeys(track.automation.pan),
+        }
+      : undefined,
+  };
+}
+
+function prepareScore(score: Score): Score {
+  return expandSfx(expandUnits(score));
+}
+
+function clipLengthSec(clip: Clip, audio: ClipAudio | undefined): number {
+  const srcDur = audio ? audio.buffers[0].length / audio.sampleRate : 0;
+  const t0 = clip.trim?.[0] ?? 0;
+  const t1 = clip.trim?.[1] ?? (srcDur > 0 ? srcDur : t0);
+  return Math.max(0, t1 - t0);
+}
+
+function inferDuration(score: Score, clips: RenderOptions['clips']): number {
+  if (score.duration && score.duration > 0) return score.duration;
+  let duration = 0;
+  score.tracks.forEach((track, i) => {
+    const grooved = applyGroove(score, track, i);
+    const off = track.offset ?? 0;
+    duration = Math.max(duration, getTrackDuration(grooved) + off);
+    for (const c of trackClips(grooved)) {
+      duration = Math.max(duration, c.at + off + clipLengthSec(c, clips?.[c.src]));
+    }
+  });
+  return duration;
+}
+
+class BandSplit {
+  private readonly lowL: Biquad;
+  private readonly lowR: Biquad;
+  private readonly highL: Biquad;
+  private readonly highR: Biquad;
+
+  constructor(sampleRate: number, band: [number, number]) {
+    this.lowL = new Biquad('lowpass', sampleRate, band[0]);
+    this.lowR = new Biquad('lowpass', sampleRate, band[0]);
+    this.highL = new Biquad('highpass', sampleRate, band[1]);
+    this.highR = new Biquad('highpass', sampleRate, band[1]);
+  }
+
+  /** Gain `g` on the band, dry outside it. g = 1 leaves the sample unchanged. */
+  process(l: number, r: number, g: number): [number, number] {
+    const lowL = this.lowL.process(l);
+    const lowR = this.lowR.process(r);
+    const highL = this.highL.process(l);
+    const highR = this.highR.process(r);
+    return [g * l + (1 - g) * (lowL + highL), g * r + (1 - g) * (lowR + highR)];
+  }
+}
+
+function placeClips(
+  clips: Clip[],
+  audioOf: (src: string) => ClipAudio,
+  sampleRate: number,
+  numSamples: number,
+): { l: Float32Array; r: Float32Array; onsets: number[] } {
+  const l = new Float32Array(numSamples);
+  const r = new Float32Array(numSamples);
+  const onsets: number[] = [];
+  for (const clip of clips) {
+    const audio = audioOf(clip.src);
+    const channels = resampleChannels(audio.buffers, audio.sampleRate, sampleRate);
+    const srcDur = audio.buffers[0].length / audio.sampleRate;
+    const t0 = clip.trim?.[0] ?? 0;
+    const t1 = clip.trim?.[1] ?? srcDur;
+    const i0 = Math.max(0, Math.floor(t0 * sampleRate));
+    const i1 = Math.min(channels[0].length, Math.ceil(t1 * sampleRate));
+    const start = Math.floor(clip.at * sampleRate);
+    const span = Math.max(0, i1 - i0);
+    const fadeInN = Math.floor((clip.fadeIn ?? 0) * sampleRate);
+    const fadeOutN = Math.floor((clip.fadeOut ?? 0) * sampleRate);
+    const gain = clip.gain ?? 1;
+    if (gain > 0 && span > 0) onsets.push(clip.at);
+    for (let s = 0; s < span; s++) {
+      const dest = start + s;
+      if (dest < 0 || dest >= numSamples) continue;
+      let g = gain;
+      if (fadeInN > 0 && s < fadeInN) g *= s / fadeInN;
+      if (fadeOutN > 0 && span - s < fadeOutN) g *= Math.max(0, (span - s) / fadeOutN);
+      const sl = channels[0][i0 + s] * g;
+      const sr = (channels[1] ? channels[1][i0 + s] : channels[0][i0 + s]) * g;
+      l[dest] += sl;
+      r[dest] += sr;
+    }
+  }
+  return { l, r, onsets };
+}
+
+function activityBounds(
+  track: Track,
+  points: { t: number; size: number }[],
+  sampleRate: number,
+  numSamples: number,
+  clips: Clip[],
+  clipAudio: RenderOptions['clips'],
+): [number, number] {
+  if (track.chorus) return [0, numSamples];
+  let t0 = Infinity;
+  let t1 = 0;
+  let any = false;
+  for (const p of points) {
+    any = true;
+    t0 = Math.min(t0, p.t);
+    t1 = Math.max(t1, p.t);
+  }
+  for (const n of track.notes ?? []) {
+    any = true;
+    t0 = Math.min(t0, n.t);
+    t1 = Math.max(t1, n.t + n.duration);
+  }
+  for (const c of clips) {
+    any = true;
+    t0 = Math.min(t0, c.at);
+    t1 = Math.max(t1, c.at + clipLengthSec(c, clipAudio?.[c.src]));
+  }
+  if (!any || !Number.isFinite(t0)) return [0, 0];
+  const releaseSec = (track.release ?? 0) / 1000;
+  const start = Math.max(0, Math.floor(t0 * sampleRate) - 1);
+  const end = Math.min(numSamples, Math.ceil((t1 + releaseSec + 0.05) * sampleRate));
+  return [start, Math.max(start, end)];
+}
+
 function renderTrackDry(
   score: Score,
   track: Track,
   trackIndex: number,
   numSamples: number,
   sampleRate: number,
+  clipAudio: RenderOptions['clips'],
 ): TrackRender {
-  let onsets = 0;
-  let samplesRendered = 0;
-  const points = prepareTrackPoints(applyGroove(score, track, trackIndex));
-  const defaultLightness = track.lightness ?? 0.5;
-  const eq = track.eq ? new StereoEq(sampleRate, track.eq) : null;
-  const comp = track.comp ? new Compressor(sampleRate, track.comp) : null;
+  const offset = track.offset ?? 0;
+  const grooved = applyGroove(score, track, trackIndex);
+  const placed = shiftTrack(grooved, offset);
+  const points = prepareTrackPoints(placed);
+  const clips = trackClips(placed);
+  const defaultLightness = placed.lightness ?? 0.5;
+  const [start, end] = activityBounds(placed, points, sampleRate, numSamples, clips, clipAudio);
+
+  const eq = placed.eq ? new StereoEq(sampleRate, placed.eq) : null;
+  const comp = placed.comp ? new Compressor(sampleRate, placed.comp) : null;
   const beatSec = 60 / (score.bpm ?? 120);
-  const lfos = (track.lfo ?? []).map((l) => ({
+  const lfos = (placed.lfo ?? []).map((l) => ({
     ...l,
-    hz: l.rate ?? 1 / (l.beats! * beatSec),
+    hz: l.rate ?? 1 / ((l.beats ?? 1) * beatSec),
   }));
   const lfoSum = (target: string, time: number) => {
     let v = 0;
-    for (const l of lfos) if (l.target === target) v += l.depth * lfoValue(l.shape, l.phase + l.hz * time);
+    for (const l of lfos) if (l.target === target) v += l.depth * lfoValue(l.shape, (l.phase ?? 0) + l.hz * time);
     return v;
   };
   const hasLfo = (target: string) => lfos.some((l) => l.target === target);
@@ -106,53 +281,96 @@ function renderTrackDry(
   const lfoLight = hasLfo('lightness');
   const lfoGain = lfos.filter((l) => l.target === 'gain');
   const lfoPan = hasLfo('pan');
-  const autoLight = track.automation?.lightness ? [...track.automation.lightness].sort((a, b) => a.t - b.t) : null;
-  const autoGain = track.automation?.gain ? [...track.automation.gain].sort((a, b) => a.t - b.t) : null;
-  const chorus = track.chorus ? new Chorus(sampleRate, track.chorus) : null;
+  const autoLight = placed.automation?.lightness ? [...placed.automation.lightness].sort((a, b) => a.t - b.t) : null;
+  const autoGain = placed.automation?.gain ? [...placed.automation.gain].sort((a, b) => a.t - b.t) : null;
+  const autoPan = placed.automation?.pan ? [...placed.automation.pan].sort((a, b) => a.t - b.t) : null;
+  const chorus = placed.chorus ? new Chorus(sampleRate, placed.chorus) : null;
+  const staticPan = placed.pan ?? 0;
+  const wantPan = staticPan !== 0 || lfoPan || !!autoPan;
+
+  const voiceSeed = placed.seed ?? hashSeed(score.seed, trackIndex);
+  const acoustic = placed.engine === 'pluck' || placed.engine === 'marimba' || placed.engine === 'epiano';
   const sampler = createTrackSampler(points, defaultLightness);
-  const voice = new Voice(
-    sampleRate,
-    track.hue,
-    hashSeed(score.seed, trackIndex),
-    defaultLightness,
-    track.saturation ?? 1,
-    track.timbre,
-  );
-  voice.setRelease(track.release ?? 0);
+  let voice: Voice | null = null;
+  let poly: { sampler: ReturnType<typeof createTrackSampler>; eng: Engine }[] | null = null;
+
+  if (acoustic && ((placed.notes?.length ?? 0) > 0 || (placed.points?.length ?? 0) > 0)) {
+    const engineName = placed.engine as 'pluck' | 'marimba' | 'epiano';
+    poly = (placed.notes ?? []).map((n, i) => {
+      const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed + i + 1);
+      eng.setRelease(placed.release ?? 180);
+      return { sampler: createTrackSampler(expandNotes([n]), defaultLightness), eng };
+    });
+    if ((placed.points?.length ?? 0) > 0) {
+      const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed);
+      eng.setRelease(placed.release ?? 180);
+      poly.push({ sampler: createTrackSampler(placed.points ?? [], defaultLightness), eng });
+    }
+  } else if (points.length > 0 || !clips.length) {
+    voice = new Voice(sampleRate, placed.hue ?? 180, voiceSeed, defaultLightness, placed.saturation ?? 1, placed.timbre);
+    voice.setRelease(placed.release ?? 0);
+  }
+
+  const clipBuf = clips.length
+    ? placeClips(clips, (src) => {
+        const audio = clipAudio?.[src];
+        if (!audio) throw new Error(`缺少音频 "${src}"。把解码后的 WAV 放进 render 的 clips，键名与 src 一致`);
+        return audio;
+      }, sampleRate, numSamples)
+    : null;
 
   const l = new Float32Array(numSamples);
   const r = new Float32Array(numSamples);
   const envelope = new Float32Array(numSamples);
-
+  const onsetTimes: number[] = clipBuf ? [...clipBuf.onsets] : [];
+  let onsets = onsetTimes.length;
+  let samplesRendered = 0;
   let prevAudible = false;
 
-  for (let i = 0; i < numSamples; i++) {
+  for (let i = start; i < end; i++) {
     const time = i / sampleRate;
-    const sampled = sampler.sample(time);
+    const sampled = voice ? sampler.sample(time) : null;
     const audible = sampled !== null && sampled.size > 1e-6;
-    if (audible && !prevAudible) onsets++;
-    prevAudible = audible;
+    if (voice && audible && !prevAudible) {
+      onsets++;
+      onsetTimes.push(time);
+    }
+    if (voice) prevAudible = audible;
 
-    let sl = 0;
-    let sr = 0;
-    if (sampled) {
-      let y = sampled.y;
-      let light = sampled.lightness;
-      if (lfoPitch) y += lfoSum('pitch', time);
-      if (lfoLight) light += lfoSum('lightness', time);
-      if (autoLight) light += keyframeAt(autoLight, time);
-      [sl, sr] = voice.processSample(y, sampled.size, Math.min(1, Math.max(0, light)));
-      samplesRendered++;
-    } else {
-      [sl, sr] = voice.processSample(0, 0, defaultLightness);
+    let sl = clipBuf ? clipBuf.l[i] : 0;
+    let sr = clipBuf ? clipBuf.r[i] : 0;
+    if (sl !== 0 || sr !== 0) samplesRendered++;
+    if (poly) {
+      for (const v of poly) {
+        const s = v.sampler.sample(time);
+        const [a, b] = v.eng.processSample(s?.y ?? 0, s?.size ?? 0, s ? Math.min(1, Math.max(0, s.lightness)) : defaultLightness);
+        sl += a;
+        sr += b;
+        if (s && s.size > 1e-6) samplesRendered++;
+      }
+    } else if (voice) {
+      if (sampled) {
+        let y = sampled.y;
+        let light = sampled.lightness;
+        if (lfoPitch) y += lfoSum('pitch', time);
+        if (lfoLight) light += lfoSum('lightness', time);
+        if (autoLight) light += keyframeAt(autoLight, time);
+        const [a, b] = voice.processSample(y, sampled.size, Math.min(1, Math.max(0, light)));
+        sl += a;
+        sr += b;
+        samplesRendered++;
+      } else {
+        const [a, b] = voice.processSample(0, 0, defaultLightness);
+        sl += a;
+        sr += b;
+      }
     }
     if (eq) [sl, sr] = eq.process(sl, sr);
     if (comp) [sl, sr] = comp.process(sl, sr);
     if (chorus) [sl, sr] = chorus.process(sl, sr);
-    // Gain/pan modulate after the voice so an LFO trough never re-triggers an onset.
     let g = 1;
     for (const lg of lfoGain) {
-      const w = lfoValue(lg.shape, lg.phase + lg.hz * time);
+      const w = lfoValue(lg.shape, (lg.phase ?? 0) + lg.hz * time);
       g *= 1 - Math.min(1, Math.max(0, lg.depth)) * (0.5 - 0.5 * w);
     }
     if (autoGain) g *= Math.max(0, keyframeAt(autoGain, time));
@@ -160,8 +378,11 @@ function renderTrackDry(
       sl *= g;
       sr *= g;
     }
-    if (lfoPan) {
-      const p = Math.min(1, Math.max(-1, lfoSum('pan', time)));
+    if (wantPan) {
+      let p = staticPan;
+      if (lfoPan) p += lfoSum('pan', time);
+      if (autoPan) p += keyframeAt(autoPan, time);
+      p = Math.min(1, Math.max(-1, p));
       const angle = (p + 1) * 0.25 * Math.PI;
       sl *= Math.cos(angle) * Math.SQRT2;
       sr *= Math.sin(angle) * Math.SQRT2;
@@ -171,44 +392,98 @@ function renderTrackDry(
     envelope[i] = Math.max(Math.abs(sl), Math.abs(sr));
   }
 
+  if (poly && placed.notes) {
+    for (const n of placed.notes) {
+      if (n.size > 1e-6) onsetTimes.push(n.t);
+    }
+    onsetTimes.sort((a, b) => a - b);
+    onsets = onsetTimes.length;
+  }
+
   return {
-    id: track.id,
+    id: placed.id,
     l,
     r,
     envelope,
-    track,
+    track: placed,
     onsets,
+    onsetTimes,
     samplesRendered,
     gainReductionDb: comp?.maxReductionDb ?? 0,
   };
 }
 
-export interface RenderOptions {
-  wav?: WavOptions;
-  /** Keep per-track buffers (post channel-strip, pre send) for analysis. */
-  stems?: boolean;
+function frameLevel(buffers: Float32Array[], sampleRate: number, fps: number, numSamples: number): Float32Array {
+  const frames = Math.ceil((numSamples / sampleRate) * fps);
+  const level = new Float32Array(frames);
+  for (let f = 0; f < frames; f++) {
+    const a = Math.min(numSamples, Math.floor((f / fps) * sampleRate));
+    const b = Math.min(numSamples, Math.floor(((f + 1) / fps) * sampleRate));
+    let sum = 0;
+    let n = 0;
+    for (let i = a; i < b; i++) {
+      let m = 0;
+      for (const buf of buffers) m = Math.max(m, Math.abs(buf[i]));
+      sum += m * m;
+      n++;
+    }
+    level[f] = n > 0 ? Math.sqrt(sum / n) : 0;
+  }
+  return level;
 }
 
-export function render(score: Score, options: RenderOptions = {}): RenderResult {
-  const sampleRate = score.sampleRate;
-  let duration = score.duration;
-  if (!duration) {
-    duration = Math.max(
-      ...score.tracks.map((track, i) => getTrackDuration(applyGroove(score, track, i))),
-      0,
-    );
+function applyLufsMatch(buffers: Float32Array[], sampleRate: number, target: number) {
+  const measured = measureLoudness(buffers, sampleRate).integratedLufs;
+  if (!Number.isFinite(measured)) return;
+  const gain = Math.pow(10, (target - measured) / 20);
+  if (!Number.isFinite(gain) || gain <= 0) return;
+  const g = Math.min(gain, 1e4);
+  for (const b of buffers) {
+    for (let i = 0; i < b.length; i++) b[i] *= g;
   }
+}
+
+function matchLoudness(buffers: Float32Array[], sampleRate: number, master: { loudness?: number; lufs?: number }) {
+  if (typeof master.lufs === 'number') applyLufsMatch(buffers, sampleRate, master.lufs);
+  else applyLoudnessMatch(buffers, master.loudness ?? -14);
+}
+
+export function render(scoreIn: Score, options: RenderOptions = {}): RenderResult {
+  const score = prepareScore(scoreIn);
+  const sampleRate = score.sampleRate;
+  let duration = inferDuration(score, options.clips);
   if (!Number.isFinite(duration) || duration <= 0) duration = 0;
 
   const numSamples = Math.ceil(duration * sampleRate);
   const masterCfg = score.master ?? { loudness: -14, drive: 0.15 };
   const revCfg = masterCfg.reverb ?? { size: 0.6, decay: 0.5 };
-  const dlyCfg = masterCfg.delay ?? { beats: 0.75, feedback: 0.35 };
+  const dlyCfg = {
+    beats: masterCfg.delay?.beats ?? 0.75,
+    feedback: masterCfg.delay?.feedback ?? 0.35,
+  };
+
+  const inputs: NonNullable<RenderResult['inputs']> = [];
+  const seenSrc = new Set<string>();
+  for (const t of score.tracks) {
+    for (const c of trackClips(t)) {
+      if (seenSrc.has(c.src)) continue;
+      seenSrc.add(c.src);
+      const audio = options.clips?.[c.src];
+      if (!audio) throw new Error(`缺少音频 "${c.src}"。把解码后的 WAV 放进 render 的 clips，键名与 src 一致`);
+      inputs.push({
+        src: c.src,
+        sha256: audio.sha256 ?? '',
+        sampleRate: audio.sampleRate,
+        channels: audio.buffers.length,
+        frames: audio.buffers[0]?.length ?? 0,
+      });
+    }
+  }
 
   let maxCh = 0;
   let forceStereo = false;
   for (const t of score.tracks) {
-    const chs = getChannelIndices(t.channel);
+    const chs = getChannelIndices(t.channel ?? 0);
     if (chs.length >= 2) forceStereo = true;
     for (const ch of chs) maxCh = Math.max(maxCh, ch);
   }
@@ -222,13 +497,17 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
 
   for (const track of order) {
     const idx = trackIndexMap.get(track.id) ?? 0;
-    const tr = renderTrackDry(score, track, idx, numSamples, sampleRate);
+    const tr = renderTrackDry(score, track, idx, numSamples, sampleRate, options.clips);
     rendered.push(tr);
     byId.set(track.id, tr);
   }
 
   const duckers = new Map<string, Ducker>();
-  for (const t of score.tracks) duckers.set(t.id, new Ducker(sampleRate));
+  const bands = new Map<string, BandSplit>();
+  for (const t of score.tracks) {
+    duckers.set(t.id, new Ducker(sampleRate, { holdMs: t.duck?.holdMs, releaseMs: t.duck?.releaseMs }));
+    if (t.duck?.band) bands.set(t.id, new BandSplit(sampleRate, t.duck.band));
+  }
 
   for (const tr of rendered) {
     const duck = tr.track.duck;
@@ -236,10 +515,18 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     const src = byId.get(duck.by);
     if (!src) continue;
     const ducker = duckers.get(tr.id)!;
+    const split = bands.get(tr.id);
+    const amount = duck.amount ?? 0.6;
     for (let i = 0; i < numSamples; i++) {
-      const g = ducker.process(Math.min(1, src.envelope[i] * 4), duck.amount);
-      tr.l[i] *= g;
-      tr.r[i] *= g;
+      const g = ducker.process(Math.min(1, src.envelope[i] * 4), amount);
+      if (split) {
+        const [dl, dr] = split.process(tr.l[i], tr.r[i], g);
+        tr.l[i] = dl;
+        tr.r[i] = dr;
+      } else {
+        tr.l[i] *= g;
+        tr.r[i] *= g;
+      }
     }
   }
 
@@ -262,7 +549,7 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
   const dlyInR = new Float32Array(numSamples);
 
   for (const tr of rendered) {
-    const chs = getChannelIndices(tr.track.channel);
+    const chs = getChannelIndices(tr.track.channel ?? 0);
     const space = tr.track.space ?? 0;
     const room = tr.track.room ?? 0;
     const echo = tr.track.echo ?? 0;
@@ -360,8 +647,7 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
 
   let masterReduction = 0;
   if (masterCfg.comp) {
-    // Threshold is relative to the target loudness, so normalise before compressing.
-    applyLoudnessMatch(buffers, masterCfg.loudness ?? -14);
+    matchLoudness(buffers, sampleRate, masterCfg);
     const glue = new Compressor(sampleRate, masterCfg.comp);
     const left = buffers[0];
     const right = buffers[1] ?? buffers[0];
@@ -378,10 +664,9 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     for (let i = 0; i < b.length; i++) b[i] = softClip(b[i], drive);
   }
 
-  // Limiting lowers RMS a little, so match and limit twice to land near the target.
   let limiterReduction = 0;
   for (let pass = 0; pass < 2; pass++) {
-    applyLoudnessMatch(buffers, masterCfg.loudness ?? -14);
+    matchLoudness(buffers, sampleRate, masterCfg);
     limiterReduction = Math.max(limiterReduction, lookaheadLimit(buffers, sampleRate, masterCfg.limiter));
   }
 
@@ -405,7 +690,7 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
     for (let i = 0; i < numSamples; i++) mono[i] = (tr.l[i] + tr.r[i]) * 0.5;
     return {
       trackId: tr.id,
-      channels: getChannelIndices(tr.track.channel),
+      channels: getChannelIndices(tr.track.channel ?? 0),
       samplesRendered: tr.samplesRendered,
       peakGain: peak,
       rmsGain: n > 0 ? Math.sqrt(sum / n) : 0,
@@ -416,6 +701,20 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
   });
 
   const wav = writeWavFile(buffers, sampleRate, { seed: score.seed, ...options.wav });
+
+  let envelopes: RenderResult['envelopes'];
+  if (options.envelopes) {
+    const fps = options.envelopes.fps;
+    if (!(fps > 0)) throw new Error('envelopes.fps 必须大于 0');
+    const tracks: NonNullable<RenderResult['envelopes']>['tracks'] = {};
+    for (const tr of rendered) {
+      tracks[tr.id] = {
+        onsets: tr.onsetTimes,
+        level: frameLevel([tr.l, tr.r], sampleRate, fps, numSamples),
+      };
+    }
+    envelopes = { fps, tracks, master: { level: frameLevel(buffers, sampleRate, fps, numSamples) } };
+  }
 
   return {
     buffers,
@@ -435,5 +734,7 @@ export function render(score: Score, options: RenderOptions = {}): RenderResult 
           { id: 'bus:delay', l: dlyL, r: dlyR },
         ]
       : undefined,
+    inputs: inputs.length ? inputs : undefined,
+    envelopes,
   };
 }

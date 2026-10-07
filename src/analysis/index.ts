@@ -11,6 +11,7 @@ import { analyzeSpace, bandShare } from './space.js';
 import { analyzeStructure } from './structure.js';
 import type { AnalysisReport } from './types.js';
 import { analyzeDynamics, repetitionScore } from './dynamics.js';
+import { measureVoiceover, roleOf } from './voiceover.js';
 
 export interface PlotData {
   specTimes: number[];
@@ -54,6 +55,7 @@ export interface AnalyzeInput {
   stems?: { id: string; l: Float32Array; r: Float32Array }[];
   score?: Score;
   profile?: Profile | string;
+  inputs?: AnalysisReport['inputs'];
 }
 
 export function analyze(input: AnalyzeInput): Analysis {
@@ -67,7 +69,11 @@ export function analyze(input: AnalyzeInput): Analysis {
   const trackStems = input.stems?.filter((s) => !s.id.startsWith('bus:'));
   let harmonySpec = spec;
   if (trackStems && trackStems.length > 1) {
-    const pitched = trackStems.filter((s) => !/kick|hat|clap|shaker|riser|ride/i.test(s.id));
+    const pitched = trackStems.filter((s) => {
+      const role = roleOf(input.score, s.id);
+      if (role === 'voice' || role === 'sfx') return false;
+      return !/kick|hat|clap|shaker|riser|ride/i.test(s.id);
+    });
     if (pitched.length > 0 && pitched.length < trackStems.length) {
       const buf = new Float32Array(pitched[0].l.length);
       for (const stem of pitched) {
@@ -89,7 +95,7 @@ export function analyze(input: AnalyzeInput): Analysis {
 
   const profile = typeof input.profile === 'string' ? getProfile(input.profile) : input.profile;
   if (typeof input.profile === 'string' && !profile) {
-    throw new Error(`Unknown profile "${input.profile}". Use deep-house, techno, pop-edm, or ambient.`);
+    throw new Error(`Unknown profile "${input.profile}". Use deep-house, techno, pop-edm, ambient, or voiceover-bed.`);
   }
 
   const report: AnalysisReport = {
@@ -155,6 +161,18 @@ export function analyze(input: AnalyzeInput): Analysis {
         }
       : undefined,
     profile: profile ? { name: profile.name, note: profile.note } : undefined,
+    inputs: input.inputs,
+    voiceover:
+      measureVoiceover({
+        stems: trackStems,
+        sampleRate,
+        duration,
+        score: input.score,
+        masking,
+      }) ??
+      (profile?.voiceover
+        ? { presenceGapDb: null, sfxOverlap: null, sfxPer10s: null, sfxMinGapSec: null }
+        : undefined),
     findings: [],
   };
   report.findings = buildFindings(report, profile, input.score);

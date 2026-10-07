@@ -27,7 +27,7 @@ export function applyGroove(score: Score, track: Track, trackIndex: number): Tra
 
   const grid = score.swingGrid ?? 16;
   const warp = (t: number) => (swingOn ? swingTime(t, score.bpm!, amount, grid) : t);
-  const rng = mulberry32(hashSeed(score.seed, trackIndex) ^ 0x68756d61);
+  const rng = mulberry32((track.seed ?? hashSeed(score.seed, trackIndex)) ^ 0x68756d61);
 
   let notes: Note[] | undefined;
   if (track.notes) {
@@ -45,10 +45,13 @@ export function applyGroove(score: Score, track: Track, trackIndex: number): Tra
         }
         return { ...n, t: start, duration: end - start, size };
       });
-    for (let i = 0; i < notes.length - 1; i++) {
-      const next = notes[i + 1].t;
-      if (notes[i].t + notes[i].duration > next) {
-        notes[i] = { ...notes[i], duration: Math.max(0.005, next - notes[i].t) };
+    const polyphonic = track.engine !== undefined && track.engine !== 'wavetable';
+    if (!polyphonic) {
+      for (let i = 0; i < notes.length - 1; i++) {
+        const next = notes[i + 1].t;
+        if (notes[i].t + notes[i].duration > next) {
+          notes[i] = { ...notes[i], duration: Math.max(0.005, next - notes[i].t) };
+        }
       }
     }
   }

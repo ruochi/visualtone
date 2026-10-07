@@ -1,4 +1,5 @@
 import type { Score } from './schema.js';
+import { trackClips } from './schema.js';
 import { resolveTrack, sampleAt, prepareTrackPoints } from './interpolator.js';
 import { applyGroove } from './groove.js';
 
@@ -27,6 +28,13 @@ export function resolveScore(score: Score, rate = 200): ResolvedTrackCurve[] {
       const s = sampleAt(points, i / rate, track.lightness ?? 0.5);
       env[i] = s ? s.size : 0;
     }
+    for (const c of trackClips(track)) {
+      const len = c.trim ? Math.max(0, c.trim[1] - c.trim[0]) : 0;
+      if (len <= 0) continue;
+      const a = Math.max(0, Math.floor(c.at * rate));
+      const b = Math.min(frames, Math.ceil((c.at + len) * rate));
+      for (let i = a; i < b; i++) env[i] = Math.max(env[i], c.gain ?? 1);
+    }
     envelopes.set(track.id, env);
   }
 
@@ -38,7 +46,7 @@ export function resolveScore(score: Score, rate = 200): ResolvedTrackCurve[] {
     if (!src) return { trackId: track.id, samples: base };
     const samples = base.map((s, i) => {
       const srcLevel = src[Math.min(i, src.length - 1)] ?? 0;
-      const gain = 1 - Math.min(1, srcLevel * 4) * duck.amount;
+      const gain = 1 - Math.min(1, srcLevel * 4) * (duck.amount ?? 0.6);
       return { ...s, size: s.size * gain };
     });
     return { trackId: track.id, samples };

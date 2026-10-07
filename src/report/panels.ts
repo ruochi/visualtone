@@ -96,7 +96,7 @@ function drawCurves(c: Canvas, analysis: Analysis, score: Score | undefined, x: 
   const step = Math.max(1, Math.floor((dur * 80) / w));
   for (const track of score.tracks) {
     const points = prepareTrackPoints(track);
-    const color = hueRgb(track.hue, track.lightness ?? 0.6);
+    const color = hueRgb(track.hue ?? 200, track.lightness ?? 0.6);
     let prev: { x: number; y: number } | null = null;
     for (let i = 0; i <= w; i += 1) {
       const t = (i / w) * dur;
