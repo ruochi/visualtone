@@ -8,12 +8,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.36,
-      "passed": 2,
-      "total": 16,
+      "distance": 2.33,
+      "excess": 2.01,
+      "passed": 5,
+      "total": 20,
       "oursCents": 2.805184294702341,
       "refCents": -14.134888654904602,
-      "worst": "各泛音衰减 7.76"
+      "worst": "各泛音衰减 7.76",
+      "life": {
+        "shimmer": [
+          -58.8,
+          -29.8
+        ],
+        "flutter": [
+          0.1,
+          1.2
+        ],
+        "pitch.jitter": [
+          0.9,
+          1.3
+        ],
+        "brightnessLag": [
+          10,
+          -80
+        ]
+      }
     },
     {
       "id": "tinysol-flute",
@@ -22,12 +41,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.9,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.84,
+      "excess": 1.46,
+      "passed": 10,
+      "total": 19,
       "oursCents": -1.5557785847265537,
       "refCents": 13.795170549758886,
-      "worst": "音高 3.07"
+      "worst": "微起伏 4.13",
+      "life": {
+        "shimmer": [
+          -55.8,
+          -31
+        ],
+        "flutter": [
+          0.1,
+          0.6
+        ],
+        "pitch.jitter": [
+          1,
+          0.9
+        ],
+        "brightnessLag": [
+          20,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-flute",
@@ -36,12 +74,27 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 1.68,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.73,
+      "excess": 1.52,
+      "passed": 8,
+      "total": 18,
       "oursCents": 2.3558046975806914,
       "refCents": 4.476824507101148,
-      "worst": "各泛音衰减 7.39"
+      "worst": "各泛音衰减 7.39",
+      "life": {
+        "shimmer": [
+          -58.7,
+          -29.3
+        ],
+        "flutter": [
+          0.1,
+          1.5
+        ],
+        "pitch.jitter": [
+          0.9,
+          2
+        ]
+      }
     },
     {
       "id": "tinysol-flute",
@@ -50,12 +103,27 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 1.61,
-      "passed": 7,
-      "total": 16,
+      "distance": 1.64,
+      "excess": 1.5,
+      "passed": 12,
+      "total": 19,
       "oursCents": 0.6661087471816606,
       "refCents": 6.089060878001066,
-      "worst": "奇偶泛音比 4.61"
+      "worst": "微起伏 4.82",
+      "life": {
+        "shimmer": [
+          -59.3,
+          -30.4
+        ],
+        "flutter": [
+          0.2,
+          1
+        ],
+        "pitch.jitter": [
+          1.1,
+          0.6
+        ]
+      }
     },
     {
       "id": "tinysol-clarinet",
@@ -64,12 +132,23 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.04,
-      "passed": 4,
-      "total": 13,
+      "distance": 2.05,
+      "excess": 1.85,
+      "passed": 6,
+      "total": 15,
       "oursCents": -0.3316599340601709,
       "refCents": 8.118878816009818,
-      "worst": "起音 10–90% 4.42"
+      "worst": "起音噪声感 4.41",
+      "life": {
+        "shimmer": [
+          -55.8,
+          -32.3
+        ],
+        "pitch.jitter": [
+          0.7,
+          0.5
+        ]
+      }
     },
     {
       "id": "tinysol-clarinet",
@@ -78,12 +157,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 1.93,
-      "passed": 5,
-      "total": 15,
+      "distance": 1.9,
+      "excess": 1.56,
+      "passed": 8,
+      "total": 18,
       "oursCents": -0.24028460892718162,
       "refCents": 9.88487263806991,
-      "worst": "时频图 3.61"
+      "worst": "微起伏 3.94",
+      "life": {
+        "shimmer": [
+          -54.7,
+          -31.1
+        ],
+        "flutter": [
+          0.3,
+          0.7
+        ],
+        "pitch.jitter": [
+          0.7,
+          1.3
+        ]
+      }
     },
     {
       "id": "tinysol-clarinet",
@@ -91,69 +185,148 @@
       "catalogMidi": 72,
       "midi": 72,
       "note": "C5",
-      "size": 0.3,
-      "distance": 2.35,
-      "passed": 3,
-      "total": 12,
-      "oursCents": -0.04930545620046026,
-      "refCents": 10.985969323375095,
-      "worst": "起音 10–90% 7.76"
-    },
-    {
-      "id": "tinysol-clarinet",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.9,
-      "distance": 1.73,
-      "passed": 5,
-      "total": 16,
-      "oursCents": -0.023063242525628396,
-      "refCents": 4.993534383987499,
-      "worst": "起音 10–90% 8.58"
-    },
-    {
-      "id": "tinysol-clarinet",
-      "source": "TinySOL",
-      "catalogMidi": 84,
-      "midi": 84,
-      "note": "C6",
-      "size": 0.3,
-      "distance": 1.61,
-      "passed": 6,
-      "total": 16,
-      "oursCents": -0.3685189116973699,
-      "refCents": 7.210682214674204,
-      "worst": "整体衰减 4.28"
-    },
-    {
-      "id": "tinysol-clarinet",
-      "source": "TinySOL",
-      "catalogMidi": 84,
-      "midi": 84,
-      "note": "C6",
-      "size": 0.9,
-      "distance": 1.56,
-      "passed": 8,
-      "total": 15,
-      "oursCents": -0.33681823967249785,
-      "refCents": 6.492578741859294,
-      "worst": "各泛音衰减 4.44"
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
       "size": 0.3,
       "distance": 2.32,
-      "passed": 5,
-      "total": 17,
+      "excess": 2.09,
+      "passed": 4,
+      "total": 14,
+      "oursCents": -0.04930545620046026,
+      "refCents": 10.985969323375095,
+      "worst": "起音 10–90% 7.76",
+      "life": {
+        "shimmer": [
+          -56.3,
+          -33.1
+        ],
+        "pitch.jitter": [
+          0.7,
+          0.4
+        ]
+      }
+    },
+    {
+      "id": "tinysol-clarinet",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.9,
+      "distance": 1.79,
+      "excess": 1.57,
+      "passed": 11,
+      "total": 20,
+      "oursCents": -0.023063242525628396,
+      "refCents": 4.993534383987499,
+      "worst": "起音 10–90% 8.58",
+      "life": {
+        "shimmer": [
+          -53.8,
+          -33.3
+        ],
+        "flutter": [
+          0.1,
+          2.7
+        ],
+        "pitch.jitter": [
+          0.7,
+          0.8
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-clarinet",
+      "source": "TinySOL",
+      "catalogMidi": 84,
+      "midi": 84,
+      "note": "C6",
+      "size": 0.3,
+      "distance": 1.68,
+      "excess": 1.44,
+      "passed": 11,
+      "total": 19,
+      "oursCents": -0.3685189116973699,
+      "refCents": 7.210682214674204,
+      "worst": "整体衰减 4.28",
+      "life": {
+        "shimmer": [
+          -58.4,
+          -33.4
+        ],
+        "flutter": [
+          0.1,
+          1.9
+        ],
+        "pitch.jitter": [
+          0.7,
+          0.9
+        ]
+      }
+    },
+    {
+      "id": "tinysol-clarinet",
+      "source": "TinySOL",
+      "catalogMidi": 84,
+      "midi": 84,
+      "note": "C6",
+      "size": 0.9,
+      "distance": 1.74,
+      "excess": 1.6,
+      "passed": 12,
+      "total": 18,
+      "oursCents": -0.33681823967249785,
+      "refCents": 6.492578741859294,
+      "worst": "整体衰减 4.29",
+      "life": {
+        "shimmer": [
+          -59,
+          -35.2
+        ],
+        "flutter": [
+          0.1,
+          3.9
+        ],
+        "pitch.jitter": [
+          0.7,
+          0.9
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.3,
+      "distance": 2.18,
+      "excess": 2.05,
+      "passed": 8,
+      "total": 21,
       "oursCents": -0.4358708768446092,
       "refCents": -7.1835818612933515,
-      "worst": "起音 10–90% 6.63"
+      "worst": "起音噪声感 5.24",
+      "life": {
+        "shimmer": [
+          -44.3,
+          -28.6
+        ],
+        "flutter": [
+          0.2,
+          1.4
+        ],
+        "pitch.jitter": [
+          1.9,
+          2
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-violin",
@@ -162,12 +335,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.36,
-      "passed": 5,
-      "total": 18,
+      "distance": 2.25,
+      "excess": 2.12,
+      "passed": 7,
+      "total": 22,
       "oursCents": -0.44850519983430553,
       "refCents": -8.797399123624393,
-      "worst": "泛音比例 8.07"
+      "worst": "整体衰减 5.44",
+      "life": {
+        "shimmer": [
+          -43.1,
+          -27.2
+        ],
+        "flutter": [
+          0.2,
+          2.3
+        ],
+        "pitch.jitter": [
+          1.9,
+          2.9
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-violin",
@@ -176,12 +368,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.96,
-      "passed": 7,
-      "total": 17,
+      "distance": 1.88,
+      "excess": 1.68,
+      "passed": 11,
+      "total": 21,
       "oursCents": -0.46289211212591547,
       "refCents": 0.5050689754651737,
-      "worst": "各泛音衰减 5.59"
+      "worst": "整体衰减 5.05",
+      "life": {
+        "shimmer": [
+          -41.6,
+          -26.2
+        ],
+        "flutter": [
+          0.2,
+          1.2
+        ],
+        "pitch.jitter": [
+          1.9,
+          3.7
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
     },
     {
       "id": "tinysol-violin",
@@ -190,12 +401,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.33,
-      "passed": 5,
-      "total": 17,
+      "distance": 2.18,
+      "excess": 2.01,
+      "passed": 8,
+      "total": 21,
       "oursCents": -0.1952233596108095,
       "refCents": 3.660210841414336,
-      "worst": "整体衰减 7.55"
+      "worst": "整体衰减 7.55",
+      "life": {
+        "shimmer": [
+          -45.3,
+          -29.9
+        ],
+        "flutter": [
+          0.2,
+          1.1
+        ],
+        "pitch.jitter": [
+          1.9,
+          2.4
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-violin",
@@ -204,12 +434,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.95,
-      "passed": 8,
-      "total": 17,
+      "distance": 1.89,
+      "excess": 1.58,
+      "passed": 11,
+      "total": 21,
       "oursCents": -0.18415642604215252,
       "refCents": 16.0120886711805,
-      "worst": "整体衰减 5.13"
+      "worst": "整体衰减 5.13",
+      "life": {
+        "shimmer": [
+          -43.5,
+          -26.8
+        ],
+        "flutter": [
+          0.2,
+          1.8
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.9
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "tinysol-violin",
@@ -218,12 +467,31 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 2.3,
-      "passed": 7,
-      "total": 18,
+      "distance": 2.28,
+      "excess": 1.98,
+      "passed": 8,
+      "total": 22,
       "oursCents": -0.558780481738819,
       "refCents": -26.31203834454541,
-      "worst": "非谐性 B 7.72"
+      "worst": "整体衰减 6.71",
+      "life": {
+        "shimmer": [
+          -44.9,
+          -23.3
+        ],
+        "flutter": [
+          0.4,
+          1.5
+        ],
+        "pitch.jitter": [
+          1.9,
+          2.3
+        ],
+        "brightnessLag": [
+          -10,
+          60
+        ]
+      }
     },
     {
       "id": "tinysol-violin",
@@ -232,12 +500,31 @@
       "midi": 84,
       "note": "C6",
       "size": 0.6,
-      "distance": 1.89,
-      "passed": 8,
-      "total": 17,
+      "distance": 1.92,
+      "excess": 1.71,
+      "passed": 12,
+      "total": 21,
       "oursCents": -0.5562293329270186,
       "refCents": -2.607946680469022,
-      "worst": "起音噪声感 5.10"
+      "worst": "起音噪声感 5.10",
+      "life": {
+        "shimmer": [
+          -42.5,
+          -24
+        ],
+        "flutter": [
+          0.4,
+          3.2
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-viola",
@@ -246,12 +533,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.3,
-      "distance": 2.48,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.31,
+      "excess": 2.14,
+      "passed": 6,
+      "total": 20,
       "oursCents": -0.8638983983115318,
       "refCents": -0.6316609335008748,
-      "worst": "泛音比例 7.44"
+      "worst": "起音噪声感 5.72",
+      "life": {
+        "shimmer": [
+          -47.4,
+          -29.8
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.7,
+          1.1
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
     },
     {
       "id": "tinysol-viola",
@@ -260,12 +566,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 2.16,
-      "passed": 4,
-      "total": 16,
+      "distance": 1.98,
+      "excess": 1.73,
+      "passed": 7,
+      "total": 20,
       "oursCents": -0.8719203155115018,
       "refCents": -1.5496843121926434,
-      "worst": "各泛音衰减 8.35"
+      "worst": "整体衰减 6.34",
+      "life": {
+        "shimmer": [
+          -41.3,
+          -32
+        ],
+        "flutter": [
+          0.2,
+          1.1
+        ],
+        "pitch.jitter": [
+          1.7,
+          2
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
     },
     {
       "id": "tinysol-viola",
@@ -274,12 +599,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.14,
-      "passed": 6,
-      "total": 17,
+      "distance": 2.17,
+      "excess": 1.87,
+      "passed": 7,
+      "total": 21,
       "oursCents": -0.4761972669142612,
       "refCents": -10.205044343037656,
-      "worst": "整体衰减 6.51"
+      "worst": "整体衰减 6.51",
+      "life": {
+        "shimmer": [
+          -48.4,
+          -24.5
+        ],
+        "flutter": [
+          0.2,
+          2
+        ],
+        "pitch.jitter": [
+          1.8,
+          2
+        ],
+        "brightnessLag": [
+          0,
+          -70
+        ]
+      }
     },
     {
       "id": "tinysol-viola",
@@ -288,12 +632,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.24,
-      "passed": 6,
-      "total": 18,
+      "distance": 2.18,
+      "excess": 1.9,
+      "passed": 9,
+      "total": 22,
       "oursCents": -0.2165156411498558,
       "refCents": -8.187202143899,
-      "worst": "起音噪声感 6.97"
+      "worst": "起音噪声感 6.97",
+      "life": {
+        "shimmer": [
+          -48.7,
+          -24.4
+        ],
+        "flutter": [
+          0.2,
+          1.2
+        ],
+        "pitch.jitter": [
+          1.8,
+          1.8
+        ],
+        "brightnessLag": [
+          0,
+          40
+        ]
+      }
     },
     {
       "id": "tinysol-viola",
@@ -302,12 +665,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.83,
-      "passed": 8,
-      "total": 17,
+      "distance": 1.8,
+      "excess": 1.61,
+      "passed": 12,
+      "total": 21,
       "oursCents": -0.18642237611658036,
       "refCents": -3.6072673429623827,
-      "worst": "整体衰减 5.16"
+      "worst": "整体衰减 5.16",
+      "life": {
+        "shimmer": [
+          -42.3,
+          -22.3
+        ],
+        "flutter": [
+          0.2,
+          1.4
+        ],
+        "pitch.jitter": [
+          1.8,
+          2.1
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
     },
     {
       "id": "tinysol-cello",
@@ -316,12 +698,31 @@
       "midi": 36,
       "note": "C2",
       "size": 0.3,
-      "distance": 2.49,
-      "passed": 1,
-      "total": 16,
+      "distance": 2.34,
+      "excess": 2.11,
+      "passed": 3,
+      "total": 20,
       "oursCents": -1.8092421950431972,
       "refCents": 10.415008851406206,
-      "worst": "整体衰减 7.02"
+      "worst": "整体衰减 7.02",
+      "life": {
+        "shimmer": [
+          -48,
+          -28.2
+        ],
+        "flutter": [
+          0.1,
+          1.2
+        ],
+        "pitch.jitter": [
+          1.5,
+          1.3
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "tinysol-cello",
@@ -330,12 +731,31 @@
       "midi": 36,
       "note": "C2",
       "size": 0.9,
-      "distance": 2.19,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.12,
+      "excess": 1.82,
+      "passed": 7,
+      "total": 20,
       "oursCents": -1.8307456334934906,
       "refCents": 19.73332850322716,
-      "worst": "整体衰减 7.62"
+      "worst": "整体衰减 7.62",
+      "life": {
+        "shimmer": [
+          -41.2,
+          -22.8
+        ],
+        "flutter": [
+          0.1,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.5,
+          1.1
+        ],
+        "brightnessLag": [
+          0,
+          -40
+        ]
+      }
     },
     {
       "id": "tinysol-cello",
@@ -344,12 +764,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 2.02,
-      "passed": 7,
-      "total": 17,
+      "distance": 1.99,
+      "excess": 1.73,
+      "passed": 9,
+      "total": 21,
       "oursCents": -0.942297778288168,
       "refCents": -13.858105652040024,
-      "worst": "整体衰减 6.64"
+      "worst": "整体衰减 6.64",
+      "life": {
+        "shimmer": [
+          -46.6,
+          -30.4
+        ],
+        "flutter": [
+          0.2,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.6,
+          3.5
+        ],
+        "brightnessLag": [
+          0,
+          -40
+        ]
+      }
     },
     {
       "id": "tinysol-cello",
@@ -358,82 +797,196 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.29,
-      "passed": 4,
-      "total": 17,
+      "distance": 2.21,
+      "excess": 1.91,
+      "passed": 6,
+      "total": 21,
       "oursCents": -0.49461054704479207,
       "refCents": -15.5191992109428,
-      "worst": "起音噪声感 7.24"
+      "worst": "起音噪声感 7.24",
+      "life": {
+        "shimmer": [
+          -54,
+          -25.4
+        ],
+        "flutter": [
+          0.2,
+          2.4
+        ],
+        "pitch.jitter": [
+          1.6,
+          1.7
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.9,
+      "distance": 1.91,
+      "excess": 1.69,
+      "passed": 11,
+      "total": 21,
+      "oursCents": -0.5015358705591239,
+      "refCents": -15.611609964242005,
+      "worst": "起音噪声感 5.71",
+      "life": {
+        "shimmer": [
+          -45.9,
+          -30.7
+        ],
+        "flutter": [
+          0.2,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.6,
+          1.7
+        ],
+        "brightnessLag": [
+          0,
+          -30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.3,
+      "distance": 2.14,
+      "excess": 1.92,
+      "passed": 9,
+      "total": 21,
+      "oursCents": -0.2414837239391351,
+      "refCents": -1.74244778173605,
+      "worst": "奇偶泛音比 5.33",
+      "life": {
+        "shimmer": [
+          -51.9,
+          -21.9
+        ],
+        "flutter": [
+          0.2,
+          1.7
+        ],
+        "pitch.jitter": [
+          1.6,
+          2.7
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.9,
+      "distance": 2.36,
+      "excess": 2.05,
+      "passed": 4,
+      "total": 21,
+      "oursCents": -0.1981321240125846,
+      "refCents": -11.247962920409226,
+      "worst": "整体衰减 4.80",
+      "life": {
+        "shimmer": [
+          -44.5,
+          -19.3
+        ],
+        "flutter": [
+          0.2,
+          3.3
+        ],
+        "pitch.jitter": [
+          1.6,
+          4.1
+        ],
+        "brightnessLag": [
+          0,
+          80
+        ]
+      }
+    },
+    {
+      "id": "tinysol-trumpet",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.6,
+      "distance": 2.16,
+      "excess": 1.94,
+      "passed": 6,
+      "total": 20,
+      "oursCents": -0.30555913779878563,
+      "refCents": -22.048643849319948,
+      "worst": "频谱包络 4.77",
+      "life": {
+        "shimmer": [
+          -48.7,
+          -32.6
+        ],
+        "flutter": [
+          0.1,
+          0.1
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.5
+        ],
+        "brightnessLag": [
+          10,
+          30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-trumpet",
       "source": "TinySOL",
       "catalogMidi": 60,
       "midi": 60,
       "note": "C4",
       "size": 0.9,
       "distance": 1.99,
+      "excess": 1.77,
       "passed": 7,
-      "total": 17,
-      "oursCents": -0.5015358705591239,
-      "refCents": -15.611609964242005,
-      "worst": "起音噪声感 5.71"
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.3,
-      "distance": 2.23,
-      "passed": 7,
-      "total": 17,
-      "oursCents": -0.2414837239391351,
-      "refCents": -1.74244778173605,
-      "worst": "奇偶泛音比 5.33"
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.9,
-      "distance": 2.28,
-      "passed": 3,
-      "total": 17,
-      "oursCents": -0.1981321240125846,
-      "refCents": -11.247962920409226,
-      "worst": "整体衰减 4.80"
-    },
-    {
-      "id": "tinysol-trumpet",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.6,
-      "distance": 2.31,
-      "passed": 2,
-      "total": 16,
-      "oursCents": -0.30555913779878563,
-      "refCents": -22.048643849319948,
-      "worst": "泛音比例 6.60"
-    },
-    {
-      "id": "tinysol-trumpet",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.9,
-      "distance": 2.12,
-      "passed": 3,
-      "total": 16,
+      "total": 20,
       "oursCents": -0.31821508736450377,
       "refCents": -11.883608467419183,
-      "worst": "整体衰减 4.18"
+      "worst": "整体衰减 4.18",
+      "life": {
+        "shimmer": [
+          -44,
+          -30.7
+        ],
+        "flutter": [
+          0,
+          0.2
+        ],
+        "pitch.jitter": [
+          0.5,
+          3
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
     },
     {
       "id": "tinysol-trumpet",
@@ -442,12 +995,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 1.9,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.85,
+      "excess": 1.37,
+      "passed": 9,
+      "total": 19,
       "oursCents": -0.12030372701745234,
       "refCents": 10.611371640921536,
-      "worst": "泛音比例 4.10"
+      "worst": "微起伏 2.64",
+      "life": {
+        "shimmer": [
+          -47,
+          -31.2
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.4
+        ],
+        "brightnessLag": [
+          10,
+          50
+        ]
+      }
     },
     {
       "id": "tinysol-trumpet",
@@ -456,12 +1028,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.93,
-      "passed": 4,
-      "total": 15,
+      "distance": 1.9,
+      "excess": 1.69,
+      "passed": 6,
+      "total": 19,
       "oursCents": -0.06795966188756916,
       "refCents": 9.865577640512827,
-      "worst": "整体衰减 4.88"
+      "worst": "整体衰减 4.88",
+      "life": {
+        "shimmer": [
+          -41.6,
+          -27.9
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.5
+        ],
+        "brightnessLag": [
+          0,
+          50
+        ]
+      }
     },
     {
       "id": "tinysol-trumpet",
@@ -470,12 +1061,27 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 2.01,
-      "passed": 5,
-      "total": 15,
+      "distance": 2.1,
+      "excess": 1.83,
+      "passed": 6,
+      "total": 18,
       "oursCents": -0.4925786724891966,
       "refCents": -23.09831662278005,
-      "worst": "整体衰减 5.43"
+      "worst": "整体衰减 5.43",
+      "life": {
+        "shimmer": [
+          -54.3,
+          -30.1
+        ],
+        "flutter": [
+          0.2,
+          3.3
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.7
+        ]
+      }
     },
     {
       "id": "tinysol-horn",
@@ -484,12 +1090,27 @@
       "midi": 48,
       "note": "C3",
       "size": 0.3,
-      "distance": 2.73,
-      "passed": 2,
-      "total": 16,
+      "distance": 2.61,
+      "excess": 2.46,
+      "passed": 3,
+      "total": 19,
       "oursCents": -0.6265871136998742,
       "refCents": 34.32645384223528,
-      "worst": "泛音比例 7.22"
+      "worst": "泛音斜率 5.37",
+      "life": {
+        "shimmer": [
+          -62.5,
+          -31.8
+        ],
+        "flutter": [
+          0.2,
+          0.4
+        ],
+        "pitch.jitter": [
+          0.5,
+          3
+        ]
+      }
     },
     {
       "id": "tinysol-horn",
@@ -498,12 +1119,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 1.97,
-      "passed": 5,
-      "total": 15,
+      "distance": 1.96,
+      "excess": 1.77,
+      "passed": 7,
+      "total": 19,
       "oursCents": -0.6727667033162146,
       "refCents": 0.5408733787943788,
-      "worst": "各泛音衰减 5.92"
+      "worst": "各泛音衰减 5.92",
+      "life": {
+        "shimmer": [
+          -54.2,
+          -33.4
+        ],
+        "flutter": [
+          0,
+          0.1
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.9
+        ],
+        "brightnessLag": [
+          0,
+          40
+        ]
+      }
     },
     {
       "id": "tinysol-horn",
@@ -512,12 +1152,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.12,
-      "passed": 6,
-      "total": 16,
+      "distance": 2.07,
+      "excess": 1.75,
+      "passed": 9,
+      "total": 19,
       "oursCents": -0.3131970100483972,
       "refCents": 2.8341991680180962,
-      "worst": "非谐性 B 5.65"
+      "worst": "微起伏 3.77",
+      "life": {
+        "shimmer": [
+          -53.2,
+          -30.6
+        ],
+        "flutter": [
+          0.4,
+          0.5
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.5
+        ]
+      }
     },
     {
       "id": "tinysol-horn",
@@ -526,12 +1181,23 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 1.58,
-      "passed": 8,
-      "total": 13,
+      "distance": 1.69,
+      "excess": 1.4,
+      "passed": 10,
+      "total": 15,
       "oursCents": -0.15033232970139188,
       "refCents": 1.078925758806998,
-      "worst": "各泛音衰减 6.99"
+      "worst": "各泛音衰减 6.99",
+      "life": {
+        "shimmer": [
+          -57,
+          -31.7
+        ],
+        "pitch.jitter": [
+          0.5,
+          3
+        ]
+      }
     },
     {
       "id": "tinysol-horn",
@@ -540,12 +1206,27 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.87,
-      "passed": 5,
-      "total": 15,
+      "distance": 1.82,
+      "excess": 1.51,
+      "passed": 7,
+      "total": 18,
       "oursCents": -0.14097042748786606,
       "refCents": 1.5544042707812116,
-      "worst": "亮度（质心） 3.59"
+      "worst": "亮度（质心） 3.59",
+      "life": {
+        "shimmer": [
+          -46.9,
+          -32.3
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.7
+        ]
+      }
     },
     {
       "id": "tinysol-trombone",
@@ -554,12 +1235,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.19,
-      "passed": 6,
-      "total": 15,
+      "distance": 2.13,
+      "excess": 1.81,
+      "passed": 9,
+      "total": 18,
       "oursCents": -0.2906581736756816,
       "refCents": -15.228626648828936,
-      "worst": "泛音比例 5.00"
+      "worst": "微起伏 4.82",
+      "life": {
+        "shimmer": [
+          -58.9,
+          -29.9
+        ],
+        "flutter": [
+          0.1,
+          0.7
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.5
+        ]
+      }
     },
     {
       "id": "tinysol-trombone",
@@ -568,12 +1264,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.02,
-      "passed": 6,
-      "total": 16,
+      "distance": 1.98,
+      "excess": 1.7,
+      "passed": 10,
+      "total": 19,
       "oursCents": -0.29268900171809603,
       "refCents": -11.877820692103173,
-      "worst": "泛音比例 4.17"
+      "worst": "微起伏 3.88",
+      "life": {
+        "shimmer": [
+          -53.1,
+          -29.8
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.5
+        ]
+      }
     },
     {
       "id": "tinysol-trombone",
@@ -582,12 +1293,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.98,
-      "passed": 6,
-      "total": 16,
+      "distance": 1.93,
+      "excess": 1.64,
+      "passed": 11,
+      "total": 20,
       "oursCents": -0.2971765955228361,
       "refCents": -11.34391409715323,
-      "worst": "各泛音衰减 6.67"
+      "worst": "整体衰减 5.04",
+      "life": {
+        "shimmer": [
+          -49.9,
+          -29.8
+        ],
+        "flutter": [
+          0,
+          0.1
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.3
+        ],
+        "brightnessLag": [
+          0,
+          30
+        ]
+      }
     },
     {
       "id": "tinysol-sax",
@@ -596,12 +1326,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.04,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.99,
+      "excess": 1.82,
+      "passed": 9,
+      "total": 18,
       "oursCents": -0.2846365486100913,
       "refCents": 0.02982476849164945,
-      "worst": "各泛音衰减 5.59"
+      "worst": "整体衰减 5.33",
+      "life": {
+        "shimmer": [
+          -57.4,
+          -28.9
+        ],
+        "flutter": [
+          0.1,
+          0.4
+        ],
+        "pitch.jitter": [
+          0.5,
+          0.3
+        ]
+      }
     },
     {
       "id": "tinysol-sax",
@@ -610,12 +1355,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 2.08,
-      "passed": 5,
-      "total": 15,
+      "distance": 1.99,
+      "excess": 1.6,
+      "passed": 8,
+      "total": 19,
       "oursCents": -0.29506969497224383,
       "refCents": 11.400138428250932,
-      "worst": "各泛音衰减 6.29"
+      "worst": "各泛音衰减 6.29",
+      "life": {
+        "shimmer": [
+          -47.2,
+          -31.7
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          0.5,
+          0.3
+        ],
+        "brightnessLag": [
+          0,
+          40
+        ]
+      }
     },
     {
       "id": "tinysol-sax",
@@ -624,12 +1388,27 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 2.1,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.92,
+      "excess": 1.71,
+      "passed": 10,
+      "total": 18,
       "oursCents": -0.11197367461488283,
       "refCents": -1.2786733644141324,
-      "worst": "泛音比例 6.93"
+      "worst": "奇偶泛音比 5.02",
+      "life": {
+        "shimmer": [
+          -50,
+          -46.5
+        ],
+        "flutter": [
+          0.2,
+          0.2
+        ],
+        "pitch.jitter": [
+          0.5,
+          0.4
+        ]
+      }
     },
     {
       "id": "tinysol-sax",
@@ -638,12 +1417,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.94,
-      "passed": 5,
-      "total": 16,
+      "distance": 1.82,
+      "excess": 1.38,
+      "passed": 10,
+      "total": 20,
       "oursCents": -0.09692176594455883,
       "refCents": 8.148327612800434,
-      "worst": "整体衰减 4.86"
+      "worst": "整体衰减 4.86",
+      "life": {
+        "shimmer": [
+          -45.8,
+          -33
+        ],
+        "flutter": [
+          0.1,
+          0.5
+        ],
+        "pitch.jitter": [
+          0.5,
+          0.9
+        ],
+        "brightnessLag": [
+          0,
+          20
+        ]
+      }
     },
     {
       "id": "tinysol-bass",
@@ -652,12 +1450,31 @@
       "midi": 36,
       "note": "C2",
       "size": 0.3,
-      "distance": 2.22,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.21,
+      "excess": 1.83,
+      "passed": 6,
+      "total": 20,
       "oursCents": -2.2649495615942232,
       "refCents": 18.642524257366148,
-      "worst": "整体衰减 7.05"
+      "worst": "整体衰减 7.05",
+      "life": {
+        "shimmer": [
+          -51.4,
+          -26.4
+        ],
+        "flutter": [
+          0.1,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.4,
+          2.6
+        ],
+        "brightnessLag": [
+          -10,
+          -90
+        ]
+      }
     },
     {
       "id": "tinysol-bass",
@@ -667,11 +1484,30 @@
       "note": "C2",
       "size": 0.9,
       "distance": 2.15,
-      "passed": 4,
-      "total": 16,
+      "excess": 1.83,
+      "passed": 6,
+      "total": 20,
       "oursCents": -2.256021574811742,
       "refCents": 8.46743468988886,
-      "worst": "整体衰减 7.84"
+      "worst": "整体衰减 7.84",
+      "life": {
+        "shimmer": [
+          -50.6,
+          -27.7
+        ],
+        "flutter": [
+          0.1,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.4,
+          3.3
+        ],
+        "brightnessLag": [
+          0,
+          -70
+        ]
+      }
     },
     {
       "id": "tinysol-bass",
@@ -680,12 +1516,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 2.16,
-      "passed": 5,
-      "total": 17,
+      "distance": 2.08,
+      "excess": 1.9,
+      "passed": 10,
+      "total": 21,
       "oursCents": -1.1396173499631854,
       "refCents": -8.788842452169566,
-      "worst": "整体衰减 8.47"
+      "worst": "整体衰减 8.47",
+      "life": {
+        "shimmer": [
+          -49.4,
+          -29.5
+        ],
+        "flutter": [
+          0.2,
+          0.6
+        ],
+        "pitch.jitter": [
+          1.4,
+          1.1
+        ],
+        "brightnessLag": [
+          0,
+          -30
+        ]
+      }
     },
     {
       "id": "tinysol-bass",
@@ -694,12 +1549,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 2.24,
-      "passed": 6,
-      "total": 17,
+      "distance": 2.22,
+      "excess": 1.93,
+      "passed": 9,
+      "total": 21,
       "oursCents": -1.1418162033124086,
       "refCents": -12.785363705354635,
-      "worst": "整体衰减 9.28"
+      "worst": "整体衰减 9.28",
+      "life": {
+        "shimmer": [
+          -48.8,
+          -26.4
+        ],
+        "flutter": [
+          0.2,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.4,
+          1.8
+        ],
+        "brightnessLag": [
+          0,
+          80
+        ]
+      }
     },
     {
       "id": "tinysol-bass",
@@ -708,12 +1582,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.28,
-      "passed": 4,
-      "total": 17,
+      "distance": 2.18,
+      "excess": 1.92,
+      "passed": 6,
+      "total": 21,
       "oursCents": -0.6565552854104871,
       "refCents": -34.52961421162242,
-      "worst": "整体衰减 8.41"
+      "worst": "整体衰减 8.41",
+      "life": {
+        "shimmer": [
+          -59.3,
+          -27.1
+        ],
+        "flutter": [
+          0.2,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.4,
+          3.5
+        ],
+        "brightnessLag": [
+          0,
+          20
+        ]
+      }
     },
     {
       "id": "tinysol-tuba",
@@ -722,12 +1615,31 @@
       "midi": 31,
       "note": "G1",
       "size": 0.6,
-      "distance": 2.13,
-      "passed": 6,
-      "total": 16,
+      "distance": 2.09,
+      "excess": 1.81,
+      "passed": 9,
+      "total": 20,
       "oursCents": -3.365950582242929,
       "refCents": 0.8845737651771952,
-      "worst": "泛音比例 4.70"
+      "worst": "微起伏 4.82",
+      "life": {
+        "shimmer": [
+          -56.4,
+          -27.5
+        ],
+        "flutter": [
+          0,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.2,
+          6
+        ],
+        "brightnessLag": [
+          10,
+          20
+        ]
+      }
     },
     {
       "id": "tinysol-tuba",
@@ -736,12 +1648,27 @@
       "midi": 36,
       "note": "C2",
       "size": 0.9,
-      "distance": 1.95,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.94,
+      "excess": 1.65,
+      "passed": 8,
+      "total": 18,
       "oursCents": -2.8195138056579534,
       "refCents": 8.65257911084117,
-      "worst": "整体衰减 11.61"
+      "worst": "整体衰减 11.61",
+      "life": {
+        "flutter": [
+          0,
+          1.3
+        ],
+        "pitch.jitter": [
+          0.6,
+          10.1
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-tuba",
@@ -750,12 +1677,27 @@
       "midi": 43,
       "note": "G2",
       "size": 0.3,
-      "distance": 2.22,
-      "passed": 5,
-      "total": 17,
+      "distance": 2.16,
+      "excess": 2.02,
+      "passed": 8,
+      "total": 20,
       "oursCents": -2.0123656094918316,
       "refCents": -4.8592640236402165,
-      "worst": "起音 10–90% 14.53"
+      "worst": "起音 10–90% 14.53",
+      "life": {
+        "shimmer": [
+          -62.1,
+          -28.1
+        ],
+        "flutter": [
+          0.1,
+          0.6
+        ],
+        "pitch.jitter": [
+          1,
+          2.3
+        ]
+      }
     },
     {
       "id": "tinysol-tuba",
@@ -764,12 +1706,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.13,
-      "passed": 6,
-      "total": 16,
+      "distance": 2.08,
+      "excess": 1.87,
+      "passed": 10,
+      "total": 19,
       "oursCents": -0.9276260640962645,
       "refCents": -1.7618906058251496,
-      "worst": "整体衰减 6.64"
+      "worst": "整体衰减 6.64",
+      "life": {
+        "shimmer": [
+          -60,
+          -28.5
+        ],
+        "flutter": [
+          0.3,
+          1
+        ],
+        "pitch.jitter": [
+          0.9,
+          1.5
+        ]
+      }
     },
     {
       "id": "tinysol-tuba",
@@ -778,12 +1735,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.83,
-      "passed": 7,
-      "total": 16,
+      "distance": 1.93,
+      "excess": 1.61,
+      "passed": 10,
+      "total": 20,
       "oursCents": -0.9267842385481222,
       "refCents": 5.761458605242521,
-      "worst": "整体衰减 11.51"
+      "worst": "整体衰减 11.51",
+      "life": {
+        "shimmer": [
+          -54.5,
+          -21.4
+        ],
+        "flutter": [
+          0.1,
+          2.8
+        ],
+        "pitch.jitter": [
+          0.8,
+          3.6
+        ],
+        "brightnessLag": [
+          0,
+          30
+        ]
+      }
     },
     {
       "id": "tinysol-oboe",
@@ -792,12 +1768,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.36,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.22,
+      "excess": 2.02,
+      "passed": 7,
+      "total": 20,
       "oursCents": -0.2759259892442645,
       "refCents": 9.377418989348111,
-      "worst": "泛音比例 4.53"
+      "worst": "微起伏 4.48",
+      "life": {
+        "shimmer": [
+          -58.7,
+          -31.8
+        ],
+        "flutter": [
+          0,
+          0.3
+        ],
+        "pitch.jitter": [
+          0.5,
+          0.9
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
     },
     {
       "id": "tinysol-oboe",
@@ -806,12 +1801,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.82,
-      "passed": 8,
-      "total": 15,
+      "distance": 1.77,
+      "excess": 1.56,
+      "passed": 12,
+      "total": 19,
       "oursCents": -0.2807017635792228,
       "refCents": -1.3251192345062415,
-      "worst": "各泛音衰减 4.47"
+      "worst": "整体衰减 3.94",
+      "life": {
+        "shimmer": [
+          -51.3,
+          -31.6
+        ],
+        "flutter": [
+          0,
+          0.7
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.7
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-oboe",
@@ -820,12 +1834,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 1.7,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.8,
+      "excess": 1.51,
+      "passed": 10,
+      "total": 19,
       "oursCents": -0.10688988513166632,
       "refCents": 7.784653643678909,
-      "worst": "起音 10–90% 3.47"
+      "worst": "微起伏 3.80",
+      "life": {
+        "shimmer": [
+          -55.5,
+          -32.7
+        ],
+        "flutter": [
+          0,
+          0.5
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.7
+        ],
+        "brightnessLag": [
+          0,
+          110
+        ]
+      }
     },
     {
       "id": "tinysol-oboe",
@@ -834,12 +1867,31 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.57,
-      "passed": 7,
-      "total": 15,
+      "distance": 1.73,
+      "excess": 1.45,
+      "passed": 9,
+      "total": 19,
       "oursCents": -0.10166879373520148,
       "refCents": 1.0116731783456605,
-      "worst": "起音 10–90% 4.47"
+      "worst": "整体衰减 3.88",
+      "life": {
+        "shimmer": [
+          -53.5,
+          -32.1
+        ],
+        "flutter": [
+          0,
+          0.6
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.7
+        ],
+        "brightnessLag": [
+          0,
+          -70
+        ]
+      }
     },
     {
       "id": "tinysol-bassoon",
@@ -848,12 +1900,31 @@
       "midi": 36,
       "note": "C2",
       "size": 0.6,
-      "distance": 1.97,
-      "passed": 7,
-      "total": 15,
+      "distance": 1.89,
+      "excess": 1.66,
+      "passed": 11,
+      "total": 19,
       "oursCents": -1.2633618851780346,
       "refCents": -3.1092111686834847,
-      "worst": "各泛音衰减 5.28"
+      "worst": "微起伏 4.11",
+      "life": {
+        "shimmer": [
+          -54.3,
+          -29.6
+        ],
+        "flutter": [
+          0,
+          0.1
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.3
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
     },
     {
       "id": "tinysol-bassoon",
@@ -862,12 +1933,31 @@
       "midi": 36,
       "note": "C2",
       "size": 0.9,
-      "distance": 1.71,
-      "passed": 7,
-      "total": 15,
+      "distance": 1.67,
+      "excess": 1.4,
+      "passed": 12,
+      "total": 19,
       "oursCents": -1.2576840351789575,
       "refCents": 3.4855433576160406,
-      "worst": "各泛音衰减 3.52"
+      "worst": "微起伏 3.20",
+      "life": {
+        "shimmer": [
+          -50.7,
+          -31.5
+        ],
+        "flutter": [
+          0,
+          0.1
+        ],
+        "pitch.jitter": [
+          0.5,
+          1.1
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "tinysol-bassoon",
@@ -876,12 +1966,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.28,
-      "passed": 4,
-      "total": 16,
+      "distance": 2.25,
+      "excess": 1.94,
+      "passed": 6,
+      "total": 19,
       "oursCents": -0.29909080093047874,
       "refCents": 18.575653923931423,
-      "worst": "各泛音衰减 7.30"
+      "worst": "奇偶泛音比 7.26",
+      "life": {
+        "shimmer": [
+          -62.2,
+          -31
+        ],
+        "flutter": [
+          0.1,
+          1
+        ],
+        "pitch.jitter": [
+          0.5,
+          4.1
+        ]
+      }
     },
     {
       "id": "tinysol-bassoon",
@@ -890,12 +1995,31 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 2.37,
-      "passed": 4,
-      "total": 15,
+      "distance": 2.33,
+      "excess": 2.1,
+      "passed": 5,
+      "total": 19,
       "oursCents": -0.30479458304326124,
       "refCents": 19.023956798954327,
-      "worst": "起音 10–90% 4.99"
+      "worst": "谐噪比 4.85",
+      "life": {
+        "shimmer": [
+          -56.8,
+          -32.3
+        ],
+        "flutter": [
+          0,
+          0.5
+        ],
+        "pitch.jitter": [
+          0.5,
+          2.5
+        ],
+        "brightnessLag": [
+          0,
+          160
+        ]
+      }
     },
     {
       "id": "vsco-marimba",
@@ -905,11 +2029,22 @@
       "note": "C3",
       "size": 0.9,
       "distance": 2.26,
-      "passed": 6,
-      "total": 16,
+      "excess": 1.91,
+      "passed": 8,
+      "total": 18,
       "oursCents": 0.2420126196641697,
       "refCents": -4.205397854797629,
-      "worst": "奇偶泛音比 7.62"
+      "worst": "奇偶泛音比 7.62",
+      "life": {
+        "pitch.jitter": [
+          0.4,
+          2.2
+        ],
+        "brightnessLag": [
+          0,
+          -70
+        ]
+      }
     },
     {
       "id": "vsco-marimba",
@@ -918,12 +2053,23 @@
       "midi": 59,
       "note": "B3",
       "size": 0.9,
-      "distance": 2.26,
-      "passed": 3,
-      "total": 15,
+      "distance": 2.14,
+      "excess": 1.85,
+      "passed": 7,
+      "total": 17,
       "oursCents": 0.09670422553094266,
       "refCents": -6.238836131876466,
-      "worst": "起音 10–90% 9.68"
+      "worst": "起音 10–90% 9.68",
+      "life": {
+        "pitch.jitter": [
+          0.6,
+          0.2
+        ],
+        "brightnessLag": [
+          -10,
+          -30
+        ]
+      }
     },
     {
       "id": "vsco-marimba",
@@ -932,12 +2078,23 @@
       "midi": 65,
       "note": "F4",
       "size": 0.9,
-      "distance": 2.23,
-      "passed": 3,
-      "total": 15,
+      "distance": 2.11,
+      "excess": 1.85,
+      "passed": 6,
+      "total": 17,
       "oursCents": -0.1610257771044616,
       "refCents": -4.421474941071032,
-      "worst": "奇偶泛音比 9.61"
+      "worst": "奇偶泛音比 9.61",
+      "life": {
+        "pitch.jitter": [
+          0.9,
+          0.4
+        ],
+        "brightnessLag": [
+          -10,
+          -30
+        ]
+      }
     },
     {
       "id": "vsco-marimba",
@@ -946,12 +2103,23 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.79,
-      "passed": 8,
-      "total": 17,
+      "distance": 1.71,
+      "excess": 1.4,
+      "passed": 12,
+      "total": 19,
       "oursCents": 0.2378960370435621,
       "refCents": 2.127757871852716,
-      "worst": "泛音比例 3.56"
+      "worst": "响度包络 2.90",
+      "life": {
+        "pitch.jitter": [
+          1.4,
+          0.5
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
     },
     {
       "id": "vsco-marimba",
@@ -960,12 +2128,19 @@
       "midi": 79,
       "note": "G5",
       "size": 0.9,
-      "distance": 1.93,
-      "passed": 6,
-      "total": 14,
+      "distance": 1.86,
+      "excess": 1.61,
+      "passed": 7,
+      "total": 15,
       "oursCents": 0.06806971382688877,
       "refCents": -1.8083771118290428,
-      "worst": "起音噪声感 4.45"
+      "worst": "起音噪声感 4.45",
+      "life": {
+        "pitch.jitter": [
+          0.1,
+          0.2
+        ]
+      }
     },
     {
       "id": "vsco-xylophone",
@@ -975,11 +2150,22 @@
       "note": "C5",
       "size": 0.9,
       "distance": 2.31,
-      "passed": 5,
-      "total": 18,
+      "excess": 2.14,
+      "passed": 6,
+      "total": 20,
       "oursCents": 0.2387263576372565,
       "refCents": 10.384837493876557,
-      "worst": "非谐性 B 10.23"
+      "worst": "奇偶泛音比 9.67",
+      "life": {
+        "pitch.jitter": [
+          0.1,
+          6.7
+        ],
+        "brightnessLag": [
+          0,
+          -30
+        ]
+      }
     },
     {
       "id": "vsco-xylophone",
@@ -988,12 +2174,23 @@
       "midi": 79,
       "note": "G5",
       "size": 0.9,
-      "distance": 2.06,
-      "passed": 6,
-      "total": 18,
+      "distance": 2.07,
+      "excess": 1.8,
+      "passed": 9,
+      "total": 20,
       "oursCents": 0.0690862712720927,
       "refCents": 13.901606765545495,
-      "worst": "非谐性 B 10.23"
+      "worst": "分音起伏 7.83",
+      "life": {
+        "flutter": [
+          0,
+          7.8
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-xylophone",
@@ -1002,12 +2199,19 @@
       "midi": 84,
       "note": "C6",
       "size": 0.9,
-      "distance": 1.8,
-      "passed": 8,
-      "total": 15,
+      "distance": 1.75,
+      "excess": 1.32,
+      "passed": 9,
+      "total": 16,
       "oursCents": -0.11333058236779393,
       "refCents": 15.111655694241291,
-      "worst": "谐噪比 4.06"
+      "worst": "谐噪比 4.06",
+      "life": {
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-xylophone",
@@ -1017,11 +2221,13 @@
       "note": "C7",
       "size": 0.9,
       "distance": 1.46,
-      "passed": 8,
+      "excess": 1.13,
+      "passed": 10,
       "total": 15,
       "oursCents": 0.060538113785303646,
       "refCents": 16.65423491917577,
-      "worst": "音高 3.32"
+      "worst": "谐噪比 2.31",
+      "life": {}
     },
     {
       "id": "vsco-glock",
@@ -1030,12 +2236,23 @@
       "midi": 79,
       "note": "G5",
       "size": 0.7,
-      "distance": 2.38,
-      "passed": 4,
-      "total": 15,
+      "distance": 2.35,
+      "excess": 2.14,
+      "passed": 5,
+      "total": 17,
       "oursCents": 0.07110031611934575,
       "refCents": 8.392614202188833,
-      "worst": "奇偶泛音比 12.43"
+      "worst": "奇偶泛音比 12.43",
+      "life": {
+        "pitch.jitter": [
+          0.4,
+          13.6
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-glock",
@@ -1044,12 +2261,23 @@
       "midi": 84,
       "note": "C6",
       "size": 0.7,
-      "distance": 2.37,
-      "passed": 3,
-      "total": 15,
+      "distance": 2.31,
+      "excess": 2.06,
+      "passed": 4,
+      "total": 17,
       "oursCents": -0.11432312531454003,
       "refCents": 11.316945303279086,
-      "worst": "泛音比例 5.71"
+      "worst": "响度包络 3.92",
+      "life": {
+        "pitch.jitter": [
+          0.3,
+          5.3
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-glock",
@@ -1058,12 +2286,19 @@
       "midi": 91,
       "note": "G6",
       "size": 0.7,
-      "distance": 2.47,
+      "distance": 2.5,
+      "excess": 2.18,
       "passed": 2,
-      "total": 15,
+      "total": 16,
       "oursCents": -0.04139684592706976,
       "refCents": 11.97936922381601,
-      "worst": "奇偶泛音比 7.05"
+      "worst": "奇偶泛音比 7.05",
+      "life": {
+        "pitch.jitter": [
+          0.3,
+          5.9
+        ]
+      }
     },
     {
       "id": "vsco-glock",
@@ -1072,12 +2307,19 @@
       "midi": 96,
       "note": "C7",
       "size": 0.7,
-      "distance": 2.18,
-      "passed": 4,
-      "total": 13,
+      "distance": 2.25,
+      "excess": 1.86,
+      "passed": 5,
+      "total": 14,
       "oursCents": 0.0616863640374433,
       "refCents": 15.927188421979398,
-      "worst": "泛音比例 4.77"
+      "worst": "音高抖动 7.02",
+      "life": {
+        "pitch.jitter": [
+          0.2,
+          14.3
+        ]
+      }
     },
     {
       "id": "vsco-harp",
@@ -1086,12 +2328,23 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 2.62,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.47,
+      "excess": 2.31,
+      "passed": 5,
+      "total": 18,
       "oursCents": 0.24157623905814185,
       "refCents": -1.5545945908666616,
-      "worst": "非谐性 B 7.77"
+      "worst": "奇偶泛音比 6.80",
+      "life": {
+        "pitch.jitter": [
+          0.3,
+          1
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-harp",
@@ -1100,12 +2353,23 @@
       "midi": 55,
       "note": "G3",
       "size": 0.6,
-      "distance": 2.39,
-      "passed": 4,
-      "total": 16,
+      "distance": 2.25,
+      "excess": 2.04,
+      "passed": 7,
+      "total": 18,
       "oursCents": -0.3299273751092209,
       "refCents": -0.5206151237335839,
-      "worst": "非谐性 B 7.63"
+      "worst": "谐噪比 5.61",
+      "life": {
+        "pitch.jitter": [
+          0.2,
+          1.2
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "vsco-harp",
@@ -1114,12 +2378,19 @@
       "midi": 65,
       "note": "F4",
       "size": 0.6,
-      "distance": 2.19,
-      "passed": 7,
-      "total": 16,
+      "distance": 2.12,
+      "excess": 1.9,
+      "passed": 9,
+      "total": 17,
       "oursCents": -0.16218895866219057,
       "refCents": -1.4094950032728626,
-      "worst": "非谐性 B 8.08"
+      "worst": "响度包络 4.08",
+      "life": {
+        "pitch.jitter": [
+          0.4,
+          1.3
+        ]
+      }
     },
     {
       "id": "vsco-harp",
@@ -1128,12 +2399,27 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 2.29,
-      "passed": 3,
-      "total": 18,
+      "distance": 2.23,
+      "excess": 1.98,
+      "passed": 6,
+      "total": 21,
       "oursCents": 0.2417143731449156,
       "refCents": -10.704101195979472,
-      "worst": "非谐性 B 7.10"
+      "worst": "谐噪比 6.62",
+      "life": {
+        "flutter": [
+          0,
+          5.9
+        ],
+        "pitch.jitter": [
+          0.1,
+          2.2
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
     },
     {
       "id": "vsco-organ",
@@ -1142,12 +2428,31 @@
       "midi": 36,
       "note": "C2",
       "size": 0.6,
-      "distance": 2.42,
-      "passed": 4,
-      "total": 16,
+      "distance": 2.47,
+      "excess": 2.27,
+      "passed": 5,
+      "total": 20,
       "oursCents": 0.2347726764591201,
       "refCents": -3.469137989521974,
-      "worst": "起音 10–90% 9.63"
+      "worst": "亮度（质心） 8.58",
+      "life": {
+        "shimmer": [
+          -57.9,
+          -18.5
+        ],
+        "flutter": [
+          0,
+          1.5
+        ],
+        "pitch.jitter": [
+          0.3,
+          6.2
+        ],
+        "brightnessLag": [
+          0,
+          -140
+        ]
+      }
     },
     {
       "id": "vsco-organ",
@@ -1156,12 +2461,31 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 1.65,
-      "passed": 7,
-      "total": 15,
+      "distance": 1.64,
+      "excess": 1.26,
+      "passed": 11,
+      "total": 19,
       "oursCents": 0.23048543414043254,
       "refCents": 4.361984055477801,
-      "worst": "起音 10–90% 3.22"
+      "worst": "时频图 2.93",
+      "life": {
+        "shimmer": [
+          -47.9,
+          -37.2
+        ],
+        "flutter": [
+          0,
+          2.2
+        ],
+        "pitch.jitter": [
+          0.2,
+          1.2
+        ],
+        "brightnessLag": [
+          0,
+          30
+        ]
+      }
     },
     {
       "id": "vsco-organ",
@@ -1170,12 +2494,27 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 1.61,
-      "passed": 6,
-      "total": 15,
+      "distance": 1.66,
+      "excess": 1.5,
+      "passed": 9,
+      "total": 18,
       "oursCents": 0.23308552144130373,
       "refCents": -4.125505745403145,
-      "worst": "时频图 2.67"
+      "worst": "微起伏 3.04",
+      "life": {
+        "shimmer": [
+          -50.6,
+          -32.4
+        ],
+        "flutter": [
+          0,
+          1.3
+        ],
+        "pitch.jitter": [
+          0.2,
+          1.9
+        ]
+      }
     },
     {
       "id": "vsco-organ",
@@ -1185,11 +2524,26 @@
       "note": "C5",
       "size": 0.6,
       "distance": 1.86,
-      "passed": 7,
-      "total": 15,
+      "excess": 1.62,
+      "passed": 9,
+      "total": 18,
       "oursCents": 0.23673002893394893,
       "refCents": -4.695062964349255,
-      "worst": "起音 10–90% 10.39"
+      "worst": "起音 10–90% 10.39",
+      "life": {
+        "shimmer": [
+          -41,
+          -21.8
+        ],
+        "flutter": [
+          0.2,
+          1.2
+        ],
+        "pitch.jitter": [
+          0.2,
+          0.5
+        ]
+      }
     },
     {
       "id": "vsco-organ",
@@ -1198,12 +2552,27 @@
       "midi": 84,
       "note": "C6",
       "size": 0.6,
-      "distance": 1.94,
-      "passed": 6,
-      "total": 16,
+      "distance": 1.87,
+      "excess": 1.59,
+      "passed": 8,
+      "total": 19,
       "oursCents": -0.11321699163852784,
       "refCents": -2.3687879784661354,
-      "worst": "泛音斜率 3.55"
+      "worst": "泛音斜率 3.55",
+      "life": {
+        "shimmer": [
+          -50,
+          -37.6
+        ],
+        "flutter": [
+          0.5,
+          2.1
+        ],
+        "pitch.jitter": [
+          0,
+          0.4
+        ]
+      }
     },
     {
       "id": "vsco-kick",
@@ -1212,12 +2581,19 @@
       "midi": 22,
       "note": "A#0",
       "size": 0.85,
-      "distance": 2.29,
-      "passed": 2,
-      "total": 13,
+      "distance": 2.21,
+      "excess": 2,
+      "passed": 4,
+      "total": 14,
       "oursCents": 0.03806243328988958,
       "refCents": 6.304924921077241,
-      "worst": "泛音比例 13.59"
+      "worst": "起音噪声感 7.18",
+      "life": {
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-snare",
@@ -1227,11 +2603,13 @@
       "note": "C4",
       "size": 0.75,
       "distance": 2.3,
-      "passed": 1,
+      "excess": 2.22,
+      "passed": 2,
       "total": 12,
       "oursCents": 0.248136049555806,
       "refCents": null,
-      "worst": "泛音比例 11.81"
+      "worst": "亮度（质心） 4.34",
+      "life": {}
     },
     {
       "id": "vsco-conga",
@@ -1240,12 +2618,19 @@
       "midi": 52,
       "note": "E3",
       "size": 0.7,
-      "distance": 2.11,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.05,
+      "excess": 1.7,
+      "passed": 5,
+      "total": 17,
       "oursCents": 0.12245567087629555,
       "refCents": -12.293195961032783,
-      "worst": "非谐性 B 10.25"
+      "worst": "非谐性 B 10.25",
+      "life": {
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
     },
     {
       "id": "vsco-timpani",
@@ -1254,12 +2639,23 @@
       "midi": 30,
       "note": "F#1",
       "size": 0.8,
-      "distance": 2.44,
-      "passed": 3,
-      "total": 15,
+      "distance": 2.33,
+      "excess": 2.01,
+      "passed": 4,
+      "total": 17,
       "oursCents": -0.05820753248149259,
       "refCents": -19.68984943976918,
-      "worst": "泛音比例 7.37"
+      "worst": "亮度随时间的走势 5.91",
+      "life": {
+        "pitch.jitter": [
+          12.8,
+          9.7
+        ],
+        "brightnessLag": [
+          0,
+          20
+        ]
+      }
     },
     {
       "id": "vsco-timpani",
@@ -1268,12 +2664,23 @@
       "midi": 34,
       "note": "A#1",
       "size": 0.8,
-      "distance": 2.62,
-      "passed": 2,
-      "total": 16,
+      "distance": 2.5,
+      "excess": 2.4,
+      "passed": 4,
+      "total": 18,
       "oursCents": -0.15574950534139897,
       "refCents": 44.21445193061527,
-      "worst": "泛音比例 10.59"
+      "worst": "亮度随时间的走势 5.44",
+      "life": {
+        "pitch.jitter": [
+          9.5,
+          6.5
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "vsco-timpani",
@@ -1282,12 +2689,23 @@
       "midi": 37,
       "note": "C#2",
       "size": 0.8,
-      "distance": 2.45,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.35,
+      "excess": 2.18,
+      "passed": 5,
+      "total": 18,
       "oursCents": -0.2092295445932976,
       "refCents": 30.868619253403086,
-      "worst": "泛音比例 8.09"
+      "worst": "亮度随时间的走势 4.91",
+      "life": {
+        "pitch.jitter": [
+          5.5,
+          2.1
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "vsco-timpani",
@@ -1296,12 +2714,23 @@
       "midi": 40,
       "note": "E2",
       "size": 0.8,
-      "distance": 2.48,
-      "passed": 2,
-      "total": 16,
+      "distance": 2.34,
+      "excess": 2,
+      "passed": 5,
+      "total": 18,
       "oursCents": 0.12113223286795669,
       "refCents": -17.021534409042776,
-      "worst": "泛音比例 9.11"
+      "worst": "亮度随时间的走势 4.82",
+      "life": {
+        "pitch.jitter": [
+          5.1,
+          6.3
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
     },
     {
       "id": "vsco-timpani",
@@ -1310,12 +2739,23 @@
       "midi": 46,
       "note": "A#2",
       "size": 0.8,
-      "distance": 2.62,
-      "passed": 4,
-      "total": 16,
+      "distance": 2.49,
+      "excess": 2.35,
+      "passed": 5,
+      "total": 18,
       "oursCents": -0.15506536641922625,
       "refCents": -38.08902678913209,
-      "worst": "泛音比例 9.63"
+      "worst": "泛音斜率 6.77",
+      "life": {
+        "pitch.jitter": [
+          2.9,
+          5.4
+        ],
+        "brightnessLag": [
+          -10,
+          10
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1324,12 +2764,23 @@
       "midi": 36,
       "note": "C2",
       "size": 0.3,
-      "distance": 2.2,
-      "passed": 5,
-      "total": 16,
+      "distance": 2.08,
+      "excess": 1.81,
+      "passed": 8,
+      "total": 18,
       "oursCents": 0.6024778047038035,
       "refCents": -13.770453510534164,
-      "worst": "各泛音衰减 4.79"
+      "worst": "响度包络 4.59",
+      "life": {
+        "pitch.jitter": [
+          3.2,
+          2.2
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1338,12 +2789,23 @@
       "midi": 36,
       "note": "C2",
       "size": 0.6,
-      "distance": 2.21,
-      "passed": 3,
-      "total": 16,
+      "distance": 2.09,
+      "excess": 1.84,
+      "passed": 7,
+      "total": 18,
       "oursCents": 0.6037812372979434,
       "refCents": -8.361017902022146,
-      "worst": "泛音斜率 5.60"
+      "worst": "泛音斜率 5.60",
+      "life": {
+        "pitch.jitter": [
+          2.1,
+          3.2
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1352,12 +2814,23 @@
       "midi": 36,
       "note": "C2",
       "size": 0.9,
-      "distance": 2.4,
-      "passed": 4,
-      "total": 16,
+      "distance": 2.27,
+      "excess": 2.03,
+      "passed": 7,
+      "total": 18,
       "oursCents": 0.6050576224687927,
       "refCents": -12.635927397907135,
-      "worst": "泛音斜率 5.33"
+      "worst": "泛音斜率 5.33",
+      "life": {
+        "pitch.jitter": [
+          1.9,
+          2.9
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1366,12 +2839,19 @@
       "midi": 48,
       "note": "C3",
       "size": 0.3,
-      "distance": 1.91,
-      "passed": 7,
-      "total": 16,
+      "distance": 1.85,
+      "excess": 1.65,
+      "passed": 11,
+      "total": 17,
       "oursCents": 0.6843543209383265,
       "refCents": -5.855351549668599,
-      "worst": "各泛音衰减 6.31"
+      "worst": "各泛音衰减 6.31",
+      "life": {
+        "pitch.jitter": [
+          1,
+          0.8
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1380,12 +2860,23 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 1.87,
-      "passed": 7,
-      "total": 16,
+      "distance": 1.77,
+      "excess": 1.5,
+      "passed": 10,
+      "total": 18,
       "oursCents": 0.6848235576416843,
       "refCents": -12.743604308446168,
-      "worst": "各泛音衰减 4.38"
+      "worst": "响度包络 4.05",
+      "life": {
+        "pitch.jitter": [
+          0.8,
+          0.8
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1394,12 +2885,23 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 1.9,
-      "passed": 8,
-      "total": 16,
+      "distance": 1.8,
+      "excess": 1.46,
+      "passed": 11,
+      "total": 18,
       "oursCents": 0.6854953695666426,
       "refCents": -12.044766066785074,
-      "worst": "响度包络 4.10"
+      "worst": "响度包络 4.10",
+      "life": {
+        "pitch.jitter": [
+          0.6,
+          1.7
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1408,12 +2910,19 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.24,
-      "passed": 5,
-      "total": 16,
+      "distance": 2.17,
+      "excess": 1.91,
+      "passed": 7,
+      "total": 17,
       "oursCents": 0.8635626557137491,
       "refCents": -3.4724039473494805,
-      "worst": "奇偶泛音比 5.61"
+      "worst": "奇偶泛音比 5.61",
+      "life": {
+        "pitch.jitter": [
+          0.5,
+          1.5
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1422,12 +2931,23 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 1.89,
-      "passed": 6,
-      "total": 16,
+      "distance": 1.78,
+      "excess": 1.58,
+      "passed": 11,
+      "total": 18,
       "oursCents": 0.8616011307113202,
       "refCents": -2.9018568775169493,
-      "worst": "响度包络 3.75"
+      "worst": "响度包络 3.75",
+      "life": {
+        "pitch.jitter": [
+          0.4,
+          1
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1436,12 +2956,23 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 2.03,
-      "passed": 6,
-      "total": 16,
+      "distance": 1.92,
+      "excess": 1.67,
+      "passed": 9,
+      "total": 18,
       "oursCents": 0.8595898449655809,
       "refCents": -2.021182732813471,
-      "worst": "响度包络 3.68"
+      "worst": "响度包络 3.68",
+      "life": {
+        "pitch.jitter": [
+          0.4,
+          2.2
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1450,12 +2981,23 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.28,
+      "distance": 2.29,
+      "excess": 2.15,
       "passed": 6,
-      "total": 16,
+      "total": 18,
       "oursCents": 1.2897105018969335,
       "refCents": -1.9578013864344068,
-      "worst": "各泛音衰减 5.20"
+      "worst": "整体衰减 5.03",
+      "life": {
+        "flutter": [
+          0.2,
+          3.4
+        ],
+        "pitch.jitter": [
+          0.5,
+          3.5
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1464,12 +3006,27 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 1.99,
-      "passed": 6,
-      "total": 16,
+      "distance": 1.95,
+      "excess": 1.79,
+      "passed": 9,
+      "total": 19,
       "oursCents": 1.2891608543164144,
       "refCents": -1.7140551655148892,
-      "worst": "整体衰减 3.64"
+      "worst": "分音起伏 3.86",
+      "life": {
+        "flutter": [
+          0.1,
+          3.9
+        ],
+        "pitch.jitter": [
+          0.6,
+          1.6
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1479,11 +3036,26 @@
       "note": "C5",
       "size": 0.9,
       "distance": 1.71,
-      "passed": 7,
-      "total": 16,
+      "excess": 1.57,
+      "passed": 11,
+      "total": 19,
       "oursCents": 1.2885465337920186,
       "refCents": -0.5741961199993753,
-      "worst": "响度包络 3.02"
+      "worst": "分音起伏 3.67",
+      "life": {
+        "flutter": [
+          0,
+          3.7
+        ],
+        "pitch.jitter": [
+          1.1,
+          1
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1492,12 +3064,23 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 2.4,
-      "passed": 4,
-      "total": 19,
+      "distance": 2.44,
+      "excess": 2.3,
+      "passed": 5,
+      "total": 21,
       "oursCents": 1.8650620763043342,
       "refCents": 7.224300464126755,
-      "worst": "各泛音衰减 7.54"
+      "worst": "各泛音衰减 7.54",
+      "life": {
+        "flutter": [
+          0.2,
+          4
+        ],
+        "pitch.jitter": [
+          0.8,
+          6
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1506,12 +3089,23 @@
       "midi": 84,
       "note": "C6",
       "size": 0.6,
-      "distance": 2.43,
-      "passed": 4,
-      "total": 18,
+      "distance": 2.49,
+      "excess": 2.3,
+      "passed": 5,
+      "total": 20,
       "oursCents": 1.8666987837072977,
       "refCents": 8.377532669712945,
-      "worst": "奇偶泛音比 5.92"
+      "worst": "奇偶泛音比 5.92",
+      "life": {
+        "flutter": [
+          0.1,
+          3.7
+        ],
+        "pitch.jitter": [
+          1.3,
+          7
+        ]
+      }
     },
     {
       "id": "salamander-piano",
@@ -1520,12 +3114,27 @@
       "midi": 84,
       "note": "C6",
       "size": 0.9,
-      "distance": 2.13,
-      "passed": 6,
-      "total": 19,
+      "distance": 2.08,
+      "excess": 1.9,
+      "passed": 10,
+      "total": 22,
       "oursCents": 1.8681629983031132,
       "refCents": 9.329326570489199,
-      "worst": "奇偶泛音比 4.65"
+      "worst": "奇偶泛音比 4.65",
+      "life": {
+        "flutter": [
+          0.1,
+          3.8
+        ],
+        "pitch.jitter": [
+          0.9,
+          1.5
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
     }
   ]
 }

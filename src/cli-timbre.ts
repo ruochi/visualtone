@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { analyzeNote, compareTimbre, noteName, timbreToJson, type NoteFeatures, type TimbreComparison } from './analysis/timbre.js';
 import { loadScoreFile } from './load-score.js';
@@ -9,6 +9,16 @@ import { readWavFile, writeWavFile } from './wav.js';
 function flag(name: string, args: string[]): string | undefined {
   const i = args.indexOf(name);
   return i === -1 ? undefined : args[i + 1];
+}
+
+/** Median error two real takes of one note already show. Missing file means no floor. */
+function loadFloor(): Record<string, number> | undefined {
+  try {
+    const raw = JSON.parse(readFileSync(new URL('../references/floor.json', import.meta.url), 'utf8')) as { metrics?: Record<string, number> };
+    return raw.metrics;
+  } catch {
+    return undefined;
+  }
 }
 
 function num(name: string, args: string[]): number | undefined {
@@ -58,14 +68,20 @@ export function printFeatures(f: NoteFeatures): void {
       `HNR ${f1(h.hnrDb)} dB  spurious ${f1(h.spuriousDb)} dB`,
   );
   console.log(`decay/n   ${h.decayDbPerSec.map((v) => f1(v)).join(' ')} dB/s`);
+  console.log(
+    `life      shimmer ${f1(f.envelope.shimmerDb)} dB  flutter ${f1(h.flutterDb)} dB  jitter ${f1(f.pitch.jitterCents)} cents  high-lag ${f1(f.spectrum.brightnessLagMs, 0)} ms`,
+  );
   console.log(`peaks     ${f.peaks.map((p) => (p.ratio === null ? `${p.hz.toFixed(0)}Hz` : `${p.ratio.toFixed(3)}`) + `(${p.db.toFixed(0)})`).join(' ')}`);
   console.log(`artifacts clicks ${f.artifacts.clicks}  dc ${f.artifacts.dcOffset.toFixed(4)}  non-finite ${f.artifacts.nonFinite}`);
 }
 
 export function printComparison(c: TimbreComparison): void {
-  console.log(`\n对比参照：通过 ${c.passed}/${c.total}，距离 ${c.distance.toFixed(2)}（0 = 一样）`);
+  const excess = c.excess === null ? '' : `，超出地板 ${c.excess.toFixed(2)}`;
+  console.log(`\n对比参照：通过 ${c.passed}/${c.total}，距离 ${c.distance.toFixed(2)}${excess}（0 = 一样）`);
+  const failed = new Map(c.findings.map((f) => [f.metric, f.severity]));
   for (const m of [...c.metrics].sort((a, b) => b.error - a.error)) {
-    const mark = m.error <= 1 ? 'ok ' : m.error <= 2 ? '!  ' : '!! ';
+    const severity = failed.get(m.id);
+    const mark = severity === 'high' ? '!! ' : severity ? '!  ' : 'ok ';
     console.log(`  ${mark}${m.label.padEnd(10)} ${f1(m.value, 2).padStart(9)} ${m.ref === null ? '' : `ref ${f1(m.ref, 2)}`} ${m.unit}  err ${m.error.toFixed(2)}`);
   }
   for (const f of c.findings) {
@@ -112,7 +128,7 @@ export function runTimbre(args: string[]): void {
     ref = analyzeNote(r.mono, r.sampleRate, { midi: num('--ref-midi', args) ?? midi });
     console.log(`\nreference ${refPath}`);
     printFeatures(ref);
-    comparison = compareTimbre(features, ref);
+    comparison = compareTimbre(features, ref, loadFloor());
     printComparison(comparison);
   }
   const jsonPath = flag('--json', args);
@@ -187,7 +203,7 @@ export function runProbe(args: string[]): void {
         continue;
       }
       const r = monoWav(join(refDir, file));
-      const comparison = compareTimbre(cell.features, analyzeNote(r.mono, r.sampleRate, { midi }));
+      const comparison = compareTimbre(cell.features, analyzeNote(r.mono, r.sampleRate, { midi }), loadFloor());
       comparisons.push({ file, midi, size, comparison });
       console.log(`\n${noteName(midi)}@${size} vs ${file}`);
       printComparison(comparison);

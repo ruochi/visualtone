@@ -18,6 +18,12 @@ interface ToneSpec {
   noise?: number;
   extra?: { hz: number; amp: number }[];
   lead?: number;
+  /** Whole-note amplitude modulation: multiply by 1 + depth·sin. */
+  am?: { hz: number; depth: number };
+  /** One partial wanders on its own. index is 0-based. */
+  flutterPartial?: { index: number; hz: number; depth: number };
+  /** Partials from the 5th up take this long to fade in. */
+  highAttackSec?: number;
 }
 
 function rng(seed: number) {
@@ -46,14 +52,19 @@ function tone(spec: ToneSpec, sr = SR): Float32Array {
       if (f >= sr * 0.45) return;
       phases[k] += (2 * Math.PI * f) / sr;
       const d = spec.decays ? Math.pow(10, (-(spec.decays[k] ?? 0) * t) / 20) : 1;
-      v += a * d * Math.sin(phases[k]);
+      const own = spec.flutterPartial && spec.flutterPartial.index === k
+        ? 1 + spec.flutterPartial.depth * Math.sin(2 * Math.PI * spec.flutterPartial.hz * t)
+        : 1;
+      const rise = spec.highAttackSec && k >= 4 ? Math.min(1, t / spec.highAttackSec) : 1;
+      v += a * d * own * rise * Math.sin(phases[k]);
     });
     (spec.extra ?? []).forEach((e, k) => {
       extraPh[k] += (2 * Math.PI * e.hz) / sr;
       v += e.amp * Math.sin(extraPh[k]);
     });
     if (spec.noise) v += spec.noise * (rand() * 2 - 1);
-    out[i] = v * att * 0.3;
+    const am = spec.am ? 1 + spec.am.depth * Math.sin(2 * Math.PI * spec.am.hz * t) : 1;
+    out[i] = v * att * am * 0.3;
   }
   return out;
 }
@@ -161,6 +172,26 @@ test('timbre: hard cut clicks, a fade does not; release time', () => {
   assert.ok(f.envelope.releaseMs !== null && Math.abs(f.envelope.releaseMs - 150) < 20, `release ${f.envelope.releaseMs}`);
 });
 
+test('timbre: a steady tone is flat, and modulation is measured', () => {
+  const steady = analyzeNote(tone({ f0: 440, amps: saw(8), seconds: 1.6 }), SR);
+  assert.ok(steady.envelope.shimmerDb !== null && steady.envelope.shimmerDb < -35, `shimmer ${steady.envelope.shimmerDb}`);
+  assert.ok(steady.harmonics.flutterDb !== null && steady.harmonics.flutterDb < 0.6, `flutter ${steady.harmonics.flutterDb}`);
+  assert.ok(steady.pitch.jitterCents !== null && steady.pitch.jitterCents < 2, `jitter ${steady.pitch.jitterCents}`);
+
+  const am = analyzeNote(tone({ f0: 440, amps: saw(8), seconds: 1.6, am: { hz: 12, depth: 0.3 } }), SR);
+  assert.ok(am.envelope.shimmerDb! > steady.envelope.shimmerDb! + 15, `am shimmer ${am.envelope.shimmerDb}`);
+
+  const wandered = analyzeNote(tone({ f0: 330, amps: saw(6), seconds: 1.6, flutterPartial: { index: 2, hz: 3, depth: 0.9 } }), SR);
+  assert.ok(wandered.harmonics.flutterDb! > steady.harmonics.flutterDb! + 0.5, `flutter ${steady.harmonics.flutterDb} -> ${wandered.harmonics.flutterDb}`);
+
+  const late = analyzeNote(tone({ f0: 220, amps: saw(12), seconds: 0.8, highAttackSec: 0.1 }), SR);
+  const together = analyzeNote(tone({ f0: 220, amps: saw(12), seconds: 0.8, attackSec: 0.004 }), SR);
+  assert.ok(
+    late.spectrum.brightnessLagMs! > together.spectrum.brightnessLagMs! + 15,
+    `lag ${together.spectrum.brightnessLagMs} -> ${late.spectrum.brightnessLagMs}`,
+  );
+});
+
 test('compareTimbre: identical passes, a faster decay is named first', () => {
   const spec: ToneSpec = { f0: 262, amps: saw(10), seconds: 2, decays: Array.from({ length: 10 }, (_, i) => 6 + 3 * i), attackSec: 0.003 };
   const ref = analyzeNote(tone(spec), SR);
@@ -173,6 +204,13 @@ test('compareTimbre: identical passes, a faster decay is named first', () => {
   assert.ok(cmp.findings.length > 0);
   assert.ok(/decay/i.test(cmp.findings[0].id), cmp.findings.map((f) => f.id).join(','));
   assert.ok(cmp.distance > same.distance);
+  assert.equal(same.excess, null);
+
+  const decay = cmp.metrics.find((m) => m.id === 'decay')!;
+  assert.ok(decay.error > 1);
+  const absorbed = compareTimbre(fast, ref, { decay: decay.error, 'decay.early': 50, 'decay.late': 50, partialDecay: 50, envelope: 50 });
+  assert.ok(!absorbed.findings.some((f) => f.metric === 'decay'), absorbed.findings.map((f) => f.metric).join(','));
+  assert.ok(absorbed.excess !== null && absorbed.excess < cmp.distance);
 });
 
 test('analyzeProbe flags an out-of-tune cell', () => {

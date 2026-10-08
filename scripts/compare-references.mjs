@@ -7,6 +7,13 @@ import { readWavFile } from '../dist/wav.js';
 
 const root = new URL('..', import.meta.url).pathname;
 const catalog = JSON.parse(readFileSync(join(root, 'references/catalog.json'), 'utf8'));
+let floorMetrics;
+try {
+  floorMetrics = JSON.parse(readFileSync(join(root, 'references/floor.json'), 'utf8')).metrics;
+} catch {
+  floorMetrics = undefined;
+}
+const scaleOf = (id) => Math.max(1, floorMetrics?.[id] ?? 1);
 const recorded = join(root, 'references/recorded');
 
 function loadWav(path) {
@@ -72,8 +79,8 @@ for (const set of catalog.sets) {
     if (midi !== catalogMidi) ref = analyzeNote(refBuf.mono, refBuf.sampleRate, { midi });
     const oursBuf = renderNote(set.engine, set.hue, midi, size, set.kind, refBuf.mono.length / refBuf.sampleRate);
     const ours = analyzeNote(oursBuf.mono, 48000, { midi, start: 0, stop: oursBuf.stop, noteOff: oursBuf.noteOff });
-    const cmp = compareTimbre(ours, ref);
-    const worst = [...cmp.metrics].sort((a, b) => b.error - a.error)[0];
+    const cmp = compareTimbre(ours, ref, floorMetrics);
+    const worst = [...cmp.metrics].sort((a, b) => b.error / scaleOf(b.id) - a.error / scaleOf(a.id))[0];
     const row = {
       id: set.id,
       source: set.source,
@@ -82,15 +89,22 @@ for (const set of catalog.sets) {
       note: noteName(midi),
       size,
       distance: Number(cmp.distance.toFixed(2)),
+      excess: cmp.excess === null ? null : Number(cmp.excess.toFixed(2)),
       passed: cmp.passed,
       total: cmp.total,
       oursCents: ours.centsOff,
       refCents: ref.centsOff,
       worst: worst ? `${worst.label} ${worst.error.toFixed(2)}` : '',
+      life: Object.fromEntries(
+        ['shimmer', 'flutter', 'pitch.jitter', 'brightnessLag']
+          .map((id) => cmp.metrics.find((m) => m.id === id))
+          .filter((m) => m && m.value !== null && m.ref !== null)
+          .map((m) => [m.id, [Number(m.value.toFixed(1)), Number(m.ref.toFixed(1))]]),
+      ),
     };
     report.push(row);
     console.log(
-      `${set.id.padEnd(18)} ${row.note.padEnd(4)} @${size.toFixed(1)}  dist ${row.distance.toFixed(2)}  ${cmp.passed}/${cmp.total}  ${row.worst}`,
+      `${set.id.padEnd(18)} ${row.note.padEnd(4)} @${size.toFixed(1)}  dist ${row.distance.toFixed(2)}  excess ${row.excess === null ? '-' : row.excess.toFixed(2)}  ${cmp.passed}/${cmp.total}  ${row.worst}`,
     );
   }
 }
@@ -98,13 +112,20 @@ for (const set of catalog.sets) {
 const bySet = new Map();
 for (const row of report) {
   const g = bySet.get(row.id) || [];
-  g.push(row.distance);
+  g.push(row);
   bySet.set(row.id, g);
 }
-console.log('\nmean distance (0 = same as the recording)');
-for (const [id, xs] of bySet) {
-  const mean = xs.reduce((s, v) => s + v, 0) / xs.length;
-  console.log(`  ${id.padEnd(18)} ${mean.toFixed(2)}  n=${xs.length}`);
+const avg = (xs) => xs.reduce((s, v) => s + v, 0) / xs.length;
+console.log('\nmean distance, then excess over the real-vs-real floor (1 ≈ two takes of the same note)');
+for (const [id, rows] of bySet) {
+  const excess = rows.map((r) => r.excess).filter((v) => v !== null);
+  console.log(`  ${id.padEnd(18)} ${avg(rows.map((r) => r.distance)).toFixed(2)}   excess ${excess.length ? avg(excess).toFixed(2) : '-'}  n=${rows.length}`);
+}
+console.log('\nshimmer, 8–20 Hz envelope modulation in dB (ours / recording; higher is livelier)');
+for (const [id, rows] of bySet) {
+  const xs = rows.map((r) => r.life?.shimmer).filter(Boolean);
+  if (!xs.length) continue;
+  console.log(`  ${id.padEnd(18)} ${avg(xs.map((p) => p[0])).toFixed(1)} / ${avg(xs.map((p) => p[1])).toFixed(1)}`);
 }
 writeFileSync(join(root, 'references/gap.json'), JSON.stringify({ ceiling: catalog.ceiling, rows: report }, null, 2) + '\n');
 console.log('wrote references/gap.json');

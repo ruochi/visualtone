@@ -36,6 +36,8 @@ export interface NoteFeatures {
     glideCents: number | null;
     vibratoRateHz: number | null;
     vibratoDepthCents: number | null;
+    /** Cents left after the slow drift and the vibrato sinusoid are removed. A frozen oscillator sits near 0. */
+    jitterCents: number | null;
   };
   envelope: {
     peakDb: number;
@@ -55,6 +57,8 @@ export interface NoteFeatures {
     temporalCentroidSec: number;
     /** dB against the peak at CURVE_MS after the onset. */
     curve: { tMs: number; db: number | null }[];
+    /** Envelope modulation from 8 to 20 Hz, dB against the mean level. Above the vibrato, where a real note keeps moving. */
+    shimmerDb: number | null;
   };
   spectrum: {
     centroidHz: number;
@@ -73,6 +77,8 @@ export interface NoteFeatures {
     hopSec: number;
     /** Log-mel frames from the onset, dB against the loudest cell, floored at -80. */
     melFrames: number[][];
+    /** High partials reach half their peak this many ms after the low ones. Brass is positive; a hammer is negative. */
+    brightnessLagMs: number | null;
   };
   harmonics: {
     /** Partials 1..16, dB against the loudest. Null where no partial was found. */
@@ -89,6 +95,8 @@ export interface NoteFeatures {
     spuriousDb: number | null;
     /** Partials 1..8, positive dB per second. */
     decayDbPerSec: (number | null)[];
+    /** Sustain wobble of one partial against the others, dB. Shared vibrato loudness is removed first. */
+    flutterDb: number | null;
   };
   /** Strongest spectral peaks right after the onset. */
   peaks: { hz: number; ratio: number | null; db: number }[];
@@ -306,7 +314,7 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
     onsetSec,
     f0Hz: null,
     centsOff: null,
-    pitch: { stdCents: null, driftCents: null, glideCents: null, vibratoRateHz: null, vibratoDepthCents: null },
+    pitch: { stdCents: null, driftCents: null, glideCents: null, vibratoRateHz: null, vibratoDepthCents: null, jitterCents: null },
     envelope: {
       peakDb: -Infinity,
       attackMs: 0,
@@ -318,6 +326,7 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
       releaseMs: null,
       temporalCentroidSec: 0,
       curve: CURVE_MS.map((tMs) => ({ tMs, db: null })),
+      shimmerDb: null,
     },
     spectrum: {
       centroidHz: 0,
@@ -332,6 +341,7 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
       mfcc: [],
       hopSec: 0,
       melFrames: [],
+      brightnessLagMs: null,
     },
     harmonics: {
       amplitudesDb: [],
@@ -342,6 +352,7 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
       hnrDb: null,
       spuriousDb: null,
       decayDbPerSec: [],
+      flutterDb: null,
     },
     peaks: [],
     artifacts: { clicks: 0, clickTimes: [], dcOffset: 0, nonFinite },
@@ -527,12 +538,43 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
     return { tMs, db: i < envLen ? Math.max(-90, envDb[i]) : null };
   });
 
+  // Modulation faster than vibrato. Sum orthogonal bins so a longer note does not read as more of it.
+  let shimmerDb: number | null = null;
+  {
+    const i0 = attackIdx + Math.round(0.3 / frameSec);
+    const i1 = Math.min(holdEnd, envLen);
+    const step = Math.max(1, Math.round(0.005 / frameSec));
+    const samples: number[] = [];
+    for (let i = i0; i < i1; i += step) samples.push(env[i]);
+    if (samples.length > 80) {
+      const mean = samples.reduce((s, v) => s + v, 0) / samples.length;
+      if (mean > 1e-8) {
+        const dur = samples.length * step * frameSec;
+        let power = 0;
+        for (let f = 8; f < 20; f += 1 / dur) {
+          const w = (2 * Math.PI * f * step * frameSec);
+          let re = 0;
+          let im = 0;
+          for (let i = 0; i < samples.length; i++) {
+            const v = (samples[i] - mean) / mean;
+            const ph = w * i;
+            re += v * Math.cos(ph);
+            im -= v * Math.sin(ph);
+          }
+          power += (2 * (re * re + im * im)) / (samples.length * samples.length);
+        }
+        shimmerDb = Math.max(-80, 10 * Math.log10(power + 1e-12));
+      }
+    }
+  }
+
   // Pitch stability and vibrato.
   let stdCents: number | null = null;
   let driftCents: number | null = null;
   let glideCents: number | null = null;
   let vibratoRateHz: number | null = null;
   let vibratoDepthCents: number | null = null;
+  let jitterCents: number | null = null;
   if (cents.length >= 3) {
     const mean = cents.reduce((s, v) => s + v, 0) / cents.length;
     stdCents = Math.sqrt(cents.reduce((s, v) => s + (v - mean) ** 2, 0) / cents.length);
@@ -564,6 +606,28 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
         vibratoRateHz = bestRate;
         vibratoDepthCents = bestA;
       }
+      // What is left once the drift line and the vibrato are gone. A player jitters; a loop does not.
+      let cleaned = resid;
+      if (vibratoRateHz !== null) {
+        let re = 0;
+        let im = 0;
+        for (let i = 0; i < resid.length; i++) {
+          const ph = 2 * Math.PI * vibratoRateHz * ctimes[i];
+          re += resid[i] * Math.cos(ph);
+          im -= resid[i] * Math.sin(ph);
+        }
+        const aCos = (2 * re) / resid.length;
+        const aSin = (-2 * im) / resid.length;
+        cleaned = resid.map((v, i) => {
+          const ph = 2 * Math.PI * (vibratoRateHz as number) * ctimes[i];
+          return v - (aCos * Math.cos(ph) + aSin * Math.sin(ph));
+        });
+      }
+      const held = cleaned.filter((_, i) => ctimes[i] - t0 >= 0.3);
+      if (held.length >= 20) {
+        const m = held.reduce((s, v) => s + v, 0) / held.length;
+        jitterCents = Math.sqrt(held.reduce((s, v) => s + (v - m) ** 2, 0) / held.length);
+      }
     }
   }
 
@@ -578,7 +642,8 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
   const fMax = Math.min(16000, sr * 0.45);
   const sBin = sr / sN;
   const kMax = Math.min(sN / 2 - 1, Math.floor(fMax / sBin));
-  const frames: { t: number; e: number; centroid: number; flat: number; roll: number; mel: number[] }[] = [];
+  const frames: { t: number; e: number; centroid: number; flat: number; roll: number; mel: number[]; low: number; high: number }[] = [];
+  const fSplit = f0Yin ?? 0;
   for (let c = onsetSample; c < x.length; c += sHop) {
     const P = powerSpectrum(x, c - sN / 2, sN, sWin, sRe, sIm);
     let e = 0;
@@ -617,6 +682,15 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       for (let j = 0; j < w.length; j++) s += P[bank.lo[b] + j] * w[j];
       mel.push(s);
     }
+    let low = 0;
+    let high = 0;
+    if (fSplit > 0) {
+      const kLo2 = Math.min(kMax, Math.ceil((3.5 * fSplit) / sBin));
+      const kHi1 = Math.max(kLo2 + 1, Math.floor((5 * fSplit) / sBin));
+      const kHi2 = Math.min(kMax, Math.ceil(Math.min(8000, 16 * fSplit) / sBin));
+      for (let k = Math.max(1, Math.floor((0.5 * fSplit) / sBin)); k <= kLo2; k++) low += P[k];
+      for (let k = kHi1; k <= kHi2; k++) high += P[k];
+    }
     frames.push({
       t: (c - onsetSample) / sr,
       e,
@@ -624,7 +698,23 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       flat: flatN > 0 ? Math.exp(logSum / flatN) / (linSum / flatN) : 0,
       roll: k85 * sBin,
       mel,
+      low,
+      high,
     });
+  }
+  let brightnessLagMs: number | null = null;
+  if (fSplit > 0) {
+    const early = frames.filter((f) => f.t <= 0.25);
+    const reach = (key: 'low' | 'high') => {
+      let peakE = 0;
+      for (const f of early) peakE = Math.max(peakE, f[key]);
+      if (peakE <= 0) return null;
+      for (const f of early) if (f[key] >= 0.5 * peakE) return { t: f.t, peakE };
+      return null;
+    };
+    const lo = reach('low');
+    const hi = reach('high');
+    if (lo && hi && hi.peakE > lo.peakE * 1e-3) brightnessLagMs = (hi.t - lo.t) * 1000;
   }
   const maxE = frames.reduce((m, f) => Math.max(m, f.e), 0);
   const active = frames.filter((f) => f.e >= maxE * 1e-4);
@@ -835,6 +925,35 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
     decayDbPerSec.push(fit ? -fit.slope : null);
   }
 
+  // Each partial of a real note wanders on its own. Subtract the shared loudness first, so vibrato does not count.
+  let flutterDb: number | null = null;
+  {
+    const offSecF = opts.noteOff !== undefined ? opts.noteOff - onsetSec : Infinity;
+    const frs = long.filter((fr) => fr.t >= 0.35 && fr.t <= Math.min(1.8, offSecF - 0.05));
+    const parts = found.filter((p) => p.n <= 6);
+    if (frs.length >= 8 && parts.length >= 3) {
+      const rows = parts.map((p) =>
+        frs.map((fr) => {
+          let m = 0;
+          for (let k = p.k - 1; k <= p.k + 1; k++) if (k > 0 && k < fr.P.length) m = Math.max(m, fr.P[k]);
+          return pdb(m);
+        }),
+      );
+      const common = frs.map((_, i) => rows.reduce((s, row) => s + row[i], 0) / rows.length);
+      const stds = rows.map((row) => {
+        const y = row.map((v, i) => v - common[i]);
+        const trend = linFit(
+          frs.map((fr) => fr.t),
+          y,
+        );
+        const r = y.map((v, i) => v - (trend ? trend.intercept + trend.slope * frs[i].t : 0));
+        const m = r.reduce((s, v) => s + v, 0) / r.length;
+        return Math.sqrt(r.reduce((s, v) => s + (v - m) ** 2, 0) / r.length);
+      });
+      flutterDb = median(stds);
+    }
+  }
+
   const peaks: { hz: number; ratio: number | null; db: number }[] = [];
   {
     const cands: { k: number; p: number }[] = [];
@@ -884,7 +1003,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
     onsetSec,
     f0Hz,
     centsOff: f0Hz && opts.midi !== undefined ? 1200 * Math.log2(f0Hz / midiHz(opts.midi)) : null,
-    pitch: { stdCents, driftCents, glideCents, vibratoRateHz, vibratoDepthCents },
+    pitch: { stdCents, driftCents, glideCents, vibratoRateHz, vibratoDepthCents, jitterCents },
     envelope: {
       peakDb: 20 * Math.log10(peak),
       attackMs: (t90 - t10) * frameSec * 1000,
@@ -896,6 +1015,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       releaseMs,
       temporalCentroidSec: tcDen > 0 ? tcNum / tcDen : 0,
       curve: envCurve,
+      shimmerDb,
     },
     spectrum: {
       centroidHz: weighted(active, 'centroid') ?? 0,
@@ -910,6 +1030,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       mfcc: dct(melMean, MFCC_COUNT),
       hopSec: sHop / sr,
       melFrames,
+      brightnessLagMs,
     },
     harmonics: {
       amplitudesDb,
@@ -920,6 +1041,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       hnrDb,
       spuriousDb,
       decayDbPerSec,
+      flutterDb,
     },
     peaks,
     artifacts: {
@@ -948,6 +1070,11 @@ export interface TimbreComparison {
   total: number;
   /** RMS of the errors, each capped at 3. 0 is identical. */
   distance: number;
+  /**
+   * Same RMS after each error is divided by max(1, its real-vs-real floor).
+   * Null when no floor was given. 1 means about as far apart as two real takes of the same note.
+   */
+  excess: number | null;
   findings: Finding[];
 }
 
@@ -970,8 +1097,16 @@ function spectroDistance(a: number[][], b: number[][]): number | null {
 
 const r1 = (v: number) => Math.round(v * 10) / 10;
 
-/** Compare a rendered note with a reference recording of the same pitch. */
-export function compareTimbre(ours: NoteFeatures, ref: NoteFeatures): TimbreComparison {
+/**
+ * Compare a rendered note with a reference recording of the same pitch.
+ * `floor` is the median error two real recordings of one note already show, per metric.
+ * A metric only counts past that, so natural variation is not reported as a defect.
+ */
+export function compareTimbre(
+  ours: NoteFeatures,
+  ref: NoteFeatures,
+  floor?: Readonly<Record<string, number>>,
+): TimbreComparison {
   const metrics: TimbreMetric[] = [];
   const add = (m: TimbreMetric) => {
     if (Number.isFinite(m.error)) metrics.push(m);
@@ -1127,14 +1262,57 @@ export function compareTimbre(ours: NoteFeatures, ref: NoteFeatures): TimbreComp
   }
   const sd = spectroDistance(os.melFrames, rs.melFrames);
   if (sd !== null) add({ id: 'spectrogram', label: '时频图', unit: 'dB', value: sd, ref: null, error: sd / 6 });
+  if (ours.harmonics.flutterDb !== null && ref.harmonics.flutterDb !== null) {
+    add({
+      id: 'flutter',
+      label: '分音起伏',
+      unit: 'dB',
+      value: ours.harmonics.flutterDb,
+      ref: ref.harmonics.flutterDb,
+      error: Math.abs(ours.harmonics.flutterDb - ref.harmonics.flutterDb) / 1,
+    });
+  }
+  if (ours.pitch.jitterCents !== null && ref.pitch.jitterCents !== null) {
+    add({
+      id: 'pitch.jitter',
+      label: '音高抖动',
+      unit: 'cents',
+      value: ours.pitch.jitterCents,
+      ref: ref.pitch.jitterCents,
+      error: Math.abs(ours.pitch.jitterCents - ref.pitch.jitterCents) / 2,
+    });
+  }
+  if (ours.spectrum.brightnessLagMs !== null && ref.spectrum.brightnessLagMs !== null) {
+    add({
+      id: 'brightnessLag',
+      label: '高频滞后',
+      unit: 'ms',
+      value: ours.spectrum.brightnessLagMs,
+      ref: ref.spectrum.brightnessLagMs,
+      error: Math.abs(ours.spectrum.brightnessLagMs - ref.spectrum.brightnessLagMs) / 20,
+    });
+  }
+  if (ours.envelope.shimmerDb !== null && ref.envelope.shimmerDb !== null) {
+    add({
+      id: 'shimmer',
+      label: '微起伏',
+      unit: 'dB',
+      value: ours.envelope.shimmerDb,
+      ref: ref.envelope.shimmerDb,
+      error: Math.abs(ours.envelope.shimmerDb - ref.envelope.shimmerDb) / 6,
+    });
+  }
 
-  const passed = metrics.filter((m) => m.error <= 1).length;
+  // A floor below 1 would make the ruler stricter than the hand tolerance. Never do that.
+  const scale = (id: string) => Math.max(1, floor?.[id] ?? 1);
+  const passed = metrics.filter((m) => m.error / scale(m.id) <= 1).length;
   const distance = rmsOf(metrics.map((m) => Math.min(3, m.error)));
+  const excess = floor ? rmsOf(metrics.map((m) => Math.min(3, m.error / scale(m.id)))) : null;
   const findings = metrics
-    .filter((m) => m.error > 1)
-    .sort((a, b) => b.error - a.error)
+    .filter((m) => m.error / scale(m.id) > 1)
+    .sort((a, b) => b.error / scale(b.id) - a.error / scale(a.id))
     .map((m) => timbreFinding(m));
-  return { metrics, passed, total: metrics.length, distance, findings };
+  return { metrics, passed, total: metrics.length, distance, excess, findings };
 }
 
 function fmt(v: number | null, digits = 1): string {
@@ -1247,6 +1425,34 @@ function timbreFinding(m: TimbreMetric): Finding {
     case 'vibrato.depth':
     case 'vibrato.rate':
       return { ...base, target, message: `${m.label} ${fmt(m.value)} ${m.unit}，参照 ${fmt(m.ref)}`, suggestion: '调整音高 LFO 的深度和速度' };
+    case 'flutter':
+      return {
+        ...base,
+        target,
+        message: `分音各自的起伏 ${fmt(m.value)} dB，参照 ${fmt(m.ref)} dB，${higher ? '晃得更多' : '太平'}`,
+        suggestion: higher ? '减小各分音上不相干的幅度调制' : '让每个分音有一点自己的起伏，而不是整条音一起抖',
+      };
+    case 'pitch.jitter':
+      return {
+        ...base,
+        target,
+        message: `去掉揉弦后还剩 ${fmt(m.value)} 音分抖动，参照 ${fmt(m.ref)}`,
+        suggestion: higher ? '减小音高上的随机抖动' : '在揉弦之外留一点不规则的音高抖动，完全平滑的音高听起来是合成的',
+      };
+    case 'brightnessLag':
+      return {
+        ...base,
+        target,
+        message: `高频比低频晚 ${fmt(m.value, 0)} ms 到达，参照 ${fmt(m.ref, 0)} ms`,
+        suggestion: higher ? '让高次泛音和基频一起起来' : '让高次泛音晚一点进来，铜管和起吹都是这样',
+      };
+    case 'shimmer':
+      return {
+        ...base,
+        target,
+        message: `8–20 Hz 的起伏 ${fmt(m.value)} dB，参照 ${fmt(m.ref)} dB，${higher ? '抖得更多' : '太稳'}`,
+        suggestion: higher ? '压低比揉弦更快的幅度起伏' : '在揉弦之上加一点不规则的幅度起伏，完全平稳的持续音听起来是合成的',
+      };
     default:
       return { ...base, target: '< 1', message: `${m.label}差 ${fmt(m.value)} ${m.unit}`, suggestion: '先修排在前面的具体指标' };
   }
