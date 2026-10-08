@@ -22,7 +22,7 @@ export const MODELS = {
     method: 'additive',
     engines: ['bow', 'brass', 'reed', 'bass'],
     how: 'Harmonics on an exponential slope that opens with loudness, one resonance, filtered breath or bow noise, and a player’s vibrato, drift, and 8–20 Hz level motion.',
-    params: ['harmonic slope (soft, loud, register, low-note flattening)', 'lowpass', 'resonance Hz, Q, mix', 'noise band and level', 'finger transient', 'attack and release', 'vibrato, drift, level motion'],
+    params: ['harmonic slope (soft, loud, register, low-note flattening)', 'lowpass', 'resonance Hz, Q, mix', 'noise band and level', 'finger transient', 'held decay', 'attack and release', 'vibrato, drift, level motion'],
     controls: 'size flattens the slope and raises the noise; lightness brightens a little',
   },
   drawbar: {
@@ -113,7 +113,7 @@ export const INSTRUMENTS = {
   viola: { model: 'harmonic', engine: 'bow', hue: 160, reference: 'tinysol-viola' },
   cello: { model: 'harmonic', engine: 'bow', hue: 300, reference: 'tinysol-cello' },
   contrabass: { model: 'harmonic', engine: 'bass', hue: 40, reference: 'tinysol-bass' },
-  'electric-bass': { model: 'harmonic', engine: 'bass', hue: 270 },
+  'electric-bass': { model: 'harmonic', engine: 'bass', hue: 270, reference: 'nsynth-electric-bass' },
   trumpet: { model: 'harmonic', engine: 'brass', hue: 40, reference: 'tinysol-trumpet' },
   horn: { model: 'harmonic', engine: 'brass', hue: 130, reference: 'tinysol-horn' },
   trombone: { model: 'harmonic', engine: 'brass', hue: 210, reference: 'tinysol-trombone' },

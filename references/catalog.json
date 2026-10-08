@@ -395,11 +395,36 @@
       "hue": 40,
       "kind": "sustain",
       "notes": [
-        { "midi": 36, "size": 0.3, "dynamics": "pp", "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-pp-3c-N.wav" },
-        { "midi": 36, "size": 0.9, "dynamics": "ff", "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-ff-3c-N.wav" },
-        { "midi": 48, "size": 0.6, "dynamics": "mf", "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-mf-1c-N.wav" },
-        { "midi": 48, "size": 0.9, "dynamics": "ff", "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-ff-1c-N.wav" },
-        { "midi": 60, "size": 0.3, "dynamics": "pp", "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-pp-1c-N.wav" }
+        {
+          "midi": 36,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-pp-3c-N.wav"
+        },
+        {
+          "midi": 36,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-ff-3c-N.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-mf-1c-N.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-ff-1c-N.wav"
+        },
+        {
+          "midi": 60,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-pp-1c-N.wav"
+        }
       ]
     },
     {
@@ -412,11 +437,36 @@
       "hue": 270,
       "kind": "sustain",
       "notes": [
-        { "midi": 31, "size": 0.6, "dynamics": "mf", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-mf-N-N.wav" },
-        { "midi": 36, "size": 0.9, "dynamics": "ff", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C2-ff-N-N.wav" },
-        { "midi": 43, "size": 0.3, "dynamics": "pp", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-pp-N-N.wav" },
-        { "midi": 60, "size": 0.6, "dynamics": "mf", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-mf-N-N.wav" },
-        { "midi": 60, "size": 0.9, "dynamics": "ff", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-ff-N-N.wav" }
+        {
+          "midi": 31,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-mf-N-N.wav"
+        },
+        {
+          "midi": 36,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C2-ff-N-N.wav"
+        },
+        {
+          "midi": 43,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-pp-N-N.wav"
+        },
+        {
+          "midi": 60,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-mf-N-N.wav"
+        },
+        {
+          "midi": 60,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-ff-N-N.wav"
+        }
       ]
     },
     {
@@ -429,10 +479,30 @@
       "hue": 40,
       "kind": "sustain",
       "notes": [
-        { "midi": 60, "size": 0.3, "dynamics": "pp", "archive": "Winds/Oboe/ordinario/Ob-ord-C4-pp-N-N.wav" },
-        { "midi": 60, "size": 0.9, "dynamics": "ff", "archive": "Winds/Oboe/ordinario/Ob-ord-C4-ff-N-N.wav" },
-        { "midi": 72, "size": 0.6, "dynamics": "mf", "archive": "Winds/Oboe/ordinario/Ob-ord-C5-mf-N-N.wav" },
-        { "midi": 72, "size": 0.9, "dynamics": "ff", "archive": "Winds/Oboe/ordinario/Ob-ord-C5-ff-N-N.wav" }
+        {
+          "midi": 60,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-C4-pp-N-N.wav"
+        },
+        {
+          "midi": 60,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-C4-ff-N-N.wav"
+        },
+        {
+          "midi": 72,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-C5-mf-N-N.wav"
+        },
+        {
+          "midi": 72,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-C5-ff-N-N.wav"
+        }
       ]
     },
     {
@@ -445,10 +515,30 @@
       "hue": 220,
       "kind": "sustain",
       "notes": [
-        { "midi": 36, "size": 0.6, "dynamics": "mf", "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-mf-N-N.wav" },
-        { "midi": 36, "size": 0.9, "dynamics": "ff", "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-ff-N-N.wav" },
-        { "midi": 60, "size": 0.3, "dynamics": "pp", "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-pp-N-N.wav" },
-        { "midi": 60, "size": 0.9, "dynamics": "ff", "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-ff-N-N.wav" }
+        {
+          "midi": 36,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-mf-N-N.wav"
+        },
+        {
+          "midi": 36,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-ff-N-N.wav"
+        },
+        {
+          "midi": 60,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-pp-N-N.wav"
+        },
+        {
+          "midi": 60,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-ff-N-N.wav"
+        }
       ]
     },
     {
@@ -853,6 +943,524 @@
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C6v16.flac",
           "file": "C6v16.flac",
           "flac": true
+        }
+      ]
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "license": "CC-BY-4.0",
+      "url": "https://magenta.tensorflow.org/datasets/nsynth",
+      "credit": "Engel et al., Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders, 2017. The notes were rendered from commercial sample libraries and released by Google under CC BY 4.0.",
+      "engine": "bass",
+      "hue": 270,
+      "kind": "sustain",
+      "hold": 3,
+      "tail": 1,
+      "notes": [
+        {
+          "midi": 30,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "bass_electronic_018",
+          "file": "30_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 35,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_018",
+          "file": "35_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 35,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "bass_electronic_018",
+          "file": "35_1.000_bass_electronic_018.wav"
+        },
+        {
+          "midi": 41,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "bass_electronic_018",
+          "file": "41_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 51,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_018",
+          "file": "51_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 57,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_018",
+          "file": "57_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 28,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_025",
+          "file": "28_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 33,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "bass_electronic_025",
+          "file": "33_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 40,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_025",
+          "file": "40_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 40,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "bass_electronic_025",
+          "file": "40_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "bass_electronic_025",
+          "file": "48_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 57,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "bass_electronic_025",
+          "file": "57_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 31,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "bass_electronic_027",
+          "file": "31_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 31,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_027",
+          "file": "31_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 31,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "bass_electronic_027",
+          "file": "31_1.000_bass_electronic_027.wav"
+        },
+        {
+          "midi": 35,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "bass_electronic_027",
+          "file": "35_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 35,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "bass_electronic_027",
+          "file": "35_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 35,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "bass_electronic_027",
+          "file": "35_1.000_bass_electronic_027.wav"
+        },
+        {
+          "midi": 28,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "28_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 28,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "28_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 28,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "28_1.000_bass_electronic_018.wav"
+        },
+        {
+          "midi": 36,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "36_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 36,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "36_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 36,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "36_1.000_bass_electronic_018.wav"
+        },
+        {
+          "midi": 44,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "44_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 44,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "44_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 44,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "44_1.000_bass_electronic_018.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "48_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "48_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 48,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "48_1.000_bass_electronic_018.wav"
+        },
+        {
+          "midi": 56,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "56_0.394_bass_electronic_018.wav"
+        },
+        {
+          "midi": 56,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "56_0.787_bass_electronic_018.wav"
+        },
+        {
+          "midi": 56,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_018",
+          "file": "56_1.000_bass_electronic_018.wav"
+        },
+        {
+          "midi": 30,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "30_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 30,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "30_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 30,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "30_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 37,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "37_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 37,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "37_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 37,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "37_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 45,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "45_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 45,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "45_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 45,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "45_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 50,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "50_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 50,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "50_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 50,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "50_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 55,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "55_0.394_bass_electronic_025.wav"
+        },
+        {
+          "midi": 55,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "55_0.787_bass_electronic_025.wav"
+        },
+        {
+          "midi": 55,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_025",
+          "file": "55_1.000_bass_electronic_025.wav"
+        },
+        {
+          "midi": 29,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "29_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 29,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "29_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 29,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "29_1.000_bass_electronic_027.wav"
+        },
+        {
+          "midi": 38,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "38_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 38,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "38_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 38,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "38_1.000_bass_electronic_027.wav"
+        },
+        {
+          "midi": 41,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "41_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 41,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "41_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 41,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "41_1.000_bass_electronic_027.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "48_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "48_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 48,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "48_1.000_bass_electronic_027.wav"
+        },
+        {
+          "midi": 54,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "54_0.394_bass_electronic_027.wav"
+        },
+        {
+          "midi": 54,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "54_0.787_bass_electronic_027.wav"
+        },
+        {
+          "midi": 54,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "bass_electronic_027",
+          "file": "54_1.000_bass_electronic_027.wav"
         }
       ]
     }

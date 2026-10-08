@@ -1,0 +1,682 @@
+{
+  "instrument": "electric-bass",
+  "set": "nsynth-electric-bass",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 2.121,
+    "params": {
+      "slope.base": 0.3,
+      "slope.soft": 0.15,
+      "slope.light": 0.08,
+      "resonance.hz": 92,
+      "resonance.q": 6,
+      "resonance.mix": 0.16,
+      "noise.level": 0.006,
+      "noise.hz": 180,
+      "transient.level": 0.7,
+      "transient.brighten": 0.35,
+      "transient.sec": 0.07,
+      "transient.noise": 0.15,
+      "attackSec": 0.01,
+      "life.shimmerRms": 0
+    }
+  },
+  "after": {
+    "fitExcess": 1.347,
+    "fitLoss": 1.347,
+    "holdoutExcess": 1.328,
+    "holdoutLoss": 1.328,
+    "params": {
+      "slope.base": 0.5599999999999999,
+      "slope.soft": 0.2375,
+      "slope.light": 0.08,
+      "resonance.hz": 179.5,
+      "resonance.q": 5.25,
+      "resonance.mix": 0.26,
+      "noise.level": 0,
+      "noise.hz": 273.75,
+      "transient.level": 0.675,
+      "transient.brighten": 0.305,
+      "transient.sec": 0.015,
+      "transient.noise": 0.3,
+      "attackSec": 0.01625,
+      "life.shimmerRms": 0.0125,
+      "ring.sec": 1.4249999999999998,
+      "ring.pitchPow": 0.86875,
+      "ring.partialPow": 0.7000000000000001,
+      "ring.refHz": 55
+    }
+  },
+  "notes": [
+    {
+      "file": "28_1.000_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 28,
+      "size": 1,
+      "excess": 1.255,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "起音噪声感 3.33"
+    },
+    {
+      "file": "44_0.394_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 44,
+      "size": 0.394,
+      "excess": 1.488,
+      "cents": -1.05,
+      "clicks": 0,
+      "worst": "亮度（质心） 3.38"
+    },
+    {
+      "file": "48_0.787_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.787,
+      "excess": 1.51,
+      "cents": -0.82,
+      "clicks": 0,
+      "worst": "谐噪比 2.73"
+    },
+    {
+      "file": "56_1.000_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 56,
+      "size": 1,
+      "excess": 1.24,
+      "cents": -0.59,
+      "clicks": 0,
+      "worst": "起音 10–90% 6.83"
+    },
+    {
+      "file": "37_0.394_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 37,
+      "size": 0.394,
+      "excess": 1.232,
+      "cents": -1.21,
+      "clicks": 0,
+      "worst": "起音噪声感 3.06"
+    },
+    {
+      "file": "45_0.787_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 45,
+      "size": 0.787,
+      "excess": 0.866,
+      "cents": -0.77,
+      "clicks": 0,
+      "worst": "亮度随时间的走势 1.71"
+    },
+    {
+      "file": "50_1.000_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 50,
+      "size": 1,
+      "excess": 1.253,
+      "cents": -0.77,
+      "clicks": 0,
+      "worst": "奇偶泛音比 4.09"
+    },
+    {
+      "file": "29_0.394_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 29,
+      "size": 0.394,
+      "excess": 1.788,
+      "cents": -1.03,
+      "clicks": 0,
+      "worst": "音高 240.32"
+    },
+    {
+      "file": "38_0.787_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 38,
+      "size": 0.787,
+      "excess": 1.395,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "整体衰减 3.59"
+    },
+    {
+      "file": "41_1.000_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 41,
+      "size": 1,
+      "excess": 1.482,
+      "cents": -0.67,
+      "clicks": 0,
+      "worst": "亮度（质心） 3.22"
+    },
+    {
+      "file": "54_0.394_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 54,
+      "size": 0.394,
+      "excess": 1.558,
+      "cents": -0.68,
+      "clicks": 0,
+      "worst": "奇偶泛音比 6.87"
+    },
+    {
+      "file": "36_0.394_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 36,
+      "size": 0.394,
+      "excess": 1.332,
+      "cents": -1.22,
+      "clicks": 0,
+      "worst": "起音噪声感 3.10"
+    },
+    {
+      "file": "44_0.787_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 44,
+      "size": 0.787,
+      "excess": 1.15,
+      "cents": -1.04,
+      "clicks": 0,
+      "worst": "频谱包络 3.46"
+    },
+    {
+      "file": "48_1.000_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 1,
+      "excess": 1.143,
+      "cents": -0.82,
+      "clicks": 0,
+      "worst": "时频图 2.63"
+    },
+    {
+      "file": "30_0.394_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 30,
+      "size": 0.394,
+      "excess": 1.449,
+      "cents": -1.49,
+      "clicks": 0,
+      "worst": "音高 240.38"
+    },
+    {
+      "file": "37_0.787_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 37,
+      "size": 0.787,
+      "excess": 1.3,
+      "cents": -1.21,
+      "clicks": 0,
+      "worst": "亮度随时间的走势 2.82"
+    },
+    {
+      "file": "45_1.000_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 45,
+      "size": 1,
+      "excess": 1.074,
+      "cents": -0.77,
+      "clicks": 0,
+      "worst": "亮度随时间的走势 2.53"
+    },
+    {
+      "file": "55_0.394_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 55,
+      "size": 0.394,
+      "excess": 1.201,
+      "cents": -0.36,
+      "clicks": 0,
+      "worst": "起音噪声感 3.29"
+    },
+    {
+      "file": "29_0.787_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 29,
+      "size": 0.787,
+      "excess": 1.815,
+      "cents": -1.03,
+      "clicks": 0,
+      "worst": "音高 241.60"
+    },
+    {
+      "file": "38_1.000_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 38,
+      "size": 1,
+      "excess": 1.463,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "整体衰减 3.45"
+    },
+    {
+      "file": "48_0.394_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.394,
+      "excess": 1.852,
+      "cents": -0.83,
+      "clicks": 0,
+      "worst": "音高 239.71"
+    },
+    {
+      "file": "54_0.787_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 54,
+      "size": 0.787,
+      "excess": 1.626,
+      "cents": -0.69,
+      "clicks": 0,
+      "worst": "谐噪比 5.21"
+    },
+    {
+      "file": "28_0.394_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 28,
+      "size": 0.394,
+      "excess": 1.21,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "泛音斜率 2.83"
+    },
+    {
+      "file": "36_0.787_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 36,
+      "size": 0.787,
+      "excess": 1.209,
+      "cents": -1.22,
+      "clicks": 0,
+      "worst": "起音 10–90% 8.06"
+    },
+    {
+      "file": "44_1.000_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 44,
+      "size": 1,
+      "excess": 1.253,
+      "cents": -1.02,
+      "clicks": 0,
+      "worst": "起音 10–90% 8.00"
+    },
+    {
+      "file": "56_0.394_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 56,
+      "size": 0.394,
+      "excess": 1.312,
+      "cents": -0.58,
+      "clicks": 0,
+      "worst": "松开后的尾巴 5.25"
+    },
+    {
+      "file": "30_0.787_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 30,
+      "size": 0.787,
+      "excess": 1.598,
+      "cents": -1.48,
+      "clicks": 0,
+      "worst": "音高 241.70"
+    },
+    {
+      "file": "37_1.000_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 37,
+      "size": 1,
+      "excess": 1.242,
+      "cents": -1.21,
+      "clicks": 0,
+      "worst": "亮度（质心） 3.80"
+    },
+    {
+      "file": "50_0.394_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 50,
+      "size": 0.394,
+      "excess": 1.27,
+      "cents": -0.77,
+      "clicks": 0,
+      "worst": "谐噪比 2.71"
+    },
+    {
+      "file": "55_0.787_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 55,
+      "size": 0.787,
+      "excess": 1.093,
+      "cents": -0.36,
+      "clicks": 0,
+      "worst": "亮度随时间的走势 2.27"
+    },
+    {
+      "file": "29_1.000_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 29,
+      "size": 1,
+      "excess": 1.986,
+      "cents": -1.03,
+      "clicks": 0,
+      "worst": "音高 240.75"
+    },
+    {
+      "file": "41_0.394_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 41,
+      "size": 0.394,
+      "excess": 1.297,
+      "cents": -0.67,
+      "clicks": 0,
+      "worst": "早段衰减 2.26"
+    },
+    {
+      "file": "48_0.787_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.787,
+      "excess": 1.414,
+      "cents": -0.82,
+      "clicks": 0,
+      "worst": "谐噪比 4.62"
+    },
+    {
+      "file": "54_1.000_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 54,
+      "size": 1,
+      "excess": 1.636,
+      "cents": -0.68,
+      "clicks": 0,
+      "worst": "奇偶泛音比 5.17"
+    },
+    {
+      "file": "28_0.787_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 28,
+      "size": 0.787,
+      "excess": 1.091,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "起音噪声感 2.37"
+    },
+    {
+      "file": "36_1.000_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 36,
+      "size": 1,
+      "excess": 1.101,
+      "cents": -1.22,
+      "clicks": 0,
+      "worst": "非谐性 B 6.95"
+    },
+    {
+      "file": "48_0.394_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.394,
+      "excess": 1.623,
+      "cents": -0.83,
+      "clicks": 0,
+      "worst": "松开后的尾巴 2.92"
+    },
+    {
+      "file": "56_0.787_bass_electronic_018.wav",
+      "split": "valid",
+      "midi": 56,
+      "size": 0.787,
+      "excess": 1.328,
+      "cents": -0.59,
+      "clicks": 0,
+      "worst": "起音 10–90% 6.74"
+    },
+    {
+      "file": "30_1.000_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 30,
+      "size": 1,
+      "excess": 1.051,
+      "cents": -1.48,
+      "clicks": 0,
+      "worst": "谐噪比 2.68"
+    },
+    {
+      "file": "45_0.394_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 45,
+      "size": 0.394,
+      "excess": 1.125,
+      "cents": -0.79,
+      "clicks": 0,
+      "worst": "起音噪声感 3.76"
+    },
+    {
+      "file": "50_0.787_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 50,
+      "size": 0.787,
+      "excess": 1.072,
+      "cents": -0.77,
+      "clicks": 0,
+      "worst": "奇偶泛音比 3.70"
+    },
+    {
+      "file": "55_1.000_bass_electronic_025.wav",
+      "split": "valid",
+      "midi": 55,
+      "size": 1,
+      "excess": 1.222,
+      "cents": -0.36,
+      "clicks": 0,
+      "worst": "亮度随时间的走势 3.26"
+    },
+    {
+      "file": "38_0.394_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 38,
+      "size": 0.394,
+      "excess": 1.276,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "整体衰减 2.76"
+    },
+    {
+      "file": "41_0.787_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 41,
+      "size": 0.787,
+      "excess": 1.315,
+      "cents": -0.67,
+      "clicks": 0,
+      "worst": "早段衰减 2.47"
+    },
+    {
+      "file": "48_1.000_bass_electronic_027.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 1,
+      "excess": 1.421,
+      "cents": -0.82,
+      "clicks": 0,
+      "worst": "谐噪比 4.08"
+    },
+    {
+      "file": "30_0.394_bass_electronic_018.wav",
+      "split": "test",
+      "midi": 30,
+      "size": 0.394,
+      "excess": 0.863,
+      "cents": -1.49,
+      "clicks": 0,
+      "worst": "谐噪比 1.93"
+    },
+    {
+      "file": "51_0.787_bass_electronic_018.wav",
+      "split": "test",
+      "midi": 51,
+      "size": 0.787,
+      "excess": 1.299,
+      "cents": -0.62,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.13"
+    },
+    {
+      "file": "40_0.787_bass_electronic_025.wav",
+      "split": "test",
+      "midi": 40,
+      "size": 0.787,
+      "excess": 1.111,
+      "cents": -0.78,
+      "clicks": 0,
+      "worst": "亮度（质心） 2.35"
+    },
+    {
+      "file": "31_0.394_bass_electronic_027.wav",
+      "split": "test",
+      "midi": 31,
+      "size": 0.394,
+      "excess": 0.973,
+      "cents": -1.2,
+      "clicks": 0,
+      "worst": "奇偶泛音比 2.19"
+    },
+    {
+      "file": "35_0.787_bass_electronic_027.wav",
+      "split": "test",
+      "midi": 35,
+      "size": 0.787,
+      "excess": 1.421,
+      "cents": -1.36,
+      "clicks": 0,
+      "worst": "整体衰减 3.16"
+    },
+    {
+      "file": "35_0.787_bass_electronic_018.wav",
+      "split": "test",
+      "midi": 35,
+      "size": 0.787,
+      "excess": 1.169,
+      "cents": -1.36,
+      "clicks": 0,
+      "worst": "起音 10–90% 8.23"
+    },
+    {
+      "file": "57_0.787_bass_electronic_018.wav",
+      "split": "test",
+      "midi": 57,
+      "size": 0.787,
+      "excess": 1.306,
+      "cents": -0.3,
+      "clicks": 0,
+      "worst": "起音 10–90% 7.81"
+    },
+    {
+      "file": "40_1.000_bass_electronic_025.wav",
+      "split": "test",
+      "midi": 40,
+      "size": 1,
+      "excess": 1.246,
+      "cents": -0.78,
+      "clicks": 0,
+      "worst": "亮度（质心） 3.04"
+    },
+    {
+      "file": "31_0.787_bass_electronic_027.wav",
+      "split": "test",
+      "midi": 31,
+      "size": 0.787,
+      "excess": 1.196,
+      "cents": -1.2,
+      "clicks": 0,
+      "worst": "奇偶泛音比 2.72"
+    },
+    {
+      "file": "35_1.000_bass_electronic_027.wav",
+      "split": "test",
+      "midi": 35,
+      "size": 1,
+      "excess": 1.561,
+      "cents": -1.36,
+      "clicks": 0,
+      "worst": "整体衰减 3.40"
+    },
+    {
+      "file": "35_1.000_bass_electronic_018.wav",
+      "split": "test",
+      "midi": 35,
+      "size": 1,
+      "excess": 1.379,
+      "cents": -1.36,
+      "clicks": 0,
+      "worst": "起音 10–90% 8.23"
+    },
+    {
+      "file": "28_0.787_bass_electronic_025.wav",
+      "split": "test",
+      "midi": 28,
+      "size": 0.787,
+      "excess": 1.752,
+      "cents": -1.17,
+      "clicks": 0,
+      "worst": "音高 240.92"
+    },
+    {
+      "file": "48_0.394_bass_electronic_025.wav",
+      "split": "test",
+      "midi": 48,
+      "size": 0.394,
+      "excess": 1.674,
+      "cents": -0.83,
+      "clicks": 0,
+      "worst": "谐噪比 4.80"
+    },
+    {
+      "file": "31_1.000_bass_electronic_027.wav",
+      "split": "test",
+      "midi": 31,
+      "size": 1,
+      "excess": 1.448,
+      "cents": -1.2,
+      "clicks": 0,
+      "worst": "亮度（质心） 3.20"
+    },
+    {
+      "file": "41_0.394_bass_electronic_018.wav",
+      "split": "test",
+      "midi": 41,
+      "size": 0.394,
+      "excess": 1.343,
+      "cents": -0.67,
+      "clicks": 0,
+      "worst": "起音 10–90% 6.42"
+    },
+    {
+      "file": "33_1.000_bass_electronic_025.wav",
+      "split": "test",
+      "midi": 33,
+      "size": 1,
+      "excess": 1.273,
+      "cents": -1.15,
+      "clicks": 0,
+      "worst": "亮度（质心） 2.93"
+    },
+    {
+      "file": "57_0.394_bass_electronic_025.wav",
+      "split": "test",
+      "midi": 57,
+      "size": 0.394,
+      "excess": 1.645,
+      "cents": -0.31,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.37"
+    },
+    {
+      "file": "35_0.394_bass_electronic_027.wav",
+      "split": "test",
+      "midi": 35,
+      "size": 0.394,
+      "excess": 1.247,
+      "cents": -1.37,
+      "clicks": 0,
+      "worst": "整体衰减 2.87"
+    }
+  ]
+}

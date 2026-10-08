@@ -47,6 +47,11 @@ export interface HarmonicPreset {
    * Finger attack on an electric bass.
    */
   transient?: { level: number; brighten: number; minSlope: number; sec: number; noise: number; noiseStrike: number; noiseSec: number };
+  /**
+   * Decay while the key is held. Partial n has time constant
+   * sec·(refHz/f0)^pitchPow / n^partialPow. A player keeps a bow or a breath alive, so those presets omit it.
+   */
+  ring?: { sec: number; refHz: number; pitchPow: number; partialPow: number };
   attackSec: number;
   releaseSec: number;
   life: PitchLifeSpec;
@@ -200,14 +205,28 @@ export const HARMONIC_PRESETS = {
     attackSec: 0.05,
     life: { vibratoCents: 6, vibratoHz: 4.9, vibratoDelaySec: 0.3, wanderCents: 2.5, vibratoGain: 0.04, shimmerRms: 0.043 },
   },
+  // Fitted to NSynth electronic basses (CC BY 4.0). Held strings decay; a finger transient dies in a few dozen milliseconds.
   'electric-bass': {
     ...BASS,
-    slope: bassSlope(0.3),
-    resonance: { hz: 92, q: 6, mix: 0.16, mixStrike: 0 },
-    noise: bassNoise(0.015),
-    transient: { level: 0.7, brighten: 0.35, minSlope: 0.06, sec: 0.07, noise: 0.15, noiseStrike: 0.55, noiseSec: 0.018 },
-    attackSec: 0.01,
-    life: { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.2, vibratoGain: 0, shimmerRms: 0 },
+    slope: {
+      base: 0.56,
+      soft: 0.2375,
+      softPow: 1,
+      high: 0,
+      highSoft: 0,
+      highFrom: 48,
+      highSpan: 24,
+      lowFlatten: 0,
+      lowFrom: 0,
+      light: 0.08,
+      min: 0.08,
+    },
+    resonance: { hz: 179.5, q: 5.25, mix: 0.26, mixStrike: 0 },
+    noise: { hz: 273.75, hzStrike: 900, level: 0, strike: 0.015, strike2: 0, low: 1, high: 0 },
+    transient: { level: 0.675, brighten: 0.305, minSlope: 0.06, sec: 0.015, noise: 0.3, noiseStrike: 0.55, noiseSec: 0.018 },
+    attackSec: 0.01625,
+    ring: { sec: 1.425, refHz: 55, pitchPow: 0.86875, partialPow: 0.7 },
+    life: { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.2, vibratoGain: 0, shimmerRms: 0.0125 },
   },
   // Horn and tuba stay darker on high notes even when loud; trumpet does not. A saxophone opens up by mezzo-forte.
   trumpet: {
@@ -291,6 +310,8 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let noiseAmp = 0.02;
   let trEnv = 0;
   let finger = 0;
+  const ringDec = new Float64Array(N);
+  let useRing = false;
   const trDec = tr ? Math.exp(-1 / (tr.sec * sampleRate)) : 0;
   const fingerDec = tr ? Math.exp(-1 / (tr.noiseSec * sampleRate)) : 0;
   const bodyW = (2 * Math.PI * p.resonance.hz) / sampleRate;
@@ -352,6 +373,16 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         bodyMix = p.resonance.mix + strike * p.resonance.mixStrike;
         trEnv = tr ? tr.level : 0;
         finger = tr ? tr.level * (tr.noise + strike * tr.noiseStrike) : 0;
+        useRing = p.ring !== undefined;
+        if (p.ring) {
+          for (let n = 1; n <= N; n++) {
+            const tau = Math.max(
+              0.03,
+              (p.ring.sec * Math.pow(p.ring.refHz / freq, p.ring.pitchPow)) / Math.pow(n, p.ring.partialPow),
+            );
+            ringDec[n - 1] = Math.exp(-1 / (tau * sampleRate));
+          }
+        }
         bz1 = 0;
         bz2 = 0;
         env = 0;
@@ -372,6 +403,10 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       let bright = 0;
       for (let n = 0; n < N; n++) {
         if (gains[n] === 0 && brightGains[n] === 0) continue;
+        if (useRing) {
+          gains[n] *= ringDec[n];
+          if (tr) brightGains[n] *= ringDec[n];
+        }
         phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
         const sine = Math.sin(phases[n]);

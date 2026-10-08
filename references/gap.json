@@ -1,5 +1,13 @@
 {
   "ceiling": "Recorded notes. FluidSynth and GM soundfonts are not the reference.",
+  "baselines": [
+    {
+      "id": "nsynth-electric-bass",
+      "pairs": 11,
+      "distance": 1.94,
+      "excess": 1.73
+    }
+  ],
   "rows": [
     {
       "id": "tinysol-flute",
@@ -9,10 +17,10 @@
       "note": "C4",
       "size": 0.3,
       "distance": 2.25,
-      "excess": 1.86,
+      "excess": 1.9,
       "passed": 5,
       "total": 20,
-      "oursCents": 2.7771329991001537,
+      "oursCents": 2.700604060310923,
       "refCents": -14.134888654904602,
       "worst": "起音噪声感 4.65",
       "life": {
@@ -42,19 +50,19 @@
       "note": "C4",
       "size": 0.9,
       "distance": 1.7,
-      "excess": 1.3,
+      "excess": 1.29,
       "passed": 11,
       "total": 19,
-      "oursCents": -1.5576349094490665,
+      "oursCents": -1.6272264750466652,
       "refCents": 13.795170549758886,
       "worst": "时频图 2.87",
       "life": {
         "shimmer": [
-          -29.5,
+          -29.6,
           -31
         ],
         "flutter": [
-          0.1,
+          0.2,
           0.6
         ],
         "pitch.jitter": [
@@ -74,16 +82,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 1.44,
-      "excess": 1.16,
+      "distance": 1.54,
+      "excess": 1.33,
       "passed": 9,
       "total": 18,
-      "oursCents": 2.331793905195786,
+      "oursCents": 2.265351003723386,
       "refCents": 4.476824507101148,
-      "worst": "奇偶泛音比 2.41",
+      "worst": "各泛音衰减 4.73",
       "life": {
         "shimmer": [
-          -29.5,
+          -29.6,
           -29.3
         ],
         "flutter": [
@@ -103,20 +111,20 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 1.49,
-      "excess": 1.28,
+      "distance": 1.52,
+      "excess": 1.33,
       "passed": 13,
       "total": 19,
-      "oursCents": 0.6400902612134186,
+      "oursCents": 0.6103657727837083,
       "refCents": 6.089060878001066,
       "worst": "奇偶泛音比 4.61",
       "life": {
         "shimmer": [
-          -29.6,
+          -29.4,
           -30.4
         ],
         "flutter": [
-          0.3,
+          0.2,
           1
         ],
         "pitch.jitter": [
@@ -132,16 +140,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 1.91,
+      "distance": 1.9,
       "excess": 1.58,
       "passed": 7,
       "total": 15,
-      "oursCents": -0.33450367153871574,
+      "oursCents": -0.36634215718659247,
       "refCents": 8.118878816009818,
       "worst": "起音噪声感 4.41",
       "life": {
         "shimmer": [
-          -32.8,
+          -32.9,
           -32.3
         ],
         "pitch.jitter": [
@@ -157,11 +165,11 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 1.88,
-      "excess": 1.46,
+      "distance": 1.87,
+      "excess": 1.44,
       "passed": 9,
       "total": 18,
-      "oursCents": -0.2463510170775707,
+      "oursCents": -0.28108214059760994,
       "refCents": 9.88487263806991,
       "worst": "时频图 3.64",
       "life": {
@@ -170,7 +178,7 @@
           -31.1
         ],
         "flutter": [
-          0.3,
+          0.2,
           0.7
         ],
         "pitch.jitter": [
@@ -186,11 +194,11 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.19,
-      "excess": 1.95,
+      "distance": 2.18,
+      "excess": 1.94,
       "passed": 4,
       "total": 14,
-      "oursCents": -0.060155207150815564,
+      "oursCents": -0.11108392067566798,
       "refCents": 10.985969323375095,
       "worst": "起音 10–90% 8.61",
       "life": {
@@ -211,24 +219,24 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.74,
-      "excess": 1.46,
+      "distance": 1.76,
+      "excess": 1.5,
       "passed": 11,
       "total": 20,
-      "oursCents": -0.03369722358394081,
+      "oursCents": -0.08205320397198237,
       "refCents": 4.993534383987499,
-      "worst": "起音 10–90% 9.05",
+      "worst": "起音 10–90% 9.10",
       "life": {
         "shimmer": [
-          -32.9,
+          -32.7,
           -33.3
         ],
         "flutter": [
-          0.2,
+          0.1,
           2.7
         ],
         "pitch.jitter": [
-          2.1,
+          2.2,
           0.8
         ],
         "brightnessLag": [
@@ -244,20 +252,20 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 1.47,
-      "excess": 1.25,
+      "distance": 1.56,
+      "excess": 1.3,
       "passed": 13,
       "total": 19,
-      "oursCents": -0.3772788177846311,
+      "oursCents": -0.38055838878691267,
       "refCents": 7.210682214674204,
-      "worst": "整体衰减 4.31",
+      "worst": "整体衰减 4.30",
       "life": {
         "shimmer": [
           -32.8,
           -33.4
         ],
         "flutter": [
-          0.3,
+          0.2,
           1.9
         ],
         "pitch.jitter": [
@@ -273,11 +281,11 @@
       "midi": 84,
       "note": "C6",
       "size": 0.9,
-      "distance": 1.65,
-      "excess": 1.42,
-      "passed": 13,
-      "total": 19,
-      "oursCents": -0.34589779120652775,
+      "distance": 1.68,
+      "excess": 1.45,
+      "passed": 12,
+      "total": 18,
+      "oursCents": -0.344609593265635,
       "refCents": 6.492578741859294,
       "worst": "整体衰减 4.26",
       "life": {
@@ -306,7 +314,7 @@
       "excess": 1.91,
       "passed": 9,
       "total": 21,
-      "oursCents": -0.4716298950356455,
+      "oursCents": -0.5029121245503829,
       "refCents": -7.1835818612933515,
       "worst": "起音噪声感 5.24",
       "life": {
@@ -335,16 +343,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.1,
-      "excess": 1.93,
-      "passed": 8,
+      "distance": 2.17,
+      "excess": 1.97,
+      "passed": 9,
       "total": 22,
-      "oursCents": -0.4883815632467785,
+      "oursCents": -0.5181271494839979,
       "refCents": -8.797399123624393,
       "worst": "整体衰减 5.31",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.7,
           -27.2
         ],
         "flutter": [
@@ -368,16 +376,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.8,
+      "distance": 1.79,
       "excess": 1.49,
-      "passed": 11,
+      "passed": 13,
       "total": 21,
-      "oursCents": -0.5045020262659441,
+      "oursCents": -0.5342005971213635,
       "refCents": 0.5050689754651737,
-      "worst": "整体衰减 4.92",
+      "worst": "整体衰减 4.93",
       "life": {
         "shimmer": [
-          -25.7,
+          -25.8,
           -26.2
         ],
         "flutter": [
@@ -401,20 +409,20 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.11,
-      "excess": 1.88,
+      "distance": 2.1,
+      "excess": 1.85,
       "passed": 9,
       "total": 21,
-      "oursCents": -0.2167596743801328,
+      "oursCents": -0.2444986533605302,
       "refCents": 3.660210841414336,
-      "worst": "整体衰减 7.45",
+      "worst": "整体衰减 7.46",
       "life": {
         "shimmer": [
-          -25.7,
+          -25.6,
           -29.9
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.1
         ],
         "pitch.jitter": [
@@ -438,16 +446,16 @@
       "excess": 1.54,
       "passed": 12,
       "total": 21,
-      "oursCents": -0.19275652428090295,
+      "oursCents": -0.2026283545407367,
       "refCents": 16.0120886711805,
-      "worst": "整体衰减 5.06",
+      "worst": "整体衰减 5.10",
       "life": {
         "shimmer": [
           -25.4,
           -26.8
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.8
         ],
         "pitch.jitter": [
@@ -467,20 +475,20 @@
       "midi": 84,
       "note": "C6",
       "size": 0.3,
-      "distance": 2.15,
+      "distance": 2.16,
       "excess": 1.83,
       "passed": 10,
       "total": 22,
-      "oursCents": -0.5828488564566651,
+      "oursCents": -0.5762041219946393,
       "refCents": -26.31203834454541,
-      "worst": "整体衰减 6.66",
+      "worst": "整体衰减 6.68",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.5,
           -23.3
         ],
         "flutter": [
-          0.5,
+          0.6,
           1.5
         ],
         "pitch.jitter": [
@@ -500,20 +508,20 @@
       "midi": 84,
       "note": "C6",
       "size": 0.6,
-      "distance": 1.78,
-      "excess": 1.61,
+      "distance": 1.77,
+      "excess": 1.57,
       "passed": 13,
       "total": 21,
-      "oursCents": -0.5843312245809864,
+      "oursCents": -0.5734406041378494,
       "refCents": -2.607946680469022,
-      "worst": "起音噪声感 5.10",
+      "worst": "起音噪声感 5.19",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.5,
           -24
         ],
         "flutter": [
-          0.5,
+          0.6,
           3.2
         ],
         "pitch.jitter": [
@@ -537,7 +545,7 @@
       "excess": 2.04,
       "passed": 7,
       "total": 20,
-      "oursCents": -0.9016039467442025,
+      "oursCents": -1.0873441338571952,
       "refCents": -0.6316609335008748,
       "worst": "起音噪声感 5.72",
       "life": {
@@ -566,16 +574,16 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 1.97,
-      "excess": 1.69,
-      "passed": 8,
+      "distance": 1.96,
+      "excess": 1.68,
+      "passed": 7,
       "total": 20,
-      "oursCents": -0.9149786378557614,
+      "oursCents": -1.1227049384205063,
       "refCents": -1.5496843121926434,
       "worst": "整体衰减 6.34",
       "life": {
         "shimmer": [
-          -26.2,
+          -25.9,
           -32
         ],
         "flutter": [
@@ -603,12 +611,12 @@
       "excess": 1.74,
       "passed": 8,
       "total": 21,
-      "oursCents": -0.510487323901936,
+      "oursCents": -0.5391253260427112,
       "refCents": -10.205044343037656,
       "worst": "整体衰减 6.51",
       "life": {
         "shimmer": [
-          -26.1,
+          -26.2,
           -24.5
         ],
         "flutter": [
@@ -632,11 +640,11 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.11,
-      "excess": 1.74,
+      "distance": 2.09,
+      "excess": 1.78,
       "passed": 10,
       "total": 22,
-      "oursCents": -0.23780498270450934,
+      "oursCents": -0.2818258865794665,
       "refCents": -8.187202143899,
       "worst": "起音噪声感 6.97",
       "life": {
@@ -649,11 +657,11 @@
           1.2
         ],
         "pitch.jitter": [
-          2.9,
+          2.8,
           1.8
         ],
         "brightnessLag": [
-          -10,
+          0,
           40
         ]
       }
@@ -666,15 +674,15 @@
       "note": "C5",
       "size": 0.9,
       "distance": 1.67,
-      "excess": 1.42,
+      "excess": 1.47,
       "passed": 13,
       "total": 21,
-      "oursCents": -0.19409876024132822,
+      "oursCents": -0.23769061066448433,
       "refCents": -3.6072673429623827,
       "worst": "整体衰减 5.16",
       "life": {
         "shimmer": [
-          -25.9,
+          -26.2,
           -22.3
         ],
         "flutter": [
@@ -682,7 +690,7 @@
           1.4
         ],
         "pitch.jitter": [
-          2.9,
+          2.8,
           2.1
         ],
         "brightnessLag": [
@@ -698,16 +706,16 @@
       "midi": 36,
       "note": "C2",
       "size": 0.3,
-      "distance": 2.19,
-      "excess": 1.93,
+      "distance": 2.21,
+      "excess": 1.97,
       "passed": 4,
       "total": 20,
-      "oursCents": -1.7919133965838159,
+      "oursCents": -2.034208844719379,
       "refCents": 10.415008851406206,
       "worst": "整体衰减 7.03",
       "life": {
         "shimmer": [
-          -25.3,
+          -25.4,
           -28.2
         ],
         "flutter": [
@@ -731,16 +739,16 @@
       "midi": 36,
       "note": "C2",
       "size": 0.9,
-      "distance": 1.91,
-      "excess": 1.63,
-      "passed": 8,
+      "distance": 1.99,
+      "excess": 1.67,
+      "passed": 9,
       "total": 20,
-      "oursCents": -1.8143707452755702,
+      "oursCents": -2.045405966027666,
       "refCents": 19.73332850322716,
       "worst": "整体衰减 7.62",
       "life": {
         "shimmer": [
-          -25.2,
+          -25.3,
           -22.8
         ],
         "flutter": [
@@ -764,16 +772,16 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 1.93,
+      "distance": 1.92,
       "excess": 1.64,
       "passed": 11,
       "total": 21,
-      "oursCents": -0.9960702974224543,
+      "oursCents": -1.1750256662131138,
       "refCents": -13.858105652040024,
       "worst": "整体衰减 6.69",
       "life": {
         "shimmer": [
-          -25.1,
+          -25.3,
           -30.4
         ],
         "flutter": [
@@ -797,11 +805,11 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.13,
-      "excess": 1.76,
+      "distance": 2.15,
+      "excess": 1.81,
       "passed": 7,
       "total": 21,
-      "oursCents": -0.5261997808335255,
+      "oursCents": -0.5564047558510495,
       "refCents": -15.5191992109428,
       "worst": "起音噪声感 7.24",
       "life": {
@@ -831,15 +839,15 @@
       "note": "C4",
       "size": 0.9,
       "distance": 1.83,
-      "excess": 1.61,
+      "excess": 1.56,
       "passed": 12,
       "total": 21,
-      "oursCents": -0.549208076109062,
+      "oursCents": -0.5759294280194075,
       "refCents": -15.611609964242005,
-      "worst": "起音噪声感 5.71",
+      "worst": "起音噪声感 5.80",
       "life": {
         "shimmer": [
-          -25.1,
+          -25.2,
           -30.7
         ],
         "flutter": [
@@ -863,16 +871,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.3,
-      "distance": 2.06,
+      "distance": 2.05,
       "excess": 1.86,
       "passed": 10,
       "total": 21,
-      "oursCents": -0.2653467356255963,
+      "oursCents": -0.324637632602062,
       "refCents": -1.74244778173605,
       "worst": "奇偶泛音比 5.32",
       "life": {
         "shimmer": [
-          -25,
+          -25.1,
           -21.9
         ],
         "flutter": [
@@ -900,12 +908,12 @@
       "excess": 1.88,
       "passed": 6,
       "total": 21,
-      "oursCents": -0.20748153950282663,
+      "oursCents": -0.2837541349505042,
       "refCents": -11.247962920409226,
       "worst": "整体衰减 4.80",
       "life": {
         "shimmer": [
-          -24.8,
+          -25,
           -19.3
         ],
         "flutter": [
@@ -929,20 +937,20 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2.18,
-      "excess": 1.88,
+      "distance": 2.14,
+      "excess": 1.86,
       "passed": 7,
       "total": 20,
-      "oursCents": -0.31671947896066766,
+      "oursCents": -0.34494173526051336,
       "refCents": -22.048643849319948,
-      "worst": "频谱包络 4.76",
+      "worst": "频谱包络 4.75",
       "life": {
         "shimmer": [
-          -30,
+          -30.3,
           -32.6
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.1
         ],
         "pitch.jitter": [
@@ -963,15 +971,15 @@
       "note": "C4",
       "size": 0.9,
       "distance": 2.01,
-      "excess": 1.77,
+      "excess": 1.75,
       "passed": 8,
       "total": 20,
-      "oursCents": -0.33980528283513334,
+      "oursCents": -0.36240197338530916,
       "refCents": -11.883608467419183,
       "worst": "整体衰减 4.18",
       "life": {
         "shimmer": [
-          -30.5,
+          -30,
           -30.7
         ],
         "flutter": [
@@ -995,20 +1003,20 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 1.69,
-      "excess": 1.16,
-      "passed": 11,
-      "total": 20,
-      "oursCents": -0.12586969593932895,
+      "distance": 1.71,
+      "excess": 1.19,
+      "passed": 10,
+      "total": 19,
+      "oursCents": -0.16615231417706305,
       "refCents": 10.611371640921536,
-      "worst": "时频图 2.95",
+      "worst": "时频图 2.94",
       "life": {
         "shimmer": [
-          -29.9,
+          -29.6,
           -31.2
         ],
         "flutter": [
-          0.3,
+          0.2,
           0.3
         ],
         "pitch.jitter": [
@@ -1028,16 +1036,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.73,
-      "excess": 1.46,
-      "passed": 8,
+      "distance": 1.75,
+      "excess": 1.47,
+      "passed": 7,
       "total": 19,
-      "oursCents": -0.06731227081092127,
+      "oursCents": -0.10767754515493648,
       "refCents": 9.865577640512827,
       "worst": "整体衰减 4.88",
       "life": {
         "shimmer": [
-          -29.4,
+          -29.5,
           -27.9
         ],
         "flutter": [
@@ -1065,12 +1073,12 @@
       "excess": 1.64,
       "passed": 9,
       "total": 18,
-      "oursCents": -0.5037204114265008,
+      "oursCents": -0.49563646051265625,
       "refCents": -23.09831662278005,
       "worst": "整体衰减 5.43",
       "life": {
         "shimmer": [
-          -30,
+          -30.1,
           -30.1
         ],
         "flutter": [
@@ -1090,11 +1098,11 @@
       "midi": 48,
       "note": "C3",
       "size": 0.3,
-      "distance": 2.58,
-      "excess": 2.39,
+      "distance": 2.56,
+      "excess": 2.38,
       "passed": 4,
       "total": 19,
-      "oursCents": -0.6429050842903014,
+      "oursCents": -0.7696882684546965,
       "refCents": 34.32645384223528,
       "worst": "泛音斜率 5.37",
       "life": {
@@ -1119,16 +1127,16 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 1.76,
-      "excess": 1.6,
-      "passed": 10,
-      "total": 19,
-      "oursCents": -0.693266653278565,
+      "distance": 1.75,
+      "excess": 1.56,
+      "passed": 11,
+      "total": 20,
+      "oursCents": -0.8166737217117455,
       "refCents": 0.5408733787943788,
-      "worst": "各泛音衰减 5.58",
+      "worst": "各泛音衰减 5.41",
       "life": {
         "shimmer": [
-          -31.4,
+          -31.6,
           -33.4
         ],
         "flutter": [
@@ -1152,16 +1160,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 2,
-      "excess": 1.62,
+      "distance": 1.99,
+      "excess": 1.61,
       "passed": 10,
       "total": 19,
-      "oursCents": -0.3190104811887967,
+      "oursCents": -0.3460750258193017,
       "refCents": 2.8341991680180962,
-      "worst": "泛音斜率 3.44",
+      "worst": "泛音斜率 3.46",
       "life": {
         "shimmer": [
-          -31.8,
+          -31.7,
           -30.6
         ],
         "flutter": [
@@ -1182,12 +1190,12 @@
       "note": "C5",
       "size": 0.3,
       "distance": 1.4,
-      "excess": 1.11,
+      "excess": 1.07,
       "passed": 13,
       "total": 15,
-      "oursCents": -0.15906726540876232,
+      "oursCents": -0.20140694390657168,
       "refCents": 1.078925758806998,
-      "worst": "各泛音衰减 4.74",
+      "worst": "各泛音衰减 4.20",
       "life": {
         "shimmer": [
           -31.6,
@@ -1206,16 +1214,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.68,
-      "excess": 1.37,
-      "passed": 10,
+      "distance": 1.64,
+      "excess": 1.35,
+      "passed": 11,
       "total": 18,
-      "oursCents": -0.1505261920387498,
+      "oursCents": -0.20062155094524914,
       "refCents": 1.5544042707812116,
-      "worst": "亮度（质心） 3.59",
+      "worst": "亮度（质心） 3.72",
       "life": {
         "shimmer": [
-          -31.6,
+          -31.5,
           -32.3
         ],
         "flutter": [
@@ -1235,16 +1243,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.3,
-      "distance": 2.05,
-      "excess": 1.68,
+      "distance": 1.97,
+      "excess": 1.64,
       "passed": 10,
       "total": 18,
-      "oursCents": -0.29970645316522637,
+      "oursCents": -0.32722245765903135,
       "refCents": -15.228626648828936,
       "worst": "奇偶泛音比 4.48",
       "life": {
         "shimmer": [
-          -29.6,
+          -29.7,
           -29.9
         ],
         "flutter": [
@@ -1265,15 +1273,15 @@
       "note": "C4",
       "size": 0.6,
       "distance": 1.8,
-      "excess": 1.45,
+      "excess": 1.46,
       "passed": 11,
       "total": 19,
-      "oursCents": -0.30300971497131063,
+      "oursCents": -0.3300583761857506,
       "refCents": -11.877820692103173,
       "worst": "整体衰减 3.81",
       "life": {
         "shimmer": [
-          -29.5,
+          -29.7,
           -29.8
         ],
         "flutter": [
@@ -1293,16 +1301,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.8,
-      "excess": 1.48,
-      "passed": 12,
+      "distance": 1.68,
+      "excess": 1.33,
+      "passed": 13,
       "total": 20,
-      "oursCents": -0.3103167124485319,
+      "oursCents": -0.336333751062252,
       "refCents": -11.34391409715323,
       "worst": "整体衰减 5.04",
       "life": {
         "shimmer": [
-          -29.4,
+          -29.7,
           -29.8
         ],
         "flutter": [
@@ -1327,15 +1335,15 @@
       "note": "C4",
       "size": 0.3,
       "distance": 1.88,
-      "excess": 1.68,
+      "excess": 1.66,
       "passed": 10,
       "total": 18,
-      "oursCents": -0.28788498049600286,
+      "oursCents": -0.31567434277192374,
       "refCents": 0.02982476849164945,
       "worst": "整体衰减 5.34",
       "life": {
         "shimmer": [
-          -34.5,
+          -34.6,
           -28.9
         ],
         "flutter": [
@@ -1357,14 +1365,14 @@
       "size": 0.9,
       "distance": 1.91,
       "excess": 1.41,
-      "passed": 9,
+      "passed": 10,
       "total": 19,
-      "oursCents": -0.3015768609028286,
+      "oursCents": -0.32736463624476936,
       "refCents": 11.400138428250932,
       "worst": "整体衰减 4.08",
       "life": {
         "shimmer": [
-          -35,
+          -34.6,
           -31.7
         ],
         "flutter": [
@@ -1388,20 +1396,20 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 2.05,
-      "excess": 1.81,
+      "distance": 2.11,
+      "excess": 1.8,
       "passed": 8,
-      "total": 18,
-      "oursCents": -0.11824773410150279,
+      "total": 19,
+      "oursCents": -0.1575258152585919,
       "refCents": -1.2786733644141324,
       "worst": "奇偶泛音比 5.02",
       "life": {
         "shimmer": [
-          -34.3,
+          -33.9,
           -46.5
         ],
         "flutter": [
-          0.2,
+          0.5,
           0.2
         ],
         "pitch.jitter": [
@@ -1417,20 +1425,20 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.79,
-      "excess": 1.33,
-      "passed": 11,
+      "distance": 1.73,
+      "excess": 1.28,
+      "passed": 12,
       "total": 20,
-      "oursCents": -0.1008569512070504,
+      "oursCents": -0.14025927309149988,
       "refCents": 8.148327612800434,
       "worst": "整体衰减 4.86",
       "life": {
         "shimmer": [
-          -33.7,
+          -34,
           -33
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.5
         ],
         "pitch.jitter": [
@@ -1450,20 +1458,20 @@
       "midi": 36,
       "note": "C2",
       "size": 0.3,
-      "distance": 1.97,
-      "excess": 1.58,
+      "distance": 2,
+      "excess": 1.6,
       "passed": 7,
       "total": 19,
-      "oursCents": -2.246032546986817,
+      "oursCents": -2.42031680730752,
       "refCents": 18.642524257366148,
       "worst": "整体衰减 7.05",
       "life": {
         "shimmer": [
-          -27.5,
+          -27.4,
           -26.4
         ],
         "flutter": [
-          0.1,
+          0.2,
           0.3
         ],
         "pitch.jitter": [
@@ -1487,16 +1495,16 @@
       "excess": 1.63,
       "passed": 7,
       "total": 19,
-      "oursCents": -2.2375842147713243,
+      "oursCents": -2.4112475432327996,
       "refCents": 8.46743468988886,
       "worst": "整体衰减 7.84",
       "life": {
         "shimmer": [
-          -27.4,
+          -27.3,
           -27.7
         ],
         "flutter": [
-          0.1,
+          0.2,
           0.3
         ],
         "pitch.jitter": [
@@ -1516,11 +1524,11 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 2.04,
-      "excess": 1.85,
+      "distance": 2.03,
+      "excess": 1.82,
       "passed": 10,
       "total": 20,
-      "oursCents": -1.1689841362758988,
+      "oursCents": -1.3889229265534708,
       "refCents": -8.788842452169566,
       "worst": "整体衰减 8.47",
       "life": {
@@ -1553,12 +1561,12 @@
       "excess": 1.9,
       "passed": 7,
       "total": 20,
-      "oursCents": -1.1708433869988384,
+      "oursCents": -1.395721278495555,
       "refCents": -12.785363705354635,
       "worst": "整体衰减 9.28",
       "life": {
         "shimmer": [
-          -27.1,
+          -27,
           -26.4
         ],
         "flutter": [
@@ -1583,10 +1591,10 @@
       "note": "C4",
       "size": 0.3,
       "distance": 2.11,
-      "excess": 1.76,
+      "excess": 1.77,
       "passed": 7,
       "total": 20,
-      "oursCents": -0.6734373528136507,
+      "oursCents": -0.7144416235389145,
       "refCents": -34.52961421162242,
       "worst": "整体衰减 8.41",
       "life": {
@@ -1616,15 +1624,15 @@
       "note": "G1",
       "size": 0.6,
       "distance": 1.77,
-      "excess": 1.46,
-      "passed": 11,
+      "excess": 1.44,
+      "passed": 10,
       "total": 20,
-      "oursCents": -3.362534249989855,
+      "oursCents": -2.9638615352477826,
       "refCents": 0.8845737651771952,
       "worst": "泛音斜率 4.66",
       "life": {
         "shimmer": [
-          -26.9,
+          -27.1,
           -27.5
         ],
         "flutter": [
@@ -1636,7 +1644,7 @@
           6
         ],
         "brightnessLag": [
-          10,
+          0,
           20
         ]
       }
@@ -1649,15 +1657,15 @@
       "note": "C2",
       "size": 0.9,
       "distance": 1.84,
-      "excess": 1.59,
+      "excess": 1.58,
       "passed": 8,
       "total": 19,
-      "oursCents": -2.799002350212456,
+      "oursCents": -2.9751814129596053,
       "refCents": 8.65257911084117,
       "worst": "整体衰减 11.61",
       "life": {
         "shimmer": [
-          -26.5,
+          -26.6,
           -19
         ],
         "flutter": [
@@ -1681,16 +1689,16 @@
       "midi": 43,
       "note": "G2",
       "size": 0.3,
-      "distance": 2.05,
-      "excess": 1.91,
+      "distance": 2.02,
+      "excess": 1.82,
       "passed": 9,
       "total": 20,
-      "oursCents": -1.9367584177275354,
+      "oursCents": -1.7156352171600728,
       "refCents": -4.8592640236402165,
-      "worst": "起音 10–90% 13.08",
+      "worst": "起音 10–90% 13.09",
       "life": {
         "shimmer": [
-          -26.2,
+          -26.3,
           -28.1
         ],
         "flutter": [
@@ -1698,7 +1706,7 @@
           0.6
         ],
         "pitch.jitter": [
-          3,
+          3.1,
           2.3
         ]
       }
@@ -1710,16 +1718,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 1.84,
-      "excess": 1.59,
+      "distance": 1.88,
+      "excess": 1.61,
       "passed": 10,
       "total": 19,
-      "oursCents": -0.8997167192260542,
+      "oursCents": -0.9401943859652153,
       "refCents": -1.7618906058251496,
       "worst": "整体衰减 6.64",
       "life": {
         "shimmer": [
-          -26.1,
+          -26,
           -28.5
         ],
         "flutter": [
@@ -1739,16 +1747,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.71,
-      "excess": 1.44,
+      "distance": 1.72,
+      "excess": 1.45,
       "passed": 11,
       "total": 19,
-      "oursCents": -0.901960279474263,
+      "oursCents": -0.9420694002173863,
       "refCents": 5.761458605242521,
       "worst": "整体衰减 11.51",
       "life": {
         "shimmer": [
-          -25.7,
+          -25.6,
           -21.4
         ],
         "flutter": [
@@ -1773,15 +1781,15 @@
       "note": "C4",
       "size": 0.3,
       "distance": 2.16,
-      "excess": 1.98,
+      "excess": 1.97,
       "passed": 7,
       "total": 19,
-      "oursCents": -0.2824710101078705,
+      "oursCents": -0.31277628270349656,
       "refCents": 9.377418989348111,
       "worst": "整体衰减 3.98",
       "life": {
         "shimmer": [
-          -31.9,
+          -31.8,
           -31.8
         ],
         "flutter": [
@@ -1805,16 +1813,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 1.54,
-      "excess": 1.24,
+      "distance": 1.52,
+      "excess": 1.22,
       "passed": 14,
       "total": 19,
-      "oursCents": -0.2900894450117767,
+      "oursCents": -0.31849991925729854,
       "refCents": -1.3251192345062415,
       "worst": "整体衰减 3.94",
       "life": {
         "shimmer": [
-          -32,
+          -31.8,
           -31.6
         ],
         "flutter": [
@@ -1838,16 +1846,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 1.7,
-      "excess": 1.39,
+      "distance": 1.69,
+      "excess": 1.38,
       "passed": 11,
       "total": 19,
-      "oursCents": -0.11603232220138532,
+      "oursCents": -0.15457509031768796,
       "refCents": 7.784653643678909,
       "worst": "整体衰减 3.34",
       "life": {
         "shimmer": [
-          -31.7,
+          -31.6,
           -32.7
         ],
         "flutter": [
@@ -1872,15 +1880,15 @@
       "note": "C5",
       "size": 0.9,
       "distance": 1.65,
-      "excess": 1.39,
+      "excess": 1.42,
       "passed": 11,
       "total": 19,
-      "oursCents": -0.10944443475310096,
+      "oursCents": -0.14803727898286148,
       "refCents": 1.0116731783456605,
       "worst": "整体衰减 3.88",
       "life": {
         "shimmer": [
-          -31.6,
+          -31.7,
           -32.1
         ],
         "flutter": [
@@ -1908,9 +1916,9 @@
       "excess": 1.33,
       "passed": 13,
       "total": 19,
-      "oursCents": -1.2514712816290645,
+      "oursCents": -1.3539032554788106,
       "refCents": -3.1092111686834847,
-      "worst": "泛音斜率 3.09",
+      "worst": "泛音斜率 3.08",
       "life": {
         "shimmer": [
           -31.2,
@@ -1941,12 +1949,12 @@
       "excess": 1.17,
       "passed": 13,
       "total": 19,
-      "oursCents": -1.2460179347189426,
+      "oursCents": -1.3464207888636746,
       "refCents": 3.4855433576160406,
       "worst": "整体衰减 3.15",
       "life": {
         "shimmer": [
-          -31.2,
+          -31.3,
           -31.5
         ],
         "flutter": [
@@ -1974,7 +1982,7 @@
       "excess": 1.76,
       "passed": 7,
       "total": 19,
-      "oursCents": -0.30596780328710277,
+      "oursCents": -0.336112002322565,
       "refCents": 18.575653923931423,
       "worst": "奇偶泛音比 7.26",
       "life": {
@@ -1999,16 +2007,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.9,
-      "distance": 2.22,
-      "excess": 1.92,
+      "distance": 2.16,
+      "excess": 1.88,
       "passed": 7,
       "total": 19,
-      "oursCents": -0.3133595709866518,
+      "oursCents": -0.3400825281082957,
       "refCents": 19.023956798954327,
-      "worst": "谐噪比 4.85",
+      "worst": "谐噪比 4.82",
       "life": {
         "shimmer": [
-          -30.9,
+          -30.8,
           -32.3
         ],
         "flutter": [
@@ -2032,11 +2040,11 @@
       "midi": 48,
       "note": "C3",
       "size": 0.9,
-      "distance": 2.26,
+      "distance": 2.27,
       "excess": 1.91,
-      "passed": 8,
+      "passed": 7,
       "total": 18,
-      "oursCents": 0.2420126196641697,
+      "oursCents": 0.22765919291910064,
       "refCents": -4.205397854797629,
       "worst": "奇偶泛音比 7.62",
       "life": {
@@ -2059,9 +2067,9 @@
       "size": 0.9,
       "distance": 2.14,
       "excess": 1.85,
-      "passed": 7,
+      "passed": 8,
       "total": 17,
-      "oursCents": 0.09670422553094266,
+      "oursCents": -0.07898942860737476,
       "refCents": -6.238836131876466,
       "worst": "起音 10–90% 9.68",
       "life": {
@@ -2082,11 +2090,11 @@
       "midi": 65,
       "note": "F4",
       "size": 0.9,
-      "distance": 2.11,
-      "excess": 1.85,
-      "passed": 6,
+      "distance": 2.03,
+      "excess": 1.77,
+      "passed": 8,
       "total": 17,
-      "oursCents": -0.1610257771044616,
+      "oursCents": 0.3178963408453822,
       "refCents": -4.421474941071032,
       "worst": "奇偶泛音比 9.61",
       "life": {
@@ -2107,11 +2115,11 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 1.71,
+      "distance": 1.72,
       "excess": 1.4,
       "passed": 12,
       "total": 19,
-      "oursCents": 0.2378960370435621,
+      "oursCents": 0.22442674105641527,
       "refCents": 2.127757871852716,
       "worst": "响度包络 2.90",
       "life": {
@@ -2132,11 +2140,11 @@
       "midi": 79,
       "note": "G5",
       "size": 0.9,
-      "distance": 1.86,
-      "excess": 1.61,
+      "distance": 1.83,
+      "excess": 1.6,
       "passed": 7,
       "total": 15,
-      "oursCents": 0.06806971382688877,
+      "oursCents": 0.10378591675656623,
       "refCents": -1.8083771118290428,
       "worst": "起音噪声感 4.45",
       "life": {
@@ -2153,16 +2161,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.9,
-      "distance": 2.31,
-      "excess": 2.14,
+      "distance": 2.32,
+      "excess": 2.1,
       "passed": 6,
       "total": 20,
-      "oursCents": 0.2387263576372565,
+      "oursCents": 0.2249363336747147,
       "refCents": 10.384837493876557,
-      "worst": "奇偶泛音比 9.67",
+      "worst": "奇偶泛音比 9.62",
       "life": {
         "pitch.jitter": [
-          0.1,
+          0.2,
           6.7
         ],
         "brightnessLag": [
@@ -2178,13 +2186,13 @@
       "midi": 79,
       "note": "G5",
       "size": 0.9,
-      "distance": 2.07,
+      "distance": 2.06,
       "excess": 1.8,
       "passed": 9,
       "total": 20,
-      "oursCents": 0.0690862712720927,
+      "oursCents": 0.1044507771778162,
       "refCents": 13.901606765545495,
-      "worst": "分音起伏 7.83",
+      "worst": "分音起伏 7.84",
       "life": {
         "flutter": [
           0,
@@ -2205,11 +2213,11 @@
       "size": 0.9,
       "distance": 1.75,
       "excess": 1.32,
-      "passed": 9,
+      "passed": 10,
       "total": 16,
-      "oursCents": -0.11333058236779393,
+      "oursCents": -0.08354880452338373,
       "refCents": 15.111655694241291,
-      "worst": "谐噪比 4.06",
+      "worst": "谐噪比 4.16",
       "life": {
         "brightnessLag": [
           0,
@@ -2224,13 +2232,13 @@
       "midi": 96,
       "note": "C7",
       "size": 0.9,
-      "distance": 1.46,
-      "excess": 1.13,
+      "distance": 1.5,
+      "excess": 1.15,
       "passed": 10,
       "total": 15,
-      "oursCents": 0.060538113785303646,
+      "oursCents": 0.04826749273141784,
       "refCents": 16.65423491917577,
-      "worst": "谐噪比 2.31",
+      "worst": "谐噪比 2.44",
       "life": {}
     },
     {
@@ -2241,15 +2249,15 @@
       "note": "G5",
       "size": 0.7,
       "distance": 2.35,
-      "excess": 2.14,
-      "passed": 5,
+      "excess": 2.18,
+      "passed": 6,
       "total": 17,
-      "oursCents": 0.07110031611934575,
+      "oursCents": 0.10610393636737674,
       "refCents": 8.392614202188833,
       "worst": "奇偶泛音比 12.43",
       "life": {
         "pitch.jitter": [
-          0.4,
+          0.5,
           13.6
         ],
         "brightnessLag": [
@@ -2266,12 +2274,12 @@
       "note": "C6",
       "size": 0.7,
       "distance": 2.31,
-      "excess": 2.06,
+      "excess": 2.07,
       "passed": 4,
       "total": 17,
-      "oursCents": -0.11432312531454003,
+      "oursCents": -0.08429058559347385,
       "refCents": 11.316945303279086,
-      "worst": "响度包络 3.92",
+      "worst": "响度包络 3.90",
       "life": {
         "pitch.jitter": [
           0.3,
@@ -2291,10 +2299,10 @@
       "note": "G6",
       "size": 0.7,
       "distance": 2.5,
-      "excess": 2.18,
+      "excess": 2.19,
       "passed": 2,
       "total": 16,
-      "oursCents": -0.04139684592706976,
+      "oursCents": -0.06278565384078828,
       "refCents": 11.97936922381601,
       "worst": "奇偶泛音比 7.05",
       "life": {
@@ -2311,11 +2319,11 @@
       "midi": 96,
       "note": "C7",
       "size": 0.7,
-      "distance": 2.25,
+      "distance": 2.23,
       "excess": 1.86,
       "passed": 5,
       "total": 14,
-      "oursCents": 0.0616863640374433,
+      "oursCents": 0.049412073313561684,
       "refCents": 15.927188421979398,
       "worst": "音高抖动 7.02",
       "life": {
@@ -2336,12 +2344,12 @@
       "excess": 2.31,
       "passed": 5,
       "total": 18,
-      "oursCents": 0.24157623905814185,
+      "oursCents": 0.2271553567960588,
       "refCents": -1.5545945908666616,
-      "worst": "奇偶泛音比 6.80",
+      "worst": "奇偶泛音比 6.81",
       "life": {
         "pitch.jitter": [
-          0.3,
+          1.1,
           1
         ],
         "brightnessLag": [
@@ -2361,7 +2369,7 @@
       "excess": 2.04,
       "passed": 7,
       "total": 18,
-      "oursCents": -0.3299273751092209,
+      "oursCents": 0.2680249957082889,
       "refCents": -0.5206151237335839,
       "worst": "谐噪比 5.61",
       "life": {
@@ -2382,16 +2390,20 @@
       "midi": 65,
       "note": "F4",
       "size": 0.6,
-      "distance": 2.12,
-      "excess": 1.9,
-      "passed": 9,
-      "total": 17,
-      "oursCents": -0.16218895866219057,
+      "distance": 2.2,
+      "excess": 1.99,
+      "passed": 7,
+      "total": 18,
+      "oursCents": 0.3120803059012473,
       "refCents": -1.4094950032728626,
       "worst": "响度包络 4.08",
       "life": {
+        "flutter": [
+          0,
+          3.7
+        ],
         "pitch.jitter": [
-          0.4,
+          0.3,
           1.3
         ]
       }
@@ -2407,7 +2419,7 @@
       "excess": 1.98,
       "passed": 6,
       "total": 21,
-      "oursCents": 0.2417143731449156,
+      "oursCents": 0.22735206918844103,
       "refCents": -10.704101195979472,
       "worst": "谐噪比 6.62",
       "life": {
@@ -2436,9 +2448,9 @@
       "excess": 2.21,
       "passed": 5,
       "total": 20,
-      "oursCents": 0.24147616999793034,
+      "oursCents": 0.22625553214085367,
       "refCents": -3.469137989521974,
-      "worst": "亮度（质心） 8.58",
+      "worst": "亮度（质心） 8.60",
       "life": {
         "shimmer": [
           -30.2,
@@ -2465,16 +2477,16 @@
       "midi": 48,
       "note": "C3",
       "size": 0.6,
-      "distance": 1.52,
-      "excess": 1.2,
+      "distance": 1.51,
+      "excess": 1.19,
       "passed": 12,
       "total": 19,
-      "oursCents": 0.20464386526757775,
+      "oursCents": 0.18649581667608361,
       "refCents": 4.361984055477801,
-      "worst": "时频图 2.90",
+      "worst": "时频图 2.80",
       "life": {
         "shimmer": [
-          -29.7,
+          -29.4,
           -37.2
         ],
         "flutter": [
@@ -2498,16 +2510,16 @@
       "midi": 60,
       "note": "C4",
       "size": 0.6,
-      "distance": 1.56,
-      "excess": 1.35,
-      "passed": 9,
+      "distance": 1.59,
+      "excess": 1.37,
+      "passed": 10,
       "total": 18,
-      "oursCents": 0.22602625563123202,
+      "oursCents": 0.21233070199919388,
       "refCents": -4.125505745403145,
       "worst": "泛音斜率 2.65",
       "life": {
         "shimmer": [
-          -29.4,
+          -29.2,
           -32.4
         ],
         "flutter": [
@@ -2527,16 +2539,16 @@
       "midi": 72,
       "note": "C5",
       "size": 0.6,
-      "distance": 1.7,
+      "distance": 1.71,
       "excess": 1.46,
       "passed": 10,
       "total": 18,
-      "oursCents": 0.234215914982584,
+      "oursCents": 0.2192756701530822,
       "refCents": -4.695062964349255,
-      "worst": "起音 10–90% 9.34",
+      "worst": "起音 10–90% 9.33",
       "life": {
         "shimmer": [
-          -29.2,
+          -28.8,
           -21.8
         ],
         "flutter": [
@@ -2556,16 +2568,16 @@
       "midi": 84,
       "note": "C6",
       "size": 0.6,
-      "distance": 1.75,
+      "distance": 1.76,
       "excess": 1.49,
       "passed": 9,
       "total": 19,
-      "oursCents": -0.1120639312344539,
+      "oursCents": -0.08230429489609031,
       "refCents": -2.3687879784661354,
-      "worst": "泛音斜率 3.55",
+      "worst": "泛音斜率 3.57",
       "life": {
         "shimmer": [
-          -29.4,
+          -29.7,
           -37.6
         ],
         "flutter": [
@@ -2585,13 +2597,13 @@
       "midi": 22,
       "note": "A#0",
       "size": 0.85,
-      "distance": 2.21,
-      "excess": 2,
+      "distance": 2.26,
+      "excess": 2.04,
       "passed": 4,
-      "total": 14,
-      "oursCents": 0.03806243328988958,
+      "total": 13,
+      "oursCents": 0.0971381489808542,
       "refCents": 6.304924921077241,
-      "worst": "起音噪声感 7.18",
+      "worst": "起音噪声感 6.90",
       "life": {
         "brightnessLag": [
           -10,
@@ -2607,12 +2619,12 @@
       "note": "C4",
       "size": 0.75,
       "distance": 2.3,
-      "excess": 2.22,
+      "excess": 2.18,
       "passed": 2,
       "total": 12,
-      "oursCents": 0.248136049555806,
+      "oursCents": 0.23422252194656315,
       "refCents": null,
-      "worst": "亮度（质心） 4.34",
+      "worst": "亮度（质心） 4.44",
       "life": {}
     },
     {
@@ -2622,13 +2634,13 @@
       "midi": 52,
       "note": "E3",
       "size": 0.7,
-      "distance": 2.05,
-      "excess": 1.7,
+      "distance": 2.1,
+      "excess": 1.72,
       "passed": 5,
       "total": 17,
-      "oursCents": 0.12245567087629555,
+      "oursCents": -0.14484537121115884,
       "refCents": -12.293195961032783,
-      "worst": "非谐性 B 10.25",
+      "worst": "非谐性 B 10.26",
       "life": {
         "brightnessLag": [
           -10,
@@ -2643,16 +2655,16 @@
       "midi": 30,
       "note": "F#1",
       "size": 0.8,
-      "distance": 2.33,
-      "excess": 2.01,
-      "passed": 4,
+      "distance": 2.3,
+      "excess": 2.03,
+      "passed": 5,
       "total": 17,
-      "oursCents": -0.05820753248149259,
+      "oursCents": 0.2797822899701764,
       "refCents": -19.68984943976918,
-      "worst": "亮度随时间的走势 5.91",
+      "worst": "亮度随时间的走势 5.87",
       "life": {
         "pitch.jitter": [
-          12.8,
+          12.6,
           9.7
         ],
         "brightnessLag": [
@@ -2669,15 +2681,15 @@
       "note": "A#1",
       "size": 0.8,
       "distance": 2.5,
-      "excess": 2.4,
-      "passed": 4,
-      "total": 18,
-      "oursCents": -0.15574950534139897,
+      "excess": 2.39,
+      "passed": 3,
+      "total": 17,
+      "oursCents": -0.23880762222585425,
       "refCents": 44.21445193061527,
-      "worst": "亮度随时间的走势 5.44",
+      "worst": "奇偶泛音比 16.09",
       "life": {
         "pitch.jitter": [
-          9.5,
+          9.3,
           6.5
         ],
         "brightnessLag": [
@@ -2693,13 +2705,13 @@
       "midi": 37,
       "note": "C#2",
       "size": 0.8,
-      "distance": 2.35,
-      "excess": 2.18,
+      "distance": 2.36,
+      "excess": 2.19,
       "passed": 5,
       "total": 18,
-      "oursCents": -0.2092295445932976,
+      "oursCents": -0.2016693827316317,
       "refCents": 30.868619253403086,
-      "worst": "亮度随时间的走势 4.91",
+      "worst": "亮度随时间的走势 4.87",
       "life": {
         "pitch.jitter": [
           5.5,
@@ -2718,20 +2730,20 @@
       "midi": 40,
       "note": "E2",
       "size": 0.8,
-      "distance": 2.34,
-      "excess": 2,
+      "distance": 2.35,
+      "excess": 2.04,
       "passed": 5,
       "total": 18,
-      "oursCents": 0.12113223286795669,
+      "oursCents": -0.1503604337086377,
       "refCents": -17.021534409042776,
-      "worst": "亮度随时间的走势 4.82",
+      "worst": "亮度随时间的走势 4.75",
       "life": {
         "pitch.jitter": [
           5.1,
           6.3
         ],
         "brightnessLag": [
-          0,
+          -10,
           10
         ]
       }
@@ -2744,15 +2756,15 @@
       "note": "A#2",
       "size": 0.8,
       "distance": 2.49,
-      "excess": 2.35,
+      "excess": 2.37,
       "passed": 5,
-      "total": 18,
-      "oursCents": -0.15506536641922625,
+      "total": 17,
+      "oursCents": -0.2385627365810036,
       "refCents": -38.08902678913209,
-      "worst": "泛音斜率 6.77",
+      "worst": "奇偶泛音比 17.66",
       "life": {
         "pitch.jitter": [
-          2.9,
+          3,
           5.4
         ],
         "brightnessLag": [
@@ -3133,6 +3145,2191 @@
         "pitch.jitter": [
           0.9,
           1.5
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 28,
+      "midi": 28,
+      "note": "E1",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.56,
+      "excess": 1.21,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -1.1711562344025293,
+      "refCents": 6.361489765292681,
+      "worst": "泛音斜率 2.83",
+      "life": {
+        "shimmer": [
+          -24.4,
+          -22.5
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.1
+        ],
+        "brightnessLag": [
+          -10,
+          10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 28,
+      "midi": 28,
+      "note": "E1",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.47,
+      "excess": 1.09,
+      "passed": 12,
+      "total": 23,
+      "oursCents": -1.1722677985776946,
+      "refCents": 6.632661492668378,
+      "worst": "起音噪声感 2.37",
+      "life": {
+        "shimmer": [
+          -24.2,
+          -22.5
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.2
+        ],
+        "brightnessLag": [
+          -10,
+          10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 28,
+      "midi": 40,
+      "note": "E2",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "test",
+      "distance": 2.12,
+      "excess": 1.93,
+      "passed": 8,
+      "total": 21,
+      "oursCents": -0.7832109839108123,
+      "refCents": 3.4169570458342364,
+      "worst": "谐噪比 7.21",
+      "life": {
+        "shimmer": [
+          -19,
+          -29.1
+        ],
+        "flutter": [
+          0.6,
+          1.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          8.7
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 28,
+      "midi": 28,
+      "note": "E1",
+      "size": 1,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.57,
+      "excess": 1.25,
+      "passed": 11,
+      "total": 23,
+      "oursCents": -1.1728520379174436,
+      "refCents": 9.514024384117564,
+      "worst": "起音噪声感 3.33",
+      "life": {
+        "shimmer": [
+          -24.1,
+          -21.6
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.4
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 29,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 2.34,
+      "excess": 2.04,
+      "passed": 6,
+      "total": 22,
+      "oursCents": -0.6692762012796124,
+      "refCents": 0.5687315063022499,
+      "worst": "谐噪比 7.57",
+      "life": {
+        "shimmer": [
+          -17.9,
+          -30.3
+        ],
+        "flutter": [
+          0.4,
+          1.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          12.7
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 29,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 2.26,
+      "excess": 1.94,
+      "passed": 6,
+      "total": 20,
+      "oursCents": -0.6678112955863889,
+      "refCents": 6.993293219075785,
+      "worst": "谐噪比 7.00",
+      "life": {
+        "shimmer": [
+          -17.8,
+          -32.5
+        ],
+        "flutter": [
+          0.6,
+          0.6
+        ],
+        "pitch.jitter": [
+          1.2,
+          13.7
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 29,
+      "midi": 41,
+      "note": "F2",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 2.37,
+      "excess": 2.04,
+      "passed": 4,
+      "total": 20,
+      "oursCents": -0.6669399930777902,
+      "refCents": 2.709845888711321,
+      "worst": "谐噪比 6.41",
+      "life": {
+        "shimmer": [
+          -17.8,
+          -33
+        ],
+        "flutter": [
+          0.7,
+          0.6
+        ],
+        "pitch.jitter": [
+          1.3,
+          9.9
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 30,
+      "midi": 30,
+      "note": "F#1",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "test",
+      "distance": 1.16,
+      "excess": 0.86,
+      "passed": 17,
+      "total": 23,
+      "oursCents": -1.486593596124111,
+      "refCents": 3.7276286389253537,
+      "worst": "谐噪比 1.93",
+      "life": {
+        "shimmer": [
+          -23.5,
+          -21.8
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.1
+        ],
+        "brightnessLag": [
+          -10,
+          10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 30,
+      "midi": 42,
+      "note": "F#2",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.91,
+      "excess": 1.68,
+      "passed": 9,
+      "total": 23,
+      "oursCents": -1.1288283016702527,
+      "refCents": 0.40814106095632874,
+      "worst": "谐噪比 7.50",
+      "life": {
+        "shimmer": [
+          -17.6,
+          -23
+        ],
+        "flutter": [
+          0.5,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.2,
+          9.7
+        ],
+        "brightnessLag": [
+          -10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 30,
+      "midi": 42,
+      "note": "F#2",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 2.08,
+      "excess": 1.84,
+      "passed": 8,
+      "total": 23,
+      "oursCents": -1.1251115399761469,
+      "refCents": 7.005512748104552,
+      "worst": "谐噪比 6.93",
+      "life": {
+        "shimmer": [
+          -17.5,
+          -25.4
+        ],
+        "flutter": [
+          0.6,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.2,
+          10.5
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 30,
+      "midi": 30,
+      "note": "F#1",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.17,
+      "excess": 1.05,
+      "passed": 18,
+      "total": 23,
+      "oursCents": -1.4814694881751966,
+      "refCents": 3.098656219528809,
+      "worst": "谐噪比 2.68",
+      "life": {
+        "shimmer": [
+          -23.2,
+          -24.6
+        ],
+        "flutter": [
+          0.1,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.4
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 31,
+      "midi": 31,
+      "note": "G1",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "test",
+      "distance": 1.23,
+      "excess": 0.97,
+      "passed": 15,
+      "total": 23,
+      "oursCents": -1.2007798088101147,
+      "refCents": -1.6218583795711023,
+      "worst": "奇偶泛音比 2.19",
+      "life": {
+        "shimmer": [
+          -23,
+          -26.8
+        ],
+        "flutter": [
+          0.1,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.1
+        ],
+        "brightnessLag": [
+          -10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 31,
+      "midi": 31,
+      "note": "G1",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "test",
+      "distance": 1.37,
+      "excess": 1.2,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -1.2020772914289042,
+      "refCents": -3.1265423348102797,
+      "worst": "奇偶泛音比 2.72",
+      "life": {
+        "shimmer": [
+          -22.9,
+          -28.5
+        ],
+        "flutter": [
+          0.1,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.5
+        ],
+        "brightnessLag": [
+          -10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 31,
+      "midi": 31,
+      "note": "G1",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "test",
+      "distance": 1.63,
+      "excess": 1.45,
+      "passed": 10,
+      "total": 21,
+      "oursCents": -1.202810452573163,
+      "refCents": -0.9834805036227143,
+      "worst": "亮度（质心） 3.20",
+      "life": {
+        "shimmer": [
+          -22.8,
+          -30.8
+        ],
+        "flutter": [
+          0.1,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.3
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 33,
+      "midi": 33,
+      "note": "A1",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "test",
+      "distance": 1.39,
+      "excess": 1.27,
+      "passed": 13,
+      "total": 20,
+      "oursCents": -1.1522775471076805,
+      "refCents": 3.1104331557101386,
+      "worst": "亮度（质心） 2.93",
+      "life": {
+        "shimmer": [
+          -20.7,
+          -25.9
+        ],
+        "flutter": [
+          0.1,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.4
+        ],
+        "brightnessLag": [
+          -10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 35,
+      "midi": 35,
+      "note": "B1",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "test",
+      "distance": 1.41,
+      "excess": 1.25,
+      "passed": 10,
+      "total": 21,
+      "oursCents": -1.3693772408491245,
+      "refCents": 0.4732423173192897,
+      "worst": "整体衰减 2.87",
+      "life": {
+        "shimmer": [
+          -20.5,
+          -30.5
+        ],
+        "flutter": [
+          0.1,
+          0.6
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.3
+        ],
+        "brightnessLag": [
+          -10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 35,
+      "midi": 35,
+      "note": "B1",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "test",
+      "distance": 1.42,
+      "excess": 1.17,
+      "passed": 12,
+      "total": 22,
+      "oursCents": -1.363879436929224,
+      "refCents": 1.586095403498286,
+      "worst": "起音 10–90% 8.23",
+      "life": {
+        "shimmer": [
+          -20.3,
+          -19.2
+        ],
+        "flutter": [
+          0.1,
+          0.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.6
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 35,
+      "midi": 35,
+      "note": "B1",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "test",
+      "distance": 1.56,
+      "excess": 1.42,
+      "passed": 9,
+      "total": 20,
+      "oursCents": -1.363879436929224,
+      "refCents": 1.9760897658750494,
+      "worst": "整体衰减 3.16",
+      "life": {
+        "shimmer": [
+          -20.3,
+          -32.1
+        ],
+        "flutter": [
+          0.1,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 35,
+      "midi": 35,
+      "note": "B1",
+      "size": 1,
+      "instrument": "bass_electronic_018",
+      "split": "test",
+      "distance": 1.55,
+      "excess": 1.38,
+      "passed": 12,
+      "total": 22,
+      "oursCents": -1.3607371694383084,
+      "refCents": -0.06893357128425283,
+      "worst": "起音 10–90% 8.23",
+      "life": {
+        "shimmer": [
+          -20.2,
+          -18.7
+        ],
+        "flutter": [
+          0.1,
+          0.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.4
+        ],
+        "brightnessLag": [
+          -10,
+          10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 35,
+      "midi": 35,
+      "note": "B1",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "test",
+      "distance": 1.69,
+      "excess": 1.56,
+      "passed": 7,
+      "total": 20,
+      "oursCents": -1.3607371694383084,
+      "refCents": -0.21335577309773424,
+      "worst": "整体衰减 3.40",
+      "life": {
+        "shimmer": [
+          -20.2,
+          -33.3
+        ],
+        "flutter": [
+          0.1,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.4
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.61,
+      "excess": 1.33,
+      "passed": 12,
+      "total": 23,
+      "oursCents": -1.2170377367434142,
+      "refCents": -1.0360058567986163,
+      "worst": "起音噪声感 3.10",
+      "life": {
+        "shimmer": [
+          -20.4,
+          -18.5
+        ],
+        "flutter": [
+          0.2,
+          1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.2
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.46,
+      "excess": 1.21,
+      "passed": 13,
+      "total": 22,
+      "oursCents": -1.2178939517328538,
+      "refCents": 0.47454373197086847,
+      "worst": "起音 10–90% 8.06",
+      "life": {
+        "shimmer": [
+          -20.2,
+          -19.5
+        ],
+        "flutter": [
+          0.2,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.2
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 1,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.38,
+      "excess": 1.1,
+      "passed": 15,
+      "total": 23,
+      "oursCents": -1.2161676465221736,
+      "refCents": 0.29228041272392474,
+      "worst": "非谐性 B 6.95",
+      "life": {
+        "shimmer": [
+          -20.1,
+          -18.5
+        ],
+        "flutter": [
+          0.2,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.2
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 37,
+      "midi": 37,
+      "note": "C#2",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.38,
+      "excess": 1.23,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -1.2068337636625948,
+      "refCents": -0.24002152735737353,
+      "worst": "起音噪声感 3.06",
+      "life": {
+        "shimmer": [
+          -20,
+          -22
+        ],
+        "flutter": [
+          0.2,
+          1.8
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.4
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 37,
+      "midi": 37,
+      "note": "C#2",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.44,
+      "excess": 1.3,
+      "passed": 15,
+      "total": 23,
+      "oursCents": -1.2102202223034684,
+      "refCents": 2.1539369248695697,
+      "worst": "亮度随时间的走势 2.82",
+      "life": {
+        "shimmer": [
+          -19.8,
+          -22.1
+        ],
+        "flutter": [
+          0.3,
+          1.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.6
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 37,
+      "midi": 37,
+      "note": "C#2",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.39,
+      "excess": 1.24,
+      "passed": 15,
+      "total": 23,
+      "oursCents": -1.210149449495081,
+      "refCents": 1.9123559491104694,
+      "worst": "亮度（质心） 3.80",
+      "life": {
+        "shimmer": [
+          -19.7,
+          -23.2
+        ],
+        "flutter": [
+          0.3,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 38,
+      "midi": 38,
+      "note": "D2",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.57,
+      "excess": 1.28,
+      "passed": 10,
+      "total": 20,
+      "oursCents": -1.168840846116043,
+      "refCents": -2.7551849691835693,
+      "worst": "整体衰减 2.76",
+      "life": {
+        "shimmer": [
+          -19.6,
+          -28.7
+        ],
+        "flutter": [
+          0.4,
+          0.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.8
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 38,
+      "midi": 38,
+      "note": "D2",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.63,
+      "excess": 1.39,
+      "passed": 11,
+      "total": 21,
+      "oursCents": -1.1705598481084818,
+      "refCents": -0.4571830260460767,
+      "worst": "整体衰减 3.59",
+      "life": {
+        "shimmer": [
+          -19.4,
+          -31.8
+        ],
+        "flutter": [
+          0.5,
+          0.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 38,
+      "midi": 38,
+      "note": "D2",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.68,
+      "excess": 1.46,
+      "passed": 11,
+      "total": 21,
+      "oursCents": -1.1715334839610643,
+      "refCents": 0.6917885003028872,
+      "worst": "整体衰减 3.45",
+      "life": {
+        "shimmer": [
+          -19.4,
+          -31
+        ],
+        "flutter": [
+          0.5,
+          0.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 40,
+      "midi": 40,
+      "note": "E2",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "test",
+      "distance": 1.35,
+      "excess": 1.11,
+      "passed": 14,
+      "total": 23,
+      "oursCents": -0.7832109839108123,
+      "refCents": -1.2473772139622807,
+      "worst": "亮度（质心） 2.35",
+      "life": {
+        "shimmer": [
+          -19,
+          -23.7
+        ],
+        "flutter": [
+          0.6,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.6
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 40,
+      "midi": 40,
+      "note": "E2",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "test",
+      "distance": 1.43,
+      "excess": 1.25,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -0.78147063606816,
+      "refCents": -1.5754059976711179,
+      "worst": "亮度（质心） 3.04",
+      "life": {
+        "shimmer": [
+          -19,
+          -25
+        ],
+        "flutter": [
+          0.7,
+          0.2
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "test",
+      "distance": 1.67,
+      "excess": 1.34,
+      "passed": 15,
+      "total": 23,
+      "oursCents": -0.6692762012796124,
+      "refCents": -4.118828407674546,
+      "worst": "起音 10–90% 6.42",
+      "life": {
+        "shimmer": [
+          -17.9,
+          -18.9
+        ],
+        "flutter": [
+          0.4,
+          0.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.1
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.64,
+      "excess": 1.3,
+      "passed": 10,
+      "total": 22,
+      "oursCents": -0.6692762012796124,
+      "refCents": -3.672503904173408,
+      "worst": "早段衰减 2.26",
+      "life": {
+        "shimmer": [
+          -17.9,
+          -26
+        ],
+        "flutter": [
+          0.4,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.1
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.67,
+      "excess": 1.32,
+      "passed": 11,
+      "total": 23,
+      "oursCents": -0.6678112955863889,
+      "refCents": -1.390120400671634,
+      "worst": "早段衰减 2.47",
+      "life": {
+        "shimmer": [
+          -17.8,
+          -26.5
+        ],
+        "flutter": [
+          0.6,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.2,
+          1.4
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.86,
+      "excess": 1.48,
+      "passed": 10,
+      "total": 23,
+      "oursCents": -0.6669399930777902,
+      "refCents": -2.687820712320752,
+      "worst": "亮度（质心） 3.22",
+      "life": {
+        "shimmer": [
+          -17.8,
+          -28
+        ],
+        "flutter": [
+          0.7,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.4
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 44,
+      "midi": 44,
+      "note": "G#2",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.65,
+      "excess": 1.49,
+      "passed": 13,
+      "total": 22,
+      "oursCents": -1.0496258095901365,
+      "refCents": -1.803546217330884,
+      "worst": "亮度（质心） 3.38",
+      "life": {
+        "shimmer": [
+          -17.1,
+          -15.9
+        ],
+        "flutter": [
+          0.8,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 44,
+      "midi": 44,
+      "note": "G#2",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.4,
+      "excess": 1.15,
+      "passed": 13,
+      "total": 22,
+      "oursCents": -1.0436385952599396,
+      "refCents": 0.8024718770579513,
+      "worst": "频谱包络 3.46",
+      "life": {
+        "shimmer": [
+          -17,
+          -15.5
+        ],
+        "flutter": [
+          1.1,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 44,
+      "midi": 44,
+      "note": "G#2",
+      "size": 1,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.48,
+      "excess": 1.25,
+      "passed": 12,
+      "total": 22,
+      "oursCents": -1.021511622415395,
+      "refCents": -1.4642977529755148,
+      "worst": "起音 10–90% 8.00",
+      "life": {
+        "shimmer": [
+          -17,
+          -15.4
+        ],
+        "flutter": [
+          1.1,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.6
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 45,
+      "midi": 45,
+      "note": "A2",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.36,
+      "excess": 1.13,
+      "passed": 14,
+      "total": 23,
+      "oursCents": -0.7883044681803602,
+      "refCents": -3.5702810180084823,
+      "worst": "起音噪声感 3.76",
+      "life": {
+        "shimmer": [
+          -16.5,
+          -14
+        ],
+        "flutter": [
+          1.1,
+          0.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 45,
+      "midi": 45,
+      "note": "A2",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.18,
+      "excess": 0.87,
+      "passed": 17,
+      "total": 23,
+      "oursCents": -0.7680387928604501,
+      "refCents": -1.2619844631990635,
+      "worst": "亮度随时间的走势 1.71",
+      "life": {
+        "shimmer": [
+          -16.4,
+          -14.6
+        ],
+        "flutter": [
+          1.4,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 45,
+      "midi": 45,
+      "note": "A2",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.33,
+      "excess": 1.07,
+      "passed": 15,
+      "total": 23,
+      "oursCents": -0.7660674981688362,
+      "refCents": -1.5406548979244157,
+      "worst": "亮度随时间的走势 2.53",
+      "life": {
+        "shimmer": [
+          -16.3,
+          -15
+        ],
+        "flutter": [
+          1.5,
+          1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.8,
+      "excess": 1.62,
+      "passed": 11,
+      "total": 22,
+      "oursCents": -0.8267289707118376,
+      "refCents": -0.26135102430346185,
+      "worst": "松开后的尾巴 2.92",
+      "life": {
+        "shimmer": [
+          -15.5,
+          -12.7
+        ],
+        "flutter": [
+          1.5,
+          1.5
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "test",
+      "distance": 1.92,
+      "excess": 1.67,
+      "passed": 10,
+      "total": 23,
+      "oursCents": -0.8267289707118376,
+      "refCents": -1.897371943201351,
+      "worst": "谐噪比 4.80",
+      "life": {
+        "shimmer": [
+          -15.5,
+          -11.4
+        ],
+        "flutter": [
+          1.5,
+          1.8
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.5
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 2.07,
+      "excess": 1.89,
+      "passed": 8,
+      "total": 23,
+      "oursCents": -0.4205622237727634,
+      "refCents": -2.2863347865009334,
+      "worst": "谐噪比 10.14",
+      "life": {
+        "shimmer": [
+          -10.5,
+          -12.4
+        ],
+        "flutter": [
+          3.7,
+          2.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          4.2
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.8,
+      "excess": 1.51,
+      "passed": 10,
+      "total": 23,
+      "oursCents": -0.8174741469434051,
+      "refCents": -3.9964827242452614,
+      "worst": "谐噪比 2.73",
+      "life": {
+        "shimmer": [
+          -14.9,
+          -12.2
+        ],
+        "flutter": [
+          1.7,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.76,
+      "excess": 1.41,
+      "passed": 12,
+      "total": 23,
+      "oursCents": -0.8174741469434051,
+      "refCents": -7.477041394858467,
+      "worst": "谐噪比 4.62",
+      "life": {
+        "shimmer": [
+          -14.9,
+          -13.2
+        ],
+        "flutter": [
+          1.7,
+          1.6
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 1,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.47,
+      "excess": 1.14,
+      "passed": 14,
+      "total": 22,
+      "oursCents": -0.8181435683252284,
+      "refCents": -1.2273356149596073,
+      "worst": "时频图 2.63",
+      "life": {
+        "shimmer": [
+          -14.9,
+          -11.9
+        ],
+        "flutter": [
+          1.8,
+          1.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.6
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.72,
+      "excess": 1.42,
+      "passed": 14,
+      "total": 23,
+      "oursCents": -0.8181435683252284,
+      "refCents": -4.655518572325542,
+      "worst": "谐噪比 4.08",
+      "life": {
+        "shimmer": [
+          -14.9,
+          -14
+        ],
+        "flutter": [
+          1.8,
+          2
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.7
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.44,
+      "excess": 1.27,
+      "passed": 14,
+      "total": 22,
+      "oursCents": -0.7694349420543845,
+      "refCents": -2.0252219286442,
+      "worst": "谐噪比 2.71",
+      "life": {
+        "shimmer": [
+          -14.5,
+          -13.3
+        ],
+        "flutter": [
+          1.6,
+          1.9
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.5
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.31,
+      "excess": 1.07,
+      "passed": 15,
+      "total": 22,
+      "oursCents": -0.7696604797713331,
+      "refCents": -1.4673686339834962,
+      "worst": "奇偶泛音比 3.70",
+      "life": {
+        "shimmer": [
+          -14.4,
+          -13.1
+        ],
+        "flutter": [
+          1.9,
+          2.1
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.6
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.52,
+      "excess": 1.25,
+      "passed": 13,
+      "total": 22,
+      "oursCents": -0.7713139128105322,
+      "refCents": -3.814252066918178,
+      "worst": "奇偶泛音比 4.09",
+      "life": {
+        "shimmer": [
+          -14.4,
+          -13.5
+        ],
+        "flutter": [
+          2,
+          3.9
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.7
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 51,
+      "midi": 51,
+      "note": "D#3",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "test",
+      "distance": 1.61,
+      "excess": 1.3,
+      "passed": 14,
+      "total": 23,
+      "oursCents": -0.6229746652111912,
+      "refCents": -3.5663354999425936,
+      "worst": "松开后的尾巴 4.13",
+      "life": {
+        "shimmer": [
+          -14.7,
+          -11.6
+        ],
+        "flutter": [
+          2.5,
+          2.9
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 54,
+      "midi": 54,
+      "note": "F#3",
+      "size": 0.394,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.79,
+      "excess": 1.56,
+      "passed": 12,
+      "total": 23,
+      "oursCents": -0.6843601076243749,
+      "refCents": -1.3860952361821324,
+      "worst": "奇偶泛音比 6.87",
+      "life": {
+        "shimmer": [
+          -13.2,
+          -17.2
+        ],
+        "flutter": [
+          2.6,
+          2.6
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.3
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 54,
+      "midi": 54,
+      "note": "F#3",
+      "size": 0.787,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.89,
+      "excess": 1.63,
+      "passed": 11,
+      "total": 23,
+      "oursCents": -0.6857447449831289,
+      "refCents": -2.042099378309569,
+      "worst": "谐噪比 5.21",
+      "life": {
+        "shimmer": [
+          -13.2,
+          -18.5
+        ],
+        "flutter": [
+          2.7,
+          2.3
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 54,
+      "midi": 54,
+      "note": "F#3",
+      "size": 1,
+      "instrument": "bass_electronic_027",
+      "split": "valid",
+      "distance": 1.88,
+      "excess": 1.64,
+      "passed": 12,
+      "total": 23,
+      "oursCents": -0.6831549619675131,
+      "refCents": -5.511913791362211,
+      "worst": "奇偶泛音比 5.17",
+      "life": {
+        "shimmer": [
+          -13.2,
+          -18.7
+        ],
+        "flutter": [
+          2.8,
+          2.8
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.5
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 55,
+      "midi": 55,
+      "note": "G3",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.44,
+      "excess": 1.2,
+      "passed": 14,
+      "total": 22,
+      "oursCents": -0.35538695893877337,
+      "refCents": -2.5586060622883666,
+      "worst": "起音噪声感 3.29",
+      "life": {
+        "shimmer": [
+          -12.7,
+          -15.3
+        ],
+        "flutter": [
+          2.8,
+          2.2
+        ],
+        "pitch.jitter": [
+          1.2,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 55,
+      "midi": 55,
+      "note": "G3",
+      "size": 0.787,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.43,
+      "excess": 1.09,
+      "passed": 16,
+      "total": 22,
+      "oursCents": -0.3584509868025231,
+      "refCents": 0.10072994779468251,
+      "worst": "亮度随时间的走势 2.27",
+      "life": {
+        "shimmer": [
+          -12.7,
+          -15.1
+        ],
+        "flutter": [
+          2.8,
+          2.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 55,
+      "midi": 55,
+      "note": "G3",
+      "size": 1,
+      "instrument": "bass_electronic_025",
+      "split": "valid",
+      "distance": 1.5,
+      "excess": 1.22,
+      "passed": 15,
+      "total": 22,
+      "oursCents": -0.3559896566865132,
+      "refCents": -4.117116916501949,
+      "worst": "亮度随时间的走势 3.26",
+      "life": {
+        "shimmer": [
+          -12.7,
+          -14.6
+        ],
+        "flutter": [
+          2.8,
+          2.7
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.9
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 56,
+      "midi": 56,
+      "note": "G#3",
+      "size": 0.394,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.54,
+      "excess": 1.31,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -0.5829448668116489,
+      "refCents": -2.529750036030017,
+      "worst": "松开后的尾巴 5.25",
+      "life": {
+        "shimmer": [
+          -12.3,
+          -11.5
+        ],
+        "flutter": [
+          3.1,
+          3.7
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.8
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 56,
+      "midi": 56,
+      "note": "G#3",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.49,
+      "excess": 1.33,
+      "passed": 12,
+      "total": 23,
+      "oursCents": -0.5871955124847182,
+      "refCents": -1.5873777994644378,
+      "worst": "起音 10–90% 6.74",
+      "life": {
+        "shimmer": [
+          -12.3,
+          -11.7
+        ],
+        "flutter": [
+          3.2,
+          3.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.9
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 56,
+      "midi": 56,
+      "note": "G#3",
+      "size": 1,
+      "instrument": "bass_electronic_018",
+      "split": "valid",
+      "distance": 1.44,
+      "excess": 1.24,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -0.58631279525241,
+      "refCents": -2.4310951213629703,
+      "worst": "起音 10–90% 6.83",
+      "life": {
+        "shimmer": [
+          -12,
+          -12
+        ],
+        "flutter": [
+          3.3,
+          3.5
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.8
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 57,
+      "midi": 57,
+      "note": "A3",
+      "size": 0.394,
+      "instrument": "bass_electronic_025",
+      "split": "test",
+      "distance": 1.93,
+      "excess": 1.65,
+      "passed": 11,
+      "total": 22,
+      "oursCents": -0.3059597439900724,
+      "refCents": -3.9390746858438708,
+      "worst": "松开后的尾巴 6.37",
+      "life": {
+        "shimmer": [
+          -12.1,
+          -12.1
+        ],
+        "flutter": [
+          3.3,
+          3
+        ],
+        "pitch.jitter": [
+          1.2,
+          0.9
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "nsynth-electric-bass",
+      "source": "NSynth",
+      "catalogMidi": 57,
+      "midi": 57,
+      "note": "A3",
+      "size": 0.787,
+      "instrument": "bass_electronic_018",
+      "split": "test",
+      "distance": 1.45,
+      "excess": 1.31,
+      "passed": 11,
+      "total": 22,
+      "oursCents": -0.3049203875898348,
+      "refCents": -2.8476646155162584,
+      "worst": "起音 10–90% 7.81",
+      "life": {
+        "shimmer": [
+          -12.1,
+          -11
+        ],
+        "flutter": [
+          3.5,
+          3.8
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.8
         ],
         "brightnessLag": [
           0,

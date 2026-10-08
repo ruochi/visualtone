@@ -405,6 +405,32 @@ test('electronic bass stays in tune, and the offbeat voice falls while held', ()
   }
 });
 
+test('electric bass decays while held, and higher partials die first', () => {
+  const play = (midi: number, size: number) => {
+    const { mono, sr } = holdNote('bass', 270, midi, size, 1.6);
+    return analyzeNote(mono, sr, { midi, start: 0, stop: 2, noteOff: 1.65 });
+  };
+  const soft = play(40, 0.35);
+  const hard = play(40, 0.9);
+  assert.ok(Math.abs(hard.centsOff ?? 99) < 8, `cents ${hard.centsOff}`);
+  assert.equal(hard.artifacts.clicks, 0);
+  assert.equal(soft.artifacts.clicks, 0);
+  assert.ok(hard.envelope.peakDb - soft.envelope.peakDb > 3, `level ${soft.envelope.peakDb} -> ${hard.envelope.peakDb}`);
+  assert.ok(
+    soft.spectrum.centroidHz > 0 && Math.log2(hard.spectrum.centroidHz / soft.spectrum.centroidHz) > 0.1,
+    `centroid ${soft.spectrum.centroidHz} -> ${hard.spectrum.centroidHz}`,
+  );
+  assert.ok((hard.envelope.decayDbPerSec ?? 0) > 3, `decay ${hard.envelope.decayDbPerSec}`);
+  const partials = hard.harmonics.decayDbPerSec;
+  assert.ok(partials[0] !== null && partials[3] !== null && partials[3] > partials[0] + 2, `partials ${partials[0]} ${partials[3]}`);
+  const low = play(33, 0.7);
+  const high = play(57, 0.7);
+  assert.ok(
+    (high.envelope.decayDbPerSec ?? 0) > (low.envelope.decayDbPerSec ?? 0) + 2,
+    `pitch decay ${low.envelope.decayDbPerSec} -> ${high.envelope.decayDbPerSec}`,
+  );
+});
+
 test('bowed strings lean into vibrato near 5.5 Hz', () => {
   for (const hue of [40, 160, 300]) {
     const { mono, sr } = holdNote('bow', hue, 62, 0.6, 2);
