@@ -20,6 +20,9 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
   const rng = mulberry32(seed || 1);
   const hueW = ((hue % 360) + 360) % 360;
   const bright = 1 - hueW / 360;
+  // 0°–139° steel guitar, 140°–279° nylon, 280°–360° harp. Hue 70 stays the steel pluck.
+  const family = hueW >= 280 ? 'harp' : hueW >= 140 ? 'nylon' : 'steel';
+  const bodyHz = family === 'harp' ? 220 : family === 'nylon' ? 150 : 118;
   let left: PluckString | null = null;
   let right: PluckString | null = null;
   let rightZ = 0;
@@ -27,13 +30,16 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
   let wasOn = false;
   let releaseLeft = 0;
   let releaseSamples = Math.floor(0.12 * sampleRate);
+  let harpPole = 0.8;
+  let harpLpL = 0;
+  let harpLpR = 0;
   let periodSamp = 32;
   let delaySamp = 30;
   let frac = 0;
   let disp = -0.28;
   let avg = 0.5;
 
-  const bodyW = (2 * Math.PI * 118) / sampleRate;
+  const bodyW = (2 * Math.PI * bodyHz) / sampleRate;
   const bodyAlpha = Math.sin(bodyW) / 8;
   const bodyA0 = 1 + bodyAlpha;
   const bodyB0 = bodyAlpha / bodyA0;
@@ -102,11 +108,13 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
       if (on && !wasOn) {
         const freq = Math.min(sampleRate * 0.2, Math.max(30, midiToFrequency(midi)));
         periodSamp = sampleRate / freq;
-        disp = -0.18 - (1 - bright) * 0.22;
+        disp = family === 'harp' ? -0.02 : family === 'nylon' ? -0.12 : -0.18 - (1 - bright) * 0.22;
         // Less averaging keeps the upper partials alive, so a harder pluck stays bright.
         // Short loops need more averaging or harmonics alias and the note reads darker.
         const guard = Math.min(0.55, 20 / periodSamp);
         avg = Math.min(0.62, Math.max(guard, 0.78 - size * 0.78 - (lightness - 0.5) * 0.08));
+        if (family === 'harp') avg = Math.min(0.78, Math.max(guard * 0.5, 0.66 - size * 0.16));
+        if (family === 'nylon') avg = Math.min(0.68, avg + 0.08);
         const w0 = (2 * Math.PI) / periodSamp;
         const cos0 = Math.cos(w0);
         const b0 = 1 - avg;
@@ -115,8 +123,18 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
         const dispDelay = (1 - disp * disp) / (1 + 2 * disp * cos0 + disp * disp);
         delaySamp = Math.max(2, periodSamp - avgDelay - dispDelay);
         frac = delaySamp - Math.floor(delaySamp);
-        const beta = Math.min(0.48, Math.max(0.07, 0.47 - size * 0.36 - (lightness - 0.5) * 0.1));
-        const pole = Math.min(0.92, Math.max(0.05, 0.72 - size * 0.7 + (1 - bright) * 0.2));
+        let beta = Math.min(0.48, Math.max(0.07, 0.47 - size * 0.36 - (lightness - 0.5) * 0.1));
+        let pole = Math.min(0.92, Math.max(0.05, 0.72 - size * 0.7 + (1 - bright) * 0.2));
+        // A harp is plucked nearer the center, so the octave is quieter and the ring is longer.
+        if (family === 'harp') {
+          beta = Math.min(0.48, 0.44 - size * 0.04);
+          pole = Math.min(0.94, 0.86 - size * 0.12);
+          harpPole = Math.exp((-2 * Math.PI * (380 + size * 420)) / sampleRate);
+          harpLpL = 0;
+          harpLpR = 0;
+        } else if (family === 'nylon') {
+          pole = Math.min(0.9, pole + 0.1);
+        }
         left = make(beta, pole);
         right = make(Math.min(0.48, beta + 0.02), pole);
         rightZ = 0;
@@ -131,12 +149,21 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
       } else {
         releaseLeft = releaseSamples;
       }
-      const loss = 0.982 + Math.min(1, Math.max(0, lightness)) * 0.014;
+      const loss =
+        family === 'harp'
+          ? 0.992 + Math.min(1, Math.max(0, lightness)) * 0.006
+          : 0.982 + Math.min(1, Math.max(0, lightness)) * 0.014;
       const outL = step(left, loss);
       const rawR = step(right, loss);
       const outR = rightZ;
       rightZ = rawR;
       const g = env * (on ? 1 : releaseLeft / releaseSamples);
+      if (family === 'harp') {
+        const a = 1 - harpPole;
+        harpLpL = outL * a + harpLpL * harpPole;
+        harpLpR = outR * a + harpLpR * harpPole;
+        return [harpLpL * g, harpLpR * g];
+      }
       return [outL * g, outR * g];
     },
   };
@@ -1112,13 +1139,14 @@ function brassSpec(hue: number): BrassSpec {
   const h = ((hue % 360) + 360) % 360;
   if (h < 90) return { soft: 2.55, loud: 0.05, register: 0.02, attackSec: 0.05, bellHz: 1800, noise: 0.16 };
   if (h < 180) return { soft: 2.5, loud: 0.85, register: 1.15, attackSec: 0.06, bellHz: 480, noise: 0.05 };
-  if (h < 270) return { soft: 2.05, loud: 0.32, register: 0.35, attackSec: 0.042, bellHz: 620, noise: 0.07 };
+  if (h < 240) return { soft: 2.05, loud: 0.32, register: 0.35, attackSec: 0.042, bellHz: 620, noise: 0.07 };
+  if (h < 300) return { soft: 2.2, loud: 0.2, register: 1.25, attackSec: 0.07, bellHz: 220, noise: 0.03 };
   return { soft: 3.1, loud: 0.42, register: 0.25, attackSec: 0.038, bellHz: 1700, noise: 0.1 };
 }
 
 /**
  * Lip reed, as harmonics whose slope opens with loudness.
- * Hue: 0°–89° trumpet, 90°–179° horn, 180°–269° trombone, 270°–360° saxophone.
+ * Hue: 0°–89° trumpet, 90°–179° horn, 180°–239° trombone, 240°–299° tuba, 300°–360° saxophone.
  */
 export function createBrass(sampleRate: number, hue: number, seed: number): Engine {
   const spec = brassSpec(hue);
@@ -1202,7 +1230,324 @@ export function createBrass(sampleRate: number, hue: number, seed: number): Engi
   };
 }
 
-export type AcousticEngine = 'pluck' | 'marimba' | 'epiano' | 'organ' | 'drum' | 'wind' | 'bow' | 'piano' | 'brass';
+interface BassSpec {
+  dark: number;
+  attackSec: number;
+  bodyHz: number;
+  noise: number;
+  /** Finger noise that dies after the attack. Electric bass has it; a bow does not. */
+  pluck: number;
+}
+
+function bassSpec(hue: number): BassSpec {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 180) return { dark: 0.22, attackSec: 0.05, bodyHz: 70, noise: 0.035, pluck: 0 };
+  return { dark: 0.18, attackSec: 0.01, bodyHz: 92, noise: 0.015, pluck: 0.7 };
+}
+
+/**
+ * Low string. Hue 0°–179° is a bowed contrabass. 180°–360° is an electric bass:
+ * a round sustain plus a short finger attack.
+ */
+export function createBass(sampleRate: number, hue: number, seed: number): Engine {
+  const spec = bassSpec(hue);
+  const rng = mulberry32(seed || 1);
+  const N = 24;
+  const phases = new Float64Array(N);
+  const gains = new Float64Array(N);
+  const pluckGains = new Float64Array(N);
+  let freq = 55;
+  let env = 0;
+  let pluckEnv = 0;
+  let pluckDec = 0.99;
+  let wasOn = false;
+  let releaseSec = 0.22;
+  const attackCoeff = Math.exp(-1 / (spec.attackSec * sampleRate));
+  let nz = 0;
+  let noisePole = 0.8;
+  let noiseAmp = 0.02;
+  let finger = 0;
+  const bodyW = (2 * Math.PI * spec.bodyHz) / sampleRate;
+  const bodyAlpha = Math.sin(bodyW) / 6;
+  const bodyA0 = 1 + bodyAlpha;
+  const bodyB0 = bodyAlpha / bodyA0;
+  const bodyB2 = -bodyAlpha / bodyA0;
+  const bodyA1 = (-2 * Math.cos(bodyW)) / bodyA0;
+  const bodyA2 = (1 - bodyAlpha) / bodyA0;
+  let bz1 = 0;
+  let bz2 = 0;
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.02, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        freq = Math.min(sampleRate * 0.2, Math.max(28, midiToFrequency(midi)));
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        const tilt = Math.max(0.12, spec.dark + 0.55 - strike * 0.42 - (light - 0.5) * 0.08);
+        const brightTilt = Math.max(0.06, tilt - 0.35);
+        let energy = 0;
+        for (let n = 1; n <= N; n++) {
+          const f = freq * n;
+          const g = f >= sampleRate * 0.45 ? 0 : Math.exp(-tilt * (n - 1));
+          const p = f >= sampleRate * 0.45 ? 0 : Math.exp(-brightTilt * (n - 1));
+          gains[n - 1] = g;
+          pluckGains[n - 1] = p;
+          energy += g * g;
+          phases[n - 1] = n * n * 0.37;
+        }
+        const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
+        for (let n = 0; n < N; n++) {
+          gains[n] *= norm;
+          pluckGains[n] *= norm;
+        }
+        nz = 0;
+        noisePole = Math.exp((-2 * Math.PI * (180 + strike * 900)) / sampleRate);
+        noiseAmp = spec.noise * (0.4 + strike);
+        finger = spec.pluck * (0.15 + strike * 0.55);
+        pluckEnv = spec.pluck;
+        pluckDec = Math.exp(-1 / (0.07 * sampleRate));
+        bz1 = 0;
+        bz2 = 0;
+        env = 0;
+      }
+      wasOn = on;
+      if (!on && env < 1e-5 && finger < 1e-4) return [0, 0];
+      const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+      const dest = on ? size : 0;
+      env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      pluckEnv *= pluckDec;
+      finger *= Math.exp(-1 / (0.018 * sampleRate));
+      let s = 0;
+      let p = 0;
+      for (let n = 0; n < N; n++) {
+        if (gains[n] === 0 && pluckGains[n] === 0) continue;
+        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
+        const sine = Math.sin(phases[n]);
+        s += sine * gains[n];
+        p += sine * pluckGains[n];
+      }
+      const white = rng() * 2 - 1;
+      nz = white * (1 - noisePole) + nz * noisePole;
+      const bodyIn = s + p * pluckEnv;
+      const body = bodyB0 * bodyIn + bz1;
+      bz1 = -bodyA1 * body + bz2;
+      bz2 = bodyB2 * bodyIn - bodyA2 * body;
+      const out = (bodyIn + body * (spec.pluck > 0 ? 0.16 : 0.08) + nz * (noiseAmp + finger)) * env * 0.5;
+      return [out * 1.02, out * 0.98];
+    },
+  };
+}
+
+interface ReedSpec {
+  soft: number;
+  loud: number;
+  formantHz: number;
+  attackSec: number;
+  noise: number;
+}
+
+function reedSpec(hue: number): ReedSpec {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 180) return { soft: 1.15, loud: 0.22, formantHz: 1500, attackSec: 0.032, noise: 0.04 };
+  return { soft: 1.55, loud: 0.18, formantHz: 540, attackSec: 0.048, noise: 0.028 };
+}
+
+/**
+ * Double reed. Hue 0°–179° oboe, 180°–360° bassoon.
+ * A conical bore has every harmonic; the formant is what makes it nasal.
+ */
+export function createReed(sampleRate: number, hue: number, seed: number): Engine {
+  const spec = reedSpec(hue);
+  const rng = mulberry32(seed || 1);
+  const N = 22;
+  const phases = new Float64Array(N);
+  const gains = new Float64Array(N);
+  let freq = 440;
+  let env = 0;
+  let wasOn = false;
+  let releaseSec = 0.16;
+  const attackCoeff = Math.exp(-1 / (spec.attackSec * sampleRate));
+  let nz = 0;
+  let noisePole = 0.7;
+  let noiseAmp = 0.02;
+  const bodyW = (2 * Math.PI * spec.formantHz) / sampleRate;
+  const bodyAlpha = Math.sin(bodyW) / 11;
+  const bodyA0 = 1 + bodyAlpha;
+  const bodyB0 = bodyAlpha / bodyA0;
+  const bodyB2 = -bodyAlpha / bodyA0;
+  const bodyA1 = (-2 * Math.cos(bodyW)) / bodyA0;
+  const bodyA2 = (1 - bodyAlpha) / bodyA0;
+  let bz1 = 0;
+  let bz2 = 0;
+  let formantMix = 0.2;
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.02, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        freq = Math.min(sampleRate * 0.22, Math.max(32, midiToFrequency(midi)));
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        const tilt = Math.max(0.12, spec.loud + (spec.soft - spec.loud) * Math.pow(1 - strike, 1.25) - (light - 0.5) * 0.08);
+        let energy = 0;
+        for (let n = 1; n <= N; n++) {
+          const f = freq * n;
+          const g = f >= sampleRate * 0.45 ? 0 : Math.exp(-tilt * (n - 1));
+          gains[n - 1] = g;
+          energy += g * g;
+          phases[n - 1] = n * n * 0.33;
+        }
+        const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
+        for (let n = 0; n < N; n++) gains[n] *= norm;
+        nz = 0;
+        noisePole = Math.exp((-2 * Math.PI * (700 + strike * 2200)) / sampleRate);
+        noiseAmp = spec.noise * (0.5 + strike * 0.8);
+        formantMix = 0.28 + strike * 0.22;
+        bz1 = 0;
+        bz2 = 0;
+        env = 0;
+      }
+      wasOn = on;
+      if (!on && env < 1e-5) return [0, 0];
+      const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+      const dest = on ? size : 0;
+      env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      let s = 0;
+      for (let n = 0; n < N; n++) {
+        if (gains[n] === 0) continue;
+        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
+        s += Math.sin(phases[n]) * gains[n];
+      }
+      const white = rng() * 2 - 1;
+      nz = white * (1 - noisePole) + nz * noisePole;
+      const body = bodyB0 * s + bz1;
+      bz1 = -bodyA1 * body + bz2;
+      bz2 = bodyB2 * s - bodyA2 * body;
+      const out = (s + body * formantMix + nz * noiseAmp) * env * 0.46;
+      return [out * 1.03, out * 0.97];
+    },
+  };
+}
+
+/**
+ * Unpitched metal. Hue 0°–119° closed hi-hat, 120°–199° open hi-hat, 200°–360° crash.
+ * Midi picks the cymbal size: a higher note is a smaller, brighter plate.
+ */
+export function createCymbal(sampleRate: number, hue: number, seed: number): Engine {
+  const h = ((hue % 360) + 360) % 360;
+  const closed = h < 120;
+  const openHat = h >= 120 && h < 200;
+  const rng = mulberry32(seed || 1);
+  const N = 18;
+  const phases = new Float64Array(N);
+  const amps = new Float64Array(N);
+  const ratios = new Float64Array(N);
+  const taus = new Float64Array(N);
+  for (let i = 0; i < N; i++) ratios[i] = Math.pow(i + 1, 1.18) * (0.9 + ((i * 5) % 4) * 0.045);
+  let base = 400;
+  let alive = 0;
+  let wasOn = false;
+  let attack = 1;
+  let attackInc = 1;
+  let nz = 0;
+  let noiseAmp = 0;
+  let noiseTau = 0.05;
+  let noisePole = 0.4;
+  let lp = 0;
+  let prev = 0;
+
+  return {
+    setRelease(ms: number) {
+      const cap = Math.max(0.02, ms / 1000);
+      for (let i = 0; i < N; i++) taus[i] = Math.min(taus[i] || cap, cap);
+      noiseTau = Math.min(noiseTau, cap);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        const center = midiToFrequency(Math.min(96, Math.max(36, midi)));
+        base = closed ? center * 6.5 : openHat ? center * 4.2 : center * 2.4;
+        const hang = closed ? 0.055 + strike * 0.03 : openHat ? 0.22 + strike * 0.28 : 0.7 + strike * 1.1;
+        let energy = 0;
+        for (let i = 0; i < N; i++) {
+          const f = base * ratios[i];
+          const g = f >= sampleRate * 0.45 ? 0 : Math.exp(-0.22 * i) * (0.25 + strike * (0.4 + i / N));
+          amps[i] = g;
+          energy += g * g;
+          phases[i] = rng() * Math.PI * 2;
+          taus[i] = hang / (1 + i * (closed ? 0.35 : 0.12));
+        }
+        const norm = energy > 1e-8 ? 0.35 / Math.sqrt(energy) : 0;
+        for (let i = 0; i < N; i++) amps[i] *= norm * (0.55 + light * 0.2);
+        noiseAmp = (closed ? 0.22 : openHat ? 0.16 : 0.2) * (0.35 + strike);
+        noiseTau = hang * (closed ? 0.45 : 0.7);
+        noisePole = Math.exp((-2 * Math.PI * (2500 + strike * 6000 + (closed ? 2000 : 0))) / sampleRate);
+        nz = 0;
+        lp = 0;
+        prev = 0;
+        attack = 0;
+        attackInc = 1 / (0.003 * sampleRate);
+        alive = Math.ceil(sampleRate * (hang + 0.35));
+      }
+      wasOn = on;
+      if (!on && alive > 0) {
+        for (let i = 0; i < N; i++) taus[i] = Math.min(taus[i], closed ? 0.02 : 0.08);
+        noiseTau = Math.min(noiseTau, closed ? 0.015 : 0.05);
+      }
+      if (alive <= 0) return [0, 0];
+      alive--;
+      let s = 0;
+      let peak = 0;
+      for (let i = 0; i < N; i++) {
+        if (amps[i] === 0) continue;
+        const f = base * ratios[i];
+        phases[i] += (2 * Math.PI * f) / sampleRate;
+        if (phases[i] > Math.PI * 2) phases[i] -= Math.PI * 2;
+        amps[i] *= Math.exp(-1 / (taus[i] * sampleRate));
+        s += Math.sin(phases[i]) * amps[i];
+        peak = Math.max(peak, Math.abs(amps[i]));
+      }
+      const white = rng() * 2 - 1;
+      nz = white * (1 - noisePole) + nz * noisePole;
+      noiseAmp *= Math.exp(-1 / (Math.max(0.01, noiseTau) * sampleRate));
+      attack = Math.min(1, attack + attackInc);
+      const mixed = (s + nz * noiseAmp) * attack;
+      const hp = mixed - prev;
+      prev = mixed;
+      lp = hp * 0.2 + lp * 0.8;
+      if (peak < 1e-5 && noiseAmp < 1e-4) {
+        alive = 0;
+        return [0, 0];
+      }
+      return [lp * 0.85, (lp * 0.7 + hp * 0.15)];
+    },
+  };
+}
+
+export type AcousticEngine =
+  | 'pluck'
+  | 'marimba'
+  | 'epiano'
+  | 'organ'
+  | 'drum'
+  | 'wind'
+  | 'bow'
+  | 'piano'
+  | 'brass'
+  | 'bass'
+  | 'reed'
+  | 'cymbal';
 
 export function isAcousticEngine(name: string | undefined): name is AcousticEngine {
   return (
@@ -1214,7 +1559,10 @@ export function isAcousticEngine(name: string | undefined): name is AcousticEngi
     name === 'wind' ||
     name === 'bow' ||
     name === 'piano' ||
-    name === 'brass'
+    name === 'brass' ||
+    name === 'bass' ||
+    name === 'reed' ||
+    name === 'cymbal'
   );
 }
 
@@ -1227,5 +1575,8 @@ export function createEngine(name: AcousticEngine, sampleRate: number, hue: numb
   if (name === 'bow') return createBow(sampleRate, hue, seed);
   if (name === 'piano') return createPiano(sampleRate, hue, seed);
   if (name === 'brass') return createBrass(sampleRate, hue, seed);
+  if (name === 'bass') return createBass(sampleRate, hue, seed);
+  if (name === 'reed') return createReed(sampleRate, hue, seed);
+  if (name === 'cymbal') return createCymbal(sampleRate, hue, seed);
   return createEpiano(sampleRate, hue, seed);
 }

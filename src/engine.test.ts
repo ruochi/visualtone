@@ -238,7 +238,13 @@ test('drum, wind, bow, and piano stay in tune and get brighter', () => {
     { engine: 'piano', hue: 30 },
     { engine: 'brass', hue: 40 },
     { engine: 'brass', hue: 140 },
+    { engine: 'brass', hue: 210 },
+    { engine: 'brass', hue: 270 },
     { engine: 'brass', hue: 300 },
+    { engine: 'bass', hue: 40 },
+    { engine: 'bass', hue: 220 },
+    { engine: 'reed', hue: 40 },
+    { engine: 'reed', hue: 220 },
   ] as const;
   const measure = (engine: string, hue: number, midi: number, size: number) => {
     const score = ScoreSchema.parse({
@@ -280,6 +286,42 @@ test('drum, wind, bow, and piano stay in tune and get brighter', () => {
       high.envelope.decayDbPerSec !== null &&
       high.envelope.decayDbPerSec > low.envelope.decayDbPerSec,
     `piano decay ${low.envelope.decayDbPerSec} -> ${high.envelope.decayDbPerSec}`,
+  );
+});
+
+test('cymbal rings, a closed hat dies before a crash, and neither clicks', () => {
+  const sr = 48000;
+  const hit = (hue: number, size: number) => {
+    const score = ScoreSchema.parse({
+      sampleRate: sr,
+      duration: 1.4,
+      seed: 4,
+      master: { loudness: -18, drive: 0 },
+      tracks: [
+        {
+          id: 'c',
+          hue,
+          engine: 'cymbal',
+          channel: [0, 1],
+          notes: [{ t: 0.05, y: 60, size, duration: 0.9, ease: 'hold' }],
+        },
+      ],
+    });
+    const stem = render(score, { stems: true }).stems![0];
+    const mono = new Float32Array(stem.l.length);
+    for (let i = 0; i < mono.length; i++) mono[i] = (stem.l[i] + stem.r[i]) * 0.5;
+    return analyzeNote(mono, sr, { start: 0, stop: 1.4, noteOff: 0.95, midi: 60 });
+  };
+  const hat = hit(40, 0.7);
+  const crash = hit(280, 0.7);
+  const soft = hit(280, 0.3);
+  assert.equal(hat.artifacts.clicks, 0);
+  assert.equal(crash.artifacts.clicks, 0);
+  assert.ok(hat.envelope.decayDbPerSec !== null && crash.envelope.decayDbPerSec !== null);
+  assert.ok(hat.envelope.decayDbPerSec > crash.envelope.decayDbPerSec + 4, `hat ${hat.envelope.decayDbPerSec} crash ${crash.envelope.decayDbPerSec}`);
+  assert.ok(
+    soft.spectrum.centroidHz > 0 && Math.log2(crash.spectrum.centroidHz / soft.spectrum.centroidHz) > 0.1,
+    `crash centroid ${soft.spectrum.centroidHz.toFixed(0)} -> ${crash.spectrum.centroidHz.toFixed(0)}`,
   );
 });
 

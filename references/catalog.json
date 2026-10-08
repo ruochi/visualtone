@@ -386,6 +386,72 @@
       ]
     },
     {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "license": "CC-BY-4.0",
+      "url": "https://zenodo.org/records/3685367",
+      "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
+      "engine": "bass",
+      "hue": 40,
+      "kind": "sustain",
+      "notes": [
+        { "midi": 36, "size": 0.3, "dynamics": "pp", "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-pp-3c-N.wav" },
+        { "midi": 36, "size": 0.9, "dynamics": "ff", "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-ff-3c-N.wav" },
+        { "midi": 48, "size": 0.6, "dynamics": "mf", "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-mf-1c-N.wav" },
+        { "midi": 48, "size": 0.9, "dynamics": "ff", "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-ff-1c-N.wav" },
+        { "midi": 60, "size": 0.3, "dynamics": "pp", "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-pp-1c-N.wav" }
+      ]
+    },
+    {
+      "id": "tinysol-tuba",
+      "source": "TinySOL",
+      "license": "CC-BY-4.0",
+      "url": "https://zenodo.org/records/3685367",
+      "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
+      "engine": "brass",
+      "hue": 270,
+      "kind": "sustain",
+      "notes": [
+        { "midi": 31, "size": 0.6, "dynamics": "mf", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-mf-N-N.wav" },
+        { "midi": 36, "size": 0.9, "dynamics": "ff", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C2-ff-N-N.wav" },
+        { "midi": 43, "size": 0.3, "dynamics": "pp", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-pp-N-N.wav" },
+        { "midi": 60, "size": 0.6, "dynamics": "mf", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-mf-N-N.wav" },
+        { "midi": 60, "size": 0.9, "dynamics": "ff", "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-ff-N-N.wav" }
+      ]
+    },
+    {
+      "id": "tinysol-oboe",
+      "source": "TinySOL",
+      "license": "CC-BY-4.0",
+      "url": "https://zenodo.org/records/3685367",
+      "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
+      "engine": "reed",
+      "hue": 40,
+      "kind": "sustain",
+      "notes": [
+        { "midi": 60, "size": 0.3, "dynamics": "pp", "archive": "Winds/Oboe/ordinario/Ob-ord-C4-pp-N-N.wav" },
+        { "midi": 60, "size": 0.9, "dynamics": "ff", "archive": "Winds/Oboe/ordinario/Ob-ord-C4-ff-N-N.wav" },
+        { "midi": 72, "size": 0.6, "dynamics": "mf", "archive": "Winds/Oboe/ordinario/Ob-ord-C5-mf-N-N.wav" },
+        { "midi": 72, "size": 0.9, "dynamics": "ff", "archive": "Winds/Oboe/ordinario/Ob-ord-C5-ff-N-N.wav" }
+      ]
+    },
+    {
+      "id": "tinysol-bassoon",
+      "source": "TinySOL",
+      "license": "CC-BY-4.0",
+      "url": "https://zenodo.org/records/3685367",
+      "credit": "Cella et al., TinySOL, recorded at Ircam 1996–1999. CC BY 4.0.",
+      "engine": "reed",
+      "hue": 220,
+      "kind": "sustain",
+      "notes": [
+        { "midi": 36, "size": 0.6, "dynamics": "mf", "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-mf-N-N.wav" },
+        { "midi": 36, "size": 0.9, "dynamics": "ff", "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-ff-N-N.wav" },
+        { "midi": 60, "size": 0.3, "dynamics": "pp", "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-pp-N-N.wav" },
+        { "midi": 60, "size": 0.9, "dynamics": "ff", "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-ff-N-N.wav" }
+      ]
+    },
+    {
       "id": "vsco-marimba",
       "source": "VSCO 2 CE",
       "license": "CC0-1.0",
@@ -506,7 +572,7 @@
       "url": "https://github.com/sgossner/VSCO-2-CE",
       "credit": "VSCO 2 Community Edition, recorded by Sam Gossner and Simon Dalzell. CC0.",
       "engine": "pluck",
-      "hue": 70,
+      "hue": 310,
       "kind": "strike",
       "notes": [
         {

@@ -212,7 +212,21 @@ export const SfxEventSchema = z.object({
   y: z.number().optional(),
 });
 
-export const EngineSchema = z.enum(['wavetable', 'pluck', 'marimba', 'epiano', 'organ', 'drum', 'wind', 'bow', 'piano', 'brass']);
+export const EngineSchema = z.enum([
+  'wavetable',
+  'pluck',
+  'marimba',
+  'epiano',
+  'organ',
+  'drum',
+  'wind',
+  'bow',
+  'piano',
+  'brass',
+  'bass',
+  'reed',
+  'cymbal',
+]);
 export const RoleSchema = z.enum(['voice', 'sfx', 'music']);
 
 const TrackSchemaBase = z.object({
@@ -220,7 +234,7 @@ const TrackSchemaBase = z.object({
   hue: z.number().min(0).max(360).optional().describe('Hue in degrees (0-360) mapping to timbre family'),
   channel: ChannelSchema.default(0).describe('Output channel index or stereo pair [0,1]'),
   role: RoleSchema.optional().describe('voice, sfx, or music. Analysis prefers this over the track id'),
-  engine: EngineSchema.optional().describe('Default wavetable. Acoustic engines are polyphonic and do not follow the wavetable hue ring. Hue selects the mallet, drum, wind, bow, or brass family'),
+  engine: EngineSchema.optional().describe('Default wavetable. Acoustic engines are polyphonic and do not follow the wavetable hue ring. Hue selects the mallet, drum, wind, bow, brass, bass, reed, or cymbal family'),
   lightness: z.number().min(0).max(1).default(0.5),
   saturation: z.number().min(0).max(1).default(1).optional(),
   pan: z.number().min(-1).max(1).optional().describe('Static pan, -1 left to 1 right. 0 is center'),
