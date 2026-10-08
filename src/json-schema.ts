@@ -117,6 +117,7 @@ const JsonScoreSchema = z.object({
           'piano',
           'brass',
           'bass',
+          'sub',
           'reed',
           'cymbal',
         ])

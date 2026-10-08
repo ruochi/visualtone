@@ -273,7 +273,7 @@ test('sfx names expand to sounding tracks', () => {
 });
 
 test('acoustic engines overlap instead of cutting the previous note', () => {
-  for (const engine of ['pluck', 'marimba', 'epiano', 'organ', 'drum', 'wind', 'bow', 'piano', 'brass', 'bass', 'reed', 'cymbal'] as const) {
+  for (const engine of ['pluck', 'marimba', 'epiano', 'organ', 'drum', 'wind', 'bow', 'piano', 'brass', 'bass', 'sub', 'reed', 'cymbal'] as const) {
     const score = ScoreSchema.parse({
       sampleRate: 22050,
       duration: 0.5,

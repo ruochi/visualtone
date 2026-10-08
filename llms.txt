@@ -125,7 +125,7 @@ With `bpm` (and optional `meter`, default `[4, 4]`): point/note `at: "4:2"` (bar
 
 ## Acoustic engines
 
-`engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal bar) | `epiano` (FM) | `organ` (drawbar additive) | `drum` (modal membrane) | `wind` (flute or clarinet bore) | `bow` (bowed string) | `piano` (struck string) | `brass` (lip reed) | `bass` (contrabass or electric bass) | `reed` (oboe or bassoon) | `cymbal` (hi-hat or crash). The acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring.
+`engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal bar) | `epiano` (FM) | `organ` (drawbar additive) | `drum` (modal membrane) | `wind` (flute or clarinet bore) | `bow` (bowed string) | `piano` (struck string) | `brass` (lip reed) | `bass` (contrabass or electric bass) | `sub` (electronic bass) | `reed` (oboe or bassoon) | `cymbal` (hi-hat or crash). The acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring.
 
 `pluck` is a Karplus–Strong string with a fractional delay. The loop length compensates the averaging filter and the dispersion allpass, so high notes stay in tune. Hue 0°–139° is a steel guitar, 140°–279° nylon, 280°–360° harp. A harp is plucked nearer the center, rings longer, and is lowpassed on the way out. `size` moves a guitar pluck toward the bridge; `lightness` lengthens the ring. Body resonances sit at 118 Hz, 150 Hz, and 220 Hz.
 
@@ -136,6 +136,8 @@ With `bpm` (and optional `meter`, default `[4, 4]`): point/note `at: "4:2"` (bar
 `brass` is a lip reed: harmonics whose slope opens with loudness. Hue 0°–89° trumpet, 90°–179° horn (high notes stay darker even when loud), 180°–239° trombone, 240°–299° tuba, 300°–360° saxophone. Partial phases are spread so a bright spectrum does not line up into a sawtooth corner. A bell resonance sits at a different frequency for each instrument. `size` flattens the spectrum and adds a little noise. Pitch drifts by about 1.5 cents (tuba 3). Held notes also move in level at 8–20 Hz: about −30 dB on trumpet, −32 on horn, −30 on trombone, −26 on tuba, and −35 on saxophone.
 
 `bass` is a low string. Hue 0°–179° is a bowed contrabass, body near 70 Hz, with a slower, shallower vibrato (4.9 Hz ±6 cents) and about −27 dB of 8–20 Hz level motion. Hue 180°–360° is an electric bass: a round sustain plus a short finger noise, without that motion. Pitch can go down to about 28 Hz.
+
+`sub` is an electronic dance bass. Hue 0°–119° is a sub: near a sine, with a pitch dip of about 4 semitones that settles onto the note. `size` squares the wave and opens the lowpass, so a harder note is brighter. Hue 120°–239° is a reese: two saws about 8–15 cents apart, then a lowpass. Hue 240°–360° is a rhythmic bass: level and lowpass both fall while the key is held, so a 16th grid has accents. Pitch can go down to about 27 Hz. Duck the track from the kick so the low end clears on each hit.
 
 `reed` is a double reed. Hue 0°–179° is an oboe, nasal formant near 1500 Hz. Hue 180°–360° is a bassoon, formant near 540 Hz. A conical bore has every harmonic. `size` opens the spectrum. Pitch drifts by about 1.5 cents. Held notes move in level at 8–20 Hz: about −32 dB on the oboe and −31 dB on the bassoon.
 

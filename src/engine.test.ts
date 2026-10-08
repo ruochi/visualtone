@@ -375,6 +375,36 @@ test('held notes carry irregular loudness motion near the recordings', () => {
   }
 });
 
+test('electronic bass stays in tune, and the offbeat voice falls while held', () => {
+  const rms = (mono: Float32Array, sr: number, a: number, b: number) => {
+    let s = 0;
+    const i0 = Math.round(a * sr);
+    const i1 = Math.round(b * sr);
+    for (let i = i0; i < i1; i++) s += mono[i] * mono[i];
+    return 10 * Math.log10(s / (i1 - i0) + 1e-20);
+  };
+  for (const hue of [40, 160, 300]) {
+    const soft = (() => {
+      const { mono, sr } = holdNote('sub', hue, 40, 0.3, 0.8);
+      return analyzeNote(mono, sr, { start: 0, stop: 1.2, noteOff: 0.85, midi: 40 });
+    })();
+    const { mono, sr } = holdNote('sub', hue, 40, 0.85, 0.8);
+    const hard = analyzeNote(mono, sr, { start: 0, stop: 1.2, noteOff: 0.85, midi: 40 });
+    assert.ok(hard.centsOff !== null && Math.abs(hard.centsOff) < 8, `hue ${hue} cents ${hard.centsOff}`);
+    assert.equal(hard.artifacts.clicks, 0, `hue ${hue} clicks`);
+    assert.equal(soft.artifacts.clicks, 0, `hue ${hue} soft clicks`);
+    assert.ok(hard.envelope.peakDb - soft.envelope.peakDb > 3, `hue ${hue} level`);
+    assert.ok(
+      soft.spectrum.centroidHz > 0 && Math.log2(hard.spectrum.centroidHz / soft.spectrum.centroidHz) > 0.1,
+      `hue ${hue} centroid ${soft.spectrum.centroidHz.toFixed(0)} -> ${hard.spectrum.centroidHz.toFixed(0)}`,
+    );
+    const early = rms(mono, sr, 0.08, 0.16);
+    const late = rms(mono, sr, 0.5, 0.7);
+    if (hue >= 240) assert.ok(late < early - 6, `pluck fell ${early.toFixed(1)} -> ${late.toFixed(1)}`);
+    else assert.ok(late > early - 3, `sustain fell ${early.toFixed(1)} -> ${late.toFixed(1)}`);
+  }
+});
+
 test('bowed strings lean into vibrato near 5.5 Hz', () => {
   for (const hue of [40, 160, 300]) {
     const { mono, sr } = holdNote('bow', hue, 62, 0.6, 2);

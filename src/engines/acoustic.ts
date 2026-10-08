@@ -1739,6 +1739,143 @@ export function createCymbal(sampleRate: number, hue: number, seed: number): Eng
   };
 }
 
+type SubKind = 'sub' | 'reese' | 'pluck';
+
+function subKind(hue: number): SubKind {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 120) return 'sub';
+  if (h < 240) return 'reese';
+  return 'pluck';
+}
+
+/**
+ * Electronic bass. Hue 0°–119° is a sub: a sine with a short pitch dip and
+ * saturation that grows with `size`. 120°–239° is a reese, two detuned saws
+ * behind a lowpass. 240°–360° is an offbeat bass: the lowpass and the level
+ * both fall while the key is still down, so a 16th grid reads as rhythm.
+ */
+export function createSub(sampleRate: number, hue: number, _seed: number): Engine {
+  const kind = subKind(hue);
+  const N = kind === 'sub' ? 8 : 32;
+  const phases = new Float64Array(N);
+  const phasesB = new Float64Array(N);
+  const gains = new Float64Array(N);
+  const lp = [0, 0, 0, 0];
+  const lpB = [0, 0, 0, 0];
+  let freq = 55;
+  let env = 0;
+  let wasOn = false;
+  let releaseSec = 0.1;
+  const attackCoeff = Math.exp(-1 / (0.004 * sampleRate));
+  let drive = 1.2;
+  let detune = 1;
+  let detuneMix = 0;
+  let scoopLeft = 0;
+  let scoopTotal = 1;
+  let scoopSemis = 0;
+  let pluckEnv = 1;
+  let pluckDec = 1;
+  let fEnv = 1;
+  let fDec = 1;
+  let cutBase = 200;
+  let cutOpen = 600;
+
+  const lowpass = (x: number, state: number[], a: number) => {
+    let y = x;
+    for (let i = 0; i < 4; i++) {
+      state[i] = y * a + state[i] * (1 - a);
+      y = state[i];
+    }
+    return y;
+  };
+
+  return {
+    setRelease(ms: number) {
+      releaseSec = Math.max(0.012, ms / 1000);
+    },
+    processSample(midi, size, lightness) {
+      const on = size > 1e-5;
+      if (on && !wasOn) {
+        freq = Math.min(sampleRate * 0.22, Math.max(27, midiToFrequency(midi)));
+        const strike = Math.min(1, Math.max(0, size));
+        const light = Math.min(1, Math.max(0, lightness));
+        // A quiet sub stays near a sine. Pushing it squares the wave and opens the lowpass.
+        drive = kind === 'sub' ? 1.05 + strike * 1.7 : 1.25 + strike * 1.15;
+        detune = Math.pow(2, (kind === 'reese' ? 8 + strike * 7 : 4) / 1200);
+        detuneMix = kind === 'reese' ? 0.7 : kind === 'pluck' ? 0.18 : 0;
+        scoopSemis = kind === 'sub' ? 4 : kind === 'reese' ? 1.5 : 0;
+        scoopTotal = Math.max(1, Math.round((kind === 'sub' ? 0.03 : 0.014) * sampleRate));
+        scoopLeft = scoopTotal;
+        // A 1/n saw's corner trips the click detector. An exponential slope stays round.
+        const tilt = kind === 'sub' ? 2.2 - strike * 1.3 : Math.max(0.32, 0.38 + (1 - strike) * 0.45);
+        let energy = 0;
+        for (let n = 1; n <= N; n++) {
+          const f = freq * n;
+          let g = 0;
+          if (f < sampleRate * 0.45) {
+            g = kind === 'sub' ? (n === 1 ? 1 : Math.exp(-tilt * (n - 1)) * strike) : Math.exp(-tilt * (n - 1));
+          }
+          gains[n - 1] = g;
+          energy += g * g;
+          phases[n - 1] = 0;
+          phasesB[n - 1] = n * 0.37;
+        }
+        const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
+        for (let n = 0; n < N; n++) gains[n] *= norm;
+        pluckEnv = 1;
+        // Only the offbeat bass dies under a held key. Sub and reese stay up so a whole note can pump with the kick.
+        const pluckSec = kind === 'pluck' ? Math.max(0.055, Math.min(0.16, 0.15 * Math.pow(90 / freq, 0.5))) : 8;
+        pluckDec = Math.exp(-1 / (pluckSec * sampleRate));
+        fEnv = 1;
+        fDec = kind === 'pluck' ? Math.exp(-1 / (0.05 * sampleRate)) : 1;
+        const span = kind === 'sub' ? 4.2 : 7.5;
+        // The offbeat bass sweeps the harmonics, and leaves the fundamental in the passband.
+        // A cutoff falling through the fundamental stretches the period and the note reads flat.
+        cutBase = freq * (kind === 'pluck' ? 2.8 + light * 0.4 : 1.35 + light * 0.3);
+        cutOpen = Math.min(1100 + strike * 700, freq * (kind === 'pluck' ? 3.4 + strike * span : 1.7 + strike * span + light * 1.2));
+        lp[0] = lp[1] = lp[2] = lp[3] = 0;
+        lpB[0] = lpB[1] = lpB[2] = lpB[3] = 0;
+        env = 0;
+      }
+      wasOn = on;
+      if (!on && env < 1e-5) return [0, 0];
+
+      const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
+      const dest = on ? size : 0;
+      env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      if (kind === 'pluck') pluckEnv *= pluckDec;
+      if (kind === 'pluck') fEnv *= fDec;
+      if (scoopLeft > 0) scoopLeft--;
+      const scoop = scoopTotal > 0 ? scoopLeft / scoopTotal : 0;
+      const fNow = freq * Math.pow(2, (scoopSemis * scoop * scoop) / 12);
+      const step = (2 * Math.PI * fNow) / sampleRate;
+      let s = 0;
+      let b = 0;
+      for (let n = 0; n < N; n++) {
+        if (gains[n] === 0) continue;
+        phases[n] += step * (n + 1);
+        if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
+        s += Math.sin(phases[n]) * gains[n];
+        if (detuneMix > 0) {
+          phasesB[n] += step * detune * (n + 1);
+          if (phasesB[n] > Math.PI * 2) phasesB[n] -= Math.PI * 2;
+          b += Math.sin(phasesB[n]) * gains[n];
+        }
+      }
+      const shaped = Math.tanh(s * drive);
+      const shapedB = detuneMix > 0 ? Math.tanh(b * drive) : 0;
+      const cut = Math.min(sampleRate * 0.42, cutBase + (cutOpen - cutBase) * (kind === 'pluck' ? fEnv : 1));
+      const a = 1 - Math.exp((-2 * Math.PI * cut) / sampleRate);
+      const filt = lowpass(shaped, lp, a);
+      const filtB = detuneMix > 0 ? lowpass(shapedB, lpB, a) : 0;
+      const g = env * pluckEnv * 0.58;
+      const mid = filt;
+      const side = (filtB - filt) * detuneMix * 0.4;
+      return [(mid + side) * g, (mid - side) * g];
+    },
+  };
+}
+
 export type AcousticEngine =
   | 'pluck'
   | 'marimba'
@@ -1750,6 +1887,7 @@ export type AcousticEngine =
   | 'piano'
   | 'brass'
   | 'bass'
+  | 'sub'
   | 'reed'
   | 'cymbal';
 
@@ -1765,6 +1903,7 @@ export function isAcousticEngine(name: string | undefined): name is AcousticEngi
     name === 'piano' ||
     name === 'brass' ||
     name === 'bass' ||
+    name === 'sub' ||
     name === 'reed' ||
     name === 'cymbal'
   );
@@ -1780,6 +1919,7 @@ export function createEngine(name: AcousticEngine, sampleRate: number, hue: numb
   if (name === 'piano') return createPiano(sampleRate, hue, seed);
   if (name === 'brass') return createBrass(sampleRate, hue, seed);
   if (name === 'bass') return createBass(sampleRate, hue, seed);
+  if (name === 'sub') return createSub(sampleRate, hue, seed);
   if (name === 'reed') return createReed(sampleRate, hue, seed);
   if (name === 'cymbal') return createCymbal(sampleRate, hue, seed);
   return createEpiano(sampleRate, hue, seed);
