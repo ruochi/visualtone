@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { INSTRUMENT_IDS, type InstrumentId } from './instruments.js';
 import { expandUnits } from './units.js';
 
 export const EaseSchema = z.enum(['step', 'linear', 'in', 'out', 'inOut', 'exp']);
@@ -228,6 +229,7 @@ export const EngineSchema = z.enum([
   'reed',
   'cymbal',
 ]);
+export const InstrumentSchema = z.enum(INSTRUMENT_IDS);
 export const RoleSchema = z.enum(['voice', 'sfx', 'music']);
 
 const TrackSchemaBase = z.object({
@@ -235,6 +237,7 @@ const TrackSchemaBase = z.object({
   hue: z.number().min(0).max(360).optional().describe('Hue in degrees (0-360) mapping to timbre family'),
   channel: ChannelSchema.default(0).describe('Output channel index or stereo pair [0,1]'),
   role: RoleSchema.optional().describe('voice, sfx, or music. Analysis prefers this over the track id'),
+  instrument: InstrumentSchema.optional().describe('Named instrument. Sets engine and hue; do not set either alongside it'),
   engine: EngineSchema.optional().describe('Default wavetable. Acoustic engines are polyphonic and do not follow the wavetable hue ring. Hue selects the mallet, drum, wind, bow, brass, bass, sub, reed, or cymbal family'),
   lightness: z.number().min(0).max(1).default(0.5),
   saturation: z.number().min(0).max(1).default(1).optional(),
@@ -268,8 +271,11 @@ export const TrackSchema = TrackSchemaBase.superRefine((t, ctx) => {
   if (!clips && !sfx && !curves) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Track needs points, notes, clips, or sfx' });
   }
-  if (!clips && !sfx && t.hue === undefined) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Synth track needs hue' });
+  if (t.instrument !== undefined && (t.engine !== undefined || t.hue !== undefined)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'instrument sets engine and hue; remove engine and hue, or remove instrument' });
+  }
+  if (!clips && !sfx && t.hue === undefined && t.instrument === undefined) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Synth track needs hue or instrument' });
   }
 });
 
@@ -331,6 +337,7 @@ export interface Track {
   hue?: number;
   channel?: number | number[];
   role?: Role;
+  instrument?: InstrumentId;
   engine?: EngineName;
   lightness?: number;
   saturation?: number;

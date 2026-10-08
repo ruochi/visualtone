@@ -123,6 +123,24 @@ Track `offset` shifts one track. Track `seed` keeps noise stable when tracks are
 
 With `bpm` (and optional `meter`, default `[4, 4]`): point/note `at: "4:2"` (bar 4, beat 2, 1-based), `pitch: "A3"`, note `len: "1/8"`. Missing bpm is an error. `chord("Am7", "A3")` and `pattern("x...x..x", { bpm, y, bar, step })` are functions, not schema.
 
+## Instruments by synthesis method
+
+`"instrument": "cello"` sets engine and hue together. Do not set `engine` or `hue` on the same track. Instruments that share a generation method and a parameter set share one model:
+
+- additive / `harmonic` (engines bow, brass, reed, bass): violin, viola, cello, contrabass, electric-bass, trumpet, horn, trombone, tuba, saxophone, oboe, bassoon
+- additive / `drawbar` (organ): organ, organ-full
+- modal / `bar` (marimba): marimba, xylophone, vibraphone, glockenspiel
+- modal / `membrane` (drum): kick, tom, snare, conga, frame-drum
+- modal / `stiff-string` (piano): piano
+- modal / `plate` (cymbal): hihat-closed, hihat-open, crash
+- waveguide / `plucked-string` (pluck): steel-guitar, nylon-guitar, harp
+- waveguide / `blown-bore` (wind): flute, clarinet
+- fm / `two-operator` (epiano): electric-piano
+- subtractive / `virtual-analog` (sub): sub-bass, reese-bass, offbeat-bass
+- wavetable / `hue-ring` (wavetable): synth-pluck, synth-lead, synth-pad
+
+The four `harmonic` engine names now run one generator (`createHarmonic`) with a preset per instrument (`HARMONIC_PRESETS`). Output matches the earlier separate engines to 1.4e-14. `INSTRUMENTS` and `MODELS` are exported with each instrument's model, engine, hue, and reference recording set. Not built yet: source-filter voice and choir, stochastic particle percussion (clap, shaker), electric guitar on the plucked-string waveguide.
+
 ## Acoustic engines
 
 `engine`: `wavetable` (default) | `pluck` (Karplus–Strong) | `marimba` (modal bar) | `epiano` (FM) | `organ` (drawbar additive) | `drum` (modal membrane) | `wind` (flute or clarinet bore) | `bow` (bowed string) | `piano` (struck string) | `brass` (lip reed) | `bass` (contrabass or electric bass) | `sub` (electronic bass) | `reed` (oboe or bassoon) | `cymbal` (hi-hat or crash). The acoustic engines are polyphonic: overlapping notes are not cut. Hue does not interpolate with the wavetable ring.

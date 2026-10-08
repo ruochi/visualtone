@@ -343,7 +343,7 @@ console.log('Track report:', result.eventReport);
 | 300° | Snare / clap |
 | 335° | Hi-hat |
 
-`lightness` 控制低通截止频率。`engine` 可以换成 `pluck`（拨弦）、`marimba`（打击条）、`epiano`（电钢）、`organ`（音轮风琴）、`drum`（鼓膜）、`wind`（长笛/单簧管）、`bow`（弓弦）、`piano`（钢琴）、`brass`（铜管/萨克斯）、`bass`（低音）、`sub`（电子低音）、`reed`（双簧管/巴松）或 `cymbal`（镲）；这几种不跟波表插值。原声引擎按音符分配复音，一条轨可以叠和弦。
+`lightness` 控制低通截止频率。`engine` 可以换成 `pluck`（拨弦）、`marimba`（打击条）、`epiano`（电钢）、`organ`（音轮风琴）、`drum`（鼓膜）、`wind`（长笛/单簧管）、`bow`（弓弦）、`piano`（钢琴）、`brass`（铜管/萨克斯）、`bass`（低音）、`sub`（电子低音）、`reed`（双簧管/巴松）或 `cymbal`（镲）；这几种不跟波表插值。原声引擎按音符分配复音，一条轨可以叠和弦。也可以直接写乐器名，比如 `"instrument": "cello"`，见“按生成方法分类”。
 
 ## API 参考
 
@@ -479,6 +479,34 @@ result.envelopes.master.level;
 
 有 `bpm` 时，点和音符可以写 `at: "4:2"`（第 4 小节第 2 拍，从 1 起）、`pitch: "A3"`、`len: "1/8"`。`meter` 默认 `[4, 4]`。`chord("Am7", "A3")` 和 `pattern("x...x...x.x.", { bpm, y })` 是函数，不进 schema。
 
+### 按生成方法分类
+
+乐器按“声音怎么生成”分组。生成方法相同、可调参数也相同的乐器共用一个模型，彼此只差一组数字。轨上写 `"instrument": "cello"` 就会选中对应的引擎和色调；这时不要再写 `engine` 或 `hue`。原来的 `engine` 加 `hue` 写法照旧可用，声音不变。
+
+| 方法 | 模型 | 引擎名 | 乐器 | 可调参数 |
+|---|---|---|---|---|
+| 加法 | `harmonic` 持续谐波 | `bow` `brass` `reed` `bass` | `violin` `viola` `cello` `contrabass` `electric-bass` `trumpet` `horn` `trombone` `tuba` `saxophone` `oboe` `bassoon` | 谐波斜率（轻奏、强奏、音区、低音区摊平）、低通、共鸣峰频率/Q/混合、噪声频段和电平、手指瞬态、起音和释放、揉弦、漂移、8–20 Hz 起伏 |
+| 加法 | `drawbar` 拉杆 | `organ` | `organ` `organ-full` | 九档音栓配比、管长决定的开口时间、打击音、气压起伏 |
+| 模态 | `bar` 音条 | `marimba` | `marimba` `xylophone` `vibraphone` `glockenspiel` | 模态频率比、各模态衰减和音高缩放、高阶模态电平和滚降区间、槌击噪声、颤音 |
+| 模态 | `membrane` 圆膜 | `drum` | `kick` `tom` `snare` `conga` `frame-drum` | 基频衰减、沙带噪声、击槌咔嗒、音高下落 |
+| 模态 | `stiff-string` 刚性弦 | `piano` | `piano` | 刚度 B 随音高变化、分音衰减、槌子硬度、双弦失谐 |
+| 模态 | `plate` 金属板 | `cymbal` | `hihat-closed` `hihat-open` `crash` | 板的大小、余响长度、噪声电平和频段、捂音 |
+| 波导 | `plucked-string` 拨弦 | `pluck` | `steel-guitar` `nylon-guitar` `harp` | 拨点、环路损耗、色散、琴体共鸣、输出低通 |
+| 波导 | `blown-bore` 吹管 | `wind` | `flute` `clarinet` | 开管或闭管、气流/簧片增益、偶次谐波项、环路滤波、气声 |
+| 调频 | `two-operator` 双算子 | `epiano` | `electric-piano` | 调制比、调制指数、衰减 |
+| 减法 | `virtual-analog` 虚拟模拟 | `sub` | `sub-bass` `reese-bass` `offbeat-bass` | 波形（正弦底音、两列失谐锯齿、节奏 pluck）、推力、截止频率和包络、音高下落、失谐 |
+| 波表 | `hue-ring` 色调环 | `wavetable` | `synth-pluck` `synth-lead` `synth-pad` | 色调位置、音色覆盖、齐奏、漂移 |
+
+`bow`、`brass`、`reed`、`bass` 原来是四份几乎一样的代码，现在合并成同一个持续谐波生成器（`src/engines/harmonic.ts`），每件乐器是 `HARMONIC_PRESETS` 里的一组参数。合并前后 330 段渲染逐样本比对，最大差值 1.4×10⁻¹⁴。萨克斯、双簧管和铜管同在这一类，因为它们的声音用同一种方法生成；单簧管和长笛同在吹管波导里，因为它们靠环路自激。
+
+还没有的方法，按这张表另开：
+
+- 源-滤波（共振峰）：人声、合唱。声门脉冲经过几组共振峰滤波，元音决定共振峰位置。
+- 随机粒子：拍手、沙锤、铃鼓。很多次随机碰撞，各自激起一组共振，碰撞概率随时间衰减。
+- 波导里的新模型：电吉他，拨弦之后加拾音器位置、音箱失真和箱体滤波。弦乐拨奏放在拨弦模型里，换成提琴的琴体。
+
+`INSTRUMENTS` 和 `MODELS` 从包里导出，里面写明了每件乐器的模型、引擎、色调，以及调过它的那套录音。
+
 ### 原声引擎
 
 `engine` 为 `pluck`、`marimba`、`epiano`、`organ`、`drum`、`wind`、`bow`、`piano`、`brass`、`bass`、`sub`、`reed` 或 `cymbal` 时按音符分配复音，重叠的音符不会被截短。色调不跟波表插值。
@@ -533,6 +561,8 @@ result.envelopes.master.level;
 - ✅ 前瞻真峰值限幅器
 - ✅ 采样轨（引用外部 WAV）、音效预设、分段合并、按帧电平
 - ✅ 拨弦 / 马林巴 / 电钢
+- ✅ 按生成方法分类的乐器名（`instrument`）
+- ⏳ 共振峰人声、随机粒子打击乐、电吉他
 - ⏳ SF2 采样音色
 - ⏳ Remotion 集成
 

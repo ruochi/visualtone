@@ -1,4 +1,6 @@
-/** Musical spelling expanded to seconds and MIDI before render. Not part of the audio model. */
+/** Musical spelling and instrument names expanded to seconds, MIDI, engine, and hue before render. Not part of the audio model. */
+
+import { INSTRUMENTS, type InstrumentId } from './instruments.js';
 
 export interface LoosePoint {
   t?: number;
@@ -29,6 +31,9 @@ export interface LooseScore {
   bpm?: number;
   meter?: [number, number];
   tracks: {
+    instrument?: string;
+    engine?: string;
+    hue?: number;
     points?: LoosePoint[];
     notes?: LooseNote[];
     sfx?: LooseSfx[];
@@ -141,10 +146,17 @@ function expandSfxEvent<T extends LooseSfx>(e: T, bpm: number | undefined, meter
 }
 
 /** Fill t/y/duration from at/pitch/len. Idempotent once those fields are gone. */
+function namedInstrument(track: LooseScore['tracks'][number]): { engine?: string; hue?: number } {
+  if (track.instrument === undefined || !Object.hasOwn(INSTRUMENTS, track.instrument)) return {};
+  const named = INSTRUMENTS[track.instrument as InstrumentId];
+  return { engine: track.engine ?? named.engine, hue: track.hue ?? named.hue };
+}
+
 export function expandUnits<T extends LooseScore>(score: T): T {
   const meter = score.meter ?? [4, 4];
   const tracks = score.tracks.map((track) => ({
     ...track,
+    ...namedInstrument(track),
     points: track.points?.map((p) => expandPoint(p, score.bpm, meter)),
     notes: track.notes?.map((n) => expandNote(n, score.bpm, meter)),
     sfx: track.sfx?.map((e) => expandSfxEvent(e, score.bpm, meter)),

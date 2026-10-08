@@ -14,6 +14,10 @@ export {
 } from './schema.js';
 export type { Score, Track, Point, Note, Ease, TimbreOverride, Lfo } from './schema.js';
 export { getJsonSchema } from './json-schema.js';
+export { INSTRUMENTS, INSTRUMENT_IDS, MODELS, instrumentInfo } from './instruments.js';
+export type { InstrumentId, InstrumentInfo, ModelId, ModelInfo, SynthesisMethod } from './instruments.js';
+export { HARMONIC_PRESETS, createHarmonic } from './engines/harmonic.js';
+export type { HarmonicPreset, HarmonicInstrument } from './engines/harmonic.js';
 export {
   sampleAt,
   interpolateTrack,

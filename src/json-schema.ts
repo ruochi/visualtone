@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { INSTRUMENT_IDS } from './instruments.js';
 
 const Comp = z.object({
   threshold: z.number().default(-18).describe('dBFS'),
@@ -104,6 +105,10 @@ const JsonScoreSchema = z.object({
         )
         .optional(),
       role: z.enum(['voice', 'sfx', 'music']).optional(),
+      instrument: z
+        .enum(INSTRUMENT_IDS)
+        .optional()
+        .describe('Named instrument. Sets engine and hue; do not set either alongside it'),
       engine: z
         .enum([
           'wavetable',
