@@ -358,6 +358,23 @@ test('a held high flute keeps sounding and carries no DC', () => {
   }
 });
 
+test('held notes carry irregular loudness motion near the recordings', () => {
+  const cases = [
+    { engine: 'bow', hue: 40, midi: 69, lo: -34, hi: -20 },
+    { engine: 'wind', hue: 30, midi: 72, lo: -38, hi: -24 },
+    { engine: 'brass', hue: 20, midi: 70, lo: -38, hi: -24 },
+    { engine: 'reed', hue: 40, midi: 70, lo: -40, hi: -24 },
+  ];
+  for (const c of cases) {
+    const { mono, sr } = holdNote(c.engine, c.hue, c.midi, 0.6, 2.2);
+    const note = analyzeNote(mono, sr, { start: 0, stop: 2.6, noteOff: 2.25, midi: c.midi });
+    const shimmer = note.envelope.shimmerDb;
+    assert.ok(shimmer !== null && shimmer > c.lo && shimmer < c.hi, `${c.engine} shimmer ${shimmer}`);
+    assert.equal(note.artifacts.clicks, 0);
+    assert.ok(Math.abs(note.centsOff ?? 99) < 8, `${c.engine} cents ${note.centsOff}`);
+  }
+});
+
 test('bowed strings lean into vibrato near 5.5 Hz', () => {
   for (const hue of [40, 160, 300]) {
     const { mono, sr } = holdNote('bow', hue, 62, 0.6, 2);

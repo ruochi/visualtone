@@ -15,6 +15,8 @@ interface PitchLifeSpec {
   wanderCents: number;
   /** Bow pressure follows the vibrato, so the level moves with it by this fraction. */
   vibratoGain: number;
+  /** RMS of irregular loudness motion between 8 and 20 Hz. 0.032 reads as about −30 dB. */
+  shimmerRms: number;
 }
 
 interface PitchLife {
@@ -32,6 +34,9 @@ function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: number):
   const wanderAmp = spec.wanderCents * 1.25;
   const wanderInc = 1 / (0.3 * sampleRate);
   const rampSec = 0.35;
+  const shimmerHz = [8.6, 11.4, 14.2, 17.5];
+  const shimmerPhase = [0, 0, 0, 0];
+  const shimmerFreq = [0, 0, 0, 0];
   let t = 0;
   let phase = 0;
   let w0 = 0;
@@ -46,6 +51,10 @@ function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: number):
       w0 = 0;
       w1 = gauss();
       wPos = 0;
+      for (let i = 0; i < shimmerHz.length; i++) {
+        shimmerPhase[i] = rng() * Math.PI * 2;
+        shimmerFreq[i] = Math.min(19.2, Math.max(8.2, shimmerHz[i] * (0.94 + rng() * 0.12)));
+      }
     },
     step() {
       wPos += wanderInc;
@@ -68,7 +77,18 @@ function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: number):
       }
       t += 1 / sampleRate;
       life.ratio = Math.exp(cents * (Math.LN2 / 1200));
-      life.gain = 1 + vib * spec.vibratoGain;
+      // A handful of incommensurate rates, so this is not a tremolo. Recorded notes move here; a fixed loop does not.
+      let shimmer = 1;
+      if (spec.shimmerRms > 0) {
+        let s = 0;
+        for (let i = 0; i < shimmerHz.length; i++) {
+          shimmerPhase[i] += (2 * Math.PI * shimmerFreq[i]) / sampleRate;
+          if (shimmerPhase[i] > Math.PI * 2) shimmerPhase[i] -= Math.PI * 2;
+          s += Math.sin(shimmerPhase[i]);
+        }
+        shimmer = 1 + spec.shimmerRms * (s / Math.SQRT2);
+      }
+      life.gain = (1 + vib * spec.vibratoGain) * shimmer;
     },
   };
   return life;
@@ -537,7 +557,7 @@ function organRegistration(hue: number): number[] {
   return out;
 }
 
-export function createOrgan(sampleRate: number, hue: number, _seed: number): Engine {
+export function createOrgan(sampleRate: number, hue: number, seed: number): Engine {
   const base = organRegistration(hue);
   const phases = new Array(ORGAN_RATIOS.length).fill(0);
   const amps = new Array(ORGAN_RATIOS.length).fill(0);
@@ -553,6 +573,12 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
   const ampCoeff = Math.exp(-1 / (0.015 * sampleRate));
   const stopBright = base[3] + base[5] + base[8];
   const percDecay = Math.exp(-1 / (0.16 * sampleRate));
+  // Wind pressure moves the whole rank together, faster than a player's vibrato.
+  const life = createPitchLife(
+    sampleRate,
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 0, vibratoGain: 0, shimmerRms: 0.033 },
+    seed,
+  );
 
   const shape = (size: number, lightness: number, f0: number): number[] => {
     const open = Math.min(1.65, 0.15 + lightness * 0.7 + size * 1.05);
@@ -589,6 +615,7 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
         }
       }
       if (on && !wasOn) {
+        life.start();
         const target = shape(size, lightness, freq);
         for (let i = 0; i < amps.length; i++) amps[i] = target[i];
         // A fresh note starts at zero amplitude, so aligning phases does not click.
@@ -603,6 +630,7 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
       }
       wasOn = on;
       if (!on && env < 1e-5 && perc < 1e-4) return [0, 0];
+      life.step();
 
       const target = shape(heldSize, heldLight, freq);
       for (let i = 0; i < amps.length; i++) amps[i] = amps[i] * ampCoeff + target[i] * (1 - ampCoeff);
@@ -633,7 +661,7 @@ export function createOrgan(sampleRate: number, hue: number, _seed: number): Eng
         l += s;
         r += s;
       }
-      const g = env * 0.28;
+      const g = env * 0.28 * life.gain;
       return [l * g, r * g];
     },
   };
@@ -854,7 +882,7 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   let boreY = 0;
   const life = createPitchLife(
     sampleRate,
-    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: clarinet ? 2 : 3, vibratoGain: 0 },
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: clarinet ? 2 : 3, vibratoGain: 0, shimmerRms: clarinet ? 0.022 : 0.032 },
     seed,
   );
   const dcPole = Math.exp((-2 * Math.PI * 24) / sampleRate);
@@ -1018,7 +1046,8 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
       dcY2 = hp2;
       out = hp2;
       const air = nz * env * (0.008 + strike * 0.02);
-      return [out + air, out + air * 0.9];
+      const g = life.gain;
+      return [(out + air) * g, (out + air * 0.9) * g];
     },
   };
 }
@@ -1029,13 +1058,14 @@ interface BowSpec {
   bodyHz: number;
   vibratoCents: number;
   vibratoHz: number;
+  shimmerRms: number;
 }
 
 function bowSpec(hue: number): BowSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 120) return { dark: 0, attackSec: 0.028, bodyHz: 290, vibratoCents: 12, vibratoHz: 5.6 };
-  if (h < 240) return { dark: 0.04, attackSec: 0.04, bodyHz: 210, vibratoCents: 11, vibratoHz: 5.4 };
-  return { dark: 0.1, attackSec: 0.055, bodyHz: 125, vibratoCents: 9, vibratoHz: 5.2 };
+  if (h < 120) return { dark: 0, attackSec: 0.028, bodyHz: 290, vibratoCents: 12, vibratoHz: 5.6, shimmerRms: 0.05 };
+  if (h < 240) return { dark: 0.04, attackSec: 0.04, bodyHz: 210, vibratoCents: 11, vibratoHz: 5.4, shimmerRms: 0.048 };
+  return { dark: 0.1, attackSec: 0.055, bodyHz: 125, vibratoCents: 9, vibratoHz: 5.2, shimmerRms: 0.053 };
 }
 
 /** Helmholtz motion: harmonic partials of a bowed string. Hue picks violin, viola, or cello. */
@@ -1066,7 +1096,14 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
   const smooth = [0, 0, 0, 0];
   const life = createPitchLife(
     sampleRate,
-    { vibratoCents: spec.vibratoCents, vibratoHz: spec.vibratoHz, vibratoDelaySec: 0.22, wanderCents: 2, vibratoGain: 0.05 },
+    {
+      vibratoCents: spec.vibratoCents,
+      vibratoHz: spec.vibratoHz,
+      vibratoDelaySec: 0.22,
+      wanderCents: 2,
+      vibratoGain: 0.05,
+      shimmerRms: spec.shimmerRms,
+    },
     seed,
   );
 
@@ -1265,15 +1302,16 @@ interface BrassSpec {
   attackSec: number;
   bellHz: number;
   noise: number;
+  shimmerRms: number;
 }
 
 function brassSpec(hue: number): BrassSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 90) return { soft: 2.55, loud: 0.05, register: 0.02, shadePow: 1.35, attackSec: 0.05, bellHz: 1800, noise: 0.16 };
-  if (h < 180) return { soft: 2.5, loud: 0.55, register: 1.15, shadePow: 1.35, attackSec: 0.06, bellHz: 480, noise: 0.05 };
-  if (h < 240) return { soft: 2.05, loud: 0.15, register: 0.35, shadePow: 1.35, attackSec: 0.042, bellHz: 620, noise: 0.07 };
-  if (h < 300) return { soft: 1.6, loud: 0.02, register: 1.25, shadePow: 1.35, attackSec: 0.07, bellHz: 220, noise: 0.03 };
-  return { soft: 4.2, loud: 0.25, register: 0.25, shadePow: 2.2, attackSec: 0.038, bellHz: 1700, noise: 0.1 };
+  if (h < 90) return { soft: 2.55, loud: 0.05, register: 0.02, shadePow: 1.35, attackSec: 0.05, bellHz: 1800, noise: 0.16, shimmerRms: 0.03 };
+  if (h < 180) return { soft: 2.5, loud: 0.55, register: 1.15, shadePow: 1.35, attackSec: 0.06, bellHz: 480, noise: 0.05, shimmerRms: 0.025 };
+  if (h < 240) return { soft: 2.05, loud: 0.15, register: 0.35, shadePow: 1.35, attackSec: 0.042, bellHz: 620, noise: 0.07, shimmerRms: 0.032 };
+  if (h < 300) return { soft: 1.6, loud: 0.02, register: 1.25, shadePow: 1.35, attackSec: 0.07, bellHz: 220, noise: 0.03, shimmerRms: 0.048 };
+  return { soft: 4.2, loud: 0.25, register: 0.25, shadePow: 2.2, attackSec: 0.038, bellHz: 1700, noise: 0.1, shimmerRms: 0.018 };
 }
 
 /**
@@ -1307,7 +1345,7 @@ export function createBrass(sampleRate: number, hue: number, seed: number): Engi
 
   const life = createPitchLife(
     sampleRate,
-    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: spec.bellHz < 300 ? 3 : 1.5, vibratoGain: 0 },
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: spec.bellHz < 300 ? 3 : 1.5, vibratoGain: 0, shimmerRms: spec.shimmerRms },
     seed,
   );
   return {
@@ -1377,12 +1415,13 @@ interface BassSpec {
   noise: number;
   /** Finger noise that dies after the attack. Electric bass has it; a bow does not. */
   pluck: number;
+  shimmerRms: number;
 }
 
 function bassSpec(hue: number): BassSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 180) return { dark: 0.12, attackSec: 0.05, bodyHz: 70, noise: 0.035, pluck: 0 };
-  return { dark: 0.3, attackSec: 0.01, bodyHz: 92, noise: 0.015, pluck: 0.7 };
+  if (h < 180) return { dark: 0.12, attackSec: 0.05, bodyHz: 70, noise: 0.035, pluck: 0, shimmerRms: 0.043 };
+  return { dark: 0.3, attackSec: 0.01, bodyHz: 92, noise: 0.015, pluck: 0.7, shimmerRms: 0 };
 }
 
 /**
@@ -1420,8 +1459,8 @@ export function createBass(sampleRate: number, hue: number, seed: number): Engin
   const life = createPitchLife(
     sampleRate,
     spec.pluck > 0
-      ? { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.2, vibratoGain: 0 }
-      : { vibratoCents: 6, vibratoHz: 4.9, vibratoDelaySec: 0.3, wanderCents: 2.5, vibratoGain: 0.04 },
+      ? { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.2, vibratoGain: 0, shimmerRms: 0 }
+      : { vibratoCents: 6, vibratoHz: 4.9, vibratoDelaySec: 0.3, wanderCents: 2.5, vibratoGain: 0.04, shimmerRms: spec.shimmerRms },
     seed,
   );
   return {
@@ -1500,12 +1539,13 @@ interface ReedSpec {
   attackSec: number;
   noise: number;
   midMidi: number;
+  shimmerRms: number;
 }
 
 function reedSpec(hue: number): ReedSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 180) return { soft: 1.15, loud: 0.22, formantHz: 1500, attackSec: 0.032, noise: 0.04, midMidi: 72 };
-  return { soft: 1.55, loud: 0.18, formantHz: 540, attackSec: 0.048, noise: 0.028, midMidi: 62 };
+  if (h < 180) return { soft: 1.15, loud: 0.22, formantHz: 1500, attackSec: 0.032, noise: 0.04, midMidi: 72, shimmerRms: 0.025 };
+  return { soft: 1.55, loud: 0.18, formantHz: 540, attackSec: 0.048, noise: 0.028, midMidi: 62, shimmerRms: 0.028 };
 }
 
 /**
@@ -1539,7 +1579,7 @@ export function createReed(sampleRate: number, hue: number, seed: number): Engin
 
   const life = createPitchLife(
     sampleRate,
-    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.5, vibratoGain: 0 },
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.5, vibratoGain: 0, shimmerRms: spec.shimmerRms },
     seed,
   );
   return {
