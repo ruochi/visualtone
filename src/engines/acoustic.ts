@@ -1034,8 +1034,8 @@ interface BowSpec {
 function bowSpec(hue: number): BowSpec {
   const h = ((hue % 360) + 360) % 360;
   if (h < 120) return { dark: 0, attackSec: 0.028, bodyHz: 290, vibratoCents: 12, vibratoHz: 5.6 };
-  if (h < 240) return { dark: 0.15, attackSec: 0.04, bodyHz: 210, vibratoCents: 11, vibratoHz: 5.4 };
-  return { dark: 0.34, attackSec: 0.055, bodyHz: 125, vibratoCents: 9, vibratoHz: 5.2 };
+  if (h < 240) return { dark: 0.04, attackSec: 0.04, bodyHz: 210, vibratoCents: 11, vibratoHz: 5.4 };
+  return { dark: 0.1, attackSec: 0.055, bodyHz: 125, vibratoCents: 9, vibratoHz: 5.2 };
 }
 
 /** Helmholtz motion: harmonic partials of a bowed string. Hue picks violin, viola, or cello. */
@@ -1082,8 +1082,8 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
         const light = Math.min(1, Math.max(0, lightness));
         // A 1/n saw's flyback trips the click detector. An exponential slope stays rounded.
         // Real bows keep energy into the bridge hill, so the slope is shallower than a dark saw.
-        const tilt = Math.max(0.08, spec.dark * 0.28 + 0.3 - strike * 0.2 - (light - 0.5) * 0.05);
-        const cut = Math.max(500, 2200 + strike * 2400 - spec.dark * 800 + (light - 0.5) * 240);
+        const tilt = Math.max(0.06, spec.dark * 0.28 + 0.2 - strike * 0.09 - (light - 0.5) * 0.05);
+        const cut = Math.max(800, 5600 + strike * 3200 - spec.dark * 1500 + (light - 0.5) * 400);
         smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
         let energy = 0;
@@ -1260,6 +1260,8 @@ interface BrassSpec {
   loud: number;
   /** High notes stay darker by this much, even when loud. Horn does this; trumpet does not. */
   register: number;
+  /** How fast the soft darkness lets go. A saxophone opens up by mezzo-forte. */
+  shadePow: number;
   attackSec: number;
   bellHz: number;
   noise: number;
@@ -1267,11 +1269,11 @@ interface BrassSpec {
 
 function brassSpec(hue: number): BrassSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 90) return { soft: 2.55, loud: 0.05, register: 0.02, attackSec: 0.05, bellHz: 1800, noise: 0.16 };
-  if (h < 180) return { soft: 2.5, loud: 0.85, register: 1.15, attackSec: 0.06, bellHz: 480, noise: 0.05 };
-  if (h < 240) return { soft: 2.05, loud: 0.32, register: 0.35, attackSec: 0.042, bellHz: 620, noise: 0.07 };
-  if (h < 300) return { soft: 2.2, loud: 0.2, register: 1.25, attackSec: 0.07, bellHz: 220, noise: 0.03 };
-  return { soft: 3.1, loud: 0.42, register: 0.25, attackSec: 0.038, bellHz: 1700, noise: 0.1 };
+  if (h < 90) return { soft: 2.55, loud: 0.05, register: 0.02, shadePow: 1.35, attackSec: 0.05, bellHz: 1800, noise: 0.16 };
+  if (h < 180) return { soft: 2.5, loud: 0.55, register: 1.15, shadePow: 1.35, attackSec: 0.06, bellHz: 480, noise: 0.05 };
+  if (h < 240) return { soft: 2.05, loud: 0.15, register: 0.35, shadePow: 1.35, attackSec: 0.042, bellHz: 620, noise: 0.07 };
+  if (h < 300) return { soft: 1.6, loud: 0.02, register: 1.25, shadePow: 1.35, attackSec: 0.07, bellHz: 220, noise: 0.03 };
+  return { soft: 4.2, loud: 0.25, register: 0.25, shadePow: 2.2, attackSec: 0.038, bellHz: 1700, noise: 0.1 };
 }
 
 /**
@@ -1319,7 +1321,7 @@ export function createBrass(sampleRate: number, hue: number, seed: number): Engi
         const strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
         const high = Math.max(0, Math.min(1, (midi - 48) / 24));
-        const shade = Math.pow(1 - strike, 1.35);
+        const shade = Math.pow(1 - strike, spec.shadePow);
         const tilt = Math.max(
           0.045,
           spec.loud + spec.register * high * 1.15 + (spec.soft + high * 0.25) * shade - (light - 0.5) * 0.06,
@@ -1379,8 +1381,8 @@ interface BassSpec {
 
 function bassSpec(hue: number): BassSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 180) return { dark: 0.22, attackSec: 0.05, bodyHz: 70, noise: 0.035, pluck: 0 };
-  return { dark: 0.18, attackSec: 0.01, bodyHz: 92, noise: 0.015, pluck: 0.7 };
+  if (h < 180) return { dark: 0.12, attackSec: 0.05, bodyHz: 70, noise: 0.035, pluck: 0 };
+  return { dark: 0.3, attackSec: 0.01, bodyHz: 92, noise: 0.015, pluck: 0.7 };
 }
 
 /**
@@ -1390,7 +1392,7 @@ function bassSpec(hue: number): BassSpec {
 export function createBass(sampleRate: number, hue: number, seed: number): Engine {
   const spec = bassSpec(hue);
   const rng = mulberry32(seed || 1);
-  const N = 24;
+  const N = 40;
   const phases = new Float64Array(N);
   const gains = new Float64Array(N);
   const pluckGains = new Float64Array(N);
@@ -1432,7 +1434,7 @@ export function createBass(sampleRate: number, hue: number, seed: number): Engin
         freq = Math.min(sampleRate * 0.2, Math.max(28, midiToFrequency(midi)));
         const strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
-        const tilt = Math.max(0.12, spec.dark + 0.55 - strike * 0.42 - (light - 0.5) * 0.08);
+        const tilt = Math.max(0.08, spec.dark + 0.15 - strike * 0.15 - (light - 0.5) * 0.08);
         const brightTilt = Math.max(0.06, tilt - 0.35);
         let energy = 0;
         for (let n = 1; n <= N; n++) {
@@ -1497,12 +1499,13 @@ interface ReedSpec {
   formantHz: number;
   attackSec: number;
   noise: number;
+  midMidi: number;
 }
 
 function reedSpec(hue: number): ReedSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 180) return { soft: 1.15, loud: 0.22, formantHz: 1500, attackSec: 0.032, noise: 0.04 };
-  return { soft: 1.55, loud: 0.18, formantHz: 540, attackSec: 0.048, noise: 0.028 };
+  if (h < 180) return { soft: 1.15, loud: 0.22, formantHz: 1500, attackSec: 0.032, noise: 0.04, midMidi: 72 };
+  return { soft: 1.55, loud: 0.18, formantHz: 540, attackSec: 0.048, noise: 0.028, midMidi: 62 };
 }
 
 /**
@@ -1512,7 +1515,7 @@ function reedSpec(hue: number): ReedSpec {
 export function createReed(sampleRate: number, hue: number, seed: number): Engine {
   const spec = reedSpec(hue);
   const rng = mulberry32(seed || 1);
-  const N = 22;
+  const N = 32;
   const phases = new Float64Array(N);
   const gains = new Float64Array(N);
   let freq = 440;
@@ -1549,7 +1552,12 @@ export function createReed(sampleRate: number, hue: number, seed: number): Engin
         freq = Math.min(sampleRate * 0.22, Math.max(32, midiToFrequency(midi)));
         const strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
-        const tilt = Math.max(0.12, spec.loud + (spec.soft - spec.loud) * Math.pow(1 - strike, 1.25) - (light - 0.5) * 0.08);
+        // Below its middle register the formant sits over many harmonics, so the slope runs flatter.
+        const low = Math.max(0, Math.min(1, (spec.midMidi - midi) / 24));
+        const tilt = Math.max(
+          0.1,
+          (spec.loud + (spec.soft - spec.loud) * Math.pow(1 - strike, 1.25)) * (1 - low * 0.55) - (light - 0.5) * 0.08,
+        );
         let energy = 0;
         for (let n = 1; n <= N; n++) {
           const f = freq * n;
