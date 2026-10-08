@@ -13,7 +13,7 @@ import {
 } from './fx.js';
 import { applyGroove } from './groove.js';
 import { createTrackSampler, getTrackDuration, prepareTrackPoints } from './interpolator.js';
-import { BandDuck, Chorus, Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
+import { BandDuck, Biquad, Chorus, Compressor, StereoEq, keyframeAt, lfoValue } from './mix.js';
 import { expandNotes } from './notes.js';
 import { resampleChannels } from './resample.js';
 import { type Score, type Track, getChannelIndices, trackClips, type Clip } from './schema.js';
@@ -563,8 +563,11 @@ export function render(scoreIn: Score, options: RenderOptions = {}): RenderResul
   room.setParams(masterCfg.room ?? { size: 0.4, decay: 0.3, preDelayMs: 8, damping: 0.3, width: 0.6 });
   const delay = new StereoDelay(sampleRate, score.bpm, dlyCfg.beats / 4);
   delay.setFeedback(dlyCfg.feedback);
+  // A long tail on bass notes turns into a low rumble under the whole mix.
+  const hallHpL = new Biquad('highpass', sampleRate, 120);
+  const hallHpR = new Biquad('highpass', sampleRate, 120);
   for (let i = 0; i < numSamples; i++) {
-    const [hl, hr] = hall.processStereo(hallInL[i], hallInR[i]);
+    const [hl, hr] = hall.processStereo(hallHpL.process(hallInL[i]), hallHpR.process(hallInR[i]));
     revL[i] = hl;
     revR[i] = hr;
     const [ml, mr] = room.processStereo(roomInL[i], roomInR[i]);

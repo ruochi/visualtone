@@ -325,6 +325,50 @@ test('cymbal rings, a closed hat dies before a crash, and neither clicks', () =>
   );
 });
 
+function holdNote(engine: string, hue: number, midi: number, size: number, hold: number) {
+  const sr = 48000;
+  const score = ScoreSchema.parse({
+    sampleRate: sr,
+    duration: hold + 0.4,
+    seed: 3,
+    master: { loudness: -18, drive: 0 },
+    tracks: [{ id: 'n', hue, engine, channel: [0, 1], notes: [{ t: 0.05, y: midi, size, duration: hold, ease: 'hold' }] }],
+  });
+  const stem = render(score, { stems: true }).stems![0];
+  const mono = new Float32Array(stem.l.length);
+  for (let i = 0; i < mono.length; i++) mono[i] = (stem.l[i] + stem.r[i]) * 0.5;
+  return { mono, sr };
+}
+
+test('a held high flute keeps sounding and carries no DC', () => {
+  for (const midi of [72, 84]) {
+    const { mono, sr } = holdNote('wind', 30, midi, 0.7, 2.4);
+    const rmsDb = (a: number, b: number) => {
+      let s = 0;
+      for (let i = Math.round(a * sr); i < Math.round(b * sr); i++) s += mono[i] * mono[i];
+      return 10 * Math.log10(s / ((b - a) * sr) + 1e-20);
+    };
+    const early = rmsDb(0.3, 0.6);
+    const late = rmsDb(2.0, 2.4);
+    assert.ok(late > early - 3, `C${midi / 12 - 1} fell from ${early.toFixed(1)} to ${late.toFixed(1)} dB`);
+    let mean = 0;
+    for (let i = Math.round(0.3 * sr); i < Math.round(2.4 * sr); i++) mean += mono[i];
+    mean /= 2.1 * sr;
+    assert.ok(Math.abs(mean) < 0.01 * Math.pow(10, early / 20), `DC ${mean}`);
+  }
+});
+
+test('bowed strings lean into vibrato near 5.5 Hz', () => {
+  for (const hue of [40, 160, 300]) {
+    const { mono, sr } = holdNote('bow', hue, 62, 0.6, 2);
+    const note = analyzeNote(mono, sr, { start: 0, stop: 2.4, noteOff: 2.05, midi: 62 });
+    assert.ok(note.pitch.vibratoRateHz !== null && Math.abs(note.pitch.vibratoRateHz - 5.4) < 0.6, `hue ${hue} rate ${note.pitch.vibratoRateHz}`);
+    assert.ok((note.pitch.vibratoDepthCents ?? 0) > 5, `hue ${hue} depth ${note.pitch.vibratoDepthCents}`);
+    assert.ok(Math.abs(note.centsOff ?? 99) < 6, `hue ${hue} cents ${note.centsOff}`);
+    assert.equal(note.artifacts.clicks, 0);
+  }
+});
+
 test('pluck stays in tune at C6', () => {
   const sr = 48000;
   const score = ScoreSchema.parse({

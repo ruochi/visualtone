@@ -5,6 +5,75 @@ export interface Engine {
   processSample(midi: number, size: number, lightness: number): [number, number];
 }
 
+interface PitchLifeSpec {
+  /** Vibrato depth in cents once it has grown in. */
+  vibratoCents: number;
+  vibratoHz: number;
+  /** A player starts the note straight and leans into vibrato after this long. */
+  vibratoDelaySec: number;
+  /** Slow random pitch motion, standard deviation in cents. */
+  wanderCents: number;
+  /** Bow pressure follows the vibrato, so the level moves with it by this fraction. */
+  vibratoGain: number;
+}
+
+interface PitchLife {
+  start(): void;
+  /** Advance one sample. Sets `ratio` (frequency multiplier) and `gain`. */
+  step(): void;
+  ratio: number;
+  gain: number;
+}
+
+/** Held notes from a player never sit on one frequency. Recordings show vibrato on strings and a few cents of drift on winds. */
+function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: number): PitchLife {
+  const rng = mulberry32(((seed || 1) * 2654435761) >>> 0 || 7);
+  const gauss = () => (rng() + rng() + rng() - 1.5) * 2;
+  const wanderAmp = spec.wanderCents * 1.25;
+  const wanderInc = 1 / (0.3 * sampleRate);
+  const rampSec = 0.35;
+  let t = 0;
+  let phase = 0;
+  let w0 = 0;
+  let w1 = 0;
+  let wPos = 0;
+  const life: PitchLife = {
+    ratio: 1,
+    gain: 1,
+    start() {
+      t = 0;
+      phase = 0;
+      w0 = 0;
+      w1 = gauss();
+      wPos = 0;
+    },
+    step() {
+      wPos += wanderInc;
+      if (wPos >= 1) {
+        wPos -= 1;
+        w0 = w1;
+        w1 = gauss();
+      }
+      const k = 0.5 - 0.5 * Math.cos(Math.PI * wPos);
+      const wander = w0 + (w1 - w0) * k;
+      let cents = wander * wanderAmp;
+      let vib = 0;
+      if (spec.vibratoCents > 0) {
+        const grow = Math.max(0, Math.min(1, (t - spec.vibratoDelaySec) / rampSec));
+        const depth = spec.vibratoCents * grow * grow * (3 - 2 * grow);
+        phase += (2 * Math.PI * spec.vibratoHz * (1 + wander * 0.03)) / sampleRate;
+        if (phase > Math.PI * 2) phase -= Math.PI * 2;
+        vib = Math.sin(phase) * (depth / Math.max(1e-9, spec.vibratoCents));
+        cents += vib * spec.vibratoCents;
+      }
+      t += 1 / sampleRate;
+      life.ratio = Math.exp(cents * (Math.LN2 / 1200));
+      life.gain = 1 + vib * spec.vibratoGain;
+    },
+  };
+  return life;
+}
+
 interface PluckString {
   buf: Float32Array;
   w: number;
@@ -778,6 +847,21 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   let alive = 0;
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
+  let loopDelay = 32;
+  let filterDelay = 0;
+  let boreHpPole = 0;
+  let boreX = 0;
+  let boreY = 0;
+  const life = createPitchLife(
+    sampleRate,
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: clarinet ? 2 : 3, vibratoGain: 0 },
+    seed,
+  );
+  const dcPole = Math.exp((-2 * Math.PI * 24) / sampleRate);
+  let dcX = 0;
+  let dcY = 0;
+  let dcX2 = 0;
+  let dcY2 = 0;
 
   return {
     setRelease(ms: number) {
@@ -809,8 +893,27 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         // A hard jet on a long clarinet bore sounds sharp. Lengthen that loop a little.
         const lowTube = clarinet ? Math.max(0, Math.min(1, (period - 400) / 350)) : 0;
         const pull = 1 + strike * strike * 0.0021 * lowTube;
-        delaySamp = Math.max(2, loop * pull - avgDelay);
+        // An open bore with a jet gain above 1 also amplifies DC, and the DC mode grows until tanh
+        // saturates and the note dies. A highpass in the loop blocks it; its phase lead is paid back in delay.
+        let hpLead = 0;
+        boreHpPole = 0;
+        if (!clarinet) {
+          boreHpPole = Math.exp((-2 * Math.PI * freq * 0.08) / sampleRate);
+          const wn = (2 * Math.PI) / period;
+          const lead =
+            Math.atan2(Math.sin(wn), 1 - Math.cos(wn)) - Math.atan2(boreHpPole * Math.sin(wn), 1 - boreHpPole * Math.cos(wn));
+          hpLead = lead / wn;
+        }
+        boreX = 0;
+        boreY = 0;
+        // Without the DC bias the jet runs at full slope, and its saturation lags the loop by a few cents.
+        const jetLag = clarinet ? 1 : Math.pow(2, -(8.5 + strike * 12) / 1200);
+        delaySamp = Math.max(2, loop * pull * jetLag - avgDelay + hpLead);
         frac = delaySamp - Math.floor(delaySamp);
+        loopDelay = delaySamp;
+        filterDelay = avgDelay - hpLead;
+        life.start();
+        dcX = dcY = dcX2 = dcY2 = 0;
         buf.fill(0);
         w = 0;
         prev = 0;
@@ -857,6 +960,9 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         return [0, 0];
       }
 
+      life.step();
+      delaySamp = Math.max(2, (loopDelay + filterDelay) / life.ratio - filterDelay);
+      frac = delaySamp - Math.floor(delaySamp);
       const L = buf.length;
       const age0 = Math.max(1, Math.floor(delaySamp));
       const i0 = (w - age0 + L * 4) % L;
@@ -869,7 +975,13 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
       nz = white * (1 - noisePole) + nz * noisePole;
       const breath = nz * env * 0.0012;
 
-      const shaped = Math.tanh(jet * filtered);
+      let bore = filtered;
+      if (boreHpPole > 0) {
+        bore = filtered - boreX + boreHpPole * boreY;
+        boreX = filtered;
+        boreY = bore;
+      }
+      const shaped = Math.tanh(jet * bore);
       const sq = shaped * shaped;
       sqAvg = sqAvg * 0.999 + sq * 0.001;
       const evenRaw = sq - sqAvg;
@@ -897,6 +1009,14 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         } else evenDc += (sq - evenDc) * 0.002;
         out += evenMix * (sq - evenDc);
       }
+      // The even jet term and tanh both leave a DC offset in the bore. It carries no pitch.
+      const hp1 = out - dcX + dcPole * dcY;
+      dcX = out;
+      dcY = hp1;
+      const hp2 = hp1 - dcX2 + dcPole * dcY2;
+      dcX2 = hp1;
+      dcY2 = hp2;
+      out = hp2;
       const air = nz * env * (0.008 + strike * 0.02);
       return [out + air, out + air * 0.9];
     },
@@ -907,13 +1027,15 @@ interface BowSpec {
   dark: number;
   attackSec: number;
   bodyHz: number;
+  vibratoCents: number;
+  vibratoHz: number;
 }
 
 function bowSpec(hue: number): BowSpec {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 120) return { dark: 0, attackSec: 0.028, bodyHz: 290 };
-  if (h < 240) return { dark: 0.15, attackSec: 0.04, bodyHz: 210 };
-  return { dark: 0.34, attackSec: 0.055, bodyHz: 125 };
+  if (h < 120) return { dark: 0, attackSec: 0.028, bodyHz: 290, vibratoCents: 12, vibratoHz: 5.6 };
+  if (h < 240) return { dark: 0.15, attackSec: 0.04, bodyHz: 210, vibratoCents: 11, vibratoHz: 5.4 };
+  return { dark: 0.34, attackSec: 0.055, bodyHz: 125, vibratoCents: 9, vibratoHz: 5.2 };
 }
 
 /** Helmholtz motion: harmonic partials of a bowed string. Hue picks violin, viola, or cello. */
@@ -942,6 +1064,11 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
   let bz2 = 0;
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
+  const life = createPitchLife(
+    sampleRate,
+    { vibratoCents: spec.vibratoCents, vibratoHz: spec.vibratoHz, vibratoDelaySec: 0.22, wanderCents: 2, vibratoGain: 0.05 },
+    seed,
+  );
 
   return {
     setRelease(ms: number) {
@@ -976,6 +1103,7 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
         bz1 = 0;
         bz2 = 0;
         env = 0;
+        life.start();
       }
       wasOn = on;
       if (!on && env < 1e-5) return [0, 0];
@@ -983,10 +1111,12 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
       const dest = on ? size : 0;
       env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
 
+      life.step();
+      const step = (2 * Math.PI * freq * life.ratio) / sampleRate;
       let s = 0;
       for (let n = 0; n < N; n++) {
         if (gains[n] === 0) continue;
-        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
         s += Math.sin(phases[n]) * gains[n];
       }
@@ -1001,7 +1131,7 @@ export function createBow(sampleRate: number, hue: number, seed: number): Engine
       const body = bodyB0 * bowed + bz1;
       bz1 = -bodyA1 * body + bz2;
       bz2 = bodyB2 * bowed - bodyA2 * body;
-      const out = (bowed + body * 0.16) * env * 0.55;
+      const out = (bowed + body * 0.16) * env * life.gain * 0.55;
       return [out * 1.03, out * 0.97];
     },
   };
@@ -1173,6 +1303,11 @@ export function createBrass(sampleRate: number, hue: number, seed: number): Engi
   let bz2 = 0;
   let bellMix = 0.12;
 
+  const life = createPitchLife(
+    sampleRate,
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: spec.bellHz < 300 ? 3 : 1.5, vibratoGain: 0 },
+    seed,
+  );
   return {
     setRelease(ms: number) {
       releaseSec = Math.max(0.02, ms / 1000);
@@ -1206,16 +1341,19 @@ export function createBrass(sampleRate: number, hue: number, seed: number): Engi
         bz1 = 0;
         bz2 = 0;
         env = 0;
+        life.start();
       }
       wasOn = on;
       if (!on && env < 1e-5) return [0, 0];
       const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
       const dest = on ? size : 0;
       env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      life.step();
+      const step = (2 * Math.PI * freq * life.ratio) / sampleRate;
       let s = 0;
       for (let n = 0; n < N; n++) {
         if (gains[n] === 0) continue;
-        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
         s += Math.sin(phases[n]) * gains[n];
       }
@@ -1224,7 +1362,7 @@ export function createBrass(sampleRate: number, hue: number, seed: number): Engi
       const body = bodyB0 * s + bz1;
       bz1 = -bodyA1 * body + bz2;
       bz2 = bodyB2 * s - bodyA2 * body;
-      const out = (s + body * bellMix + nz * noiseAmp) * env * 0.48;
+      const out = (s + body * bellMix + nz * noiseAmp) * env * life.gain * 0.48;
       return [out * 1.02, out * 0.98];
     },
   };
@@ -1277,6 +1415,13 @@ export function createBass(sampleRate: number, hue: number, seed: number): Engin
   let bz1 = 0;
   let bz2 = 0;
 
+  const life = createPitchLife(
+    sampleRate,
+    spec.pluck > 0
+      ? { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.2, vibratoGain: 0 }
+      : { vibratoCents: 6, vibratoHz: 4.9, vibratoDelaySec: 0.3, wanderCents: 2.5, vibratoGain: 0.04 },
+    seed,
+  );
   return {
     setRelease(ms: number) {
       releaseSec = Math.max(0.02, ms / 1000);
@@ -1313,6 +1458,7 @@ export function createBass(sampleRate: number, hue: number, seed: number): Engin
         bz1 = 0;
         bz2 = 0;
         env = 0;
+        life.start();
       }
       wasOn = on;
       if (!on && env < 1e-5 && finger < 1e-4) return [0, 0];
@@ -1321,11 +1467,13 @@ export function createBass(sampleRate: number, hue: number, seed: number): Engin
       env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
       pluckEnv *= pluckDec;
       finger *= Math.exp(-1 / (0.018 * sampleRate));
+      life.step();
+      const step = (2 * Math.PI * freq * life.ratio) / sampleRate;
       let s = 0;
       let p = 0;
       for (let n = 0; n < N; n++) {
         if (gains[n] === 0 && pluckGains[n] === 0) continue;
-        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
         const sine = Math.sin(phases[n]);
         s += sine * gains[n];
@@ -1337,7 +1485,7 @@ export function createBass(sampleRate: number, hue: number, seed: number): Engin
       const body = bodyB0 * bodyIn + bz1;
       bz1 = -bodyA1 * body + bz2;
       bz2 = bodyB2 * bodyIn - bodyA2 * body;
-      const out = (bodyIn + body * (spec.pluck > 0 ? 0.16 : 0.08) + nz * (noiseAmp + finger)) * env * 0.5;
+      const out = (bodyIn + body * (spec.pluck > 0 ? 0.16 : 0.08) + nz * (noiseAmp + finger)) * env * life.gain * 0.5;
       return [out * 1.02, out * 0.98];
     },
   };
@@ -1386,6 +1534,11 @@ export function createReed(sampleRate: number, hue: number, seed: number): Engin
   let bz2 = 0;
   let formantMix = 0.2;
 
+  const life = createPitchLife(
+    sampleRate,
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: 1.5, vibratoGain: 0 },
+    seed,
+  );
   return {
     setRelease(ms: number) {
       releaseSec = Math.max(0.02, ms / 1000);
@@ -1414,16 +1567,19 @@ export function createReed(sampleRate: number, hue: number, seed: number): Engin
         bz1 = 0;
         bz2 = 0;
         env = 0;
+        life.start();
       }
       wasOn = on;
       if (!on && env < 1e-5) return [0, 0];
       const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
       const dest = on ? size : 0;
       env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
+      life.step();
+      const step = (2 * Math.PI * freq * life.ratio) / sampleRate;
       let s = 0;
       for (let n = 0; n < N; n++) {
         if (gains[n] === 0) continue;
-        phases[n] += (2 * Math.PI * freq * (n + 1)) / sampleRate;
+        phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
         s += Math.sin(phases[n]) * gains[n];
       }
@@ -1432,7 +1588,7 @@ export function createReed(sampleRate: number, hue: number, seed: number): Engin
       const body = bodyB0 * s + bz1;
       bz1 = -bodyA1 * body + bz2;
       bz2 = bodyB2 * s - bodyA2 * body;
-      const out = (s + body * formantMix + nz * noiseAmp) * env * 0.46;
+      const out = (s + body * formantMix + nz * noiseAmp) * env * life.gain * 0.46;
       return [out * 1.03, out * 0.97];
     },
   };
@@ -1530,7 +1686,7 @@ export function createCymbal(sampleRate: number, hue: number, seed: number): Eng
         alive = 0;
         return [0, 0];
       }
-      return [lp * 0.85, (lp * 0.7 + hp * 0.15)];
+      return [lp * 3.4, lp * 2.8 + hp * 0.6];
     },
   };
 }
