@@ -87,6 +87,11 @@ export interface NoteFeatures {
     melFrames: number[][];
     /** High partials reach half their peak this many ms after the low ones. Brass is positive; a hammer is negative. */
     brightnessLagMs: number | null;
+    /**
+     * Sustain energy in four bands, dB against the whole spectrum.
+     * Below 0.7·f0, 1–2 kHz, 2–4 kHz, 4–8 kHz. The first is null without a pitch.
+     */
+    bandShareDb: (number | null)[];
   };
   harmonics: {
     /** Partials 1..24, dB against the loudest. Null where no partial was found. */
@@ -621,6 +626,7 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
       hopSec: 0,
       melFrames: [],
       brightnessLagMs: null,
+      bandShareDb: [null, null, null, null],
     },
     harmonics: {
       amplitudesDb: [],
@@ -929,6 +935,10 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
   const kMax = Math.min(sN / 2 - 1, Math.floor(fMax / sBin));
   const frames: { t: number; e: number; centroid: number; flat: number; roll: number; mel: number[]; low: number; high: number }[] = [];
   const fSplit = f0Yin ?? 0;
+  const bandSum = [0, 0, 0, 0];
+  let bandTotal = 0;
+  let bandFrames = 0;
+  const sustainOff = opts.noteOff !== undefined ? opts.noteOff - onsetSec : Infinity;
   for (let c = onsetSample; c < x.length; c += sHop) {
     const P = powerSpectrum(x, c - sN / 2, sN, sWin, sRe, sIm);
     let e = 0;
@@ -976,8 +986,31 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       for (let k = Math.max(1, Math.floor((0.5 * fSplit) / sBin)); k <= kLo2; k++) low += P[k];
       for (let k = kHi1; k <= kHi2; k++) high += P[k];
     }
+    const tFrame = (c - onsetSample) / sr;
+    if (tFrame >= 0.2 && tFrame < sustainOff - 0.05) {
+      let sub = 0;
+      let mid = 0;
+      let presence = 0;
+      let air = 0;
+      let tot = 0;
+      const kSub = fSplit > 0 ? Math.floor((0.7 * fSplit) / sBin) : 0;
+      for (let k = 1; k <= kMax; k++) {
+        const f = k * sBin;
+        tot += P[k];
+        if (kSub > 0 && k <= kSub) sub += P[k];
+        if (f >= 1000 && f < 2000) mid += P[k];
+        if (f >= 2000 && f < 4000) presence += P[k];
+        if (f >= 4000 && f < 8000) air += P[k];
+      }
+      bandSum[0] += sub;
+      bandSum[1] += mid;
+      bandSum[2] += presence;
+      bandSum[3] += air;
+      bandTotal += tot;
+      bandFrames++;
+    }
     frames.push({
-      t: (c - onsetSample) / sr,
+      t: tFrame,
       e,
       centroid: den > 0 ? num / den : 0,
       flat: flatN > 0 ? Math.exp(logSum / flatN) / (linSum / flatN) : 0,
@@ -987,6 +1020,11 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       high,
     });
   }
+  const shareOf = (v: number) => Math.max(-80, 10 * Math.log10((v + 1e-30) / Math.max(bandTotal, 1e-30)));
+  const bandShareDb: (number | null)[] =
+    bandFrames > 0 && bandTotal > 0
+      ? [fSplit > 0 ? shareOf(bandSum[0]) : null, shareOf(bandSum[1]), shareOf(bandSum[2]), shareOf(bandSum[3])]
+      : [null, null, null, null];
   let brightnessLagMs: number | null = null;
   if (fSplit > 0) {
     const early = frames.filter((f) => f.t <= 0.25);
@@ -1318,6 +1356,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       hopSec: sHop / sr,
       melFrames,
       brightnessLagMs,
+      bandShareDb,
     },
     harmonics: {
       amplitudesDb,
@@ -1686,6 +1725,29 @@ export function compareTimbre(
       const v = rmsOf(diffs);
       const signed = diffs.reduce((s, d) => s + d, 0) / diffs.length;
       add({ id: 'gapNoise', label: '谐波间隙噪声', unit: 'dB', value: v, ref: null, error: v / 4, detail: `${r1(signed)}` });
+    }
+  }
+  {
+    const a = ours.spectrum.bandShareDb;
+    const b = ref.spectrum.bandShareDb;
+    const diffs: number[] = [];
+    for (let i = 0; i < 4; i++) {
+      const x = a[i];
+      const y = b[i];
+      if (x === null || x === undefined || y === null || y === undefined) continue;
+      diffs.push(x - y);
+    }
+    if (diffs.length >= 2) {
+      const v = rmsOf(diffs);
+      add({
+        id: 'bandShare',
+        label: '频段占比',
+        unit: 'dB',
+        value: a[2] ?? null,
+        ref: b[2] ?? null,
+        error: v / 3,
+        detail: diffs.map((d) => r1(d)).join(','),
+      });
     }
   }
   if (ours.motion.topPartialFrac !== null && ref.motion.topPartialFrac !== null) {

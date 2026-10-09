@@ -261,6 +261,22 @@ test('timbre: a straight ladder is smooth, and gap noise is measured', () => {
   assert.ok(few.motion.topPartialFrac! < 0.35, `few ${few.motion.topPartialFrac}`);
 });
 
+test('timbre: band share hears a 3 kHz peak and low rumble', () => {
+  const plain = analyzeNote(tone({ f0: 220, amps: saw(8), seconds: 1.2 }), SR);
+  const bright = analyzeNote(tone({ f0: 220, amps: saw(8), seconds: 1.2, extra: [{ hz: 3000, amp: 0.8 }] }), SR);
+  assert.ok(
+    bright.spectrum.bandShareDb[2]! > plain.spectrum.bandShareDb[2]! + 6,
+    `2–4 kHz ${plain.spectrum.bandShareDb[2]} -> ${bright.spectrum.bandShareDb[2]}`,
+  );
+  const rumble = analyzeNote(tone({ f0: 220, amps: saw(8), seconds: 1.2, extra: [{ hz: 40, amp: 0.5 }] }), SR);
+  assert.ok(
+    rumble.spectrum.bandShareDb[0]! > plain.spectrum.bandShareDb[0]! + 6,
+    `sub ${plain.spectrum.bandShareDb[0]} -> ${rumble.spectrum.bandShareDb[0]}`,
+  );
+  const metric = compareTimbre(bright, plain).metrics.find((m) => m.id === 'bandShare');
+  assert.ok(metric && metric.error > 1, `error ${metric?.error}`);
+});
+
 test('analyzeProbe flags an out-of-tune cell', () => {
   const cells = probeLayout({ pitches: [60, 72], sizes: [0.5], noteSec: 0.5, tailSec: 0.3 });
   const total = Math.ceil(cells[cells.length - 1].stop * SR);

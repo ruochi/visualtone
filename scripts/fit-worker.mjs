@@ -83,6 +83,10 @@ parentPort.on('message', (msg) => {
       'vibrato.depth': 1,
       centroid: 0.6,
       hnr: 0.5,
+      bandShare: 1.5,
+      attackNoise: 0.8,
+      partialDecay: 0.8,
+      decay: 0.8,
     };
     let picture = 0;
     let pictureWeight = 0;
