@@ -296,8 +296,38 @@ if (usesRing) {
   console.log(`ring start loss ${bestLoss.toFixed(3)}`);
 }
 
+if (picture && preset.body) best['body.seed'] = Math.round(preset.body.seed ?? 1);
+
+const clamp = (value, spec) => Math.min(spec.max, Math.max(spec.min, value));
+async function descend(fromRound, toRound) {
+  for (let round = fromRound; round < toRound; round++) {
+    for (const spec of specs) {
+      const step = spec.step / 2 ** round;
+      let moved = false;
+      for (const dir of [1, -1]) {
+        const value = clamp(best[spec.path] + dir * step, spec);
+        if (Math.abs(value - best[spec.path]) < 1e-9) continue;
+        const trial = { ...best, [spec.path]: value };
+        const { loss } = await evaluate(trial, false, ['valid']);
+        if (loss < bestLoss - 1e-4) {
+          best = trial;
+          bestLoss = loss;
+          moved = true;
+          console.log(`  r${round} ${spec.path} -> ${value.toFixed(4)}  loss ${loss.toFixed(3)}`);
+          break;
+        }
+      }
+      if (!moved) process.stdout.write('.');
+    }
+    console.log(`\nround ${round} loss ${bestLoss.toFixed(3)}`);
+  }
+}
+
+await descend(0, rounds);
+
+// Peak locations matter once the peaks are steep. Search seeds on the tuned shape, then polish.
 if (picture && preset.body) {
-  best['body.seed'] = Math.round(preset.body.seed ?? 1);
+  const seedBefore = best['body.seed'];
   let seedLoss = bestLoss;
   for (let seed = 1; seed <= 24; seed++) {
     const trial = { ...best, 'body.seed': seed };
@@ -310,29 +340,7 @@ if (picture && preset.body) {
     } else process.stdout.write('.');
   }
   console.log(`\nbody seed ${best['body.seed']} loss ${bestLoss.toFixed(3)}`);
-}
-
-const clamp = (value, spec) => Math.min(spec.max, Math.max(spec.min, value));
-for (let round = 0; round < rounds; round++) {
-  for (const spec of specs) {
-    const step = spec.step / 2 ** round;
-    let moved = false;
-    for (const dir of [1, -1]) {
-      const value = clamp(best[spec.path] + dir * step, spec);
-      if (Math.abs(value - best[spec.path]) < 1e-9) continue;
-      const trial = { ...best, [spec.path]: value };
-      const { loss } = await evaluate(trial, false, ['valid']);
-      if (loss < bestLoss - 1e-4) {
-        best = trial;
-        bestLoss = loss;
-        moved = true;
-        console.log(`  r${round} ${spec.path} -> ${value.toFixed(4)}  loss ${loss.toFixed(3)}`);
-        break;
-      }
-    }
-    if (!moved) process.stdout.write('.');
-  }
-  console.log(`\nround ${round} loss ${bestLoss.toFixed(3)}`);
+  if (best['body.seed'] !== seedBefore) await descend(rounds - 1, rounds);
 }
 
 if (best['body.count'] !== undefined) best['body.count'] = Math.round(best['body.count']);
