@@ -323,9 +323,49 @@ async function descend(fromRound, toRound) {
   }
 }
 
-await descend(0, rounds);
+const warm = process.env.FIT_WARM === '1';
+if (warm) {
+  try {
+    const saved = JSON.parse(readFileSync(join(root, 'references/fit', `${instrument}.json`), 'utf8'));
+    const params = saved.followup?.body?.params;
+    if (params) {
+      best = { ...best, ...params };
+      bestLoss = (await evaluate(best, false, ['valid'])).loss;
+      console.log(`warm start loss ${bestLoss.toFixed(3)}`);
+    }
+  } catch (err) {
+    console.log(`warm start skipped: ${err.message}`);
+  }
+} else {
+  await descend(0, rounds);
+}
 
-// Peak locations matter once the peaks are steep. Search seeds on the tuned shape, then polish.
+// A step of 2 dB can miss a steeper body that moves partials with the vibrato.
+let bodyMoved = false;
+if (picture && preset.body && best['body.db'] !== undefined) {
+  const dbSpec = specs.find((s) => s.path === 'body.db');
+  const qSpec = specs.find((s) => s.path === 'body.qHi');
+  const db0 = best['body.db'];
+  const q0 = best['body.qHi'];
+  for (const db of [db0 - 4, db0 + 4, db0 + 8]) {
+    for (const qHi of [q0 - 15, q0 + 20, q0 + 35]) {
+      const d = clamp(db, dbSpec);
+      const q = clamp(qHi, qSpec);
+      if (Math.abs(d - db0) < 1e-6 && Math.abs(q - q0) < 1e-6) continue;
+      const trial = { ...best, 'body.db': d, 'body.qHi': q };
+      const { loss } = await evaluate(trial, false, ['valid']);
+      if (loss < bestLoss - 1e-4) {
+        best = trial;
+        bestLoss = loss;
+        bodyMoved = true;
+        console.log(`  coarse body.db ${d.toFixed(2)} body.qHi ${q.toFixed(1)}  loss ${loss.toFixed(3)}`);
+      } else process.stdout.write('.');
+    }
+  }
+  console.log(`\ncoarse body loss ${bestLoss.toFixed(3)} db ${best['body.db']} qHi ${best['body.qHi']}`);
+}
+
+// Peak locations matter once the peaks are steep. Search seeds on that shape, then retune.
 if (picture && preset.body) {
   const seedBefore = best['body.seed'];
   let seedLoss = bestLoss;
@@ -340,7 +380,8 @@ if (picture && preset.body) {
     } else process.stdout.write('.');
   }
   console.log(`\nbody seed ${best['body.seed']} loss ${bestLoss.toFixed(3)}`);
-  if (best['body.seed'] !== seedBefore) await descend(rounds - 1, rounds);
+  if (bodyMoved) await descend(1, 3);
+  else if (best['body.seed'] !== seedBefore) await descend(rounds - 1, rounds);
 }
 
 if (best['body.count'] !== undefined) best['body.count'] = Math.round(best['body.count']);
@@ -402,7 +443,11 @@ const report =
       };
 writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
 const shown = report.followup?.body ?? report.after;
-console.log(`fit excess ${report.before?.fitExcess} -> ${shown.fitExcess}  loss ${shown.fitLoss}`);
-console.log(`holdout excess ${report.before?.holdoutExcess} -> ${shown.holdoutExcess}  loss ${shown.holdoutLoss}`);
+console.log(
+  `valid excess ${meanExcess(beforeEval.rows).toFixed(3)} -> ${shown.fitExcess}  loss ${beforeEval.loss.toFixed(3)} -> ${shown.fitLoss}`,
+);
+console.log(
+  `holdout excess ${meanExcess(beforeHold.rows).toFixed(3)} -> ${shown.holdoutExcess}  loss ${shown.holdoutLoss}`,
+);
 console.log('wrote', outPath);
 for (const w of workers) await w.worker.terminate();
