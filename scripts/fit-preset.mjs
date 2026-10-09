@@ -183,10 +183,10 @@ function pictureSpec(preset) {
   if (preset.lowpass) specs.push(span('lowpass.hz', 2800, 14000, 1200));
   if (preset.body) {
     specs.push(
-      span('body.count', 12, 64, 8),
-      span('body.qLo', 20, 50, 6),
-      span('body.qHi', 40, 90, 10),
-      span('body.db', 2, 16, 2),
+      span('body.count', 16, 480, 32),
+      span('body.qLo', 16, 140, 8),
+      span('body.qHi', 40, 220, 12),
+      span('body.db', 1, 16, 1),
       span('life.vibratoDepthJitter', 0, 0.2, 0.04),
       span('life.vibratoRateJitter', 0, 0.15, 0.03),
     );
@@ -340,29 +340,43 @@ if (warm) {
   await descend(0, rounds);
 }
 
-// A step of 2 dB can miss a steeper body that moves partials with the vibrato.
+// Sparse peaks leave most partials on a flat stretch, so vibrato does not move them.
+// These corners pack narrow peaks densely enough that the median partial sits on a slope.
 let bodyMoved = false;
 if (picture && preset.body && best['body.db'] !== undefined) {
+  const countSpec = specs.find((s) => s.path === 'body.count');
+  const qLoSpec = specs.find((s) => s.path === 'body.qLo');
+  const qHiSpec = specs.find((s) => s.path === 'body.qHi');
   const dbSpec = specs.find((s) => s.path === 'body.db');
-  const qSpec = specs.find((s) => s.path === 'body.qHi');
-  const db0 = best['body.db'];
-  const q0 = best['body.qHi'];
-  for (const db of [db0 - 4, db0 + 4, db0 + 8]) {
-    for (const qHi of [q0 - 15, q0 + 20, q0 + 35]) {
-      const d = clamp(db, dbSpec);
-      const q = clamp(qHi, qSpec);
-      if (Math.abs(d - db0) < 1e-6 && Math.abs(q - q0) < 1e-6) continue;
-      const trial = { ...best, 'body.db': d, 'body.qHi': q };
-      const { loss } = await evaluate(trial, false, ['valid']);
-      if (loss < bestLoss - 1e-4) {
-        best = trial;
-        bestLoss = loss;
-        bodyMoved = true;
-        console.log(`  coarse body.db ${d.toFixed(2)} body.qHi ${q.toFixed(1)}  loss ${loss.toFixed(3)}`);
-      } else process.stdout.write('.');
-    }
+  const corners = [
+    [160, 40, 120, 4],
+    [320, 50, 160, 3],
+    [320, 60, 180, 5],
+    [240, 30, 100, 6],
+    [480, 80, 200, 4],
+    [80, 24, 90, 10],
+  ];
+  for (const [count, qLo, qHi, db] of corners) {
+    const trial = {
+      ...best,
+      'body.count': clamp(count, countSpec),
+      'body.qLo': clamp(qLo, qLoSpec),
+      'body.qHi': clamp(qHi, qHiSpec),
+      'body.db': clamp(db, dbSpec),
+    };
+    const { loss } = await evaluate(trial, false, ['valid']);
+    if (loss < bestLoss - 1e-4) {
+      best = trial;
+      bestLoss = loss;
+      bodyMoved = true;
+      console.log(
+        `  dense count ${trial['body.count']} q ${trial['body.qLo']}-${trial['body.qHi']} db ${trial['body.db']}  loss ${loss.toFixed(3)}`,
+      );
+    } else process.stdout.write('.');
   }
-  console.log(`\ncoarse body loss ${bestLoss.toFixed(3)} db ${best['body.db']} qHi ${best['body.qHi']}`);
+  console.log(
+    `\ndense body loss ${bestLoss.toFixed(3)} count ${best['body.count']} q ${best['body.qLo']}-${best['body.qHi']} db ${best['body.db']}`,
+  );
 }
 
 // Peak locations matter once the peaks are steep. Search seeds on that shape, then retune.
