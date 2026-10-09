@@ -71,6 +71,12 @@ export function printFeatures(f: NoteFeatures): void {
   console.log(
     `life      shimmer ${f1(f.envelope.shimmerDb)} dB  flutter ${f1(h.flutterDb)} dB  jitter ${f1(f.pitch.jitterCents)} cents  high-lag ${f1(f.spectrum.brightnessLagMs, 0)} ms`,
   );
+  const g = f.motion.gapNoiseDb.map((v) => f1(v)).join('/');
+  console.log(
+    `motion    vib-am ${f1(f.motion.vibratoAmDb)} dB  corr ${f1(f.motion.amCorr, 2)}  opposite ${f1(f.motion.amOpposite, 2)}  ` +
+      `ladder ${f1(f.motion.ladderJagDb)} dB  gap ${g}  top ${f1(f.motion.topPartialFrac, 2)}  ` +
+      `vib-cv ${f1(f.pitch.vibratoDepthCv, 2)}/${f1(f.pitch.vibratoRateCv, 2)}`,
+  );
   console.log(`peaks     ${f.peaks.map((p) => (p.ratio === null ? `${p.hz.toFixed(0)}Hz` : `${p.ratio.toFixed(3)}`) + `(${p.db.toFixed(0)})`).join(' ')}`);
   console.log(`artifacts clicks ${f.artifacts.clicks}  dc ${f.artifacts.dcOffset.toFixed(4)}  non-finite ${f.artifacts.nonFinite}`);
 }

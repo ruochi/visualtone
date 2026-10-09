@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { analyzeNote, compareTimbre, noteName } from '../dist/analysis/timbre.js';
+import { TIMBRE_V1_IDS, analyzeNote, compareTimbre, metricExcess, noteName } from '../dist/analysis/timbre.js';
 import { loadWav, noteTiming, recordedFile, scoreAgainst } from './lib/score-note.mjs';
 
 const root = new URL('..', import.meta.url).pathname;
@@ -12,6 +12,7 @@ try {
   floorMetrics = undefined;
 }
 const scaleOf = (id) => Math.max(1, floorMetrics?.[id] ?? 1);
+const v1Ids = new Set(TIMBRE_V1_IDS);
 const recorded = join(root, 'references/recorded');
 
 const want = new Set(process.argv.slice(2));
@@ -64,6 +65,7 @@ for (const set of catalog.sets) {
       ...(split ? { split } : {}),
       distance: Number(cmp.distance.toFixed(2)),
       excess: cmp.excess === null ? null : Number(cmp.excess.toFixed(2)),
+      excessV1: floorMetrics ? Number(metricExcess(cmp.metrics, floorMetrics, v1Ids)?.toFixed(2)) : null,
       passed: cmp.passed,
       total: cmp.total,
       oursCents: ours.centsOff,
@@ -78,7 +80,7 @@ for (const set of catalog.sets) {
     };
     report.push(row);
     console.log(
-      `${set.id.padEnd(18)} ${row.note.padEnd(4)} @${size.toFixed(1)}  dist ${row.distance.toFixed(2)}  excess ${row.excess === null ? '-' : row.excess.toFixed(2)}  ${cmp.passed}/${cmp.total}  ${row.worst}`,
+      `${set.id.padEnd(18)} ${row.note.padEnd(4)} @${size.toFixed(1)}  dist ${row.distance.toFixed(2)}  excess ${row.excess === null ? '-' : row.excess.toFixed(2)}  v1 ${row.excessV1 === null ? '-' : row.excessV1.toFixed(2)}  ${cmp.passed}/${cmp.total}  ${row.worst}`,
     );
   }
   const groups = new Map();
@@ -122,7 +124,10 @@ const avg = (xs) => xs.reduce((s, v) => s + v, 0) / xs.length;
 console.log('\nmean distance, then excess over the real-vs-real floor (1 ≈ two takes of the same note)');
 for (const [id, rows] of bySet) {
   const excess = rows.map((r) => r.excess).filter((v) => v !== null);
-  console.log(`  ${id.padEnd(18)} ${avg(rows.map((r) => r.distance)).toFixed(2)}   excess ${excess.length ? avg(excess).toFixed(2) : '-'}  n=${rows.length}`);
+  const v1 = rows.map((r) => r.excessV1).filter((v) => v !== null);
+  console.log(
+    `  ${id.padEnd(18)} ${avg(rows.map((r) => r.distance)).toFixed(2)}   excess ${excess.length ? avg(excess).toFixed(2) : '-'}  v1 ${v1.length ? avg(v1).toFixed(2) : '-'}  n=${rows.length}`,
+  );
   for (const split of ['valid', 'test']) {
     const part = rows.filter((r) => r.split === split && r.excess !== null);
     if (part.length) console.log(`    ${split.padEnd(16)} excess ${avg(part.map((r) => r.excess)).toFixed(2)}  n=${part.length}`);

@@ -6,7 +6,11 @@ export const CURVE_MS = [5, 10, 25, 50, 100, 200, 400, 800, 1600, 3200];
 const MAX_REGION_SEC = 8;
 const MEL_BANDS = 40;
 const MFCC_COUNT = 13;
-const HARMONICS_REPORTED = 16;
+const HARMONICS_REPORTED = 24;
+/** Slope and odd/even stay on the first 16 partials, so those numbers do not move when the ladder grows. */
+const SHAPE_PARTIALS = 16;
+const LADDER_PARTIALS = 20;
+const MOTION_PARTIALS = 12;
 const DECAY_PARTIALS = 8;
 const MEL_FRAMES_SEC = 3;
 
@@ -36,6 +40,10 @@ export interface NoteFeatures {
     glideCents: number | null;
     vibratoRateHz: number | null;
     vibratoDepthCents: number | null;
+    /** Cycle-to-cycle spread of vibrato depth, as a fraction of the mean depth. A metronome sits near 0. */
+    vibratoDepthCv: number | null;
+    /** Cycle-to-cycle spread of the vibrato period, as a fraction of the mean period. */
+    vibratoRateCv: number | null;
     /** Cents left after the slow drift and the vibrato sinusoid are removed. A frozen oscillator sits near 0. */
     jitterCents: number | null;
   };
@@ -81,7 +89,7 @@ export interface NoteFeatures {
     brightnessLagMs: number | null;
   };
   harmonics: {
-    /** Partials 1..16, dB against the loudest. Null where no partial was found. */
+    /** Partials 1..24, dB against the loudest. Null where no partial was found. */
     amplitudesDb: (number | null)[];
     /** Partial n frequency over partial 1. A stiff string runs above n. */
     freqRatios: (number | null)[];
@@ -97,6 +105,25 @@ export interface NoteFeatures {
     decayDbPerSec: (number | null)[];
     /** Sustain wobble of one partial against the others, dB. Shared vibrato loudness is removed first. */
     flutterDb: number | null;
+  };
+  /**
+   * How the partials move while the note is held, and what sits between them.
+   * A real bowed note sweeps each partial across body resonances, so the partials
+   * rise and fall with the vibrato and not all in the same direction.
+   */
+  motion: {
+    /** Peak dB of the part of each partial's level that follows the vibrato. Median of partials 1..12. */
+    vibratoAmDb: number | null;
+    /** Mean correlation between partial levels once the slow trend is gone. Near 1, they all move together. */
+    amCorr: number | null;
+    /** Share of the vibrato-locked partials whose level falls as the pitch rises. */
+    amOpposite: number | null;
+    /** Residual of partials 1..20 around a straight line in log2(n), dB. A body makes this large. */
+    ladderJagDb: number | null;
+    /** Gap energy against the line core, dB, in bands under 2 kHz, 2–4, 4–8, and 8–16. */
+    gapNoiseDb: (number | null)[];
+    /** Highest partial still 6 dB above the gap, divided by how many partials could fit under 16 kHz. */
+    topPartialFrac: number | null;
   };
   /** Strongest spectral peaks right after the onset. */
   peaks: { hz: number; ratio: number | null; db: number }[];
@@ -145,6 +172,249 @@ function linFit(xs: number[], ys: number[]): { slope: number; intercept: number 
 
 function pdb(p: number): number {
   return 10 * Math.log10(Math.max(p, 1e-30));
+}
+
+function meanOf(xs: number[]): number {
+  return xs.reduce((s, v) => s + v, 0) / xs.length;
+}
+
+function stdev(xs: number[]): number {
+  if (xs.length === 0) return 0;
+  const m = meanOf(xs);
+  return Math.sqrt(xs.reduce((s, v) => s + (v - m) ** 2, 0) / xs.length);
+}
+
+/** Pearson correlation. 0 when either side does not move. */
+function correlation(a: number[], b: number[]): number {
+  const n = Math.min(a.length, b.length);
+  if (n < 4) return 0;
+  let ma = 0;
+  let mb = 0;
+  for (let i = 0; i < n; i++) {
+    ma += a[i];
+    mb += b[i];
+  }
+  ma /= n;
+  mb /= n;
+  let sxx = 0;
+  let syy = 0;
+  let sxy = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = a[i] - ma;
+    const dy = b[i] - mb;
+    sxx += dx * dx;
+    syy += dy * dy;
+    sxy += dx * dy;
+  }
+  const d = Math.sqrt(sxx * syy);
+  return d > 1e-9 ? sxy / d : 0;
+}
+
+function subtractSlow(v: number[], width: number): number[] {
+  const w = Math.max(3, width | 0);
+  const half = w >> 1;
+  const out = new Array<number>(v.length);
+  for (let i = 0; i < v.length; i++) {
+    const a = Math.max(0, i - half);
+    const b = Math.min(v.length - 1, i + half);
+    let s = 0;
+    for (let j = a; j <= b; j++) s += v[j];
+    out[i] = v[i] - s / (b - a + 1);
+  }
+  return out;
+}
+
+function emptyMotion(): NoteFeatures['motion'] {
+  return {
+    vibratoAmDb: null,
+    amCorr: null,
+    amOpposite: null,
+    ladderJagDb: null,
+    gapNoiseDb: [null, null, null, null],
+    topPartialFrac: null,
+  };
+}
+
+/** Depth and period of each rising-to-rising vibrato cycle, as a fraction of the mean. */
+function vibratoCycles(resid: number[], times: number[], rateHz: number): { depthCv: number | null; rateCv: number | null } {
+  const zc: number[] = [];
+  for (let i = 1; i < resid.length; i++) if (resid[i - 1] < 0 && resid[i] >= 0) zc.push(i);
+  const minP = 0.55 / rateHz;
+  const maxP = 1.8 / rateHz;
+  const depths: number[] = [];
+  const periods: number[] = [];
+  for (let i = 0; i + 1 < zc.length; i++) {
+    const dt = times[zc[i + 1]] - times[zc[i]];
+    if (dt < minP || dt > maxP) continue;
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (let j = zc[i]; j <= zc[i + 1]; j++) {
+      lo = Math.min(lo, resid[j]);
+      hi = Math.max(hi, resid[j]);
+    }
+    depths.push((hi - lo) / 2);
+    periods.push(dt);
+  }
+  if (depths.length < 3) return { depthCv: null, rateCv: null };
+  const md = meanOf(depths);
+  const mp = meanOf(periods);
+  return {
+    depthCv: md > 1 ? stdev(depths) / md : 0,
+    rateCv: mp > 0 ? stdev(periods) / mp : 0,
+  };
+}
+
+const GAP_BANDS: [number, number][] = [
+  [0, 2000],
+  [2000, 4000],
+  [4000, 8000],
+  [8000, 16000],
+];
+
+/**
+ * Sustain partial motion and the noise that sits between the lines.
+ * Levels come from the long STFT, so a partial can be followed as vibrato moves it.
+ */
+function measureMotion(
+  long: { t: number; P: Float32Array }[],
+  base: number,
+  stiffness: number,
+  binHz: number,
+  sampleRate: number,
+  offSec: number,
+): NoteFeatures['motion'] {
+  const motion = emptyMotion();
+  if (!(base > 0) || long.length < 4) return motion;
+  const fTop = Math.min(16000, sampleRate * 0.45);
+  const hold = long.filter((fr) => fr.t >= 0.3 && fr.t <= Math.min(2, offSec - 0.05));
+  const specFrames = hold.length >= 8 ? hold : long.filter((fr) => fr.t >= 0.05 && fr.t <= Math.min(1.2, offSec));
+  if (specFrames.length === 0) return motion;
+  const spec = new Float64Array(specFrames[0].P.length);
+  for (const fr of specFrames) for (let k = 0; k < spec.length; k++) spec[k] += fr.P[k];
+  for (let k = 0; k < spec.length; k++) spec[k] /= specFrames.length;
+
+  const predOf = (n: number) => n * base * Math.sqrt(1 + stiffness * n * n);
+  const bandOf = (hz: number) => GAP_BANDS.findIndex(([lo, hi]) => hz >= lo && hz < hi);
+  const coreSum = [0, 0, 0, 0];
+  const gapSum = [0, 0, 0, 0];
+  const ladder: { n: number; db: number }[] = [];
+  let topPartial = 0;
+  let possible = 0;
+  const maxN = Math.min(80, Math.floor(fTop / base));
+  for (let n = 1; n <= maxN; n++) {
+    const pred = predOf(n);
+    if (pred >= fTop) break;
+    possible++;
+    const kc = Math.round(pred / binHz);
+    if (kc < 4 || kc >= spec.length - 4) continue;
+    const search = Math.max(3, Math.round((0.3 * base) / binHz));
+    let kBest = kc;
+    const k0 = Math.max(3, kc - search);
+    const k1 = Math.min(spec.length - 4, kc + search);
+    for (let k = k0; k <= k1; k++) if (spec[k] > spec[kBest]) kBest = k;
+    let core = 0;
+    for (let k = kBest - 3; k <= kBest + 3; k++) core += spec[k];
+    const g0 = Math.min(spec.length - 1, Math.max(0, Math.round((pred + 0.25 * base) / binHz)));
+    const g1 = Math.min(spec.length - 1, Math.max(g0, Math.round((pred + 0.75 * base) / binHz)));
+    let gap = 0;
+    for (let k = g0; k <= g1; k++) gap += spec[k];
+    const band = bandOf(pred);
+    if (band >= 0) {
+      coreSum[band] += core;
+      gapSum[band] += gap;
+    }
+    if (pdb(core) - pdb(gap) > 6) topPartial = n;
+    if (n <= LADDER_PARTIALS && pdb(core) - pdb(gap) > 8) {
+      const a = pdb(spec[kBest - 1]);
+      const b = pdb(spec[kBest]);
+      const c = pdb(spec[kBest + 1]);
+      const den = a - 2 * b + c;
+      const p = Math.abs(den) > 1e-12 ? Math.max(-0.5, Math.min(0.5, (0.5 * (a - c)) / den)) : 0;
+      ladder.push({ n, db: b - 0.25 * (a - c) * p });
+    }
+  }
+  motion.gapNoiseDb = GAP_BANDS.map((_, i) => (coreSum[i] > 0 ? pdb(gapSum[i]) - pdb(coreSum[i]) : null));
+  motion.topPartialFrac = possible > 0 ? topPartial / possible : null;
+  if (ladder.length >= 6) {
+    const fit = linFit(
+      ladder.map((p) => Math.log2(p.n)),
+      ladder.map((p) => p.db),
+    );
+    if (fit) {
+      const resid = ladder.map((p) => p.db - (fit.intercept + fit.slope * Math.log2(p.n)));
+      motion.ladderJagDb = stdev(resid);
+    }
+  }
+
+  if (hold.length < 12) return motion;
+  const hopSec = Math.max(1e-4, (hold[hold.length - 1].t - hold[0].t) / (hold.length - 1));
+  const slow = Math.max(3, Math.round(0.5 / hopSec));
+  const rows: number[][] = [];
+  const loud: number[] = [];
+  const pitches: number[][] = [];
+  for (let n = 1; n <= MOTION_PARTIALS; n++) {
+    const pred = predOf(n);
+    if (pred >= fTop) break;
+    const search = Math.max(3, Math.round((0.28 * base) / binHz));
+    const levels: number[] = [];
+    const cents: number[] = [];
+    for (const fr of hold) {
+      const kc = Math.round(pred / binHz);
+      const k0 = Math.max(1, kc - search);
+      const k1 = Math.min(fr.P.length - 2, kc + search);
+      let kBest = k0;
+      for (let k = k0; k <= k1; k++) if (fr.P[k] > fr.P[kBest]) kBest = k;
+      let p = 0;
+      for (let k = kBest - 2; k <= kBest + 2; k++) if (k > 0 && k < fr.P.length) p += fr.P[k];
+      levels.push(pdb(p));
+      if (n <= 4 && kBest > 0 && kBest < fr.P.length - 1) {
+        const a = Math.log(fr.P[kBest - 1] + 1e-30);
+        const b = Math.log(fr.P[kBest] + 1e-30);
+        const c = Math.log(fr.P[kBest + 1] + 1e-30);
+        const den = a - 2 * b + c;
+        const shift = Math.abs(den) > 1e-12 ? Math.max(-0.5, Math.min(0.5, (0.5 * (a - c)) / den)) : 0;
+        const hz = (kBest + shift) * binHz;
+        cents.push(hz > 0 && pred > 0 ? 1200 * Math.log2(hz / pred) : 0);
+      }
+    }
+    rows.push(subtractSlow(levels, slow));
+    loud.push(median(levels) ?? -Infinity);
+    if (cents.length === hold.length) pitches.push(cents);
+  }
+  const loudest = Math.max(...loud);
+  const audible = rows.map((row, i) => (loud[i] >= loudest - 35 ? row : null)).filter((row): row is number[] => row !== null);
+  const kept = audible.filter((row) => stdev(row) > 0.05);
+  if (kept.length >= 3) {
+    const pair: number[] = [];
+    for (let i = 0; i < kept.length; i++) {
+      for (let j = i + 1; j < kept.length; j++) pair.push(correlation(kept[i], kept[j]));
+    }
+    motion.amCorr = pair.length ? meanOf(pair) : null;
+  }
+  if (pitches.length >= 2) {
+    const pitch = subtractSlow(
+      hold.map((_, i) => median(pitches.map((row) => row[i])) ?? 0),
+      Math.max(3, Math.round(0.6 / hopSec)),
+    );
+    if (stdev(pitch) >= 1.5) {
+      const amps: number[] = [];
+      let against = 0;
+      let locked = 0;
+      for (const row of audible) {
+        const r = correlation(row, pitch);
+        amps.push(Math.abs(r) * stdev(row) * Math.SQRT2);
+        if (Math.abs(r) >= 0.4) {
+          locked++;
+          if (r < 0) against++;
+        }
+      }
+      motion.vibratoAmDb = median(amps.filter((v) => Number.isFinite(v)));
+      motion.amOpposite = locked >= 3 ? against / locked : null;
+    } else {
+      motion.vibratoAmDb = 0;
+    }
+  }
+  return motion;
 }
 
 export function midiHz(midi: number): number {
@@ -314,7 +584,16 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
     onsetSec,
     f0Hz: null,
     centsOff: null,
-    pitch: { stdCents: null, driftCents: null, glideCents: null, vibratoRateHz: null, vibratoDepthCents: null, jitterCents: null },
+    pitch: {
+      stdCents: null,
+      driftCents: null,
+      glideCents: null,
+      vibratoRateHz: null,
+      vibratoDepthCents: null,
+      vibratoDepthCv: null,
+      vibratoRateCv: null,
+      jitterCents: null,
+    },
     envelope: {
       peakDb: -Infinity,
       attackMs: 0,
@@ -354,6 +633,7 @@ function emptyFeatures(onsetSec: number, nonFinite: number): NoteFeatures {
       decayDbPerSec: [],
       flutterDb: null,
     },
+    motion: emptyMotion(),
     peaks: [],
     artifacts: { clicks: 0, clickTimes: [], dcOffset: 0, nonFinite },
   };
@@ -574,6 +854,8 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
   let glideCents: number | null = null;
   let vibratoRateHz: number | null = null;
   let vibratoDepthCents: number | null = null;
+  let vibratoDepthCv: number | null = null;
+  let vibratoRateCv: number | null = null;
   let jitterCents: number | null = null;
   if (cents.length >= 3) {
     const mean = cents.reduce((s, v) => s + v, 0) / cents.length;
@@ -605,6 +887,9 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       if (bestA >= 3 && (bestA * bestA) / 2 >= 0.5 * variance) {
         vibratoRateHz = bestRate;
         vibratoDepthCents = bestA;
+        const cycles = vibratoCycles(resid, ctimes, bestRate);
+        vibratoDepthCv = cycles.depthCv;
+        vibratoRateCv = cycles.rateCv;
       }
       // What is left once the drift line and the vibrato are gone. A player jitters; a loop does not.
       let cleaned = resid;
@@ -842,7 +1127,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
     amplitudesDb.push(p ? p.db - topDb : null);
     freqRatios.push(p && p1 ? p.hz / p1.hz : null);
   }
-  const slopePts = found.filter((p) => p.n <= HARMONICS_REPORTED);
+  const slopePts = found.filter((p) => p.n <= SHAPE_PARTIALS);
   const slopeFit =
     slopePts.length >= 3
       ? linFit(
@@ -954,6 +1239,8 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
     }
   }
 
+  const motion = measureMotion(long, base, B, lBin, sr, opts.noteOff !== undefined ? opts.noteOff - onsetSec : Infinity);
+
   const peaks: { hz: number; ratio: number | null; db: number }[] = [];
   {
     const cands: { k: number; p: number }[] = [];
@@ -1003,7 +1290,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
     onsetSec,
     f0Hz,
     centsOff: f0Hz && opts.midi !== undefined ? 1200 * Math.log2(f0Hz / midiHz(opts.midi)) : null,
-    pitch: { stdCents, driftCents, glideCents, vibratoRateHz, vibratoDepthCents, jitterCents },
+    pitch: { stdCents, driftCents, glideCents, vibratoRateHz, vibratoDepthCents, vibratoDepthCv, vibratoRateCv, jitterCents },
     envelope: {
       peakDb: 20 * Math.log10(peak),
       attackMs: (t90 - t10) * frameSec * 1000,
@@ -1043,6 +1330,7 @@ export function analyzeNote(buffer: Float32Array, sampleRate: number, opts: Note
       decayDbPerSec,
       flutterDb,
     },
+    motion,
     peaks,
     artifacts: {
       clicks: clickTimes.length,
@@ -1080,6 +1368,50 @@ export interface TimbreComparison {
 
 function rmsOf(xs: number[]): number {
   return xs.length ? Math.sqrt(xs.reduce((s, v) => s + v * v, 0) / xs.length) : 0;
+}
+
+/**
+ * Metric ids from before the motion block. `excessV1` uses only these, so a table
+ * from an older run can be compared without the new ruler changing the number.
+ */
+export const TIMBRE_V1_IDS: readonly string[] = [
+  'pitch',
+  'attack',
+  'decay',
+  'decay.early',
+  'decay.late',
+  'release',
+  'envelope',
+  'harmonics',
+  'slope',
+  'oddEven',
+  'inharmonicity',
+  'partialDecay',
+  'hnr',
+  'spurious',
+  'centroid',
+  'centroidCurve',
+  'attackNoise',
+  'vibrato.depth',
+  'vibrato.rate',
+  'melEnvelope',
+  'spectrogram',
+  'flutter',
+  'pitch.jitter',
+  'brightnessLag',
+  'shimmer',
+];
+
+/** RMS of capped errors. Divided by the real-vs-real floor when one is given. Null without a floor. */
+export function metricExcess(
+  metrics: readonly TimbreMetric[],
+  floor?: Readonly<Record<string, number>>,
+  ids?: ReadonlySet<string>,
+): number | null {
+  if (!floor) return null;
+  const picked = ids ? metrics.filter((m) => ids.has(m.id)) : [...metrics];
+  if (!picked.length) return null;
+  return rmsOf(picked.map((m) => Math.min(3, m.error / Math.max(1, floor[m.id] ?? 1))));
 }
 
 function spectroDistance(a: number[][], b: number[][]): number | null {
@@ -1302,12 +1634,89 @@ export function compareTimbre(
       error: Math.abs(ours.envelope.shimmerDb - ref.envelope.shimmerDb) / 6,
     });
   }
+  if (ours.motion.vibratoAmDb !== null && ref.motion.vibratoAmDb !== null) {
+    add({
+      id: 'motion.am',
+      label: '揉弦带动的起伏',
+      unit: 'dB',
+      value: ours.motion.vibratoAmDb,
+      ref: ref.motion.vibratoAmDb,
+      error: Math.abs(ours.motion.vibratoAmDb - ref.motion.vibratoAmDb) / 1.5,
+    });
+  }
+  if (ours.motion.amCorr !== null && ref.motion.amCorr !== null) {
+    add({
+      id: 'motion.corr',
+      label: '分音一起动',
+      unit: '',
+      value: ours.motion.amCorr,
+      ref: ref.motion.amCorr,
+      error: Math.abs(ours.motion.amCorr - ref.motion.amCorr) / 0.25,
+    });
+  }
+  if (ours.motion.amOpposite !== null && ref.motion.amOpposite !== null) {
+    add({
+      id: 'motion.opposite',
+      label: '分音反向',
+      unit: '',
+      value: ours.motion.amOpposite,
+      ref: ref.motion.amOpposite,
+      error: Math.abs(ours.motion.amOpposite - ref.motion.amOpposite) / 0.25,
+    });
+  }
+  if (ours.motion.ladderJagDb !== null && ref.motion.ladderJagDb !== null) {
+    add({
+      id: 'ladder',
+      label: '泛音阶梯锯齿',
+      unit: 'dB',
+      value: ours.motion.ladderJagDb,
+      ref: ref.motion.ladderJagDb,
+      error: Math.abs(ours.motion.ladderJagDb - ref.motion.ladderJagDb) / 2,
+    });
+  }
+  {
+    const diffs: number[] = [];
+    for (let i = 0; i < ours.motion.gapNoiseDb.length; i++) {
+      const a = ours.motion.gapNoiseDb[i];
+      const b = ref.motion.gapNoiseDb[i];
+      if (a === null || b === null) continue;
+      diffs.push(a - b);
+    }
+    if (diffs.length) {
+      const v = rmsOf(diffs);
+      const signed = diffs.reduce((s, d) => s + d, 0) / diffs.length;
+      add({ id: 'gapNoise', label: '谐波间隙噪声', unit: 'dB', value: v, ref: null, error: v / 4, detail: `${r1(signed)}` });
+    }
+  }
+  if (ours.motion.topPartialFrac !== null && ref.motion.topPartialFrac !== null) {
+    add({
+      id: 'topPartial',
+      label: '最高泛音',
+      unit: '',
+      value: ours.motion.topPartialFrac,
+      ref: ref.motion.topPartialFrac,
+      error: Math.abs(ours.motion.topPartialFrac - ref.motion.topPartialFrac) / 0.2,
+    });
+  }
+  {
+    const parts: number[] = [];
+    if (ours.pitch.vibratoDepthCv !== null && ref.pitch.vibratoDepthCv !== null) {
+      parts.push(Math.abs(ours.pitch.vibratoDepthCv - ref.pitch.vibratoDepthCv));
+    }
+    if (ours.pitch.vibratoRateCv !== null && ref.pitch.vibratoRateCv !== null) {
+      parts.push(Math.abs(ours.pitch.vibratoRateCv - ref.pitch.vibratoRateCv));
+    }
+    if (parts.length) {
+      const v = parts.reduce((s, x) => s + x, 0) / parts.length;
+      add({ id: 'vibrato.cv', label: '揉弦不规则', unit: '', value: v, ref: null, error: v / 0.08 });
+    }
+  }
 
   // A floor below 1 would make the ruler stricter than the hand tolerance. Never do that.
   const scale = (id: string) => Math.max(1, floor?.[id] ?? 1);
   const passed = metrics.filter((m) => m.error / scale(m.id) <= 1).length;
   const distance = rmsOf(metrics.map((m) => Math.min(3, m.error)));
-  const excess = floor ? rmsOf(metrics.map((m) => Math.min(3, m.error / scale(m.id)))) : null;
+  const excess = metricExcess(metrics, floor);
   const findings = metrics
     .filter((m) => m.error / scale(m.id) > 1)
     .sort((a, b) => b.error / scale(b.id) - a.error / scale(a.id))
@@ -1452,6 +1861,55 @@ function timbreFinding(m: TimbreMetric): Finding {
         target,
         message: `8–20 Hz 的起伏 ${fmt(m.value)} dB，参照 ${fmt(m.ref)} dB，${higher ? '抖得更多' : '太稳'}`,
         suggestion: higher ? '压低比揉弦更快的幅度起伏' : '在揉弦之上加一点不规则的幅度起伏，完全平稳的持续音听起来是合成的',
+      };
+    case 'motion.am':
+      return {
+        ...base,
+        target,
+        message: `跟着揉弦起伏 ${fmt(m.value)} dB，参照 ${fmt(m.ref)} dB，${higher ? '晃得更多' : '几乎不动'}`,
+        suggestion: higher ? '减小琴体峰的陡度，让音高扫过时电平少变一点' : '让每根泛音的电平跟着它此刻的频率走，扫过琴体共振时才会涨落',
+      };
+    case 'motion.corr':
+      return {
+        ...base,
+        target,
+        message: `各泛音电平的相关 ${fmt(m.value, 2)}，参照 ${fmt(m.ref, 2)}，${higher ? '太齐' : '太散'}`,
+        suggestion: higher ? '不要给所有泛音同一个音量调制，让琴体决定谁涨谁落' : '各泛音不该各抖各的：起伏要锁在揉弦上',
+      };
+    case 'motion.opposite':
+      return {
+        ...base,
+        target,
+        message: `音高升高时变轻的泛音占 ${fmt((m.value ?? 0) * 100, 0)}%，参照 ${fmt((m.ref ?? 0) * 100, 0)}%`,
+        suggestion: '琴体要有上坡也有下坡：一部分泛音随音高变响，一部分变轻',
+      };
+    case 'ladder':
+      return {
+        ...base,
+        target,
+        message: `泛音阶梯偏离直线 ${fmt(m.value)} dB，参照 ${fmt(m.ref)} dB，${higher ? '太锯齿' : '太光滑'}`,
+        suggestion: higher ? '减少琴体峰的深度' : '加一层密集的琴体峰谷，真实的阶梯不是一条斜线',
+      };
+    case 'gapNoise':
+      return {
+        ...base,
+        target: '< 4 dB',
+        message: `谐波之间的噪声差 ${fmt(m.value)} dB`,
+        suggestion: Number((m.detail ?? '0').split(':')[0]) > 0 ? '间隙里的嘶声偏多：降低直接噪声，让谐噪比靠谱线展宽而不是靠白噪声' : '谐波之间太空：加一点弓噪或气流',
+      };
+    case 'topPartial':
+      return {
+        ...base,
+        target,
+        message: `还高出噪声的泛音占 ${fmt((m.value ?? 0) * 100, 0)}%，参照 ${fmt((m.ref ?? 0) * 100, 0)}%`,
+        suggestion: higher ? '高次泛音太多：加大斜率或降低低通' : '高次泛音被噪声盖住了：放缓高段斜率，并让噪声随频率下降',
+      };
+    case 'vibrato.cv':
+      return {
+        ...base,
+        target: '< 0.08',
+        message: `揉弦每个周期的深度和速度差 ${fmt(m.value, 3)}`,
+        suggestion: '让揉弦的深度和速度每个周期变大约一成，完全匀速的正弦听起来是合成的',
       };
     default:
       return { ...base, target: '< 1', message: `${m.label}差 ${fmt(m.value)} ${m.unit}`, suggestion: '先修排在前面的具体指标' };

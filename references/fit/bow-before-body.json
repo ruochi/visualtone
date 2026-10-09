@@ -1,0 +1,280 @@
+{
+  "violin": {
+    "partials": 28,
+    "phaseSpread": 0.47,
+    "minHz": 40,
+    "maxHzRatio": 0.22,
+    "noise": {
+      "hz": 546.875,
+      "hzStrike": 2800,
+      "level": 0.1125,
+      "strike": 0.09,
+      "strike2": 0,
+      "low": 1,
+      "high": 0,
+      "direct": 0.0875,
+      "directHz": 4500
+    },
+    "releaseSec": 0.18,
+    "gain": 0.55,
+    "stereo": [
+      1.03,
+      0.97
+    ],
+    "slope": {
+      "base": 0.2075,
+      "soft": 0.045,
+      "softPow": 1,
+      "high": 0,
+      "highSoft": 0,
+      "highFrom": 48,
+      "highSpan": 24,
+      "lowFlatten": 0,
+      "lowFrom": 0,
+      "light": 0.05,
+      "min": 0.06
+    },
+    "lowpass": {
+      "hz": 7700,
+      "strike": 3200,
+      "light": 400,
+      "min": 800
+    },
+    "resonance": {
+      "hz": 269.7,
+      "q": 5.6,
+      "mix": 0.37875,
+      "mixStrike": 0
+    },
+    "modes": [
+      {
+        "hz": 173.6,
+        "q": 1.6,
+        "db": 9.57
+      },
+      {
+        "hz": 530,
+        "q": 6,
+        "db": 9.81
+      },
+      {
+        "hz": 1209.6,
+        "q": 3,
+        "db": -12.42
+      },
+      {
+        "hz": 4160,
+        "q": 6,
+        "db": 10.52
+      }
+    ],
+    "attackSec": 0.0455,
+    "life": {
+      "vibratoCents": 18,
+      "vibratoHz": 5.375,
+      "vibratoDelaySec": 0.22,
+      "wanderCents": 2.3,
+      "vibratoGain": 0.05,
+      "shimmerRms": 0.0515,
+      "vibratoHighCents": 6,
+      "vibratoLowMidi": 60,
+      "vibratoHighMidi": 68
+    }
+  },
+  "viola": {
+    "partials": 28,
+    "phaseSpread": 0.47,
+    "minHz": 40,
+    "maxHzRatio": 0.22,
+    "noise": {
+      "hz": 546.875,
+      "hzStrike": 2800,
+      "level": 0.1125,
+      "strike": 0.09,
+      "strike2": 0,
+      "low": 1,
+      "high": 0,
+      "direct": 0.075,
+      "directHz": 4500
+    },
+    "releaseSec": 0.18,
+    "gain": 0.55,
+    "stereo": [
+      1.03,
+      0.97
+    ],
+    "slope": {
+      "base": 0.2087,
+      "soft": 0.135,
+      "softPow": 1,
+      "high": 0,
+      "highSoft": 0,
+      "highFrom": 48,
+      "highSpan": 24,
+      "lowFlatten": 0,
+      "lowFrom": 0,
+      "light": 0.05,
+      "min": 0.06
+    },
+    "lowpass": {
+      "hz": 6140,
+      "strike": 3200,
+      "light": 400,
+      "min": 800
+    },
+    "resonance": {
+      "hz": 180.6,
+      "q": 9.6,
+      "mix": 0.195,
+      "mixStrike": 0
+    },
+    "attackSec": 0.0645,
+    "life": {
+      "vibratoCents": 1,
+      "vibratoHz": 5.4,
+      "vibratoDelaySec": 0.22,
+      "wanderCents": 2.3,
+      "vibratoGain": 0.05,
+      "shimmerRms": 0.0375,
+      "vibratoHighCents": 13.5,
+      "vibratoLowMidi": 48,
+      "vibratoHighMidi": 72
+    }
+  },
+  "cello": {
+    "partials": 28,
+    "phaseSpread": 0.47,
+    "minHz": 40,
+    "maxHzRatio": 0.22,
+    "noise": {
+      "hz": 350,
+      "hzStrike": 2800,
+      "level": 0.075,
+      "strike": 0.09,
+      "strike2": 0,
+      "low": 1,
+      "high": 0,
+      "direct": 0.075,
+      "directHz": 4500
+    },
+    "releaseSec": 0.18,
+    "gain": 0.55,
+    "stereo": [
+      1.03,
+      0.97
+    ],
+    "slope": {
+      "base": 0.1755,
+      "soft": 0.12,
+      "softPow": 1,
+      "high": 0,
+      "highSoft": 0,
+      "highFrom": 48,
+      "highSpan": 24,
+      "lowFlatten": 0,
+      "lowFrom": 0,
+      "light": 0.05,
+      "min": 0.06
+    },
+    "lowpass": {
+      "hz": 5150,
+      "strike": 3200,
+      "light": 400,
+      "min": 800
+    },
+    "resonance": {
+      "hz": 142.5,
+      "q": 8,
+      "mix": 0.2475,
+      "mixStrike": 0
+    },
+    "modes": [
+      {
+        "hz": 203.8,
+        "q": 6,
+        "db": 10.62
+      },
+      {
+        "hz": 222.2,
+        "q": 6,
+        "db": 11.51
+      },
+      {
+        "hz": 1014,
+        "q": 11,
+        "db": 8.66
+      },
+      {
+        "hz": 4864,
+        "q": 1.6,
+        "db": 10.72
+      }
+    ],
+    "attackSec": 0.055,
+    "life": {
+      "vibratoCents": 2,
+      "vibratoHz": 5.2,
+      "vibratoDelaySec": 0.22,
+      "wanderCents": 2,
+      "vibratoGain": 0.05,
+      "shimmerRms": 0.053,
+      "vibratoHighCents": 17.5,
+      "vibratoLowMidi": 48,
+      "vibratoHighMidi": 72
+    }
+  },
+  "contrabass": {
+    "partials": 40,
+    "phaseSpread": 0.37,
+    "minHz": 28,
+    "maxHzRatio": 0.2,
+    "releaseSec": 0.22,
+    "gain": 0.5,
+    "stereo": [
+      1.02,
+      0.98
+    ],
+    "slope": {
+      "base": 0.2175,
+      "soft": 0.165,
+      "softPow": 1,
+      "high": 0,
+      "highSoft": 0,
+      "highFrom": 48,
+      "highSpan": 24,
+      "lowFlatten": 0,
+      "lowFrom": 0,
+      "light": 0.08,
+      "min": 0.08
+    },
+    "resonance": {
+      "hz": 68.75,
+      "q": 3.6,
+      "mix": 0.2725,
+      "mixStrike": 0
+    },
+    "noise": {
+      "hz": 281.25,
+      "hzStrike": 900,
+      "level": 0.0865,
+      "strike": 0.035,
+      "strike2": 0,
+      "low": 1,
+      "high": 0,
+      "direct": 0.025,
+      "directHz": 4500
+    },
+    "attackSec": 0.06575,
+    "life": {
+      "vibratoCents": 7,
+      "vibratoHz": 4.45,
+      "vibratoDelaySec": 0.3,
+      "wanderCents": 1.6,
+      "vibratoGain": 0.04,
+      "shimmerRms": 0.0235,
+      "vibratoHighCents": 2,
+      "vibratoLowMidi": 36,
+      "vibratoHighMidi": 50
+    }
+  }
+}

@@ -24,6 +24,13 @@
     "pitch.jitter": 0.7,
     "brightnessLag": 2,
     "shimmer": 0.36,
+    "motion.am": 0.33,
+    "motion.corr": 0.34,
+    "motion.opposite": 0.6,
+    "ladder": 0.4,
+    "gapNoise": 1.29,
+    "topPartial": 0.69,
+    "vibrato.cv": 0.62,
     "decay.early": 1,
     "decay.late": 1.24
   },
@@ -50,6 +57,13 @@
     "pitch.jitter": 404,
     "brightnessLag": 394,
     "shimmer": 404,
+    "motion.am": 404,
+    "motion.corr": 404,
+    "motion.opposite": 323,
+    "ladder": 391,
+    "gapNoise": 404,
+    "topPartial": 404,
+    "vibrato.cv": 273,
     "decay.early": 395,
     "decay.late": 391
   }

@@ -24,6 +24,11 @@ interface ToneSpec {
   flutterPartial?: { index: number; hz: number; depth: number };
   /** Partials from the 5th up take this long to fade in. */
   highAttackSec?: number;
+  /**
+   * Each partial's level follows the vibrato as a peak swing in dB.
+   * Signs alternate when `alternate` is set, the way a body resonance does.
+   */
+  partialAm?: { depthDb: number; alternate?: boolean };
 }
 
 function rng(seed: number) {
@@ -55,8 +60,11 @@ function tone(spec: ToneSpec, sr = SR): Float32Array {
       const own = spec.flutterPartial && spec.flutterPartial.index === k
         ? 1 + spec.flutterPartial.depth * Math.sin(2 * Math.PI * spec.flutterPartial.hz * t)
         : 1;
+      const locked = spec.partialAm && spec.vibrato
+        ? Math.pow(10, (((spec.partialAm.alternate && k % 2 === 1 ? -1 : 1) * spec.partialAm.depthDb * Math.sin(2 * Math.PI * spec.vibrato.rate * t)) / 20))
+        : 1;
       const rise = spec.highAttackSec && k >= 4 ? Math.min(1, t / spec.highAttackSec) : 1;
-      v += a * d * own * rise * Math.sin(phases[k]);
+      v += a * d * own * locked * rise * Math.sin(phases[k]);
     });
     (spec.extra ?? []).forEach((e, k) => {
       extraPh[k] += (2 * Math.PI * e.hz) / sr;
@@ -211,6 +219,46 @@ test('compareTimbre: identical passes, a faster decay is named first', () => {
   const absorbed = compareTimbre(fast, ref, { decay: decay.error, 'decay.early': 50, 'decay.late': 50, partialDecay: 50, envelope: 50 });
   assert.ok(!absorbed.findings.some((f) => f.metric === 'decay'), absorbed.findings.map((f) => f.metric).join(','));
   assert.ok(absorbed.excess !== null && absorbed.excess < cmp.distance);
+});
+
+test('timbre: partial levels locked to vibrato, with mixed signs', () => {
+  const locked = analyzeNote(
+    tone({
+      f0: 880,
+      amps: saw(8),
+      seconds: 2.2,
+      vibrato: { rate: 5.5, cents: 25 },
+      partialAm: { depthDb: 4, alternate: true },
+    }),
+    SR,
+  );
+  assert.ok(Math.abs(locked.motion.vibratoAmDb! - 4) < 1.5, `am ${locked.motion.vibratoAmDb}`);
+  assert.ok(locked.motion.amCorr! < 0.45, `corr ${locked.motion.amCorr}`);
+  assert.ok(locked.motion.amOpposite! > 0.3 && locked.motion.amOpposite! < 0.75, `opposite ${locked.motion.amOpposite}`);
+  assert.ok(locked.pitch.vibratoDepthCv !== null && locked.pitch.vibratoDepthCv < 0.2, `depth cv ${locked.pitch.vibratoDepthCv}`);
+
+  const together = analyzeNote(tone({ f0: 880, amps: saw(8), seconds: 2.2, am: { hz: 6, depth: 0.35 } }), SR);
+  assert.ok(together.motion.amCorr! > 0.85, `together ${together.motion.amCorr}`);
+  assert.ok(together.motion.vibratoAmDb !== null && together.motion.vibratoAmDb < 0.8, `unlocked ${together.motion.vibratoAmDb}`);
+});
+
+test('timbre: a straight ladder is smooth, and gap noise is measured', () => {
+  const straight = analyzeNote(tone({ f0: 220, amps: saw(20), seconds: 1.4 }), SR);
+  assert.ok(straight.motion.ladderJagDb! < 1.5, `straight ${straight.motion.ladderJagDb}`);
+  const jaggedAmps = saw(20).map((a, i) => a * (i % 2 === 0 ? 2 : 0.5));
+  const jagged = analyzeNote(tone({ f0: 220, amps: jaggedAmps, seconds: 1.4 }), SR);
+  assert.ok(jagged.motion.ladderJagDb! > 4, `jagged ${jagged.motion.ladderJagDb}`);
+
+  const quiet = analyzeNote(tone({ f0: 400, amps: [1], seconds: 1.2 }), SR);
+  const known = analyzeNote(tone({ f0: 400, amps: [1], seconds: 1.2, extra: [{ hz: 600, amp: 0.1 }] }), SR);
+  const band = known.motion.gapNoiseDb[0];
+  assert.ok(band !== null && Math.abs(band - -20) < 1.5, `gap ${known.motion.gapNoiseDb} quiet ${quiet.motion.gapNoiseDb}`);
+  assert.ok(quiet.motion.gapNoiseDb[0]! < band! - 10, `quiet gap ${quiet.motion.gapNoiseDb[0]}`);
+
+  const full = analyzeNote(tone({ f0: 1000, amps: saw(16), seconds: 1.2 }), SR);
+  const few = analyzeNote(tone({ f0: 1000, amps: saw(3), seconds: 1.2 }), SR);
+  assert.ok(full.motion.topPartialFrac! > 0.75, `full ${full.motion.topPartialFrac}`);
+  assert.ok(few.motion.topPartialFrac! < 0.35, `few ${few.motion.topPartialFrac}`);
 });
 
 test('analyzeProbe flags an out-of-tune cell', () => {

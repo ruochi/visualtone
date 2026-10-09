@@ -73,12 +73,16 @@ parentPort.on('message', (msg) => {
     const worst = [...cmp.metrics].sort((a, b) => b.error / Math.max(1, workerData.floor?.[b.id] ?? 1) - a.error / Math.max(1, workerData.floor?.[a.id] ?? 1))[0];
     const pictureIds = {
       spectrogram: 2,
-      harmonics: 2,
-      hnr: 1.5,
-      slope: 1,
+      'motion.am': 2,
+      'motion.corr': 1,
+      gapNoise: 1.5,
+      ladder: 1,
+      harmonics: 1.5,
+      topPartial: 0.8,
+      slope: 0.8,
       'vibrato.depth': 1,
       centroid: 0.6,
-      oddEven: 0.4,
+      hnr: 0.5,
     };
     let picture = 0;
     let pictureWeight = 0;
