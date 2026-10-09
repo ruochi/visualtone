@@ -55,6 +55,8 @@ export interface HarmonicPreset {
      */
     direct?: number;
     directHz?: number;
+    /** Highpass the bow noise at this multiple of the fundamental, before it reaches the body. */
+    lowCut?: number;
   };
   /**
    * Body modes painted onto the harmonic ladder at note-on.
@@ -84,6 +86,12 @@ export interface HarmonicPreset {
    * A quieter size holds longer by soft·(1−size). Unset keeps releaseSec.
    */
   releaseShape?: { lowSec: number; highSec: number; lowMidi: number; highMidi: number; soft: number };
+  /**
+   * A bow does not sit still. The note reaches swellFrom quickly, then opens to full
+   * level over swellSec (capped at 0.4 s). After that the level falls by dbPerSec and
+   * the slope steepens by tiltPerSec, so higher partials die first.
+   */
+  bowArc?: { swellFrom: number; swellSec: number; dbPerSec: number; tiltPerSec: number };
   attackSec: number;
   releaseSec: number;
   life: PitchLifeSpec;
@@ -254,7 +262,10 @@ export const HARMONIC_PRESETS = {
       { hz: 530, q: 6, db: 9.81 },
       { hz: 1209.6, q: 3, db: -12.42 },
       { hz: 4160, q: 6, db: 10.52 },
+      { hz: 2800, q: 1.6, db: 8 },
     ],
+    transient: { level: 0.35, brighten: 0.28, minSlope: 0.06, sec: 0.045, noise: 0.16, noiseStrike: 0, noiseSec: 0.04 },
+    bowArc: { swellFrom: 0.55, swellSec: 0.28, dbPerSec: 0.6, tiltPerSec: 0.04 },
     body: { seed: 23, count: 368, qLo: 59, qHi: 173.5, db: 2.875, loHz: 160, hiHz: 12000 },
     attackSec: 0.0455,
     life: {
@@ -287,6 +298,7 @@ export const HARMONIC_PRESETS = {
       high: 0,
       direct: 0.03125,
       directHz: 5200,
+      lowCut: 0.7,
     },
     releaseSec: 0.18,
     gain: 0.55,
@@ -316,6 +328,9 @@ export const HARMONIC_PRESETS = {
       mix: 0.27625,
       mixStrike: 0,
     },
+    modes: [{ hz: 2400, q: 1.6, db: 6 }],
+    transient: { level: 0.35, brighten: 0.28, minSlope: 0.06, sec: 0.045, noise: 0.16, noiseStrike: 0, noiseSec: 0.04 },
+    bowArc: { swellFrom: 0.55, swellSec: 0.28, dbPerSec: 0.6, tiltPerSec: 0.04 },
     body: { seed: 20, count: 368, qLo: 37, qHi: 167.5, db: 3.125, loHz: 120, hiHz: 10000 },
     attackSec: 0.0645,
     life: {
@@ -344,7 +359,10 @@ export const HARMONIC_PRESETS = {
       { hz: 222.2, q: 6, db: 11.51 },
       { hz: 1014, q: 11, db: 8.66 },
       { hz: 4864, q: 1.6, db: 10.72 },
+      { hz: 2200, q: 1.6, db: 6 },
     ],
+    transient: { level: 0.35, brighten: 0.28, minSlope: 0.06, sec: 0.045, noise: 0.16, noiseStrike: 0, noiseSec: 0.04 },
+    bowArc: { swellFrom: 0.55, swellSec: 0.28, dbPerSec: 0.6, tiltPerSec: 0.04 },
     attackSec: 0.055,
     body: { seed: 13, count: 332, qLo: 58, qHi: 155.5, db: 3.875, loHz: 70, hiHz: 8000 },
     life: {
@@ -397,6 +415,9 @@ export const HARMONIC_PRESETS = {
       directHz: 3362.5,
     },
     attackSec: 0.06575,
+    modes: [{ hz: 1600, q: 1.6, db: 5 }],
+    transient: { level: 0.35, brighten: 0.28, minSlope: 0.06, sec: 0.045, noise: 0.16, noiseStrike: 0, noiseSec: 0.04 },
+    bowArc: { swellFrom: 0.55, swellSec: 0.28, dbPerSec: 0.6, tiltPerSec: 0.04 },
     body: { seed: 23, count: 308, qLo: 51, qHi: 161.5, db: 4.375, loHz: 40, hiHz: 6000 },
     life: {
       vibratoCents: 6.0625,
@@ -677,6 +698,10 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   const bodyTarget = new Float64Array(N);
   const bodyInc = new Float64Array(N);
   let bodyTick = 0;
+  let arcSamples = 0;
+  let arcTick = 0;
+  let noiseHp = 0;
+  let noiseHpPole = 0;
   for (let n = 0; n < N; n++) bodyNow[n] = 1;
 
   return {
@@ -752,6 +777,12 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         air = 0;
         airAmp = ns.direct ?? 0;
         airPole = Math.exp((-2 * Math.PI * (ns.directHz ?? 4500)) / sampleRate);
+        if (ns.lowCut) {
+          noiseHp = 0;
+          noiseHpPole = Math.exp((-2 * Math.PI * Math.max(20, ns.lowCut * freq)) / sampleRate);
+        }
+        arcSamples = 0;
+        arcTick = 0;
         bodyMix = p.resonance.mix + strike * p.resonance.mixStrike;
         trEnv = tr ? tr.level : 0;
         finger = tr ? tr.level * (tr.noise + strike * tr.noiseStrike) : 0;
@@ -778,7 +809,25 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       wasOn = on;
       if (!on && env < 1e-5 && finger < 1e-4) return [0, 0];
       const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
-      const dest = on ? size : 0;
+      let dest = on ? size : 0;
+      if (on && p.bowArc) {
+        const swellN = Math.min(0.4, Math.max(0.02, p.bowArc.swellSec)) * sampleRate;
+        const u = Math.min(1, arcSamples / swellN);
+        dest = size * (p.bowArc.swellFrom + (1 - p.bowArc.swellFrom) * u);
+        if (arcSamples >= swellN && arcTick === 0) {
+          const dt = BODY_BLOCK / sampleRate;
+          const decay = Math.pow(10, (-p.bowArc.dbPerSec * dt) / 20);
+          const tilt = p.bowArc.tiltPerSec * dt;
+          for (let n = 0; n < N; n++) {
+            if (gains[n] !== 0) gains[n] *= decay * Math.exp(-tilt * n);
+          }
+          // Bow noise follows the same fade, or a dying note turns into noise.
+          noiseAmp *= decay;
+          airAmp *= decay;
+        }
+        if (arcSamples >= swellN) arcTick = arcTick === BODY_BLOCK - 1 ? 0 : arcTick + 1;
+        arcSamples++;
+      }
       env = dest + (env - dest) * (dest > env ? attackCoeff : releaseCoeff);
       if (tr) {
         trEnv *= trDec;
@@ -823,6 +872,10 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       air = white * (1 - airPole) + air * airPole;
       let src = tr ? sum + bright * trEnv : sum;
       let noise = nz * (noiseAmp + finger);
+      if (p.noise.lowCut) {
+        noiseHp = noise * (1 - noiseHpPole) + noiseHp * noiseHpPole;
+        noise -= noiseHp;
+      }
       if (p.lowpass) {
         src += noise;
         noise = 0;

@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { analyzeNote } from './analysis/timbre.js';
 import { buildWavetable, clearWavetableCache } from './wavetable.js';
 import { hueToTimbreVector } from './timbre.js';
+import { createHarmonic, HARMONIC_PRESETS, type HarmonicPreset } from './engines/harmonic.js';
 import { spectralCentroid, stereoCorrelation, measureRmsDb } from './fx.js';
 import { render } from './renderer.js';
 import { ScoreSchema } from './schema.js';
@@ -429,6 +430,88 @@ test('electric bass decays while held, and higher partials die first', () => {
     (high.envelope.decayDbPerSec ?? 0) > (low.envelope.decayDbPerSec ?? 0) + 2,
     `pitch decay ${low.envelope.decayDbPerSec} -> ${high.envelope.decayDbPerSec}`,
   );
+});
+
+function playHarmonic(preset: HarmonicPreset, seconds: number, midi: number) {
+  const sr = 48000;
+  const engine = createHarmonic(sr, preset, 3);
+  const n = Math.round(seconds * sr);
+  const buf = new Float32Array(n);
+  const off = Math.round((seconds - 0.2) * sr);
+  for (let i = 0; i < n; i++) {
+    const [l, r] = engine.processSample(midi, i < off ? 0.6 : 0, 0.5);
+    buf[i] = (l + r) * 0.5;
+  }
+  return { buf, sr };
+}
+
+function windowRms(buf: Float32Array, sr: number, t: number) {
+  const a = Math.round(t * sr);
+  const b = a + Math.round(0.08 * sr);
+  let s = 0;
+  for (let i = a; i < b; i++) s += buf[i] * buf[i];
+  return Math.sqrt(s / (b - a));
+}
+
+test('a bow arc fades and darkens a held note', () => {
+  const life = {
+    ...HARMONIC_PRESETS.violin.life,
+    vibratoCents: 0,
+    vibratoHighCents: 0,
+    wanderCents: 0,
+    shimmerRms: 0,
+    vibratoDepthJitter: 0,
+    vibratoRateJitter: 0,
+  };
+  const withArc = playHarmonic(
+    { ...HARMONIC_PRESETS.violin, life, bowArc: { swellFrom: 0.5, swellSec: 0.2, dbPerSec: 6, tiltPerSec: 0.2 } },
+    2.4,
+    74,
+  );
+  const early = windowRms(withArc.buf, withArc.sr, 0.5);
+  const late = windowRms(withArc.buf, withArc.sr, 2);
+  assert.ok(late < early * 0.5, `level ${early.toFixed(4)} -> ${late.toFixed(4)}`);
+  const centroid = (t: number) =>
+    spectralCentroid(withArc.buf.subarray(Math.round(t * withArc.sr), Math.round((t + 0.25) * withArc.sr)), withArc.sr, 1024);
+  const bright = centroid(0.45);
+  const dark = centroid(1.85);
+  assert.ok(dark < bright, `centroid ${bright.toFixed(0)} -> ${dark.toFixed(0)}`);
+
+  const steady = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bowArc: undefined }, 2.4, 74);
+  const again = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bowArc: undefined }, 2.4, 74);
+  assert.equal(steady.buf.length, again.buf.length);
+  for (let i = 0; i < steady.buf.length; i++) {
+    if (steady.buf[i] !== again.buf[i]) assert.fail(`sample ${i} changed without bowArc`);
+  }
+  const heldEarly = windowRms(steady.buf, steady.sr, 0.5);
+  const heldLate = windowRms(steady.buf, steady.sr, 2);
+  assert.ok(heldLate > heldEarly * 0.9, `unset arc fell ${heldEarly.toFixed(4)} -> ${heldLate.toFixed(4)}`);
+});
+
+test('instruments without a bow arc keep their samples', () => {
+  const expected: Record<string, string> = {
+    trumpet: 'f11620eaa49dd83ce163c3cefa5da9db044f0bafa6288259cc7ef48091351b43',
+    horn: '723e097728770e265b7944c7562cfc0bc6220c4b0d37297ef03f3df6fd045ea9',
+    trombone: '339d2756e5ffa8f3e36d688051531497fc6290e8d1477ffe8628658d099c19a0',
+    tuba: '43fdb1236e87845385ceefd1d13fb20049437feb1d4bb4e1e442069e4d6ea441',
+    saxophone: 'fee2b9ad5364f801f427bd7961494871aac41ee706a7bbac401c0b86f55a2f6b',
+    oboe: 'ac1bbf9bd47bc832dd5dd4f4c6d87877a83df9d0ed367b55e6bbf6bde04548b9',
+    bassoon: '59862eb88f532c5fb8dde3a8320a99a06562e6522cfeeb32ecd499d438a42459',
+    'electric-bass': '10e71521f25e2d867c2d0419176f67bbd91871f7d8399e64a2266e2d68c4464d',
+    piano: '97bf30bad3f18bb86c1d2fce0fbd8f9547c7b8019ebe756d11b4d258d0856650',
+    flute: '20b051cb3fe970a8cc031999384f93eb7c127910ccf4c87103f9ab222464d5a8',
+  };
+  for (const [instrument, hash] of Object.entries(expected)) {
+    const score = ScoreSchema.parse({
+      sampleRate: 48000,
+      duration: 1.2,
+      seed: 3,
+      master: { loudness: -18, drive: 0 },
+      tracks: [{ id: 'n', instrument, notes: [{ t: 0.05, y: 62, size: 0.6, duration: 0.9, ease: 'hold' }] }],
+    });
+    const got = createHash('sha256').update(render(score).wav).digest('hex');
+    assert.equal(got, hash, instrument);
+  }
 });
 
 test('bowed strings lean into vibrato near 5.5 Hz', () => {
