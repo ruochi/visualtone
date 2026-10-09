@@ -17,9 +17,18 @@ export interface PitchLifeSpec {
   vibratoGain: number;
   /** RMS of irregular loudness motion between 8 and 20 Hz. 0.032 reads as about −30 dB. */
   shimmerRms: number;
+  /**
+   * Depth at `vibratoHighMidi`. Between `vibratoLowMidi` and that note, depth
+   * ramps from `vibratoCents`. Unset keeps one depth for every pitch.
+   */
+  vibratoHighCents?: number;
+  vibratoLowMidi?: number;
+  vibratoHighMidi?: number;
 }
 
 export interface PitchLife {
+  /** Call on note-on so a pitch ramp can pick the depth. A no-op when the ramp is unset. */
+  pitch(midi: number): void;
   start(): void;
   /** Advance one sample. Sets `ratio` (frequency multiplier) and `gain`. */
   step(): void;
@@ -42,9 +51,19 @@ export function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: n
   let w0 = 0;
   let w1 = 0;
   let wPos = 0;
+  let depthCents = spec.vibratoCents;
   const life: PitchLife = {
     ratio: 1,
     gain: 1,
+    pitch(midi: number) {
+      const high = spec.vibratoHighCents;
+      if (high === undefined) return;
+      const lo = spec.vibratoLowMidi ?? 48;
+      const hi = spec.vibratoHighMidi ?? 84;
+      const span = hi - lo;
+      const u = span === 0 ? 1 : Math.max(0, Math.min(1, (midi - lo) / span));
+      depthCents = spec.vibratoCents + (high - spec.vibratoCents) * u;
+    },
     start() {
       t = 0;
       phase = 0;
@@ -67,13 +86,13 @@ export function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: n
       const wander = w0 + (w1 - w0) * k;
       let cents = wander * wanderAmp;
       let vib = 0;
-      if (spec.vibratoCents > 0) {
+      if (depthCents > 0) {
         const grow = Math.max(0, Math.min(1, (t - spec.vibratoDelaySec) / rampSec));
-        const depth = spec.vibratoCents * grow * grow * (3 - 2 * grow);
+        const depth = depthCents * grow * grow * (3 - 2 * grow);
         phase += (2 * Math.PI * spec.vibratoHz * (1 + wander * 0.03)) / sampleRate;
         if (phase > Math.PI * 2) phase -= Math.PI * 2;
-        vib = Math.sin(phase) * (depth / Math.max(1e-9, spec.vibratoCents));
-        cents += vib * spec.vibratoCents;
+        vib = Math.sin(phase) * (depth / Math.max(1e-9, depthCents));
+        cents += vib * depthCents;
       }
       t += 1 / sampleRate;
       life.ratio = Math.exp(cents * (Math.LN2 / 1200));

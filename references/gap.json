@@ -1151,28 +1151,28 @@
       "note": "C4",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.1,
-      "excess": 1.95,
-      "passed": 10,
+      "distance": 1.75,
+      "excess": 1.57,
+      "passed": 11,
       "total": 22,
-      "oursCents": -0.6563784290741487,
+      "oursCents": -0.6733979220448643,
       "refCents": -7.1835818612933515,
-      "worst": "起音噪声感 5.24",
+      "worst": "松开后的尾巴 3.87",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.6,
           -28.7
         ],
         "flutter": [
-          0.3,
+          0.4,
           1.4
         ],
         "pitch.jitter": [
-          3.3,
+          3.9,
           2
         ],
         "brightnessLag": [
-          0,
+          10,
           0
         ]
       }
@@ -1185,28 +1185,28 @@
       "note": "C4",
       "size": 0.6,
       "split": "valid",
-      "distance": 2.07,
-      "excess": 1.87,
-      "passed": 10,
+      "distance": 1.71,
+      "excess": 1.48,
+      "passed": 13,
       "total": 23,
-      "oursCents": -0.6687844361223162,
+      "oursCents": -0.683256353348829,
       "refCents": -8.797399123624393,
-      "worst": "奇偶泛音比 3.45",
+      "worst": "松开后的尾巴 3.31",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.6,
           -28.9
         ],
         "flutter": [
-          0.3,
+          0.4,
           2.3
         ],
         "pitch.jitter": [
-          3.3,
+          3.9,
           2.9
         ],
         "brightnessLag": [
-          0,
+          10,
           0
         ]
       }
@@ -1219,28 +1219,28 @@
       "note": "C4",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.69,
-      "excess": 1.44,
-      "passed": 15,
+      "distance": 1.27,
+      "excess": 1.1,
+      "passed": 18,
       "total": 22,
-      "oursCents": -0.6799559983361427,
+      "oursCents": -0.6920951018134862,
       "refCents": 0.5050689754651737,
       "worst": "松开后的尾巴 3.62",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.4,
           -29.1
         ],
         "flutter": [
-          0.3,
+          0.5,
           1.2
         ],
         "pitch.jitter": [
-          3.3,
+          3.9,
           3.7
         ],
         "brightnessLag": [
-          0,
+          10,
           -20
         ]
       }
@@ -1253,24 +1253,24 @@
       "note": "F4",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.13,
-      "excess": 1.88,
-      "passed": 8,
+      "distance": 2.01,
+      "excess": 1.73,
+      "passed": 13,
       "total": 23,
-      "oursCents": -0.31767976689283306,
+      "oursCents": -0.31340006194350856,
       "refCents": -17.46219236386797,
-      "worst": "起音噪声感 6.37",
+      "worst": "松开后的尾巴 4.96",
       "life": {
         "shimmer": [
-          -25.7,
+          -25.4,
           -29.8
         ],
         "flutter": [
-          0.2,
+          0.3,
           1
         ],
         "pitch.jitter": [
-          3.3,
+          3,
           1.1
         ],
         "brightnessLag": [
@@ -1287,24 +1287,24 @@
       "note": "F4",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.81,
-      "excess": 1.48,
-      "passed": 8,
+      "distance": 1.64,
+      "excess": 1.26,
+      "passed": 13,
       "total": 23,
-      "oursCents": -0.30999878908395256,
+      "oursCents": -0.30837916183671527,
       "refCents": -2.971932336388028,
       "worst": "松开后的尾巴 5.27",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.4,
           -29.9
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.4
         ],
         "pitch.jitter": [
-          3.3,
+          3,
           1.2
         ],
         "brightnessLag": [
@@ -1321,24 +1321,24 @@
       "note": "F4",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.66,
-      "excess": 1.35,
-      "passed": 12,
+      "distance": 1.49,
+      "excess": 1.15,
+      "passed": 14,
       "total": 23,
-      "oursCents": -0.30278420376854925,
+      "oursCents": -0.3173019550178643,
       "refCents": -8.997447302599683,
       "worst": "松开后的尾巴 3.88",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.2,
           -30.7
         ],
         "flutter": [
-          0.2,
+          0.4,
           1.5
         ],
         "pitch.jitter": [
-          3.3,
+          3,
           2.3
         ],
         "brightnessLag": [
@@ -1355,24 +1355,24 @@
       "note": "A#4",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.06,
-      "excess": 1.76,
-      "passed": 8,
+      "distance": 2.03,
+      "excess": 1.65,
+      "passed": 10,
       "total": 22,
-      "oursCents": -0.8037592054926684,
+      "oursCents": -0.8259954037040151,
       "refCents": -10.410957277825002,
-      "worst": "起音噪声感 6.65",
+      "worst": "松开后的尾巴 5.26",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.5,
           -29.4
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.6
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           1.6
         ],
         "brightnessLag": [
@@ -1389,24 +1389,24 @@
       "note": "A#4",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.65,
-      "excess": 1.55,
-      "passed": 10,
+      "distance": 1.53,
+      "excess": 1.39,
+      "passed": 13,
       "total": 22,
-      "oursCents": -0.8081367947277794,
+      "oursCents": -0.8290284303027802,
       "refCents": -1.266082942331971,
       "worst": "整体衰减 3.70",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.4,
           -32.5
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.5
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           1.3
         ],
         "brightnessLag": [
@@ -1423,24 +1423,24 @@
       "note": "A#4",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.48,
-      "excess": 1.28,
-      "passed": 14,
+      "distance": 1.43,
+      "excess": 1.15,
+      "passed": 13,
       "total": 21,
-      "oursCents": -0.8084583158252812,
+      "oursCents": -0.8288075718615814,
       "refCents": -0.7539516606191357,
-      "worst": "起音噪声感 3.92",
+      "worst": "整体衰减 3.22",
       "life": {
         "shimmer": [
-          -25.9,
+          -25.3,
           -31.5
         ],
         "flutter": [
-          0.2,
+          0.4,
           0.3
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           2.2
         ],
         "brightnessLag": [
@@ -1457,13 +1457,13 @@
       "note": "D5",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.17,
-      "excess": 1.97,
-      "passed": 6,
+      "distance": 2.18,
+      "excess": 1.91,
+      "passed": 8,
       "total": 23,
-      "oursCents": -0.48433677777853074,
+      "oursCents": -0.47625973144817474,
       "refCents": -15.996666121689238,
-      "worst": "松开后的尾巴 6.70",
+      "worst": "松开后的尾巴 6.66",
       "life": {
         "shimmer": [
           -25.8,
@@ -1474,7 +1474,7 @@
           1.7
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           1
         ],
         "brightnessLag": [
@@ -1491,16 +1491,16 @@
       "note": "D5",
       "size": 0.6,
       "split": "valid",
-      "distance": 2.03,
-      "excess": 1.71,
+      "distance": 1.88,
+      "excess": 1.5,
       "passed": 8,
       "total": 22,
-      "oursCents": -0.48883905736254224,
+      "oursCents": -0.4787690801296718,
       "refCents": 3.7825845483997065,
       "worst": "松开后的尾巴 5.26",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.7,
           -31.8
         ],
         "flutter": [
@@ -1508,7 +1508,7 @@
           1.3
         ],
         "pitch.jitter": [
-          3.3,
+          2.5,
           2.7
         ],
         "brightnessLag": [
@@ -1525,13 +1525,13 @@
       "note": "D5",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.66,
-      "excess": 1.42,
-      "passed": 10,
+      "distance": 1.6,
+      "excess": 1.3,
+      "passed": 12,
       "total": 22,
-      "oursCents": -0.49306700083898297,
+      "oursCents": -0.4813173670545866,
       "refCents": 4.36279340745063,
-      "worst": "松开后的尾巴 6.01",
+      "worst": "松开后的尾巴 5.96",
       "life": {
         "shimmer": [
           -25.6,
@@ -1542,7 +1542,7 @@
           1.6
         ],
         "pitch.jitter": [
-          3.3,
+          2.5,
           1.3
         ],
         "brightnessLag": [
@@ -1559,24 +1559,24 @@
       "note": "G5",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.9,
-      "excess": 1.82,
+      "distance": 1.83,
+      "excess": 1.74,
       "passed": 10,
       "total": 23,
-      "oursCents": -0.47152658571751693,
+      "oursCents": -0.4149779723880822,
       "refCents": -1.1876848453865243,
-      "worst": "起音噪声感 5.91",
+      "worst": "各泛音衰减 7.64",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.6,
           -28.4
         ],
         "flutter": [
-          0.5,
+          0.3,
           1.7
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           1.1
         ],
         "brightnessLag": [
@@ -1593,24 +1593,24 @@
       "note": "G5",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.82,
-      "excess": 1.47,
-      "passed": 12,
+      "distance": 1.78,
+      "excess": 1.38,
+      "passed": 11,
       "total": 23,
-      "oursCents": -0.44541918976269906,
+      "oursCents": -0.3844788767417028,
       "refCents": 5.243510647631059,
-      "worst": "松开后的尾巴 5.45",
+      "worst": "松开后的尾巴 5.48",
       "life": {
         "shimmer": [
-          -25.8,
+          -25.6,
           -24.6
         ],
         "flutter": [
-          0.5,
+          0.3,
           2.1
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           1.7
         ],
         "brightnessLag": [
@@ -1627,24 +1627,24 @@
       "note": "G5",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.52,
-      "excess": 1.34,
-      "passed": 14,
+      "distance": 1.54,
+      "excess": 1.32,
+      "passed": 13,
       "total": 22,
-      "oursCents": -0.4235602022720618,
+      "oursCents": -0.35733196734040623,
       "refCents": 5.031939263114156,
-      "worst": "起音噪声感 4.93",
+      "worst": "松开后的尾巴 3.55",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.4,
           -23
         ],
         "flutter": [
-          0.5,
+          0.3,
           1.8
         ],
         "pitch.jitter": [
-          3.3,
+          2.6,
           1.5
         ],
         "brightnessLag": [
@@ -1661,24 +1661,24 @@
       "note": "C6",
       "size": 0.3,
       "split": "test",
-      "distance": 2.01,
-      "excess": 1.77,
-      "passed": 11,
+      "distance": 1.9,
+      "excess": 1.65,
+      "passed": 10,
       "total": 23,
-      "oursCents": -0.7045655011905858,
+      "oursCents": -0.670458643864588,
       "refCents": -26.31203834454541,
-      "worst": "起音噪声感 7.03",
+      "worst": "松开后的尾巴 4.62",
       "life": {
         "shimmer": [
-          -25.7,
+          -25.3,
           -24.3
         ],
         "flutter": [
-          1.4,
+          0.3,
           1.5
         ],
         "pitch.jitter": [
-          3.3,
+          2.5,
           2.3
         ],
         "brightnessLag": [
@@ -1695,24 +1695,24 @@
       "note": "C6",
       "size": 0.6,
       "split": "test",
-      "distance": 1.6,
-      "excess": 1.39,
-      "passed": 13,
+      "distance": 1.46,
+      "excess": 1.21,
+      "passed": 17,
       "total": 22,
-      "oursCents": -0.7055954868944668,
+      "oursCents": -0.6586029168883414,
       "refCents": -2.607946680469022,
-      "worst": "松开后的尾巴 4.72",
+      "worst": "松开后的尾巴 4.83",
       "life": {
         "shimmer": [
           -25.6,
           -25.5
         ],
         "flutter": [
-          1.4,
+          0.3,
           3.2
         ],
         "pitch.jitter": [
-          3.3,
+          2.5,
           1.4
         ],
         "brightnessLag": [
@@ -1729,24 +1729,24 @@
       "note": "C6",
       "size": 0.9,
       "split": "test",
-      "distance": 1.3,
-      "excess": 1.14,
-      "passed": 16,
+      "distance": 1.15,
+      "excess": 0.94,
+      "passed": 15,
       "total": 22,
-      "oursCents": -0.7068830262945043,
+      "oursCents": -0.6464635494319931,
       "refCents": -3.0931921023374733,
-      "worst": "起音噪声感 3.24",
+      "worst": "松开后的尾巴 2.25",
       "life": {
         "shimmer": [
           -25.6,
           -24.9
         ],
         "flutter": [
-          1.4,
+          0.3,
           1.6
         ],
         "pitch.jitter": [
-          3.2,
+          2.5,
           2
         ],
         "brightnessLag": [
@@ -1763,16 +1763,16 @@
       "note": "C3",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.06,
-      "excess": 1.84,
+      "distance": 1.99,
+      "excess": 1.8,
       "passed": 7,
-      "total": 21,
-      "oursCents": -1.3971393544641666,
+      "total": 20,
+      "oursCents": -1.4809554122496453,
       "refCents": -0.6316609335008748,
-      "worst": "松开后的尾巴 6.64",
+      "worst": "松开后的尾巴 6.63",
       "life": {
         "shimmer": [
-          -28.4,
+          -28,
           -34.7
         ],
         "flutter": [
@@ -1780,7 +1780,7 @@
           0.3
         ],
         "pitch.jitter": [
-          2.6,
+          2.3,
           1.1
         ],
         "brightnessLag": [
@@ -1797,16 +1797,16 @@
       "note": "C3",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.95,
-      "excess": 1.67,
-      "passed": 11,
-      "total": 22,
-      "oursCents": -1.411767138469305,
+      "distance": 1.88,
+      "excess": 1.56,
+      "passed": 12,
+      "total": 21,
+      "oursCents": -1.5010023260708998,
       "refCents": -4.5456959650607764,
       "worst": "松开后的尾巴 6.07",
       "life": {
         "shimmer": [
-          -28.4,
+          -27.8,
           -33.1
         ],
         "flutter": [
@@ -1814,7 +1814,7 @@
           0.4
         ],
         "pitch.jitter": [
-          2.6,
+          2.3,
           0.8
         ],
         "brightnessLag": [
@@ -1831,16 +1831,16 @@
       "note": "C3",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.74,
-      "excess": 1.47,
-      "passed": 11,
-      "total": 21,
-      "oursCents": -1.4387925210301573,
+      "distance": 1.8,
+      "excess": 1.5,
+      "passed": 13,
+      "total": 20,
+      "oursCents": -1.5135455297101787,
       "refCents": -1.5496843121926434,
-      "worst": "松开后的尾巴 6.59",
+      "worst": "松开后的尾巴 6.57",
       "life": {
         "shimmer": [
-          -28.3,
+          -27.4,
           -33.2
         ],
         "flutter": [
@@ -1848,7 +1848,7 @@
           1.1
         ],
         "pitch.jitter": [
-          2.6,
+          2.3,
           2
         ],
         "brightnessLag": [
@@ -1865,24 +1865,24 @@
       "note": "F4",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.15,
-      "excess": 1.9,
+      "distance": 2.14,
+      "excess": 1.84,
       "passed": 6,
       "total": 21,
-      "oursCents": -0.35434960766495477,
+      "oursCents": -0.33206007950652183,
       "refCents": -11.262162650870268,
-      "worst": "起音噪声感 5.91",
+      "worst": "松开后的尾巴 4.91",
       "life": {
         "shimmer": [
-          -28.5,
+          -28.3,
           -30.5
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.5
         ],
         "pitch.jitter": [
-          2.7,
+          2.8,
           2.3
         ],
         "brightnessLag": [
@@ -1899,24 +1899,24 @@
       "note": "F4",
       "size": 0.6,
       "split": "valid",
-      "distance": 2.16,
-      "excess": 1.9,
-      "passed": 9,
+      "distance": 2.04,
+      "excess": 1.73,
+      "passed": 11,
       "total": 23,
-      "oursCents": -0.3421208440920892,
+      "oursCents": -0.3206703309406705,
       "refCents": -17.38907770781449,
-      "worst": "谐噪比 3.77",
+      "worst": "松开后的尾巴 3.59",
       "life": {
         "shimmer": [
-          -28.4,
+          -28.2,
           -29.3
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.9
         ],
         "pitch.jitter": [
-          2.7,
+          2.8,
           1.9
         ],
         "brightnessLag": [
@@ -1933,16 +1933,16 @@
       "note": "F3",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.54,
-      "excess": 1.1,
-      "passed": 16,
-      "total": 23,
-      "oursCents": -0.388840760730436,
+      "distance": 1.7,
+      "excess": 1.32,
+      "passed": 13,
+      "total": 22,
+      "oursCents": -0.32625651084179236,
       "refCents": 4.990761588228422,
       "worst": "松开后的尾巴 3.25",
       "life": {
         "shimmer": [
-          -28.5,
+          -28.3,
           -28.6
         ],
         "flutter": [
@@ -1950,7 +1950,7 @@
           0.9
         ],
         "pitch.jitter": [
-          2.7,
+          3.2,
           2.3
         ],
         "brightnessLag": [
@@ -1967,16 +1967,16 @@
       "note": "A#3",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.98,
-      "excess": 1.8,
-      "passed": 9,
+      "distance": 1.99,
+      "excess": 1.75,
+      "passed": 7,
       "total": 23,
-      "oursCents": -1.0964147055344529,
+      "oursCents": -1.1208838290565466,
       "refCents": -48.13311161249043,
-      "worst": "起音噪声感 6.84",
+      "worst": "松开后的尾巴 5.92",
       "life": {
         "shimmer": [
-          -28.3,
+          -28.2,
           -28.2
         ],
         "flutter": [
@@ -1984,7 +1984,7 @@
           1.9
         ],
         "pitch.jitter": [
-          2.7,
+          2.5,
           1.4
         ],
         "brightnessLag": [
@@ -2001,16 +2001,16 @@
       "note": "A#3",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.78,
-      "excess": 1.52,
-      "passed": 11,
-      "total": 22,
-      "oursCents": -1.1094563648639506,
+      "distance": 1.61,
+      "excess": 1.38,
+      "passed": 13,
+      "total": 23,
+      "oursCents": -1.1341205169887667,
       "refCents": -8.52783178426438,
-      "worst": "松开后的尾巴 4.11",
+      "worst": "松开后的尾巴 4.23",
       "life": {
         "shimmer": [
-          -28.2,
+          -28,
           -28.7
         ],
         "flutter": [
@@ -2018,7 +2018,7 @@
           1.9
         ],
         "pitch.jitter": [
-          2.7,
+          2.5,
           2.3
         ],
         "brightnessLag": [
@@ -2035,16 +2035,16 @@
       "note": "A#3",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.45,
-      "excess": 1.19,
-      "passed": 15,
+      "distance": 1.47,
+      "excess": 1.27,
+      "passed": 13,
       "total": 23,
-      "oursCents": -1.1228481866527593,
+      "oursCents": -1.1470783067316415,
       "refCents": 7.240199641374406,
-      "worst": "各泛音衰减 5.81",
+      "worst": "各泛音衰减 7.59",
       "life": {
         "shimmer": [
-          -28.3,
+          -28.1,
           -27.1
         ],
         "flutter": [
@@ -2052,7 +2052,7 @@
           2.2
         ],
         "pitch.jitter": [
-          2.7,
+          2.5,
           2.1
         ],
         "brightnessLag": [
@@ -2069,16 +2069,16 @@
       "note": "D4",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.87,
-      "excess": 1.58,
-      "passed": 10,
+      "distance": 1.79,
+      "excess": 1.53,
+      "passed": 11,
       "total": 22,
-      "oursCents": -0.6277674884750392,
+      "oursCents": -0.5702304691550039,
       "refCents": -5.736458476267738,
-      "worst": "起音噪声感 7.06",
+      "worst": "松开后的尾巴 5.95",
       "life": {
         "shimmer": [
-          -28.5,
+          -28.2,
           -33.7
         ],
         "flutter": [
@@ -2086,7 +2086,7 @@
           1.2
         ],
         "pitch.jitter": [
-          2.6,
+          2.7,
           1
         ],
         "brightnessLag": [
@@ -2103,24 +2103,24 @@
       "note": "D4",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.61,
-      "excess": 1.49,
-      "passed": 11,
+      "distance": 1.46,
+      "excess": 1.35,
+      "passed": 12,
       "total": 21,
-      "oursCents": -0.5963657395848238,
+      "oursCents": -0.5411643671600399,
       "refCents": 0.9862450575886982,
       "worst": "松开后的尾巴 6.70",
       "life": {
         "shimmer": [
-          -28.2,
+          -27.9,
           -38.3
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.8
         ],
         "pitch.jitter": [
-          2.6,
+          2.7,
           0.6
         ],
         "brightnessLag": [
@@ -2137,20 +2137,20 @@
       "note": "D4",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.52,
-      "excess": 1.34,
-      "passed": 10,
+      "distance": 1.46,
+      "excess": 1.31,
+      "passed": 12,
       "total": 21,
-      "oursCents": -0.5610575711779255,
+      "oursCents": -0.5094463025984599,
       "refCents": -0.7051789307165636,
       "worst": "松开后的尾巴 6.29",
       "life": {
         "shimmer": [
-          -28.2,
+          -27.8,
           -36
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.9
         ],
         "pitch.jitter": [
@@ -2171,24 +2171,24 @@
       "note": "G4",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.93,
-      "excess": 1.69,
-      "passed": 9,
+      "distance": 1.81,
+      "excess": 1.57,
+      "passed": 10,
       "total": 23,
-      "oursCents": -0.4129175525023358,
+      "oursCents": -0.4042512901259918,
       "refCents": -1.0523958863248057,
-      "worst": "起音噪声感 6.23",
+      "worst": "松开后的尾巴 5.68",
       "life": {
         "shimmer": [
-          -28.6,
+          -28.4,
           -26.6
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.7
         ],
         "pitch.jitter": [
-          2.7,
+          2.9,
           1.1
         ],
         "brightnessLag": [
@@ -2205,24 +2205,24 @@
       "note": "G4",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.77,
-      "excess": 1.48,
-      "passed": 12,
+      "distance": 1.62,
+      "excess": 1.3,
+      "passed": 11,
       "total": 23,
-      "oursCents": -0.4075780929607449,
+      "oursCents": -0.39921769476664737,
       "refCents": 1.4300221280768695,
       "worst": "松开后的尾巴 4.66",
       "life": {
         "shimmer": [
-          -28.5,
+          -28.3,
           -26.3
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.6
         ],
         "pitch.jitter": [
-          2.7,
+          2.9,
           1.8
         ],
         "brightnessLag": [
@@ -2239,24 +2239,24 @@
       "note": "G4",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.64,
-      "excess": 1.2,
-      "passed": 13,
+      "distance": 1.47,
+      "excess": 1.04,
+      "passed": 18,
       "total": 23,
-      "oursCents": -0.4019610838338788,
+      "oursCents": -0.39420280998033697,
       "refCents": -1.123951605115644,
       "worst": "松开后的尾巴 3.92",
       "life": {
         "shimmer": [
-          -28.3,
+          -28.1,
           -23.5
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.8
         ],
         "pitch.jitter": [
-          2.7,
+          2.9,
           1.4
         ],
         "brightnessLag": [
@@ -2273,24 +2273,24 @@
       "note": "C5",
       "size": 0.3,
       "split": "test",
-      "distance": 1.97,
+      "distance": 1.92,
       "excess": 1.63,
       "passed": 11,
       "total": 23,
-      "oursCents": -0.38912105797536506,
+      "oursCents": -0.35484826963796007,
       "refCents": -8.187202143899,
-      "worst": "起音噪声感 6.97",
+      "worst": "松开后的尾巴 5.54",
       "life": {
         "shimmer": [
-          -28.4,
+          -27.9,
           -25.7
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.2
         ],
         "pitch.jitter": [
-          2.7,
+          3.1,
           1.8
         ],
         "brightnessLag": [
@@ -2307,24 +2307,24 @@
       "note": "C5",
       "size": 0.6,
       "split": "test",
-      "distance": 1.57,
-      "excess": 1.25,
-      "passed": 15,
+      "distance": 1.51,
+      "excess": 1.23,
+      "passed": 17,
       "total": 23,
-      "oursCents": -0.3703014047899218,
+      "oursCents": -0.33845049397594273,
       "refCents": -1.6751006463425437,
       "worst": "松开后的尾巴 5.18",
       "life": {
         "shimmer": [
-          -28.4,
+          -27.8,
           -24.7
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.1
         ],
         "pitch.jitter": [
-          2.7,
+          3.1,
           1.4
         ],
         "brightnessLag": [
@@ -2341,24 +2341,24 @@
       "note": "C5",
       "size": 0.9,
       "split": "test",
-      "distance": 1.56,
-      "excess": 1.32,
-      "passed": 13,
+      "distance": 1.35,
+      "excess": 1.18,
+      "passed": 14,
       "total": 22,
-      "oursCents": -0.34875506085188035,
+      "oursCents": -0.3198746360097319,
       "refCents": -3.6072673429623827,
-      "worst": "松开后的尾巴 4.89",
+      "worst": "松开后的尾巴 4.83",
       "life": {
         "shimmer": [
-          -28.3,
+          -27.5,
           -23.3
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.4
         ],
         "pitch.jitter": [
-          2.7,
+          3.2,
           2.1
         ],
         "brightnessLag": [
@@ -2375,16 +2375,16 @@
       "note": "C2",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.19,
-      "excess": 2.01,
-      "passed": 4,
-      "total": 21,
-      "oursCents": -2.034208844719379,
+      "distance": 2,
+      "excess": 1.74,
+      "passed": 6,
+      "total": 20,
+      "oursCents": -1.971984663483666,
       "refCents": 10.415008851406206,
       "worst": "松开后的尾巴 6.25",
       "life": {
         "shimmer": [
-          -25.9,
+          -25.7,
           -31.5
         ],
         "flutter": [
@@ -2392,7 +2392,7 @@
           1.2
         ],
         "pitch.jitter": [
-          2.5,
+          2.3,
           1.3
         ],
         "brightnessLag": [
@@ -2409,16 +2409,16 @@
       "note": "C2",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.88,
-      "excess": 1.7,
-      "passed": 6,
-      "total": 22,
-      "oursCents": -2.039297811552902,
+      "distance": 1.76,
+      "excess": 1.61,
+      "passed": 9,
+      "total": 21,
+      "oursCents": -1.9887163740245786,
       "refCents": 8.711553899545445,
       "worst": "松开后的尾巴 6.64",
       "life": {
         "shimmer": [
-          -25.7,
+          -25.4,
           -37
         ],
         "flutter": [
@@ -2426,7 +2426,7 @@
           0.3
         ],
         "pitch.jitter": [
-          2.5,
+          2.3,
           0.5
         ],
         "brightnessLag": [
@@ -2443,16 +2443,16 @@
       "note": "C2",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.96,
-      "excess": 1.71,
-      "passed": 8,
-      "total": 21,
-      "oursCents": -2.045405966027666,
+      "distance": 1.88,
+      "excess": 1.61,
+      "passed": 10,
+      "total": 20,
+      "oursCents": -2.0092778400143976,
       "refCents": 19.73332850322716,
-      "worst": "松开后的尾巴 6.80",
+      "worst": "松开后的尾巴 6.43",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.2,
           -32.5
         ],
         "flutter": [
@@ -2460,7 +2460,7 @@
           0.3
         ],
         "pitch.jitter": [
-          2.5,
+          2.3,
           1.1
         ],
         "brightnessLag": [
@@ -2477,16 +2477,16 @@
       "note": "G2",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.53,
-      "excess": 1.28,
-      "passed": 11,
-      "total": 21,
-      "oursCents": -1.1015045074544925,
+      "distance": 1.36,
+      "excess": 1.1,
+      "passed": 13,
+      "total": 20,
+      "oursCents": -1.30326223255208,
       "refCents": -2.8049631048965367,
-      "worst": "谐噪比 3.70",
+      "worst": "亮度（质心） 3.97",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.5,
           -33.2
         ],
         "flutter": [
@@ -2494,7 +2494,7 @@
           0.5
         ],
         "pitch.jitter": [
-          2.5,
+          2.3,
           1.2
         ],
         "brightnessLag": [
@@ -2511,13 +2511,13 @@
       "note": "G2",
       "size": 0.6,
       "split": "valid",
-      "distance": 2.01,
-      "excess": 1.71,
+      "distance": 1.78,
+      "excess": 1.48,
       "passed": 8,
-      "total": 21,
-      "oursCents": -1.124566188705968,
+      "total": 20,
+      "oursCents": -1.3523283400923547,
       "refCents": -31.83866818819328,
-      "worst": "音高 6.14",
+      "worst": "音高 6.10",
       "life": {
         "shimmer": [
           -25.6,
@@ -2528,7 +2528,7 @@
           0.5
         ],
         "pitch.jitter": [
-          2.5,
+          2.3,
           0.6
         ],
         "brightnessLag": [
@@ -2545,16 +2545,16 @@
       "note": "G2",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.96,
-      "excess": 1.67,
-      "passed": 8,
-      "total": 21,
-      "oursCents": -1.1444932502209437,
+      "distance": 1.92,
+      "excess": 1.55,
+      "passed": 9,
+      "total": 20,
+      "oursCents": -1.3971461740934725,
       "refCents": -19.55158074036417,
-      "worst": "起音噪声感 5.10",
+      "worst": "整体衰减 2.76",
       "life": {
         "shimmer": [
-          -25.5,
+          -25.3,
           -35.3
         ],
         "flutter": [
@@ -2562,7 +2562,7 @@
           0.3
         ],
         "pitch.jitter": [
-          2.5,
+          2.3,
           0.5
         ],
         "brightnessLag": [
@@ -2579,16 +2579,16 @@
       "note": "D3",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.9,
-      "excess": 1.67,
-      "passed": 10,
-      "total": 21,
-      "oursCents": -1.186571925264103,
+      "distance": 1.6,
+      "excess": 1.4,
+      "passed": 9,
+      "total": 20,
+      "oursCents": -1.2199103530093003,
       "refCents": -4.379605951786003,
       "worst": "松开后的尾巴 6.46",
       "life": {
         "shimmer": [
-          -25.5,
+          -25.4,
           -33
         ],
         "flutter": [
@@ -2596,11 +2596,11 @@
           0.6
         ],
         "pitch.jitter": [
-          2.5,
+          2.9,
           0.8
         ],
         "brightnessLag": [
-          0,
+          -10,
           -40
         ]
       }
@@ -2613,16 +2613,16 @@
       "note": "D3",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.57,
-      "excess": 1.35,
-      "passed": 12,
-      "total": 21,
-      "oursCents": -1.190593935663811,
+      "distance": 1.21,
+      "excess": 1.04,
+      "passed": 14,
+      "total": 20,
+      "oursCents": -1.2393083231081836,
       "refCents": 1.0382979643701418,
       "worst": "松开后的尾巴 7.21",
       "life": {
         "shimmer": [
-          -25.6,
+          -25.4,
           -35.5
         ],
         "flutter": [
@@ -2630,11 +2630,11 @@
           0.5
         ],
         "pitch.jitter": [
-          2.5,
+          2.9,
           0.8
         ],
         "brightnessLag": [
-          0,
+          -10,
           -10
         ]
       }
@@ -2647,16 +2647,16 @@
       "note": "D3",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.7,
-      "excess": 1.34,
-      "passed": 9,
-      "total": 20,
-      "oursCents": -1.2112907813655516,
+      "distance": 1.34,
+      "excess": 0.99,
+      "passed": 11,
+      "total": 19,
+      "oursCents": -1.2612786162052116,
       "refCents": -4.957796448540389,
-      "worst": "起音噪声感 3.43",
+      "worst": "起音 10–90% 3.33",
       "life": {
         "shimmer": [
-          -25.5,
+          -25.3,
           -31.3
         ],
         "flutter": [
@@ -2664,11 +2664,11 @@
           1
         ],
         "pitch.jitter": [
-          2.5,
+          2.9,
           1.4
         ],
         "brightnessLag": [
-          0,
+          -10,
           -60
         ]
       }
@@ -2681,20 +2681,20 @@
       "note": "A#3",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.04,
-      "excess": 1.84,
+      "distance": 1.91,
+      "excess": 1.74,
       "passed": 10,
       "total": 23,
-      "oursCents": -0.9520890528580199,
+      "oursCents": -0.9697810758373889,
       "refCents": -3.8875969295345896,
-      "worst": "各泛音衰减 8.04",
+      "worst": "各泛音衰减 8.03",
       "life": {
         "shimmer": [
-          -25.4,
+          -25.3,
           -31.7
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.8
         ],
         "pitch.jitter": [
@@ -2715,20 +2715,20 @@
       "note": "A#3",
       "size": 0.6,
       "split": "valid",
-      "distance": 2.09,
-      "excess": 1.7,
+      "distance": 1.98,
+      "excess": 1.56,
       "passed": 9,
       "total": 23,
-      "oursCents": -0.9640048717334255,
+      "oursCents": -0.9774976430401945,
       "refCents": -15.817830424470529,
       "worst": "松开后的尾巴 4.98",
       "life": {
         "shimmer": [
-          -25.4,
+          -25.2,
           -29.4
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.1
         ],
         "pitch.jitter": [
@@ -2749,20 +2749,20 @@
       "note": "A#3",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.52,
-      "excess": 1.32,
-      "passed": 14,
+      "distance": 1.58,
+      "excess": 1.33,
+      "passed": 15,
       "total": 22,
-      "oursCents": -0.9800403074594796,
+      "oursCents": -0.9840527460006732,
       "refCents": 0.8824700514965556,
-      "worst": "起音噪声感 6.56",
+      "worst": "松开后的尾巴 4.88",
       "life": {
         "shimmer": [
-          -25.3,
+          -25.2,
           -28.4
         ],
         "flutter": [
-          0.2,
+          0.3,
           0.8
         ],
         "pitch.jitter": [
@@ -2783,16 +2783,16 @@
       "note": "F4",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.56,
-      "excess": 1.3,
-      "passed": 11,
+      "distance": 1.23,
+      "excess": 0.95,
+      "passed": 15,
       "total": 22,
-      "oursCents": -0.2779330210314838,
+      "oursCents": -0.24704087549188464,
       "refCents": -3.2218893997165567,
-      "worst": "起音噪声感 3.70",
+      "worst": "松开后的尾巴 2.05",
       "life": {
         "shimmer": [
-          -25.5,
+          -25.4,
           -32.5
         ],
         "flutter": [
@@ -2800,7 +2800,7 @@
           1.2
         ],
         "pitch.jitter": [
-          2.5,
+          2.9,
           1.5
         ],
         "brightnessLag": [
@@ -2817,16 +2817,16 @@
       "note": "F4",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.87,
-      "excess": 1.46,
-      "passed": 10,
+      "distance": 1.62,
+      "excess": 1.19,
+      "passed": 11,
       "total": 23,
-      "oursCents": -0.26803199982976306,
+      "oursCents": -0.23408811268132423,
       "refCents": -11.813196843333976,
-      "worst": "起音噪声感 4.71",
+      "worst": "松开后的尾巴 2.81",
       "life": {
         "shimmer": [
-          -25.4,
+          -25.3,
           -27.4
         ],
         "flutter": [
@@ -2834,7 +2834,7 @@
           1.5
         ],
         "pitch.jitter": [
-          2.5,
+          2.9,
           2.9
         ],
         "brightnessLag": [
@@ -2851,24 +2851,24 @@
       "note": "F4",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.59,
-      "excess": 1.2,
-      "passed": 14,
+      "distance": 1.4,
+      "excess": 1,
+      "passed": 15,
       "total": 23,
-      "oursCents": -0.2571275114608625,
+      "oursCents": -0.219364793533091,
       "refCents": -0.2129802453964121,
-      "worst": "起音噪声感 3.98",
+      "worst": "松开后的尾巴 2.11",
       "life": {
         "shimmer": [
           -25.4,
           -30
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.6
         ],
         "pitch.jitter": [
-          2.5,
+          2.9,
           2.5
         ],
         "brightnessLag": [
@@ -2885,24 +2885,24 @@
       "note": "C5",
       "size": 0.3,
       "split": "test",
-      "distance": 1.93,
-      "excess": 1.74,
-      "passed": 10,
+      "distance": 1.71,
+      "excess": 1.51,
+      "passed": 11,
       "total": 22,
-      "oursCents": -0.324637632602062,
+      "oursCents": -0.23826019076343405,
       "refCents": -1.74244778173605,
-      "worst": "奇偶泛音比 5.32",
+      "worst": "奇偶泛音比 3.74",
       "life": {
         "shimmer": [
           -25.4,
           -23
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.7
         ],
         "pitch.jitter": [
-          2.5,
+          3.5,
           2.7
         ],
         "brightnessLag": [
@@ -2919,24 +2919,24 @@
       "note": "C5",
       "size": 0.6,
       "split": "test",
-      "distance": 1.75,
-      "excess": 1.53,
-      "passed": 10,
+      "distance": 1.58,
+      "excess": 1.29,
+      "passed": 11,
       "total": 22,
-      "oursCents": -0.30484535817561376,
+      "oursCents": -0.20762238596925922,
       "refCents": -6.364308636279125,
-      "worst": "起音噪声感 5.80",
+      "worst": "松开后的尾巴 2.69",
       "life": {
         "shimmer": [
-          -25.4,
+          -25.3,
           -20.8
         ],
         "flutter": [
-          0.2,
+          0.3,
           1.9
         ],
         "pitch.jitter": [
-          2.5,
+          3.5,
           2.5
         ],
         "brightnessLag": [
@@ -2953,24 +2953,24 @@
       "note": "C5",
       "size": 0.9,
       "split": "test",
-      "distance": 2.18,
-      "excess": 1.86,
-      "passed": 6,
+      "distance": 1.98,
+      "excess": 1.63,
+      "passed": 8,
       "total": 22,
-      "oursCents": -0.2837541349505042,
+      "oursCents": -0.1737863772178213,
       "refCents": -11.247962920409226,
-      "worst": "奇偶泛音比 3.78",
+      "worst": "分音起伏 2.95",
       "life": {
         "shimmer": [
-          -25.4,
+          -25.3,
           -20.2
         ],
         "flutter": [
-          0.2,
+          0.3,
           3.3
         ],
         "pitch.jitter": [
-          2.5,
+          3.5,
           4.1
         ],
         "brightnessLag": [
@@ -5263,16 +5263,16 @@
       "note": "C2",
       "size": 0.3,
       "split": "valid",
-      "distance": 2.03,
-      "excess": 1.67,
-      "passed": 6,
+      "distance": 2.12,
+      "excess": 1.76,
+      "passed": 7,
       "total": 21,
-      "oursCents": -1.4931929358024407,
+      "oursCents": -1.4829226756266738,
       "refCents": 18.642524257366148,
       "worst": "松开后的尾巴 9.14",
       "life": {
         "shimmer": [
-          -32.9,
+          -32.7,
           -41
         ],
         "flutter": [
@@ -5280,7 +5280,7 @@
           0.3
         ],
         "pitch.jitter": [
-          2,
+          1.9,
           2.6
         ],
         "brightnessLag": [
@@ -5297,16 +5297,16 @@
       "note": "C2",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.57,
-      "excess": 1.27,
-      "passed": 10,
+      "distance": 1.56,
+      "excess": 1.29,
+      "passed": 13,
       "total": 22,
-      "oursCents": -1.4948582615612216,
+      "oursCents": -1.483762636006818,
       "refCents": 7.712327706191775,
       "worst": "松开后的尾巴 5.48",
       "life": {
         "shimmer": [
-          -32.8,
+          -32.5,
           -33.8
         ],
         "flutter": [
@@ -5314,7 +5314,7 @@
           0.4
         ],
         "pitch.jitter": [
-          2,
+          1.9,
           1.5
         ],
         "brightnessLag": [
@@ -5331,16 +5331,16 @@
       "note": "C2",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.82,
-      "excess": 1.48,
-      "passed": 8,
+      "distance": 1.71,
+      "excess": 1.34,
+      "passed": 12,
       "total": 21,
-      "oursCents": -1.4999015628381056,
+      "oursCents": -1.4852743951619745,
       "refCents": 8.46743468988886,
       "worst": "松开后的尾巴 5.84",
       "life": {
         "shimmer": [
-          -32.7,
+          -32.4,
           -33.7
         ],
         "flutter": [
@@ -5348,7 +5348,7 @@
           0.3
         ],
         "pitch.jitter": [
-          2,
+          1.9,
           3.3
         ],
         "brightnessLag": [
@@ -5365,24 +5365,24 @@
       "note": "F2",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.67,
-      "excess": 1.37,
-      "passed": 12,
+      "distance": 1.72,
+      "excess": 1.46,
+      "passed": 11,
       "total": 22,
-      "oursCents": -0.7329251751561155,
+      "oursCents": -0.7135862382694331,
       "refCents": 3.0410943486720714,
       "worst": "松开后的尾巴 6.60",
       "life": {
         "shimmer": [
-          -32.6,
+          -32.4,
           -34
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.4
         ],
         "pitch.jitter": [
-          2,
+          1.7,
           1.7
         ],
         "brightnessLag": [
@@ -5399,24 +5399,24 @@
       "note": "F2",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.81,
-      "excess": 1.62,
-      "passed": 9,
+      "distance": 1.75,
+      "excess": 1.57,
+      "passed": 11,
       "total": 21,
-      "oursCents": -0.7272837770105159,
+      "oursCents": -0.705724374580539,
       "refCents": 3.1900598820268815,
       "worst": "松开后的尾巴 6.62",
       "life": {
         "shimmer": [
-          -32.6,
+          -32.4,
           -32
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.3
         ],
         "pitch.jitter": [
-          2,
+          1.7,
           4.5
         ],
         "brightnessLag": [
@@ -5433,24 +5433,24 @@
       "note": "F2",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.66,
-      "excess": 1.43,
-      "passed": 10,
+      "distance": 1.47,
+      "excess": 1.25,
+      "passed": 14,
       "total": 21,
-      "oursCents": -0.7209332351630293,
+      "oursCents": -0.6975731650668175,
       "refCents": 0.11406943807438034,
-      "worst": "松开后的尾巴 6.09",
+      "worst": "松开后的尾巴 6.39",
       "life": {
         "shimmer": [
-          -32.5,
+          -32.3,
           -32.4
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.5
         ],
         "pitch.jitter": [
-          2,
+          1.7,
           3
         ],
         "brightnessLag": [
@@ -5467,11 +5467,11 @@
       "note": "A#2",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.77,
-      "excess": 1.54,
-      "passed": 9,
-      "total": 21,
-      "oursCents": -1.2805868269155427,
+      "distance": 1.73,
+      "excess": 1.52,
+      "passed": 8,
+      "total": 20,
+      "oursCents": -1.2633605165265305,
       "refCents": -7.700916372798574,
       "worst": "松开后的尾巴 6.66",
       "life": {
@@ -5480,15 +5480,15 @@
           -39.2
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.4
         ],
         "pitch.jitter": [
-          2,
+          2.7,
           2.4
         ],
         "brightnessLag": [
-          0,
+          -10,
           0
         ]
       }
@@ -5501,28 +5501,28 @@
       "note": "A#2",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.86,
-      "excess": 1.57,
-      "passed": 9,
-      "total": 21,
-      "oursCents": -1.2733915839966765,
+      "distance": 1.66,
+      "excess": 1.37,
+      "passed": 12,
+      "total": 20,
+      "oursCents": -1.2694082147044372,
       "refCents": -20.89669793765286,
-      "worst": "松开后的尾巴 7.18",
+      "worst": "松开后的尾巴 7.16",
       "life": {
         "shimmer": [
           -32.5,
           -36
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.4
         ],
         "pitch.jitter": [
-          2,
+          2.7,
           2.3
         ],
         "brightnessLag": [
-          0,
+          -10,
           -50
         ]
       }
@@ -5535,28 +5535,28 @@
       "note": "A#2",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.9,
-      "excess": 1.68,
-      "passed": 9,
-      "total": 21,
-      "oursCents": -1.282516336121764,
+      "distance": 1.76,
+      "excess": 1.55,
+      "passed": 12,
+      "total": 20,
+      "oursCents": -1.277795108462792,
       "refCents": -28.393523613830833,
       "worst": "松开后的尾巴 6.96",
       "life": {
         "shimmer": [
-          -32.6,
+          -32.5,
           -28.1
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.4
         ],
         "pitch.jitter": [
-          2,
+          2.7,
           2.4
         ],
         "brightnessLag": [
-          0,
+          -10,
           10
         ]
       }
@@ -5569,11 +5569,11 @@
       "note": "D3",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.76,
-      "excess": 1.49,
-      "passed": 12,
-      "total": 22,
-      "oursCents": -0.9086169605599413,
+      "distance": 1.71,
+      "excess": 1.46,
+      "passed": 13,
+      "total": 21,
+      "oursCents": -0.9355780136450883,
       "refCents": 9.133646330291754,
       "worst": "松开后的尾巴 6.75",
       "life": {
@@ -5582,7 +5582,7 @@
           -34.4
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.8
         ],
         "pitch.jitter": [
@@ -5603,20 +5603,20 @@
       "note": "D3",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.77,
-      "excess": 1.45,
+      "distance": 1.46,
+      "excess": 1.19,
       "passed": 13,
-      "total": 21,
-      "oursCents": -0.9189990522623757,
+      "total": 20,
+      "oursCents": -0.946939155019662,
       "refCents": -7.555722956381696,
       "worst": "松开后的尾巴 7.04",
       "life": {
         "shimmer": [
-          -32.5,
+          -32.4,
           -32.9
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.5
         ],
         "pitch.jitter": [
@@ -5637,20 +5637,20 @@
       "note": "D3",
       "size": 0.9,
       "split": "valid",
-      "distance": 2.2,
-      "excess": 1.96,
+      "distance": 2.07,
+      "excess": 1.86,
       "passed": 8,
-      "total": 22,
-      "oursCents": -0.9207882988847994,
+      "total": 21,
+      "oursCents": -0.955737809328706,
       "refCents": -28.191617215294922,
       "worst": "松开后的尾巴 7.25",
       "life": {
         "shimmer": [
-          -32.5,
+          -32.2,
           -28.7
         ],
         "flutter": [
-          0.2,
+          0.1,
           1.3
         ],
         "pitch.jitter": [
@@ -5671,11 +5671,11 @@
       "note": "G3",
       "size": 0.3,
       "split": "valid",
-      "distance": 1.77,
-      "excess": 1.5,
+      "distance": 1.59,
+      "excess": 1.36,
       "passed": 13,
-      "total": 22,
-      "oursCents": -0.3711602393179348,
+      "total": 21,
+      "oursCents": -0.3769796349474116,
       "refCents": 1.6000352788793126,
       "worst": "松开后的尾巴 6.46",
       "life": {
@@ -5684,7 +5684,7 @@
           -31.8
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.8
         ],
         "pitch.jitter": [
@@ -5705,20 +5705,20 @@
       "note": "G3",
       "size": 0.6,
       "split": "valid",
-      "distance": 1.99,
-      "excess": 1.77,
+      "distance": 1.84,
+      "excess": 1.67,
       "passed": 10,
-      "total": 22,
-      "oursCents": -0.37408827794326116,
+      "total": 21,
+      "oursCents": -0.3801648762598408,
       "refCents": -36.33290941661258,
       "worst": "松开后的尾巴 5.10",
       "life": {
         "shimmer": [
-          -32.5,
+          -32.6,
           -31.7
         ],
         "flutter": [
-          0.2,
+          0.1,
           1.9
         ],
         "pitch.jitter": [
@@ -5739,20 +5739,20 @@
       "note": "G3",
       "size": 0.9,
       "split": "valid",
-      "distance": 1.82,
-      "excess": 1.6,
+      "distance": 1.58,
+      "excess": 1.37,
       "passed": 13,
-      "total": 23,
-      "oursCents": -0.3774867142057417,
+      "total": 22,
+      "oursCents": -0.38342755860734207,
       "refCents": -7.306421013940491,
       "worst": "松开后的尾巴 4.78",
       "life": {
         "shimmer": [
-          -32.7,
+          -32.6,
           -29.5
         ],
         "flutter": [
-          0.2,
+          0.1,
           1
         ],
         "pitch.jitter": [
@@ -5773,20 +5773,20 @@
       "note": "C4",
       "size": 0.3,
       "split": "test",
-      "distance": 2.11,
-      "excess": 1.84,
-      "passed": 7,
-      "total": 22,
-      "oursCents": -0.39341114128184557,
+      "distance": 1.87,
+      "excess": 1.6,
+      "passed": 9,
+      "total": 21,
+      "oursCents": -0.39789929172536637,
       "refCents": -34.52961421162242,
       "worst": "整体衰减 4.57",
       "life": {
         "shimmer": [
-          -32.4,
+          -32.3,
           -30.3
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.8
         ],
         "pitch.jitter": [
@@ -5807,20 +5807,20 @@
       "note": "C4",
       "size": 0.6,
       "split": "test",
-      "distance": 1.77,
-      "excess": 1.32,
-      "passed": 9,
-      "total": 21,
-      "oursCents": -0.3964465316589127,
+      "distance": 1.5,
+      "excess": 1.13,
+      "passed": 13,
+      "total": 20,
+      "oursCents": -0.40133912538787114,
       "refCents": -6.565831050751387,
-      "worst": "各泛音衰减 3.21",
+      "worst": "各泛音衰减 8.31",
       "life": {
         "shimmer": [
           -32.4,
           -35.2
         ],
         "flutter": [
-          0.2,
+          0.1,
           0.9
         ],
         "pitch.jitter": [
@@ -5841,20 +5841,20 @@
       "note": "C4",
       "size": 0.9,
       "split": "test",
-      "distance": 2.08,
-      "excess": 1.76,
-      "passed": 7,
-      "total": 22,
-      "oursCents": -0.3996491601015672,
+      "distance": 1.88,
+      "excess": 1.54,
+      "passed": 9,
+      "total": 21,
+      "oursCents": -0.40446257186000145,
       "refCents": -41.47691408645799,
-      "worst": "音高 8.22",
+      "worst": "音高 8.21",
       "life": {
         "shimmer": [
-          -32.3,
+          -32.5,
           -28.1
         ],
         "flutter": [
-          0.2,
+          0.1,
           1.6
         ],
         "pitch.jitter": [

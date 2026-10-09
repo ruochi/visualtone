@@ -41,7 +41,27 @@ export interface HarmonicPreset {
    * Breath or bow noise. One-pole lowpass at hz + size·hzStrike.
    * Level = (level + size·strike + size²·strike2) · (low + highRamp·high).
    */
-  noise: { hz: number; hzStrike: number; level: number; strike: number; strike2: number; low: number; high: number };
+  noise: {
+    hz: number;
+    hzStrike: number;
+    level: number;
+    strike: number;
+    strike2: number;
+    low: number;
+    high: number;
+    /**
+     * Bow noise added after the lowpass, so it fills the gaps between partials
+     * instead of being filtered into a low cloud. 0 leaves the sample unchanged.
+     */
+    direct?: number;
+    directHz?: number;
+  };
+  /**
+   * Body modes painted onto the harmonic ladder at note-on.
+   * Partial level gets Σ db·|bandpass(f)|, so a fixed body can lift one partial and sink the next.
+   * Absent leaves every partial on the plain slope.
+   */
+  modes?: { hz: number; q: number; db: number }[];
   /**
    * A brighter copy of the harmonics that dies after the attack, plus a short noise burst.
    * Finger attack on an electric bass.
@@ -181,18 +201,20 @@ export const HARMONIC_PRESETS = {
     noise: {
       hz: 546.875,
       hzStrike: 2800,
-      level: 0.0775,
+      level: 0.1125,
       strike: 0.09,
       strike2: 0,
       low: 1,
       high: 0,
+      direct: 0.0875,
+      directHz: 4500,
     },
     releaseSec: 0.18,
     gain: 0.55,
     stereo: [1.03, 0.97],
     slope: {
-      base: 0.12,
-      soft: 0,
+      base: 0.2075,
+      soft: 0.045,
       softPow: 1,
       high: 0,
       highSoft: 0,
@@ -204,7 +226,7 @@ export const HARMONIC_PRESETS = {
       min: 0.06,
     },
     lowpass: {
-      hz: 5600,
+      hz: 7700,
       strike: 3200,
       light: 400,
       min: 800,
@@ -212,17 +234,26 @@ export const HARMONIC_PRESETS = {
     resonance: {
       hz: 269.7,
       q: 5.6,
-      mix: 0.29125,
+      mix: 0.37875,
       mixStrike: 0,
     },
+    modes: [
+      { hz: 173.6, q: 1.6, db: 9.57 },
+      { hz: 530, q: 6, db: 9.81 },
+      { hz: 1209.6, q: 3, db: -12.42 },
+      { hz: 4160, q: 6, db: 10.52 },
+    ],
     attackSec: 0.0455,
     life: {
-      vibratoCents: 13.25,
+      vibratoCents: 18,
       vibratoHz: 5.375,
       vibratoDelaySec: 0.22,
       wanderCents: 2.3,
       vibratoGain: 0.05,
       shimmerRms: 0.0515,
+      vibratoHighCents: 6,
+      vibratoLowMidi: 60,
+      vibratoHighMidi: 68,
     },
   },
   viola: {
@@ -233,18 +264,20 @@ export const HARMONIC_PRESETS = {
     noise: {
       hz: 546.875,
       hzStrike: 2800,
-      level: 0.0775,
+      level: 0.1125,
       strike: 0.09,
       strike2: 0,
       low: 1,
       high: 0,
+      direct: 0.075,
+      directHz: 4500,
     },
     releaseSec: 0.18,
     gain: 0.55,
     stereo: [1.03, 0.97],
     slope: {
-      base: 0.1212,
-      soft: 0.09,
+      base: 0.2087,
+      soft: 0.135,
       softPow: 1,
       high: 0,
       highSoft: 0,
@@ -256,7 +289,7 @@ export const HARMONIC_PRESETS = {
       min: 0.06,
     },
     lowpass: {
-      hz: 5540,
+      hz: 6140,
       strike: 3200,
       light: 400,
       min: 800,
@@ -264,26 +297,41 @@ export const HARMONIC_PRESETS = {
     resonance: {
       hz: 180.6,
       q: 9.6,
-      mix: 0.1075,
+      mix: 0.195,
       mixStrike: 0,
     },
     attackSec: 0.0645,
     life: {
-      vibratoCents: 8.75,
+      vibratoCents: 1,
       vibratoHz: 5.4,
       vibratoDelaySec: 0.22,
       wanderCents: 2.3,
       vibratoGain: 0.05,
       shimmerRms: 0.0375,
+      vibratoHighCents: 13.5,
+      vibratoLowMidi: 48,
+      vibratoHighMidi: 72,
     },
   },
   cello: {
     ...BOW,
-    slope: bowSlope(0.138),
-    lowpass: { hz: 5450, strike: 3200, light: 400, min: 800 },
-    resonance: { hz: 125, q: 8, mix: 0.16, mixStrike: 0 },
+    noise: { ...BOW.noise, level: 0.075, direct: 0.075, directHz: 4500 },
+    slope: { ...bowSlope(0.1755), soft: 0.12 },
+    lowpass: { hz: 5150, strike: 3200, light: 400, min: 800 },
+    resonance: { hz: 142.5, q: 8, mix: 0.2475, mixStrike: 0 },
+    modes: [
+      { hz: 203.8, q: 6, db: 10.62 },
+      { hz: 222.2, q: 6, db: 11.51 },
+      { hz: 1014, q: 11, db: 8.66 },
+      { hz: 4864, q: 1.6, db: 10.72 },
+    ],
     attackSec: 0.055,
-    life: bowLife(9, 5.2, 0.053),
+    life: {
+      ...bowLife(2, 5.2, 0.053),
+      vibratoHighCents: 17.5,
+      vibratoLowMidi: 48,
+      vibratoHighMidi: 72,
+    },
   },
   contrabass: {
     partials: 40,
@@ -294,8 +342,8 @@ export const HARMONIC_PRESETS = {
     gain: 0.5,
     stereo: [1.02, 0.98],
     slope: {
-      base: 0.13,
-      soft: 0.15,
+      base: 0.2175,
+      soft: 0.165,
       softPow: 1,
       high: 0,
       highSoft: 0,
@@ -307,28 +355,33 @@ export const HARMONIC_PRESETS = {
       min: 0.08,
     },
     resonance: {
-      hz: 103.75,
+      hz: 68.75,
       q: 3.6,
-      mix: 0.185,
+      mix: 0.2725,
       mixStrike: 0,
     },
     noise: {
       hz: 281.25,
       hzStrike: 900,
-      level: 0.0515,
+      level: 0.0865,
       strike: 0.035,
       strike2: 0,
       low: 1,
       high: 0,
+      direct: 0.025,
+      directHz: 4500,
     },
     attackSec: 0.06575,
     life: {
-      vibratoCents: 8,
+      vibratoCents: 7,
       vibratoHz: 4.45,
       vibratoDelaySec: 0.3,
       wanderCents: 1.6,
       vibratoGain: 0.04,
       shimmerRms: 0.0235,
+      vibratoHighCents: 2,
+      vibratoLowMidi: 36,
+      vibratoHighMidi: 50,
     },
   },
   // Fitted to NSynth electronic basses (CC BY 4.0). Held strings decay; a finger transient dies in a few dozen milliseconds.
@@ -510,6 +563,9 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let nz = 0;
   let noisePole = 0.8;
   let noiseAmp = 0.02;
+  let air = 0;
+  let airPole = 0.8;
+  let airAmp = 0;
   let trEnv = 0;
   let finger = 0;
   const ringDec = new Float64Array(N);
@@ -549,10 +605,25 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
           (s.base + s.soft * shade + high * (s.high + s.highSoft * shade)) * (1 - s.lowFlatten * low) - (light - 0.5) * s.light,
         );
         const brightTilt = tr ? Math.max(tr.minSlope, tilt - tr.brighten) : 0;
+        const modes = p.modes;
         let energy = 0;
         for (let n = 1; n <= N; n++) {
           const audible = freq * n < sampleRate * 0.45;
-          const g = audible ? Math.exp(-tilt * (n - 1)) : 0;
+          let g = audible ? Math.exp(-tilt * (n - 1)) : 0;
+          if (modes && g > 0) {
+            const f = freq * n;
+            let db = 0;
+            for (let i = 0; i < modes.length; i++) {
+              const m = modes[i];
+              const r = f / m.hz;
+              const rq = r / m.q;
+              const d = (1 - r * r) * (1 - r * r) + rq * rq;
+              db += m.db * (rq / Math.sqrt(d));
+            }
+            if (db > 18) db = 18;
+            else if (db < -24) db = -24;
+            g *= Math.pow(10, db / 20);
+          }
           gains[n - 1] = g;
           brightGains[n - 1] = audible && tr ? Math.exp(-brightTilt * (n - 1)) : 0;
           energy += g * g;
@@ -572,6 +643,9 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         nz = 0;
         noisePole = Math.exp((-2 * Math.PI * (ns.hz + strike * ns.hzStrike)) / sampleRate);
         noiseAmp = (ns.level + strike * ns.strike + strike * strike * ns.strike2) * (ns.low + high * ns.high);
+        air = 0;
+        airAmp = ns.direct ?? 0;
+        airPole = Math.exp((-2 * Math.PI * (ns.directHz ?? 4500)) / sampleRate);
         bodyMix = p.resonance.mix + strike * p.resonance.mixStrike;
         trEnv = tr ? tr.level : 0;
         finger = tr ? tr.level * (tr.noise + strike * tr.noiseStrike) : 0;
@@ -588,6 +662,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         bz1 = 0;
         bz2 = 0;
         env = 0;
+        life.pitch(midi);
         life.start();
       }
       wasOn = on;
@@ -617,6 +692,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       }
       const white = rng() * 2 - 1;
       nz = white * (1 - noisePole) + nz * noisePole;
+      air = white * (1 - airPole) + air * airPole;
       let src = tr ? sum + bright * trEnv : sum;
       let noise = nz * (noiseAmp + finger);
       if (p.lowpass) {
@@ -631,7 +707,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       const body = bodyB0 * src + bz1;
       bz1 = -bodyA1 * body + bz2;
       bz2 = bodyB2 * src - bodyA2 * body;
-      const out = (src + body * bodyMix + noise) * env * life.gain * p.gain;
+      const out = (src + body * bodyMix + noise + air * airAmp) * env * life.gain * p.gain;
       return [out * p.stereo[0], out * p.stereo[1]];
     },
   };

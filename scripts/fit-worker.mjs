@@ -71,6 +71,26 @@ parentPort.on('message', (msg) => {
     if (ours.centsOff !== null && Math.abs(ours.centsOff) > 8) penalty += (Math.abs(ours.centsOff) - 8) / 4;
     if (ours.artifacts.clicks > 0) penalty += Math.min(8, ours.artifacts.clicks) * 0.25;
     const worst = [...cmp.metrics].sort((a, b) => b.error / Math.max(1, workerData.floor?.[b.id] ?? 1) - a.error / Math.max(1, workerData.floor?.[a.id] ?? 1))[0];
+    const pictureIds = {
+      spectrogram: 2,
+      harmonics: 2,
+      hnr: 1.5,
+      slope: 1,
+      'vibrato.depth': 1,
+      centroid: 0.6,
+      oddEven: 0.4,
+    };
+    let picture = 0;
+    let pictureWeight = 0;
+    if (workerData.picture) {
+      for (const [id, weight] of Object.entries(pictureIds)) {
+        const metric = cmp.metrics.find((m) => m.id === id);
+        if (!metric || metric.error == null || !Number.isFinite(metric.error)) continue;
+        picture += weight * metric.error;
+        pictureWeight += weight;
+      }
+      picture = pictureWeight > 0 ? picture / pictureWeight : cmp.excess ?? cmp.distance;
+    }
     rows.push({
       file: note.file,
       split: note.split,
@@ -78,6 +98,7 @@ parentPort.on('message', (msg) => {
       size: note.size,
       excess: cmp.excess ?? cmp.distance,
       distance: cmp.distance,
+      picture,
       penalty,
       cents: ours.centsOff,
       clicks: ours.artifacts.clicks,

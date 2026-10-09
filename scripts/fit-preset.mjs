@@ -16,10 +16,12 @@ import { HARMONIC_PRESETS } from '../dist/engines/harmonic.js';
 import { noteTiming } from './lib/score-note.mjs';
 
 const root = new URL('..', import.meta.url).pathname;
-const instrument = process.argv[2];
-const setId = process.argv[3];
+const positionals = process.argv.slice(2).filter((arg) => !arg.startsWith('--'));
+const picture = process.argv.includes('--picture');
+const instrument = positionals[0];
+const setId = positionals[1];
 if (!instrument || !setId) {
-  console.error('usage: node scripts/fit-preset.mjs <instrument> <set-id>');
+  console.error('usage: node scripts/fit-preset.mjs <instrument> <set-id> [--picture]');
   process.exit(1);
 }
 
@@ -104,12 +106,12 @@ const TABLES = {
   epiano: EPIANO_PRESETS,
   organ: { organ: { stops: ORGAN_REG[0] } },
 };
-const model = process.argv[4] || MODEL_OF[instrument] || 'harmonic';
+const model = positionals[2] || MODEL_OF[instrument] || 'harmonic';
 const preset = TABLES[model]?.[instrument];
 if (!preset) throw new Error(`${instrument} is not a ${model} preset`);
 
-function span(path, min, max, step) {
-  return { path, min, max, step };
+function span(path, min, max, step, start) {
+  return { path, min, max, step, ...(start === undefined ? {} : { start }) };
 }
 const MODEL_SPECS = {
   marimba: barSpec(),
@@ -166,7 +168,23 @@ function windSpec() {
   ];
 }
 
-const specs = SPECS[instrument] || MODEL_SPECS[instrument] || (FAMILIES[instrument] ? familySpec(preset, FAMILIES[instrument]) : null);
+function pictureSpec(preset) {
+  const specs = [
+    span('slope.base', 0.04, 0.55, 0.05),
+    span('slope.soft', 0, 0.55, 0.06),
+    span('noise.direct', 0, 0.55, 0.05, 0),
+    span('noise.level', 0, 0.16, 0.02),
+    span('life.vibratoCents', 0, 18, 1.5),
+    span('resonance.mix', 0, 0.45, 0.05),
+    span('resonance.hz', 60, 800, 70),
+  ];
+  if (preset.lowpass) specs.push(span('lowpass.hz', 2800, 14000, 1200));
+  return specs;
+}
+
+const specs = picture
+  ? pictureSpec(preset)
+  : SPECS[instrument] || MODEL_SPECS[instrument] || (FAMILIES[instrument] ? familySpec(preset, FAMILIES[instrument]) : null);
 if (!specs) throw new Error(`no parameter spec for ${instrument}`);
 
 const catalog = JSON.parse(readFileSync(join(root, 'references/catalog.json'), 'utf8'));
@@ -208,7 +226,7 @@ function chunk(list, n) {
 
 const workers = chunk(notes, workersN).map((part) => {
   const worker = new Worker(new URL('./fit-worker.mjs', import.meta.url), {
-    workerData: { instrument, model, notes: part, floor },
+    workerData: { instrument, model, notes: part, floor, picture },
   });
   const ready = new Promise((resolve, reject) => {
     const onReady = (msg) => {
@@ -244,7 +262,7 @@ function ask(worker, msg) {
 async function evaluate(values, clearRing, splits) {
   const parts = await Promise.all(workers.map((w) => ask(w.worker, { values, clearRing, splits, refHz: 55 })));
   const rows = parts.flatMap((p) => p.rows);
-  const loss = rows.reduce((s, r) => s + r.excess + r.penalty, 0) / rows.length;
+  const loss = rows.reduce((s, r) => s + (picture ? r.picture : r.excess) + r.penalty, 0) / rows.length;
   return { loss, rows };
 }
 
