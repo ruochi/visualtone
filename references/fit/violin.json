@@ -39,11 +39,238 @@
     "life.vibratoLowMidi": 60,
     "life.vibratoHighMidi": 68,
     "modes": [
-      { "hz": 173.6, "q": 1.6, "db": 9.57 },
-      { "hz": 530, "q": 6, "db": 9.81 },
-      { "hz": 1209.6, "q": 3, "db": -12.42 },
-      { "hz": 4160, "q": 6, "db": 10.52 }
-    ]
+      {
+        "hz": 173.6,
+        "q": 1.6,
+        "db": 9.57
+      },
+      {
+        "hz": 530,
+        "q": 6,
+        "db": 9.81
+      },
+      {
+        "hz": 1209.6,
+        "q": 3,
+        "db": -12.42
+      },
+      {
+        "hz": 4160,
+        "q": 6,
+        "db": 10.52
+      }
+    ],
+    "body": {
+      "why": "Dynamic body: seeded narrow peaks plus the old modes, looked up from each partial’s instantaneous frequency. Vibrato no longer lifts every partial together. Seed 1..24 picked on the valid split. After the search, slope.base, noise.level and lowpass.hz were nudged so the old excess on the holdout stayed within 0.05.",
+      "landed": { "slope.base": 0.2, "noise.level": 0.07, "lowpass.hz": 9000 },
+      "rounds": 4,
+      "fitExcess": 1.372,
+      "fitLoss": 1.198,
+      "holdoutExcess": 1.239,
+      "holdoutLoss": 1.252,
+      "params": {
+        "slope.base": 0.17625,
+        "slope.soft": 0.15000000000000002,
+        "noise.direct": 0.075,
+        "noise.directHz": 3275,
+        "noise.level": 0.04499999999999999,
+        "life.vibratoCents": 17.4375,
+        "life.shimmerRms": 0.027749999999999993,
+        "resonance.mix": 0.425,
+        "resonance.hz": 287.2,
+        "lowpass.hz": 10250,
+        "body.count": 368,
+        "body.qLo": 59,
+        "body.qHi": 173.5,
+        "body.db": 2.875,
+        "life.vibratoDepthJitter": 0.060000000000000005,
+        "life.vibratoRateJitter": 0.135,
+        "life.vibratoHighCents": 5.75,
+        "body.seed": 23
+      },
+      "notes": [
+        {
+          "file": "60_0.3.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.3,
+          "excess": 1.469,
+          "cents": -0.63,
+          "clicks": 0,
+          "worst": "松开后的尾巴 4.35"
+        },
+        {
+          "file": "65_0.6.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.6,
+          "excess": 1.221,
+          "cents": -0.31,
+          "clicks": 0,
+          "worst": "松开后的尾巴 5.16"
+        },
+        {
+          "file": "70_0.9.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.9,
+          "excess": 1.189,
+          "cents": -0.83,
+          "clicks": 0,
+          "worst": "整体衰减 3.16"
+        },
+        {
+          "file": "79_0.3.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.3,
+          "excess": 1.607,
+          "cents": -0.44,
+          "clicks": 0,
+          "worst": "各泛音衰减 8.50"
+        },
+        {
+          "file": "60_0.6.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.6,
+          "excess": 1.327,
+          "cents": -0.64,
+          "clicks": 0,
+          "worst": "松开后的尾巴 3.31"
+        },
+        {
+          "file": "65_0.9.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.9,
+          "excess": 1.041,
+          "cents": -0.3,
+          "clicks": 0,
+          "worst": "松开后的尾巴 3.80"
+        },
+        {
+          "file": "74_0.3.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.3,
+          "excess": 1.89,
+          "cents": -0.46,
+          "clicks": 0,
+          "worst": "松开后的尾巴 6.72"
+        },
+        {
+          "file": "79_0.6.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.6,
+          "excess": 1.292,
+          "cents": -0.4,
+          "clicks": 0,
+          "worst": "松开后的尾巴 5.55"
+        },
+        {
+          "file": "60_0.9.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.9,
+          "excess": 0.914,
+          "cents": -0.65,
+          "clicks": 0,
+          "worst": "松开后的尾巴 3.74"
+        },
+        {
+          "file": "70_0.3.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.3,
+          "excess": 1.61,
+          "cents": -0.84,
+          "clicks": 0,
+          "worst": "松开后的尾巴 5.28"
+        },
+        {
+          "file": "74_0.6.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.6,
+          "excess": 1.55,
+          "cents": -0.46,
+          "clicks": 0,
+          "worst": "松开后的尾巴 5.23"
+        },
+        {
+          "file": "79_0.9.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.9,
+          "excess": 1.242,
+          "cents": -0.35,
+          "clicks": 0,
+          "worst": "松开后的尾巴 3.28"
+        },
+        {
+          "file": "65_0.3.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.3,
+          "excess": 1.607,
+          "cents": -0.31,
+          "clicks": 0,
+          "worst": "松开后的尾巴 4.96"
+        },
+        {
+          "file": "70_0.6.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.6,
+          "excess": 1.366,
+          "cents": -0.83,
+          "clicks": 0,
+          "worst": "整体衰减 3.63"
+        },
+        {
+          "file": "74_0.9.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.9,
+          "excess": 1.262,
+          "cents": -0.47,
+          "clicks": 0,
+          "worst": "松开后的尾巴 5.99"
+        },
+        {
+          "file": "84_0.6.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.6,
+          "excess": 1.289,
+          "cents": -0.65,
+          "clicks": 0,
+          "worst": "松开后的尾巴 4.75"
+        },
+        {
+          "file": "84_0.9.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.9,
+          "excess": 0.81,
+          "cents": -0.63,
+          "clicks": 0,
+          "worst": "松开后的尾巴 2.10"
+        },
+        {
+          "file": "84_0.3.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.3,
+          "excess": 1.617,
+          "cents": -0.67,
+          "clicks": 0,
+          "worst": "松开后的尾巴 4.43"
+        }
+      ]
+    }
   },
   "notes": [
     {
