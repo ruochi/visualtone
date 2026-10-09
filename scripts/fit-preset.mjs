@@ -336,8 +336,17 @@ if (warm) {
   } catch (err) {
     console.log(`warm start skipped: ${err.message}`);
   }
-} else {
+} else if (process.env.FIT_DENSE !== '1') {
   await descend(0, rounds);
+}
+if (process.env.FIT_DENSE === '1' && preset.body) {
+  best['body.count'] = 320;
+  best['body.qLo'] = 50;
+  best['body.qHi'] = 160;
+  best['body.db'] = 3;
+  bestLoss = (await evaluate(best, false, ['valid'])).loss;
+  console.log(`forced dense loss ${bestLoss.toFixed(3)}`);
+  await descend(0, 2);
 }
 
 // Sparse peaks leave most partials on a flat stretch, so vibrato does not move them.
