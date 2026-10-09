@@ -1,0 +1,462 @@
+{
+  "sampleRate": 48000,
+  "duration": 37,
+  "bpm": 56,
+  "meter": [
+    4,
+    4
+  ],
+  "seed": 41,
+  "master": {
+    "lufs": -18,
+    "saturation": 0.06,
+    "room": {
+      "size": 0.4,
+      "decay": 0.32,
+      "preDelayMs": 12,
+      "damping": 0.48,
+      "width": 0.7
+    },
+    "reverb": {
+      "size": 0.45,
+      "decay": 0.36,
+      "preDelayMs": 20,
+      "damping": 0.55,
+      "width": 0.82
+    }
+  },
+  "tracks": [
+    {
+      "id": "violin-1",
+      "instrument": "violin",
+      "channel": [
+        0,
+        1
+      ],
+      "pan": -0.52,
+      "seed": 11,
+      "room": 0.28,
+      "space": 0.12,
+      "humanize": {
+        "timeMs": 8,
+        "size": 0.03
+      },
+      "notes": [
+        {
+          "at": "1:1",
+          "pitch": "D5",
+          "len": "1/2",
+          "size": 0.72
+        },
+        {
+          "at": "1:3",
+          "pitch": "E5",
+          "len": "1/4",
+          "size": 0.68
+        },
+        {
+          "at": "1:4",
+          "pitch": "F#5",
+          "len": "1/4",
+          "size": 0.74
+        },
+        {
+          "at": "2:1",
+          "pitch": "G5",
+          "len": "3/8",
+          "size": 0.78
+        },
+        {
+          "at": "2:2.5",
+          "pitch": "F#5",
+          "len": "1/8",
+          "size": 0.66
+        },
+        {
+          "at": "2:3",
+          "pitch": "E5",
+          "len": "1/2",
+          "size": 0.7
+        },
+        {
+          "at": "3:1",
+          "pitch": "F#5",
+          "len": "1/4",
+          "size": 0.72
+        },
+        {
+          "at": "3:2",
+          "pitch": "E5",
+          "len": "1/4",
+          "size": 0.68
+        },
+        {
+          "at": "3:3",
+          "pitch": "D5",
+          "len": "1/2",
+          "size": 0.7
+        },
+        {
+          "at": "4:1",
+          "pitch": "E5",
+          "len": "1/2",
+          "size": 0.68
+        },
+        {
+          "at": "5:1",
+          "pitch": "A4",
+          "len": "1/4",
+          "size": 0.66
+        },
+        {
+          "at": "5:2",
+          "pitch": "B4",
+          "len": "1/4",
+          "size": 0.68
+        },
+        {
+          "at": "5:3",
+          "pitch": "D5",
+          "len": "1/2",
+          "size": 0.74
+        },
+        {
+          "at": "6:1",
+          "pitch": "E5",
+          "len": "1/4",
+          "size": 0.72
+        },
+        {
+          "at": "6:2",
+          "pitch": "F#5",
+          "len": "1/4",
+          "size": 0.76
+        },
+        {
+          "at": "6:3",
+          "pitch": "E5",
+          "len": "1/2",
+          "size": 0.7
+        },
+        {
+          "at": "7:1",
+          "pitch": "D5",
+          "len": "1/4",
+          "size": 0.7
+        },
+        {
+          "at": "7:2",
+          "pitch": "C#5",
+          "len": "1/4",
+          "size": 0.66
+        },
+        {
+          "at": "7:3",
+          "pitch": "D5",
+          "len": "1/2",
+          "size": 0.74
+        },
+        {
+          "at": "8:1",
+          "pitch": "D5",
+          "len": "1/1",
+          "size": 0.78
+        }
+      ]
+    },
+    {
+      "id": "violin-2",
+      "instrument": "violin",
+      "channel": [
+        0,
+        1
+      ],
+      "pan": 0.4,
+      "seed": 29,
+      "room": 0.28,
+      "space": 0.12,
+      "humanize": {
+        "timeMs": 10,
+        "size": 0.03
+      },
+      "notes": [
+        {
+          "at": "1:1",
+          "pitch": "F#4",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "1:3",
+          "pitch": "A4",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "2:1",
+          "pitch": "B4",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "2:3",
+          "pitch": "E4",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "3:1",
+          "pitch": "A4",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "3:3",
+          "pitch": "F#4",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "4:1",
+          "pitch": "A4",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "5:1",
+          "pitch": "F#4",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "5:3",
+          "pitch": "B4",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "6:1",
+          "pitch": "B4",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "6:3",
+          "pitch": "A4",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "7:1",
+          "pitch": "C#4",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "7:3",
+          "pitch": "F#4",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "8:1",
+          "pitch": "F#4",
+          "len": "1/1",
+          "size": 0.44
+        }
+      ]
+    },
+    {
+      "id": "viola",
+      "instrument": "viola",
+      "channel": [
+        0,
+        1
+      ],
+      "pan": -0.16,
+      "seed": 17,
+      "room": 0.3,
+      "space": 0.12,
+      "humanize": {
+        "timeMs": 10,
+        "size": 0.03
+      },
+      "notes": [
+        {
+          "at": "1:1",
+          "pitch": "A3",
+          "len": "1/1",
+          "size": 0.4
+        },
+        {
+          "at": "2:1",
+          "pitch": "B3",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "2:3",
+          "pitch": "C#4",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "3:1",
+          "pitch": "A3",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "3:3",
+          "pitch": "F#3",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "4:1",
+          "pitch": "E3",
+          "len": "1/2",
+          "size": 0.36
+        },
+        {
+          "at": "5:1",
+          "pitch": "A3",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "5:3",
+          "pitch": "D4",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "6:1",
+          "pitch": "G3",
+          "len": "1/2",
+          "size": 0.38
+        },
+        {
+          "at": "6:3",
+          "pitch": "E3",
+          "len": "1/2",
+          "size": 0.36
+        },
+        {
+          "at": "7:1",
+          "pitch": "E3",
+          "len": "1/2",
+          "size": 0.36
+        },
+        {
+          "at": "7:3",
+          "pitch": "A3",
+          "len": "1/2",
+          "size": 0.4
+        },
+        {
+          "at": "8:1",
+          "pitch": "A3",
+          "len": "1/1",
+          "size": 0.42
+        }
+      ]
+    },
+    {
+      "id": "cello",
+      "instrument": "cello",
+      "channel": [
+        0,
+        1
+      ],
+      "pan": 0.1,
+      "seed": 23,
+      "room": 0.26,
+      "space": 0.1,
+      "humanize": {
+        "timeMs": 8,
+        "size": 0.03
+      },
+      "notes": [
+        {
+          "at": "1:1",
+          "pitch": "D3",
+          "len": "1/1",
+          "size": 0.46
+        },
+        {
+          "at": "2:1",
+          "pitch": "G2",
+          "len": "1/2",
+          "size": 0.44
+        },
+        {
+          "at": "2:3",
+          "pitch": "A2",
+          "len": "1/2",
+          "size": 0.44
+        },
+        {
+          "at": "3:1",
+          "pitch": "D3",
+          "len": "1/2",
+          "size": 0.44
+        },
+        {
+          "at": "3:3",
+          "pitch": "B2",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "4:1",
+          "pitch": "A2",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "5:1",
+          "pitch": "D3",
+          "len": "1/2",
+          "size": 0.44
+        },
+        {
+          "at": "5:3",
+          "pitch": "G2",
+          "len": "1/2",
+          "size": 0.44
+        },
+        {
+          "at": "6:1",
+          "pitch": "E2",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "6:3",
+          "pitch": "A2",
+          "len": "1/2",
+          "size": 0.44
+        },
+        {
+          "at": "7:1",
+          "pitch": "A2",
+          "len": "1/2",
+          "size": 0.42
+        },
+        {
+          "at": "7:3",
+          "pitch": "D3",
+          "len": "1/2",
+          "size": 0.46
+        },
+        {
+          "at": "8:1",
+          "pitch": "D3",
+          "len": "1/1",
+          "size": 0.48
+        }
+      ]
+    }
+  ]
+}
