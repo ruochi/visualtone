@@ -1,0 +1,89 @@
+{
+  "instrument": "organ",
+  "set": "vsco-organ",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.466,
+    "holdoutExcess": 1.471,
+    "params": {
+      "stops.0": 0.04,
+      "stops.1": 0.015,
+      "stops.2": 1,
+      "stops.3": 0.006,
+      "stops.4": 0.32,
+      "stops.5": 0.004,
+      "stops.6": 0.08,
+      "stops.7": 0,
+      "stops.8": 0
+    }
+  },
+  "after": {
+    "fitExcess": 1.376,
+    "fitLoss": 1.376,
+    "holdoutExcess": 1.396,
+    "holdoutLoss": 1.396,
+    "params": {
+      "stops.0": 0,
+      "stops.1": 0.025,
+      "stops.2": 0.85,
+      "stops.3": 0,
+      "stops.4": 0.33,
+      "stops.5": 0,
+      "stops.6": 0.11,
+      "stops.7": 0.02,
+      "stops.8": 0
+    }
+  },
+  "notes": [
+    {
+      "file": "NT5_Man3Quiet_122_rr1.wav",
+      "split": "valid",
+      "midi": 36,
+      "size": 0.6,
+      "excess": 2.069,
+      "cents": 0.23,
+      "clicks": 0,
+      "worst": "亮度（质心） 7.80"
+    },
+    {
+      "file": "NT5_Man3Quiet_134_rr1.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.6,
+      "excess": 1.067,
+      "cents": 0.19,
+      "clicks": 0,
+      "worst": "分音起伏 2.19"
+    },
+    {
+      "file": "NT5_Man3Quiet_146_rr1.wav",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.6,
+      "excess": 0.896,
+      "cents": 0.21,
+      "clicks": 0,
+      "worst": "奇偶泛音比 1.65"
+    },
+    {
+      "file": "NT5_Man3Quiet_158_rr1.wav",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.6,
+      "excess": 1.472,
+      "cents": 0.22,
+      "clicks": 0,
+      "worst": "起音 10–90% 9.33"
+    },
+    {
+      "file": "NT5_Man3Quiet_170_rr1.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.6,
+      "excess": 1.396,
+      "cents": -0.08,
+      "clicks": 0,
+      "worst": "奇偶泛音比 3.24"
+    }
+  ]
+}

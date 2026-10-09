@@ -1,0 +1,227 @@
+{
+  "instrument": "viola",
+  "set": "tinysol-viola",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.6,
+    "holdoutExcess": 1.435,
+    "params": {
+      "slope.base": 0.1212,
+      "slope.soft": 0.09,
+      "slope.light": 0.05,
+      "resonance.hz": 210,
+      "resonance.q": 8,
+      "resonance.mix": 0.16,
+      "noise.level": 0.04,
+      "noise.hz": 350,
+      "attackSec": 0.04,
+      "life.vibratoCents": 11,
+      "life.vibratoHz": 5.4,
+      "life.shimmerRms": 0.048,
+      "life.wanderCents": 2
+    }
+  },
+  "after": {
+    "fitExcess": 1.541,
+    "fitLoss": 1.541,
+    "holdoutExcess": 1.399,
+    "holdoutLoss": 1.399,
+    "params": {
+      "slope.base": 0.1212,
+      "slope.soft": 0.09,
+      "slope.light": 0.05,
+      "resonance.hz": 180.6,
+      "resonance.q": 9.6,
+      "resonance.mix": 0.1075,
+      "noise.level": 0.0775,
+      "noise.hz": 546.875,
+      "attackSec": 0.0645,
+      "life.vibratoCents": 8.75,
+      "life.vibratoHz": 5.4,
+      "life.shimmerRms": 0.037500000000000006,
+      "life.wanderCents": 2.3000000000000003
+    }
+  },
+  "notes": [
+    {
+      "file": "48_0.3.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.3,
+      "excess": 1.835,
+      "cents": -1.4,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.64"
+    },
+    {
+      "file": "53_0.6.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.6,
+      "excess": 1.828,
+      "cents": -0.43,
+      "clicks": 0,
+      "worst": "音高 236.61"
+    },
+    {
+      "file": "58_0.9.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.9,
+      "excess": 1.189,
+      "cents": -1.12,
+      "clicks": 0,
+      "worst": "各泛音衰减 5.81"
+    },
+    {
+      "file": "67_0.3.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.3,
+      "excess": 1.687,
+      "cents": -0.41,
+      "clicks": 0,
+      "worst": "起音噪声感 6.23"
+    },
+    {
+      "file": "48_0.6.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.6,
+      "excess": 1.67,
+      "cents": -1.41,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.07"
+    },
+    {
+      "file": "53_0.9.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.9,
+      "excess": 1.1,
+      "cents": -0.39,
+      "clicks": 0,
+      "worst": "松开后的尾巴 3.25"
+    },
+    {
+      "file": "62_0.3.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.3,
+      "excess": 1.576,
+      "cents": -0.63,
+      "clicks": 0,
+      "worst": "起音噪声感 7.06"
+    },
+    {
+      "file": "67_0.6.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.6,
+      "excess": 1.478,
+      "cents": -0.41,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.66"
+    },
+    {
+      "file": "48_0.9.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.9,
+      "excess": 1.469,
+      "cents": -1.44,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.59"
+    },
+    {
+      "file": "58_0.3.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.3,
+      "excess": 1.799,
+      "cents": -1.1,
+      "clicks": 0,
+      "worst": "起音噪声感 6.84"
+    },
+    {
+      "file": "62_0.6.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.6,
+      "excess": 1.487,
+      "cents": -0.6,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.70"
+    },
+    {
+      "file": "67_0.9.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.9,
+      "excess": 1.205,
+      "cents": -0.4,
+      "clicks": 0,
+      "worst": "松开后的尾巴 3.92"
+    },
+    {
+      "file": "53_0.3.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.3,
+      "excess": 1.922,
+      "cents": -0.47,
+      "clicks": 0,
+      "worst": "音高 237.84"
+    },
+    {
+      "file": "58_0.6.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.6,
+      "excess": 1.523,
+      "cents": -1.11,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.11"
+    },
+    {
+      "file": "62_0.9.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.9,
+      "excess": 1.342,
+      "cents": -0.56,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.29"
+    },
+    {
+      "file": "72_0.6.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.6,
+      "excess": 1.252,
+      "cents": -0.37,
+      "clicks": 0,
+      "worst": "松开后的尾巴 5.18"
+    },
+    {
+      "file": "72_0.9.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.9,
+      "excess": 1.317,
+      "cents": -0.35,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.89"
+    },
+    {
+      "file": "72_0.3.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.3,
+      "excess": 1.628,
+      "cents": -0.39,
+      "clicks": 0,
+      "worst": "起音噪声感 6.97"
+    }
+  ]
+}

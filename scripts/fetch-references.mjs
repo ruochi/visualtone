@@ -47,14 +47,18 @@ for (const set of catalog.sets) {
   const dir = join(outRoot, set.id);
   mkdirSync(dir, { recursive: true });
   for (const note of set.notes) {
-    const wavName = `${note.midi}_${note.size}.wav`;
+    const wavName = note.file || `${note.midi}_${note.size}.wav`;
     const dest = join(dir, wavName);
     if (existsSync(dest) && statSync(dest).size > 1000) continue;
     if (note.archive) {
       pendingArchive.push({ set, note, dest, wavName });
       continue;
     }
-    const raw = join(dir, note.file);
+    if (!note.url) {
+      console.log('skip', set.id, wavName, 'no url');
+      continue;
+    }
+    const raw = join(dir, note.file || wavName);
     await download(note.url, raw);
     if (note.flac) {
       run('ffmpeg', ['-y', '-i', raw, '-c:a', 'pcm_s24le', dest]);

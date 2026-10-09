@@ -1,0 +1,183 @@
+{
+  "instrument": "piano",
+  "set": "salamander-piano",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.748,
+    "holdoutExcess": 2.167,
+    "params": {
+      "slope": 0.64,
+      "stiffness": 0.000088,
+      "decay": 2.4,
+      "decayOrder": 0.9,
+      "hammer": 0.28,
+      "noise": 0.04
+    }
+  },
+  "after": {
+    "fitExcess": 1.692,
+    "fitLoss": 1.692,
+    "holdoutExcess": 2.147,
+    "holdoutLoss": 2.147,
+    "params": {
+      "slope": 0.72,
+      "stiffness": 0.000108,
+      "decay": 2.75,
+      "decayOrder": 0.76875,
+      "hammer": 0.13,
+      "noise": 0.0675
+    }
+  },
+  "notes": [
+    {
+      "file": "C2v1.flac",
+      "split": "valid",
+      "midi": 36,
+      "size": 0.3,
+      "excess": 1.875,
+      "cents": 0.62,
+      "clicks": 0,
+      "worst": "响度包络 4.57"
+    },
+    {
+      "file": "C3v8.flac",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.6,
+      "excess": 1.52,
+      "cents": 0.72,
+      "clicks": 0,
+      "worst": "响度包络 4.06"
+    },
+    {
+      "file": "C4v16.flac",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.9,
+      "excess": 1.525,
+      "cents": 0.93,
+      "clicks": 0,
+      "worst": "响度包络 3.70"
+    },
+    {
+      "file": "C2v8.flac",
+      "split": "valid",
+      "midi": 36,
+      "size": 0.6,
+      "excess": 1.75,
+      "cents": 0.62,
+      "clicks": 0,
+      "worst": "泛音斜率 5.25"
+    },
+    {
+      "file": "C3v16.flac",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.9,
+      "excess": 1.427,
+      "cents": 0.72,
+      "clicks": 0,
+      "worst": "响度包络 4.12"
+    },
+    {
+      "file": "C5v1.flac",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.3,
+      "excess": 2.107,
+      "cents": 1.46,
+      "clicks": 0,
+      "worst": "整体衰减 4.27"
+    },
+    {
+      "file": "C2v16.flac",
+      "split": "valid",
+      "midi": 36,
+      "size": 0.9,
+      "excess": 1.86,
+      "cents": 0.62,
+      "clicks": 0,
+      "worst": "泛音斜率 5.40"
+    },
+    {
+      "file": "C4v1.flac",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.3,
+      "excess": 1.837,
+      "cents": 0.94,
+      "clicks": 0,
+      "worst": "奇偶泛音比 5.43"
+    },
+    {
+      "file": "C5v8.flac",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.6,
+      "excess": 1.762,
+      "cents": 1.46,
+      "clicks": 0,
+      "worst": "分音起伏 3.83"
+    },
+    {
+      "file": "C3v1.flac",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.3,
+      "excess": 1.642,
+      "cents": 0.72,
+      "clicks": 0,
+      "worst": "响度包络 4.02"
+    },
+    {
+      "file": "C4v8.flac",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.6,
+      "excess": 1.5,
+      "cents": 0.94,
+      "clicks": 0,
+      "worst": "响度包络 3.77"
+    },
+    {
+      "file": "C5v16.flac",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.9,
+      "excess": 1.499,
+      "cents": 1.46,
+      "clicks": 0,
+      "worst": "分音起伏 3.63"
+    },
+    {
+      "file": "C6v1.flac",
+      "split": "test",
+      "midi": 84,
+      "size": 0.3,
+      "excess": 2.323,
+      "cents": 2.25,
+      "clicks": 0,
+      "worst": "各泛音衰减 6.94"
+    },
+    {
+      "file": "C6v8.flac",
+      "split": "test",
+      "midi": 84,
+      "size": 0.6,
+      "excess": 2.214,
+      "cents": 2.25,
+      "clicks": 0,
+      "worst": "奇偶泛音比 5.76"
+    },
+    {
+      "file": "C6v16.flac",
+      "split": "test",
+      "midi": 84,
+      "size": 0.9,
+      "excess": 1.903,
+      "cents": 2.26,
+      "clicks": 0,
+      "worst": "晚段衰减 9.18"
+    }
+  ]
+}

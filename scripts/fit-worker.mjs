@@ -1,10 +1,30 @@
 import { parentPort, workerData } from 'node:worker_threads';
 import { analyzeNote } from '../dist/analysis/timbre.js';
+import {
+  BAR_PRESETS,
+  DRUM_PRESETS,
+  EPIANO_PRESETS,
+  ORGAN_REG,
+  PIANO_PRESETS,
+  PLUCK_PRESETS,
+  WIND_PRESETS,
+} from '../dist/engines/acoustic.js';
 import { HARMONIC_PRESETS } from '../dist/engines/harmonic.js';
 import { loadWav, scoreAgainst } from './lib/score-note.mjs';
 
-const preset = HARMONIC_PRESETS[workerData.instrument];
-if (!preset) throw new Error(`no harmonic preset ${workerData.instrument}`);
+const TABLES = {
+  harmonic: HARMONIC_PRESETS,
+  bar: BAR_PRESETS,
+  drum: DRUM_PRESETS,
+  piano: PIANO_PRESETS,
+  pluck: PLUCK_PRESETS,
+  wind: WIND_PRESETS,
+  epiano: EPIANO_PRESETS,
+  organ: { organ: { stops: ORGAN_REG[0] } },
+};
+const table = TABLES[workerData.model || 'harmonic'];
+const preset = table?.[workerData.instrument];
+if (!preset) throw new Error(`no ${workerData.model || 'harmonic'} preset ${workerData.instrument}`);
 
 const notes = workerData.notes.map((note) => {
   const refBuf = loadWav(note.path);

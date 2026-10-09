@@ -15,13 +15,34 @@ interface PluckString {
 }
 
 /** Karplus–Strong string. Fractional delay keeps the pitch; size moves the pluck toward the bridge. */
+export const PLUCK_PRESETS = {
+  'steel-guitar': { bodyHz: 118, disp: -0.18, dispHue: 0.22, loss: 0.982, lossLight: 0.014 },
+  'nylon-guitar': { bodyHz: 150, disp: -0.12, dispHue: 0, loss: 0.982, lossLight: 0.014 },
+  harp: {
+    bodyHz: 295,
+    disp: -0.05,
+    dispHue: 0,
+    loss: 0.992,
+    lossLight: 0.0125,
+  },
+};
+
+export function pluckInstrumentFor(hue: number): keyof typeof PLUCK_PRESETS {
+  const h = ((hue % 360) + 360) % 360;
+  if (h >= 280) return 'harp';
+  if (h >= 140) return 'nylon-guitar';
+  return 'steel-guitar';
+}
+
 export function createPluck(sampleRate: number, hue: number, seed: number): Engine {
   const rng = mulberry32(seed || 1);
   const hueW = ((hue % 360) + 360) % 360;
   const bright = 1 - hueW / 360;
   // 0°–139° steel guitar, 140°–279° nylon, 280°–360° harp. Hue 70 stays the steel pluck.
-  const family = hueW >= 280 ? 'harp' : hueW >= 140 ? 'nylon' : 'steel';
-  const bodyHz = family === 'harp' ? 220 : family === 'nylon' ? 150 : 118;
+  const pluckId = pluckInstrumentFor(hue);
+  const pluck = PLUCK_PRESETS[pluckId];
+  const family = pluckId === 'nylon-guitar' ? 'nylon' : pluckId === 'harp' ? 'harp' : 'steel';
+  const bodyHz = pluck.bodyHz;
   let left: PluckString | null = null;
   let right: PluckString | null = null;
   let rightZ = 0;
@@ -107,7 +128,7 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
       if (on && !wasOn) {
         const freq = Math.min(sampleRate * 0.2, Math.max(30, midiToFrequency(midi)));
         periodSamp = sampleRate / freq;
-        disp = family === 'harp' ? -0.02 : family === 'nylon' ? -0.12 : -0.18 - (1 - bright) * 0.22;
+        disp = pluck.disp - (1 - bright) * pluck.dispHue;
         // Less averaging keeps the upper partials alive, so a harder pluck stays bright.
         // Short loops need more averaging or harmonics alias and the note reads darker.
         const guard = Math.min(0.55, 20 / periodSamp);
@@ -148,10 +169,7 @@ export function createPluck(sampleRate: number, hue: number, seed: number): Engi
       } else {
         releaseLeft = releaseSamples;
       }
-      const loss =
-        family === 'harp'
-          ? 0.992 + Math.min(1, Math.max(0, lightness)) * 0.006
-          : 0.982 + Math.min(1, Math.max(0, lightness)) * 0.014;
+      const loss = pluck.loss + Math.min(1, Math.max(0, lightness)) * pluck.lossLight;
       const outL = step(left, loss);
       const rawR = step(right, loss);
       const outR = rightZ;
@@ -194,67 +212,60 @@ interface MalletSpec {
   glock: boolean;
 }
 
-function malletSpec(hue: number): MalletSpec {
-  const h = ((hue % 360) + 360) % 360;
-  if (h < 120) {
-    // Rosewood: the ~4× mode sits under the fundamental, and the ~10× mode is only on the long bars.
-    return {
-      ratios: [1, 3.92, 10.08, 15.8],
-      decays: [1.2, 0.36, 0.14, 0.06],
-      gains: [0.55, 0.02, 0.05],
-      tremHz: 0,
-      pitchPow: 1.35,
-      rollStart: 70,
-      rollEnd: 77,
-      lowMode: 1.05,
-      lowMidi: 46,
-      lowWidth: 10,
-      noise: 0.4,
-      hissHz: 1200,
-      hissUntil: 96,
-      glock: false,
-    };
-  }
-  if (h < 200) {
-    // Hardwood: a quiet third, fading to a sine at the top of the instrument.
-    return {
-      ratios: [1, 3, 6.05, 9.4],
-      decays: [0.7, 0.22, 0.1, 0.05],
-      gains: [0.16, 0.07, 0.03],
-      tremHz: 0,
-      pitchPow: 1.05,
-      rollStart: 86,
-      rollEnd: 98,
-      lowMode: 0,
-      lowMidi: 0,
-      lowWidth: 0,
-      noise: 0.28,
-      hissHz: 600,
-      hissUntil: 120,
-      glock: false,
-    };
-  }
-  if (h < 280) {
-    // No recording in the catalog. Gains make up for the softer strike opening so the tremolo bar stays bright.
-    return {
-      ratios: [1, 3.97, 9.2, 14.6],
-      decays: [1.8, 0.75, 0.28, 0.11],
-      gains: [1.05, 0.46, 0.2],
-      tremHz: 5.5,
-      pitchPow: 0.75,
-      rollStart: 96,
-      rollEnd: 120,
-      lowMode: 0,
-      lowMidi: 0,
-      lowWidth: 0,
-      noise: 0.12,
-      hissHz: 1600,
-      hissUntil: 96,
-      glock: false,
-    };
-  }
+export const BAR_PRESETS = {
+  // Rosewood: the ~4× mode sits under the fundamental, and the ~10× mode is only on the long bars.
+  marimba: {
+    ratios: [1, 3.92, 10.08, 15.8],
+    decays: [1.2, 0.36, 0.14, 0.06],
+    gains: [0.55, 0.02, 0.05],
+    tremHz: 0,
+    pitchPow: 1.35,
+    rollStart: 70,
+    rollEnd: 77,
+    lowMode: 1.05,
+    lowMidi: 46,
+    lowWidth: 10,
+    noise: 0.4,
+    hissHz: 1200,
+    hissUntil: 96,
+    glock: false,
+  },
+  // Hardwood: a quiet third, fading to a sine at the top of the instrument.
+  xylophone: {
+    ratios: [1, 3.125, 6.45, 9.4],
+    decays: [0.35, 0.145, 0.175, 0.08],
+    gains: [0.34, 0.21, 0.04375],
+    tremHz: 0,
+    pitchPow: 0.875,
+    rollStart: 86,
+    rollEnd: 98,
+    lowMode: 0,
+    lowMidi: 0,
+    lowWidth: 0,
+    noise: 0.43,
+    hissHz: 600,
+    hissUntil: 120,
+    glock: false,
+  },
+  // Gains make up for the softer strike opening so the tremolo bar stays bright.
+  vibraphone: {
+    ratios: [1, 4.095, 9.55, 14.6],
+    decays: [1.49375, 0.4875, 0.1, 0.06],
+    gains: [0.825, 0.61, 0.29375],
+    tremHz: 5.5,
+    pitchPow: 0.65,
+    rollStart: 96,
+    rollEnd: 120,
+    lowMode: 0,
+    lowMidi: 0,
+    lowWidth: 0,
+    noise: 0.27,
+    hissHz: 1600,
+    hissUntil: 96,
+    glock: false,
+  },
   // Steel: long ring. The 2.76 mode catches up to the fundamental as the bar shortens; 5.4 does the opposite.
-  return {
+  glockenspiel: {
     ratios: [1, 2.76, 5.4, 8.93],
     decays: [2.4, 1.6, 1.8, 0.6],
     gains: [0.85, 0.7, 0.2],
@@ -269,7 +280,21 @@ function malletSpec(hue: number): MalletSpec {
     hissHz: 0,
     hissUntil: 0,
     glock: true,
-  };
+  },
+} satisfies Record<string, MalletSpec>;
+
+export type BarInstrument = keyof typeof BAR_PRESETS;
+
+export function barInstrumentFor(hue: number): BarInstrument {
+  const h = ((hue % 360) + 360) % 360;
+  if (h < 120) return 'marimba';
+  if (h < 200) return 'xylophone';
+  if (h < 280) return 'vibraphone';
+  return 'glockenspiel';
+}
+
+function malletSpec(hue: number): MalletSpec {
+  return BAR_PRESETS[barInstrumentFor(hue)];
 }
 
 export function createMarimba(sampleRate: number, hue: number, seed: number): Engine {
@@ -412,15 +437,29 @@ export function createMarimba(sampleRate: number, hue: number, seed: number): En
   };
 }
 
+export const EPIANO_PRESETS = {
+  'electric-piano': {
+    ratioBase: 1,
+    ratioSpan: 6,
+    index: 1.2,
+    indexLight: 3.5,
+    envDecay: 0.55,
+    indexDecay: 0.18,
+    indexDecayLight: 0.25,
+    detune: 1.003,
+  },
+};
+
 /** Two-operator FM electric piano. Hue picks the modulator ratio. */
 export function createEpiano(sampleRate: number, hue: number, _seed: number): Engine {
+  const preset = EPIANO_PRESETS['electric-piano'];
   let car = 0;
   let mod = 0;
   let index = 0;
   let env = 0;
   let wasOn = false;
   let freq = 440;
-  const ratio = 1 + Math.round((hue / 360) * 6);
+  const ratio = preset.ratioBase + Math.round((hue / 360) * preset.ratioSpan);
 
   return {
     setRelease() {},
@@ -428,19 +467,19 @@ export function createEpiano(sampleRate: number, hue: number, _seed: number): En
       const on = size > 1e-5;
       if (on && !wasOn) {
         freq = Math.max(30, midiToFrequency(midi));
-        index = 1.2 + lightness * 3.5;
+        index = preset.index + lightness * preset.indexLight;
         env = size;
         car = 0;
         mod = 0;
       }
       wasOn = on;
       if (env < 1e-5 && index < 1e-4) return [0, 0];
-      env *= Math.exp(-1 / (0.55 * sampleRate));
-      index *= Math.exp(-1 / ((0.18 + lightness * 0.25) * sampleRate));
+      env *= Math.exp(-1 / (preset.envDecay * sampleRate));
+      index *= Math.exp(-1 / ((preset.indexDecay + lightness * preset.indexDecayLight) * sampleRate));
       mod += (2 * Math.PI * freq * ratio) / sampleRate;
       car += (2 * Math.PI * freq) / sampleRate;
       const s = Math.sin(car + Math.sin(mod) * index) * env;
-      const s2 = Math.sin(car * 1.003 + Math.sin(mod + 0.2) * index) * env;
+      const s2 = Math.sin(car * preset.detune + Math.sin(mod + 0.2) * index) * env;
       return [s * 0.4, s2 * 0.4];
     },
   };
@@ -449,8 +488,8 @@ export function createEpiano(sampleRate: number, hue: number, _seed: number): En
 /** Drawbar organ. Hue walks the registration; size and lightness open the upper stops. */
 const ORGAN_RATIOS = [0.5, 1.5, 1, 2, 3, 4, 5, 6, 8];
 // Stopped flute (8' + odd partials), open flute 8'+4'+2', full mixture. Hue 0 and 360 are dark; 180 is full.
-const ORGAN_REG = [
-  [0.04, 0.015, 1, 0.006, 0.32, 0.004, 0.08, 0, 0],
+export const ORGAN_REG = [
+  [0, 0.025, 0.85, 0, 0.33, 0, 0.11, 0.02, 0],
   [0.16, 0.06, 1, 0.78, 0.12, 0.62, 0.04, 0.08, 0.2],
   [0.34, 0.28, 0.9, 0.74, 0.58, 0.68, 0.36, 0.3, 0.46],
 ];
@@ -603,13 +642,32 @@ interface DrumSpec {
   bend: number;
 }
 
-function drumSpec(hue: number): DrumSpec {
+export const DRUM_PRESETS = {
+  kick: { tau: 0.18, noise: 0.08, click: 0.7, bend: 4 },
+  tom: {
+    tau: 0.645,
+    noise: 0.025,
+    click: 0.2625,
+    bend: 0.25,
+  },
+  snare: { tau: 0.22, noise: 0.28, click: 0.45, bend: 0 },
+  conga: { tau: 0.55, noise: 0.03, click: 0.3, bend: 0 },
+  'frame-drum': { tau: 0.7, noise: 0.05, click: 0.25, bend: 0 },
+} satisfies Record<string, DrumSpec>;
+
+export type DrumInstrument = keyof typeof DRUM_PRESETS;
+
+export function drumInstrumentFor(hue: number): DrumInstrument {
   const h = ((hue % 360) + 360) % 360;
-  if (h < 45) return { tau: 0.18, noise: 0.08, click: 0.7, bend: 4 };
-  if (h < 140) return { tau: 0.42, noise: 0.015, click: 0.35, bend: 0 };
-  if (h < 230) return { tau: 0.22, noise: 0.28, click: 0.45, bend: 0 };
-  if (h < 310) return { tau: 0.55, noise: 0.03, click: 0.3, bend: 0 };
-  return { tau: 0.7, noise: 0.05, click: 0.25, bend: 0 };
+  if (h < 45) return 'kick';
+  if (h < 140) return 'tom';
+  if (h < 230) return 'snare';
+  if (h < 310) return 'conga';
+  return 'frame-drum';
+}
+
+function drumSpec(hue: number): DrumSpec {
+  return DRUM_PRESETS[drumInstrumentFor(hue)];
 }
 
 /** Modal drum. Hue picks kick, tom, snare, conga, or frame drum. */
@@ -749,6 +807,35 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
   };
 }
 
+export const WIND_PRESETS = {
+  flute: {
+    shimmerRms: 0.017,
+    wanderCents: 3,
+    jet: 1.06,
+    jetStrike: 0.22,
+    even: 0.035,
+    evenStrike: 0.4,
+    evenMix: 0,
+    evenMixStrike: 0,
+    attack: 0.042,
+  },
+  clarinet: {
+    shimmerRms: 0.022,
+    wanderCents: 2,
+    jet: 1.12,
+    jetStrike: 0.22,
+    even: 0,
+    evenStrike: 0,
+    evenMix: 0.08,
+    evenMixStrike: 0.1,
+    attack: 0.016,
+  },
+};
+
+export function windInstrumentFor(hue: number): keyof typeof WIND_PRESETS {
+  return ((hue % 360) + 360) % 360 >= 180 ? 'clarinet' : 'flute';
+}
+
 /**
  * Blown bore. Hue below 180 is a flute (open pipe, all harmonics).
  * From 180 it is a clarinet: half-period delay and a sign flip, so the bore is odd.
@@ -756,7 +843,9 @@ export function createDrum(sampleRate: number, hue: number, seed: number): Engin
  * An odd saturation sits in the loop, so the zeros — and the pitch — stay on the delay.
  */
 export function createWind(sampleRate: number, hue: number, seed: number): Engine {
-  const clarinet = ((hue % 360) + 360) % 360 >= 180;
+  const windId = windInstrumentFor(hue);
+  const wind = WIND_PRESETS[windId];
+  const clarinet = windId === 'clarinet';
   const rng = mulberry32(seed || 1);
   const buf = new Float32Array(4096);
   let w = 0;
@@ -792,7 +881,7 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   let boreY = 0;
   const life = createPitchLife(
     sampleRate,
-    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: clarinet ? 2 : 3, vibratoGain: 0, shimmerRms: clarinet ? 0.022 : 0.032 },
+    { vibratoCents: 0, vibratoHz: 0, vibratoDelaySec: 0, wanderCents: wind.wanderCents, vibratoGain: 0, shimmerRms: wind.shimmerRms },
     seed,
   );
   const dcPole = Math.exp((-2 * Math.PI * 24) / sampleRate);
@@ -860,15 +949,15 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
         for (let i = 0; i < seeded; i++) buf[i] = Math.sin((2 * Math.PI * i) / period) * 0.25;
         // Heavy saturation on a long flute pulls the pitch flat and grows a sharp edge.
         // A soft clarinet stays near the linear part of the reed; a hard one squares off.
-        jet = clarinet ? 1.12 + strike * 0.22 + register * 0.08 : 1.06 + strike * 0.22 + fluteHigh * 0.04;
+        jet = wind.jet + strike * wind.jetStrike + (clarinet ? register * 0.08 : fluteHigh * 0.04);
         // tanh is an odd function, so the open pipe needs an explicit even term.
         // A hard mid-register flute's octave is about as loud as the fundamental.
         // Low notes stay milder: a strong even jet there grows a click every period.
-        even = clarinet ? 0 : (0.035 + strike * strike * 0.34) * (1 - fluteHigh * 0.5) * (1 - fluteLow * 0.5);
+        even = clarinet ? 0 : (wind.even + strike * strike * wind.evenStrike) * (1 - fluteHigh * 0.5) * (1 - fluteLow * 0.5);
         // The inverting bore rejects even modes, so the octave is added on the way out.
         // Soft altissimo needs more mix: squaring gets quieter as the bore gets quieter.
         const altissimo = clarinet ? Math.max(0, Math.min(1, (midi - 70) / 14)) : 0;
-        evenMix = clarinet ? 0.08 + strike * 0.1 + altissimo * 7.5 * (1 - strike * 0.55) : 0;
+        evenMix = clarinet ? wind.evenMix + strike * wind.evenMixStrike + altissimo * 7.5 * (1 - strike * 0.55) : 0;
         evenDc = 0;
         evenArm = evenMix > 0;
         evenLp = 0;
@@ -883,7 +972,7 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
           : 1400 + strike * 2600 + fluteHigh * 2000 - fluteLow * 500;
         smoothPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         smooth[0] = smooth[1] = smooth[2] = smooth[3] = 0;
-        attackCoeff = Math.exp(-1 / ((clarinet ? 0.016 : 0.028 + (1 - fluteHigh) * 0.02) * sampleRate));
+        attackCoeff = Math.exp(-1 / ((wind.attack + (clarinet ? 0 : (1 - fluteHigh) * 0.02)) * sampleRate));
         releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
         env = 0;
         alive = Math.ceil(sampleRate * 3);
@@ -962,8 +1051,29 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   };
 }
 
+export const PIANO_PRESETS = {
+  piano: {
+    slope: 0.72,
+    slopeDark: 0.28,
+    slopeStrike: 0.3,
+    slopeLight: 0.08,
+    slopeMin: 0.16,
+    stiffness: 0.00011,
+    stiffnessPow: 1.15,
+    stiffnessDark: 0.25,
+    decay: 2.75,
+    decayOrder: 0.76875,
+    pitchPow: 0.82,
+    hang: 1.2,
+    hammer: 0.13,
+    noise: 0.0675,
+    noiseStrike: 0.045,
+  },
+};
+
 /** Struck string. Partials follow f·n·√(1+B·n²), and higher notes and partials die sooner. Hue darkens the hammer. */
 export function createPiano(sampleRate: number, hue: number, seed: number): Engine {
+  const preset = PIANO_PRESETS.piano;
   const dark = ((hue % 360) + 360) % 360 / 360;
   const rng = mulberry32(seed || 1);
   const N = 24;
@@ -997,11 +1107,14 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
         const freq = Math.min(sampleRate * 0.2, Math.max(27, midiToFrequency(midi)));
         const strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
-        const slope = Math.max(0.16, 0.64 + dark * 0.28 - strike * 0.3 - (light - 0.5) * 0.08);
+        const slope = Math.max(
+          preset.slopeMin,
+          preset.slope + dark * preset.slopeDark - strike * preset.slopeStrike - (light - 0.5) * preset.slopeLight,
+        );
         // Salamander's Yamaha C5: B rises from about 9e-5 at C2 to about 2.5e-3 at C6.
-        const stiffness = 0.000088 * Math.pow(freq / 65.406, 1.15) * (0.9 + dark * 0.25);
-        const pitchScale = Math.pow(freq / 220, 0.82);
-        const hang = 0.3 + strike * 1.2;
+        const stiffness = preset.stiffness * Math.pow(freq / 65.406, preset.stiffnessPow) * (0.9 + dark * preset.stiffnessDark);
+        const pitchScale = Math.pow(freq / 220, preset.pitchPow);
+        const hang = 0.3 + strike * preset.hang;
         let energy = 0;
         const raw = new Float64Array(N);
         for (let i = 0; i < N; i++) {
@@ -1016,17 +1129,17 @@ export function createPiano(sampleRate: number, hue: number, seed: number): Engi
           const n = i + 1;
           amps[i] = raw[i] * norm;
           const hold = n === 1 ? 1 : hang;
-          taus[i] = Math.max(0.03, (2.4 * hold) / (pitchScale * Math.pow(n, 0.9)));
+          taus[i] = Math.max(0.03, (preset.decay * hold) / (pitchScale * Math.pow(n, preset.decayOrder)));
           phases[i] = 0;
           phases2[i] = 0.15;
         }
         hammerTotal = Math.max(1, Math.round((0.004 + strike * 0.007) * sampleRate));
         hammerLeft = hammerTotal;
-        hammerMix = Math.pow(strike, 1.5) * 0.28;
+        hammerMix = Math.pow(strike, 1.5) * preset.hammer;
         const cut = 400 + strike * 5500 + (1 - light) * 800;
         hammerPole = Math.exp((-2 * Math.PI * cut) / sampleRate);
         hammerLp = 0;
-        noiseAmp = 0.04 + strike * 0.045;
+        noiseAmp = preset.noise + strike * preset.noiseStrike;
         noisePole = Math.exp((-2 * Math.PI * (700 + strike * 1800)) / sampleRate);
         noiseLp = 0;
         attack = 0;

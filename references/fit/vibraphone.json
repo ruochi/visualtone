@@ -1,0 +1,163 @@
+{
+  "instrument": "vibraphone",
+  "set": "nsynth-vibraphone",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 2.199,
+    "holdoutExcess": 1.943,
+    "params": {
+      "decays.0": 1.8,
+      "decays.1": 0.75,
+      "decays.2": 0.28,
+      "decays.3": 0.11,
+      "gains.0": 1.05,
+      "gains.1": 0.46,
+      "gains.2": 0.2,
+      "pitchPow": 0.75,
+      "noise": 0.12,
+      "ratios.1": 3.97,
+      "ratios.2": 9.2
+    }
+  },
+  "after": {
+    "fitExcess": 2.046,
+    "fitLoss": 2.046,
+    "holdoutExcess": 1.808,
+    "holdoutLoss": 1.808,
+    "params": {
+      "decays.0": 1.4937500000000001,
+      "decays.1": 0.48750000000000004,
+      "decays.2": 0.10000000000000003,
+      "decays.3": 0.060000000000000005,
+      "gains.0": 0.8250000000000001,
+      "gains.1": 0.6100000000000001,
+      "gains.2": 0.29375,
+      "pitchPow": 0.65,
+      "noise": 0.27,
+      "ratios.1": 4.095000000000001,
+      "ratios.2": 9.55
+    }
+  },
+  "notes": [
+    {
+      "file": "72_0.394_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.394,
+      "excess": 2.223,
+      "cents": -0.01,
+      "clicks": 0,
+      "worst": "早段衰减 7.70"
+    },
+    {
+      "file": "53_0.787_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.787,
+      "excess": 2.402,
+      "cents": 0.23,
+      "clicks": 0,
+      "worst": "奇偶泛音比 26.67"
+    },
+    {
+      "file": "72_0.787_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.787,
+      "excess": 1.947,
+      "cents": -0.01,
+      "clicks": 0,
+      "worst": "时频图 4.31"
+    },
+    {
+      "file": "53_1.000_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 1,
+      "excess": 2.394,
+      "cents": 0.23,
+      "clicks": 0,
+      "worst": "奇偶泛音比 26.67"
+    },
+    {
+      "file": "83_0.787_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 0.787,
+      "excess": 1.724,
+      "cents": 0.02,
+      "clicks": 0,
+      "worst": "谐噪比 4.26"
+    },
+    {
+      "file": "63_0.394_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 63,
+      "size": 0.394,
+      "excess": 2.149,
+      "cents": -0.11,
+      "clicks": 0,
+      "worst": "亮度（质心） 5.52"
+    },
+    {
+      "file": "94_1.000_mallet_acoustic_056.wav",
+      "split": "valid",
+      "midi": 94,
+      "size": 1,
+      "excess": 1.484,
+      "cents": -0.02,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.12"
+    },
+    {
+      "file": "58_0.787_mallet_acoustic_056.wav",
+      "split": "test",
+      "midi": 58,
+      "size": 0.787,
+      "excess": 2.272,
+      "cents": -0.14,
+      "clicks": 0,
+      "worst": "亮度（质心） 9.25"
+    },
+    {
+      "file": "96_1.000_mallet_acoustic_056.wav",
+      "split": "test",
+      "midi": 96,
+      "size": 1,
+      "excess": 1.272,
+      "cents": -0.01,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.52"
+    },
+    {
+      "file": "70_0.394_mallet_acoustic_056.wav",
+      "split": "test",
+      "midi": 70,
+      "size": 0.394,
+      "excess": 2.201,
+      "cents": -0.09,
+      "clicks": 0,
+      "worst": "亮度（质心） 6.92"
+    },
+    {
+      "file": "81_1.000_mallet_acoustic_056.wav",
+      "split": "test",
+      "midi": 81,
+      "size": 1,
+      "excess": 1.716,
+      "cents": -0.04,
+      "clicks": 0,
+      "worst": "谐噪比 4.66"
+    },
+    {
+      "file": "84_0.394_mallet_acoustic_056.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.394,
+      "excess": 1.581,
+      "cents": -0.01,
+      "clicks": 0,
+      "worst": "谐噪比 6.89"
+    }
+  ]
+}

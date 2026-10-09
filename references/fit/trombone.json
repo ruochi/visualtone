@@ -1,0 +1,229 @@
+{
+  "instrument": "trombone",
+  "set": "tinysol-trombone",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.313,
+    "holdoutExcess": 1.206,
+    "params": {
+      "slope.base": 0.15,
+      "slope.soft": 2.05,
+      "slope.light": 0.06,
+      "slope.high": 0.4025,
+      "resonance.hz": 620,
+      "resonance.q": 7,
+      "resonance.mix": 0.08,
+      "noise.level": 0.02,
+      "noise.hz": 500,
+      "attackSec": 0.042,
+      "life.vibratoCents": 0,
+      "life.vibratoHz": 0,
+      "life.shimmerRms": 0.032,
+      "life.wanderCents": 1.5
+    }
+  },
+  "after": {
+    "fitExcess": 1.131,
+    "fitLoss": 1.131,
+    "holdoutExcess": 1.135,
+    "holdoutLoss": 1.135,
+    "params": {
+      "slope.base": 0.029999999999999992,
+      "slope.soft": 1.9099999999999997,
+      "slope.light": 0.06,
+      "slope.high": 0.4025,
+      "resonance.hz": 641.7,
+      "resonance.q": 4,
+      "resonance.mix": 0.21125000000000002,
+      "noise.level": 0.03,
+      "noise.hz": 518.75,
+      "attackSec": 0.05775,
+      "life.vibratoCents": 0,
+      "life.vibratoHz": 0,
+      "life.shimmerRms": 0.0125,
+      "life.wanderCents": 1.6500000000000001
+    }
+  },
+  "notes": [
+    {
+      "file": "48_0.3.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.3,
+      "excess": 1.746,
+      "cents": -0.83,
+      "clicks": 0,
+      "worst": "泛音斜率 4.34"
+    },
+    {
+      "file": "53_0.6.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.6,
+      "excess": 1.053,
+      "cents": -0.31,
+      "clicks": 0,
+      "worst": "频谱包络 3.17"
+    },
+    {
+      "file": "58_0.9.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.9,
+      "excess": 0.854,
+      "cents": -0.85,
+      "clicks": 0,
+      "worst": "起音噪声感 2.29"
+    },
+    {
+      "file": "67_0.3.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.3,
+      "excess": 1.114,
+      "cents": -0.21,
+      "clicks": 0,
+      "worst": "谐噪比 2.65"
+    },
+    {
+      "file": "48_0.6.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.6,
+      "excess": 1.275,
+      "cents": -0.84,
+      "clicks": 0,
+      "worst": "泛音斜率 3.30"
+    },
+    {
+      "file": "53_0.9.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.9,
+      "excess": 0.721,
+      "cents": -0.27,
+      "clicks": 0,
+      "worst": "泛音斜率 1.70"
+    },
+    {
+      "file": "62_0.3.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.3,
+      "excess": 1.046,
+      "cents": -0.41,
+      "clicks": 0,
+      "worst": "时频图 2.23"
+    },
+    {
+      "file": "67_0.6.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.6,
+      "excess": 0.828,
+      "cents": -0.21,
+      "clicks": 0,
+      "worst": "谐噪比 1.46"
+    },
+    {
+      "file": "48_0.9.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.9,
+      "excess": 0.963,
+      "cents": -0.87,
+      "clicks": 0,
+      "worst": "起音噪声感 2.62"
+    },
+    {
+      "file": "58_0.3.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.3,
+      "excess": 1.494,
+      "cents": -0.84,
+      "clicks": 0,
+      "worst": "起音噪声感 4.04"
+    },
+    {
+      "file": "62_0.6.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.6,
+      "excess": 0.675,
+      "cents": -0.4,
+      "clicks": 0,
+      "worst": "频谱包络 2.27"
+    },
+    {
+      "file": "67_0.9.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.9,
+      "excess": 1.351,
+      "cents": -0.2,
+      "clicks": 0,
+      "worst": "各泛音衰减 4.65"
+    },
+    {
+      "file": "53_0.3.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.3,
+      "excess": 1.757,
+      "cents": -0.31,
+      "clicks": 0,
+      "worst": "起音噪声感 3.76"
+    },
+    {
+      "file": "58_0.6.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.6,
+      "excess": 1.115,
+      "cents": -0.85,
+      "clicks": 0,
+      "worst": "高频滞后 8.00"
+    },
+    {
+      "file": "62_0.9.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.9,
+      "excess": 0.975,
+      "cents": -0.37,
+      "clicks": 0,
+      "worst": "起音噪声感 2.24"
+    },
+    {
+      "file": "72_0.6.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.6,
+      "excess": 1.207,
+      "cents": -0.23,
+      "clicks": 0,
+      "worst": "谐噪比 3.62"
+    },
+    {
+      "file": "72_0.9.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.9,
+      "excess": 1.213,
+      "cents": -0.22,
+      "clicks": 0,
+      "worst": "高频滞后 5.50"
+    },
+    {
+      "file": "72_0.3.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.3,
+      "excess": 0.986,
+      "cents": -0.24,
+      "clicks": 0,
+      "worst": "音高 3.06"
+    }
+  ]
+}

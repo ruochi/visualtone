@@ -5,6 +5,19 @@ import { resampleBuffer } from '../../dist/resample.js';
 import { ScoreSchema } from '../../dist/schema.js';
 import { readWavFile } from '../../dist/wav.js';
 
+/** On-disk name. NSynth keeps the instrument suffix; everything else is midi_size.wav. */
+export function recordedFile(note) {
+  if (note.instrument && note.file) return note.file;
+  return `${note.midi}_${note.size}.wav`;
+}
+
+/** Per-note hold wins. A set-level hold (NSynth) is the fallback. */
+export function noteTiming(set, note) {
+  if (note?.hold !== undefined) return { hold: note.hold, tail: note.tail ?? set?.tail ?? 0.8 };
+  if (set?.hold !== undefined) return { hold: set.hold, tail: set.tail ?? 1 };
+  return undefined;
+}
+
 export function loadWav(path) {
   const wav = readWavFile(readFileSync(path));
   const n = wav.buffers[0].length;

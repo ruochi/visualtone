@@ -1,0 +1,79 @@
+{
+  "instrument": "tom",
+  "set": "vsco-timpani",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 2.236,
+    "holdoutExcess": 2.374,
+    "params": {
+      "tau": 0.42,
+      "noise": 0.015,
+      "click": 0.35,
+      "bend": 0
+    }
+  },
+  "after": {
+    "fitExcess": 2.061,
+    "fitLoss": 2.061,
+    "holdoutExcess": 2.307,
+    "holdoutLoss": 2.307,
+    "params": {
+      "tau": 0.6450000000000001,
+      "noise": 0.024999999999999998,
+      "click": 0.26249999999999996,
+      "bend": 0.25
+    }
+  },
+  "notes": [
+    {
+      "file": "Timpani1_Hit_v3_rr1_Sum.wav",
+      "split": "valid",
+      "midi": 42,
+      "size": 0.8,
+      "excess": 1.962,
+      "cents": 0.28,
+      "clicks": 0,
+      "worst": "音高 243.99"
+    },
+    {
+      "file": "Timpani2_Hit_v3_rr1_Sum.wav",
+      "split": "valid",
+      "midi": 46,
+      "size": 0.8,
+      "excess": 2.3,
+      "cents": -0.24,
+      "clicks": 0,
+      "worst": "音高 231.11"
+    },
+    {
+      "file": "Timpani3_Hit_v3_rr1_Sum.wav",
+      "split": "valid",
+      "midi": 49,
+      "size": 0.8,
+      "excess": 2.02,
+      "cents": -0.2,
+      "clicks": 0,
+      "worst": "音高 233.79"
+    },
+    {
+      "file": "Timpani4_Hit_v3_rr1_Sum.wav",
+      "split": "valid",
+      "midi": 52,
+      "size": 0.8,
+      "excess": 1.962,
+      "cents": -0.15,
+      "clicks": 0,
+      "worst": "音高 243.38"
+    },
+    {
+      "file": "Timpani5_Hit_v3_rr1_Sum.wav",
+      "split": "test",
+      "midi": 54,
+      "size": 0.8,
+      "excess": 2.307,
+      "cents": 0.28,
+      "clicks": 0,
+      "worst": "音高 167.67"
+    }
+  ]
+}

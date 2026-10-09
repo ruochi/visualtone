@@ -15,25 +15,163 @@
           "midi": 60,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Flute/ordinario/Fl-ord-C4-pp-N-N.wav"
+          "archive": "Winds/Flute/ordinario/Fl-ord-C4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.18,
+          "tail": 0.26
+        },
+        {
+          "midi": 60,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Flute/ordinario/Fl-ord-C4-mf-N-T14d.wav",
+          "split": "valid",
+          "hold": 6.05,
+          "tail": 0.2
         },
         {
           "midi": 60,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Flute/ordinario/Fl-ord-C4-ff-N-N.wav"
+          "archive": "Winds/Flute/ordinario/Fl-ord-C4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.02,
+          "tail": 0.215
         },
         {
-          "midi": 72,
+          "midi": 65,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Flute/ordinario/Fl-ord-C5-pp-N-N.wav"
+          "archive": "Winds/Flute/ordinario/Fl-ord-F4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.25,
+          "tail": 0.2
+        },
+        {
+          "midi": 65,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Flute/ordinario/Fl-ord-F4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.17,
+          "tail": 0.2
+        },
+        {
+          "midi": 65,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Flute/ordinario/Fl-ord-F4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.13,
+          "tail": 0.276
+        },
+        {
+          "midi": 70,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Flute/ordinario/Fl-ord-A#4-pp-N-T11u.wav",
+          "split": "valid",
+          "hold": 6.29,
+          "tail": 0.24
+        },
+        {
+          "midi": 70,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Flute/ordinario/Fl-ord-A#4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.42,
+          "tail": 0.2
+        },
+        {
+          "midi": 70,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Flute/ordinario/Fl-ord-A#4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.45,
+          "tail": 0.2
+        },
+        {
+          "midi": 74,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Flute/ordinario/Fl-ord-D5-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.92,
+          "tail": 0.2
+        },
+        {
+          "midi": 74,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Flute/ordinario/Fl-ord-D5-mf-N-T11d.wav",
+          "split": "valid",
+          "hold": 6.32,
+          "tail": 0.2
+        },
+        {
+          "midi": 74,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Flute/ordinario/Fl-ord-D5-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.16,
+          "tail": 0.25
+        },
+        {
+          "midi": 79,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Flute/ordinario/Fl-ord-G5-pp-N-T11u.wav",
+          "split": "valid",
+          "hold": 6.17,
+          "tail": 0.2
+        },
+        {
+          "midi": 79,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Flute/ordinario/Fl-ord-G5-mf-N-T16d.wav",
+          "split": "valid",
+          "hold": 6.466,
+          "tail": 0.2
+        },
+        {
+          "midi": 79,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Flute/ordinario/Fl-ord-G5-ff-N-T14d.wav",
+          "split": "valid",
+          "hold": 6.13,
+          "tail": 0.373
         },
         {
           "midi": 84,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Flute/ordinario/Fl-ord-C6-pp-N-N.wav"
+          "archive": "Winds/Flute/ordinario/Fl-ord-C6-pp-N-N.wav",
+          "split": "test",
+          "hold": 4.483,
+          "tail": 1.2
+        },
+        {
+          "midi": 84,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Flute/ordinario/Fl-ord-C6-mf-N-T25d.wav",
+          "split": "test",
+          "hold": 6.35,
+          "tail": 0.215
+        },
+        {
+          "midi": 84,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Flute/ordinario/Fl-ord-C6-ff-N-T38d.wav",
+          "split": "test",
+          "hold": 6.69,
+          "tail": 0.5
         }
       ]
     },
@@ -51,37 +189,163 @@
           "midi": 60,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C4-pp-N-N.wav"
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.15,
+          "tail": 0.266
         },
         {
           "midi": 60,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C4-mf-N-N.wav"
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.23,
+          "tail": 0.2
         },
         {
-          "midi": 72,
-          "size": 0.3,
-          "dynamics": "pp",
-          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C5-pp-N-N.wav"
-        },
-        {
-          "midi": 72,
+          "midi": 60,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C5-ff-N-N.wav"
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C4-ff-N-T33u.wav",
+          "split": "valid",
+          "hold": 6.26,
+          "tail": 0.24
+        },
+        {
+          "midi": 65,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-F4-pp-N-T14d.wav",
+          "split": "valid",
+          "hold": 6.22,
+          "tail": 0.2
+        },
+        {
+          "midi": 65,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-F4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.33,
+          "tail": 0.219
+        },
+        {
+          "midi": 65,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-F4-ff-N-T13u.wav",
+          "split": "valid",
+          "hold": 6.2,
+          "tail": 0.31
+        },
+        {
+          "midi": 70,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-A#4-pp-N-T15d.wav",
+          "split": "valid",
+          "hold": 6.61,
+          "tail": 0.494
+        },
+        {
+          "midi": 70,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-A#4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.43,
+          "tail": 0.2
+        },
+        {
+          "midi": 70,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-A#4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.1,
+          "tail": 0.735
+        },
+        {
+          "midi": 74,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-D5-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.16,
+          "tail": 0.347
+        },
+        {
+          "midi": 74,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-D5-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.2,
+          "tail": 0.365
+        },
+        {
+          "midi": 74,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-D5-ff-N-T14u.wav",
+          "split": "valid",
+          "hold": 6.58,
+          "tail": 0.347
+        },
+        {
+          "midi": 79,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-G5-pp-N-N.wav",
+          "split": "valid",
+          "hold": 7.05,
+          "tail": 0.464
+        },
+        {
+          "midi": 79,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-G5-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.41,
+          "tail": 0.46
+        },
+        {
+          "midi": 79,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-G5-ff-N-T12u.wav",
+          "split": "valid",
+          "hold": 6.55,
+          "tail": 0.269
         },
         {
           "midi": 84,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C6-pp-N-N.wav"
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C6-pp-N-N.wav",
+          "split": "test",
+          "hold": 6.32,
+          "tail": 0.629
+        },
+        {
+          "midi": 84,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C6-mf-N-N.wav",
+          "split": "test",
+          "hold": 6.39,
+          "tail": 0.485
         },
         {
           "midi": 84,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C6-ff-N-N.wav"
+          "archive": "Winds/Clarinet_Bb/ordinario/ClBb-ord-C6-ff-N-N.wav",
+          "split": "test",
+          "hold": 6.57,
+          "tail": 0.473
         }
       ]
     },
@@ -99,43 +363,163 @@
           "midi": 60,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C4-pp-4c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-C4-pp-4c-N.wav",
+          "split": "valid",
+          "hold": 6.07,
+          "tail": 1.2
         },
         {
           "midi": 60,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C4-mf-4c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-C4-mf-4c-N.wav",
+          "split": "valid",
+          "hold": 5.9,
+          "tail": 1.2
         },
         {
           "midi": 60,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C4-ff-4c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-C4-ff-4c-N.wav",
+          "split": "valid",
+          "hold": 6.41,
+          "tail": 1.2
         },
         {
-          "midi": 72,
+          "midi": 65,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C5-pp-2c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-F4-pp-3c-N.wav",
+          "split": "valid",
+          "hold": 6.58,
+          "tail": 1.135
         },
         {
-          "midi": 72,
+          "midi": 65,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violin/ordinario/Vn-ord-F4-mf-3c-N.wav",
+          "split": "valid",
+          "hold": 6.47,
+          "tail": 1.2
+        },
+        {
+          "midi": 65,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C5-ff-2c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-F4-ff-3c-N.wav",
+          "split": "valid",
+          "hold": 6.38,
+          "tail": 1.2
+        },
+        {
+          "midi": 70,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violin/ordinario/Vn-ord-A#4-pp-2c-N.wav",
+          "split": "valid",
+          "hold": 5.93,
+          "tail": 1.2
+        },
+        {
+          "midi": 70,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violin/ordinario/Vn-ord-A#4-mf-2c-N.wav",
+          "split": "valid",
+          "hold": 6.45,
+          "tail": 1.2
+        },
+        {
+          "midi": 70,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violin/ordinario/Vn-ord-A#4-ff-2c-N.wav",
+          "split": "valid",
+          "hold": 6.45,
+          "tail": 1.2
+        },
+        {
+          "midi": 74,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violin/ordinario/Vn-ord-D5-pp-2c-N.wav",
+          "split": "valid",
+          "hold": 6.09,
+          "tail": 1.2
+        },
+        {
+          "midi": 74,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violin/ordinario/Vn-ord-D5-mf-2c-N.wav",
+          "split": "valid",
+          "hold": 6.07,
+          "tail": 1.2
+        },
+        {
+          "midi": 74,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violin/ordinario/Vn-ord-D5-ff-2c-N.wav",
+          "split": "valid",
+          "hold": 6.7,
+          "tail": 1.2
+        },
+        {
+          "midi": 79,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violin/ordinario/Vn-ord-G5-pp-1c-N.wav",
+          "split": "valid",
+          "hold": 6.4,
+          "tail": 1.175
+        },
+        {
+          "midi": 79,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violin/ordinario/Vn-ord-G5-mf-1c-N.wav",
+          "split": "valid",
+          "hold": 6.4,
+          "tail": 1.2
+        },
+        {
+          "midi": 79,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violin/ordinario/Vn-ord-G5-ff-1c-T11d.wav",
+          "split": "valid",
+          "hold": 6.7,
+          "tail": 1.2
         },
         {
           "midi": 84,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C6-pp-2c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-C6-pp-1c-T11d.wav",
+          "split": "test",
+          "hold": 5.59,
+          "tail": 1.2
         },
         {
           "midi": 84,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Strings/Violin/ordinario/Vn-ord-C6-mf-2c-N.wav"
+          "archive": "Strings/Violin/ordinario/Vn-ord-C6-mf-1c-T12d.wav",
+          "split": "test",
+          "hold": 6.19,
+          "tail": 1.2
+        },
+        {
+          "midi": 84,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violin/ordinario/Vn-ord-C6-ff-1c-T11d.wav",
+          "split": "test",
+          "hold": 7.04,
+          "tail": 1.2
         }
       ]
     },
@@ -153,31 +537,163 @@
           "midi": 48,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Viola/ordinario/Va-ord-C3-pp-4c-N.wav"
+          "archive": "Strings/Viola/ordinario/Va-ord-C3-pp-4c-N.wav",
+          "split": "valid",
+          "hold": 6.1,
+          "tail": 1.2
+        },
+        {
+          "midi": 48,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Viola/ordinario/Va-ord-C3-mf-4c-N.wav",
+          "split": "valid",
+          "hold": 6.4,
+          "tail": 1.2
         },
         {
           "midi": 48,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Viola/ordinario/Va-ord-C3-ff-4c-N.wav"
+          "archive": "Strings/Viola/ordinario/Va-ord-C3-ff-4c-N.wav",
+          "split": "valid",
+          "hold": 6.1,
+          "tail": 1.2
         },
         {
-          "midi": 60,
+          "midi": 53,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Viola/ordinario/Va-ord-F3-pp-4c-N.wav",
+          "split": "valid",
+          "hold": 6.24,
+          "tail": 0.84
+        },
+        {
+          "midi": 53,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Strings/Viola/ordinario/Va-ord-C4-mf-3c-N.wav"
+          "archive": "Strings/Viola/ordinario/Va-ord-F3-mf-4c-N.wav",
+          "split": "valid",
+          "hold": 6.01,
+          "tail": 1.19
+        },
+        {
+          "midi": 53,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Viola/ordinario/Va-ord-F3-ff-4c-T23u_R100u.wav",
+          "split": "valid",
+          "hold": 5.89,
+          "tail": 1.2
+        },
+        {
+          "midi": 58,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Viola/ordinario/Va-ord-A#3-pp-3c-N.wav",
+          "split": "valid",
+          "hold": 6.15,
+          "tail": 1.141
+        },
+        {
+          "midi": 58,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Viola/ordinario/Va-ord-A#3-mf-3c-N.wav",
+          "split": "valid",
+          "hold": 6.52,
+          "tail": 1.096
+        },
+        {
+          "midi": 58,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Viola/ordinario/Va-ord-A#3-ff-3c-N.wav",
+          "split": "valid",
+          "hold": 7.36,
+          "tail": 1.187
+        },
+        {
+          "midi": 62,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Viola/ordinario/Va-ord-D4-pp-2c-N.wav",
+          "split": "valid",
+          "hold": 6.85,
+          "tail": 1.2
+        },
+        {
+          "midi": 62,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Viola/ordinario/Va-ord-D4-mf-2c-N.wav",
+          "split": "valid",
+          "hold": 6.56,
+          "tail": 1.2
+        },
+        {
+          "midi": 62,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Viola/ordinario/Va-ord-D4-ff-2c-N.wav",
+          "split": "valid",
+          "hold": 6.62,
+          "tail": 1.2
+        },
+        {
+          "midi": 67,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Viola/ordinario/Va-ord-G4-pp-2c-N.wav",
+          "split": "valid",
+          "hold": 6.39,
+          "tail": 1.2
+        },
+        {
+          "midi": 67,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Viola/ordinario/Va-ord-G4-mf-2c-N.wav",
+          "split": "valid",
+          "hold": 6.78,
+          "tail": 1.177
+        },
+        {
+          "midi": 67,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Viola/ordinario/Va-ord-G4-ff-2c-N.wav",
+          "split": "valid",
+          "hold": 6.14,
+          "tail": 1.2
         },
         {
           "midi": 72,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Viola/ordinario/Va-ord-C5-pp-1c-N.wav"
+          "archive": "Strings/Viola/ordinario/Va-ord-C5-pp-1c-N.wav",
+          "split": "test",
+          "hold": 6.03,
+          "tail": 1.2
+        },
+        {
+          "midi": 72,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Viola/ordinario/Va-ord-C5-mf-1c-N.wav",
+          "split": "test",
+          "hold": 5.87,
+          "tail": 1.183
         },
         {
           "midi": 72,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Viola/ordinario/Va-ord-C5-ff-1c-N.wav"
+          "archive": "Strings/Viola/ordinario/Va-ord-C5-ff-1c-N.wav",
+          "split": "test",
+          "hold": 6.36,
+          "tail": 1.2
         }
       ]
     },
@@ -195,43 +711,163 @@
           "midi": 36,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C2-pp-4c-N.wav"
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-C2-pp-4c-N.wav",
+          "split": "valid",
+          "hold": 6.38,
+          "tail": 1.2
+        },
+        {
+          "midi": 36,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-C2-mf-4c-N.wav",
+          "split": "valid",
+          "hold": 6,
+          "tail": 1.2
         },
         {
           "midi": 36,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C2-ff-4c-N.wav"
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-C2-ff-4c-N.wav",
+          "split": "valid",
+          "hold": 5.35,
+          "tail": 1.2
         },
         {
-          "midi": 48,
+          "midi": 43,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-G2-pp-3c-N.wav",
+          "split": "valid",
+          "hold": 6.25,
+          "tail": 1.2
+        },
+        {
+          "midi": 43,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C3-mf-3c-N.wav"
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-G2-mf-3c-N.wav",
+          "split": "valid",
+          "hold": 6.78,
+          "tail": 1.2
         },
         {
-          "midi": 60,
-          "size": 0.3,
-          "dynamics": "pp",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C4-pp-1c-N.wav"
-        },
-        {
-          "midi": 60,
+          "midi": 43,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C4-ff-1c-N.wav"
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-G2-ff-3c-N.wav",
+          "split": "valid",
+          "hold": 6.53,
+          "tail": 1.2
+        },
+        {
+          "midi": 50,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-D3-pp-2c-N.wav",
+          "split": "valid",
+          "hold": 6.57,
+          "tail": 1.2
+        },
+        {
+          "midi": 50,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-D3-mf-2c-N.wav",
+          "split": "valid",
+          "hold": 6.8,
+          "tail": 1.2
+        },
+        {
+          "midi": 50,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-D3-ff-2c-N.wav",
+          "split": "valid",
+          "hold": 6.84,
+          "tail": 1.2
+        },
+        {
+          "midi": 58,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-A#3-pp-1c-N.wav",
+          "split": "valid",
+          "hold": 6.58,
+          "tail": 1.082
+        },
+        {
+          "midi": 58,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-A#3-mf-1c-N.wav",
+          "split": "valid",
+          "hold": 6.23,
+          "tail": 1.131
+        },
+        {
+          "midi": 58,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-A#3-ff-1c-N.wav",
+          "split": "valid",
+          "hold": 6.2,
+          "tail": 1.2
+        },
+        {
+          "midi": 65,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-F4-pp-1c-N.wav",
+          "split": "valid",
+          "hold": 7.37,
+          "tail": 0.573
+        },
+        {
+          "midi": 65,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-F4-mf-1c-N.wav",
+          "split": "valid",
+          "hold": 6.64,
+          "tail": 0.644
+        },
+        {
+          "midi": 65,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-F4-ff-1c-N.wav",
+          "split": "valid",
+          "hold": 6.18,
+          "tail": 0.9
         },
         {
           "midi": 72,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C5-pp-1c-N.wav"
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-C5-pp-1c-N.wav",
+          "split": "test",
+          "hold": 7.14,
+          "tail": 0.64
+        },
+        {
+          "midi": 72,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-C5-mf-1c-T11u.wav",
+          "split": "test",
+          "hold": 6.07,
+          "tail": 0.914
         },
         {
           "midi": 72,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Violoncello/ordinario/Vc-ord-C5-ff-2c-N.wav"
+          "archive": "Strings/Violoncello/ordinario/Vc-ord-C5-ff-1c-T16u.wav",
+          "split": "test",
+          "hold": 6.35,
+          "tail": 0.507
         }
       ]
     },
@@ -247,33 +883,165 @@
       "notes": [
         {
           "midi": 60,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C4-pp-N-T10d.wav",
+          "split": "valid",
+          "hold": 6.06,
+          "tail": 0.2
+        },
+        {
+          "midi": 60,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C4-mf-N-N.wav"
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.01,
+          "tail": 0.224
         },
         {
           "midi": 60,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C4-ff-N-N.wav"
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.16,
+          "tail": 0.476
         },
         {
-          "midi": 72,
+          "midi": 65,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-F4-pp-N-T12u.wav",
+          "split": "valid",
+          "hold": 5.64,
+          "tail": 0.271
+        },
+        {
+          "midi": 65,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C5-mf-N-N.wav"
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-F4-mf-N-T25u.wav",
+          "split": "valid",
+          "hold": 5.86,
+          "tail": 0.305
         },
         {
-          "midi": 72,
+          "midi": 65,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C5-ff-N-N.wav"
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-F4-ff-N-T17u.wav",
+          "split": "valid",
+          "hold": 5.73,
+          "tail": 0.293
+        },
+        {
+          "midi": 70,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-A#4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.98,
+          "tail": 0.239
+        },
+        {
+          "midi": 70,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-A#4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.98,
+          "tail": 0.256
+        },
+        {
+          "midi": 70,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-A#4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.08,
+          "tail": 0.462
+        },
+        {
+          "midi": 74,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-D5-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.69,
+          "tail": 0.2
+        },
+        {
+          "midi": 74,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-D5-mf-N-T14u.wav",
+          "split": "valid",
+          "hold": 5.94,
+          "tail": 0.217
+        },
+        {
+          "midi": 74,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-D5-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.09,
+          "tail": 0.499
+        },
+        {
+          "midi": 79,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-G5-pp-N-T25d.wav",
+          "split": "valid",
+          "hold": 5.85,
+          "tail": 0.344
+        },
+        {
+          "midi": 79,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-G5-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.87,
+          "tail": 0.313
+        },
+        {
+          "midi": 79,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-G5-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.31,
+          "tail": 0.509
         },
         {
           "midi": 84,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C6-pp-N-N.wav"
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C6-pp-N-N.wav",
+          "split": "test",
+          "hold": 5.65,
+          "tail": 0.482
+        },
+        {
+          "midi": 84,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C6-mf-N-T11u.wav",
+          "split": "test",
+          "hold": 5.28,
+          "tail": 0.354
+        },
+        {
+          "midi": 84,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trumpet_C/ordinario/TpC-ord-C6-ff-N-T17u.wav",
+          "split": "test",
+          "hold": 5.16,
+          "tail": 0.585
         }
       ]
     },
@@ -291,31 +1059,163 @@
           "midi": 48,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Brass/Horn/ordinario/Hn-ord-C3-pp-N-N.wav"
+          "archive": "Brass/Horn/ordinario/Hn-ord-C3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.18,
+          "tail": 0.2
+        },
+        {
+          "midi": 48,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Horn/ordinario/Hn-ord-C3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.9,
+          "tail": 0.2
         },
         {
           "midi": 48,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Horn/ordinario/Hn-ord-C3-ff-N-N.wav"
+          "archive": "Brass/Horn/ordinario/Hn-ord-C3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.34,
+          "tail": 0.2
         },
         {
-          "midi": 60,
+          "midi": 53,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Horn/ordinario/Hn-ord-F3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.03,
+          "tail": 0.205
+        },
+        {
+          "midi": 53,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Brass/Horn/ordinario/Hn-ord-C4-mf-N-N.wav"
+          "archive": "Brass/Horn/ordinario/Hn-ord-F3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.24,
+          "tail": 0.2
+        },
+        {
+          "midi": 53,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Horn/ordinario/Hn-ord-F3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.188,
+          "tail": 0.2
+        },
+        {
+          "midi": 58,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Horn/ordinario/Hn-ord-A#3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.7,
+          "tail": 0.2
+        },
+        {
+          "midi": 58,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Horn/ordinario/Hn-ord-A#3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.05,
+          "tail": 0.2
+        },
+        {
+          "midi": 58,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Horn/ordinario/Hn-ord-A#3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.17,
+          "tail": 0.2
+        },
+        {
+          "midi": 62,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Horn/ordinario/Hn-ord-D4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.88,
+          "tail": 0.2
+        },
+        {
+          "midi": 62,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Horn/ordinario/Hn-ord-D4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.15,
+          "tail": 0.2
+        },
+        {
+          "midi": 62,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Horn/ordinario/Hn-ord-D4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.8,
+          "tail": 0.277
+        },
+        {
+          "midi": 67,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Horn/ordinario/Hn-ord-G4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.79,
+          "tail": 0.2
+        },
+        {
+          "midi": 67,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Horn/ordinario/Hn-ord-G4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 4.271,
+          "tail": 1.2
+        },
+        {
+          "midi": 67,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Horn/ordinario/Hn-ord-G4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.2,
+          "tail": 0.322
         },
         {
           "midi": 72,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Brass/Horn/ordinario/Hn-ord-C5-pp-N-N.wav"
+          "archive": "Brass/Horn/ordinario/Hn-ord-C5-pp-N-N.wav",
+          "split": "test",
+          "hold": 5.9,
+          "tail": 0.2
+        },
+        {
+          "midi": 72,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Horn/ordinario/Hn-ord-C5-mf-N-N.wav",
+          "split": "test",
+          "hold": 4.246,
+          "tail": 1.2
         },
         {
           "midi": 72,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Horn/ordinario/Hn-ord-C5-ff-N-N.wav"
+          "archive": "Brass/Horn/ordinario/Hn-ord-C5-ff-N-N.wav",
+          "split": "test",
+          "hold": 6.26,
+          "tail": 0.2
         }
       ]
     },
@@ -330,22 +1230,166 @@
       "kind": "sustain",
       "notes": [
         {
-          "midi": 60,
+          "midi": 48,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Brass/Trombone/ordinario/Tbn-ord-C4-pp-N-N.wav"
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-C3-pp-N-T25d.wav",
+          "split": "valid",
+          "hold": 5.89,
+          "tail": 0.2
         },
         {
-          "midi": 60,
+          "midi": 48,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Brass/Trombone/ordinario/Tbn-ord-C4-mf-N-N.wav"
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-C3-mf-N-T18d.wav",
+          "split": "valid",
+          "hold": 6.095,
+          "tail": 0.2
         },
         {
-          "midi": 60,
+          "midi": 48,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Trombone/ordinario/Tbn-ord-C4-ff-N-N.wav"
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-C3-ff-N-T25d.wav",
+          "split": "valid",
+          "hold": 4.11,
+          "tail": 0.301
+        },
+        {
+          "midi": 53,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-F3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.55,
+          "tail": 0.2
+        },
+        {
+          "midi": 53,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-F3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.73,
+          "tail": 0.2
+        },
+        {
+          "midi": 53,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-F3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.75,
+          "tail": 0.402
+        },
+        {
+          "midi": 58,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-A#3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.28,
+          "tail": 0.2
+        },
+        {
+          "midi": 58,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-A#3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.75,
+          "tail": 0.2
+        },
+        {
+          "midi": 58,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-A#3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.49,
+          "tail": 0.444
+        },
+        {
+          "midi": 62,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-D4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.24,
+          "tail": 0.203
+        },
+        {
+          "midi": 62,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-D4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 4.8,
+          "tail": 0.2
+        },
+        {
+          "midi": 62,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-D4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 3.85,
+          "tail": 0.762
+        },
+        {
+          "midi": 67,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-G4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 4.26,
+          "tail": 0.26
+        },
+        {
+          "midi": 67,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-G4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.19,
+          "tail": 0.267
+        },
+        {
+          "midi": 67,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-G4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.16,
+          "tail": 0.868
+        },
+        {
+          "midi": 72,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-C5-pp-N-N.wav",
+          "split": "test",
+          "hold": 4.82,
+          "tail": 0.582
+        },
+        {
+          "midi": 72,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-C5-mf-N-T23u.wav",
+          "split": "test",
+          "hold": 3.72,
+          "tail": 0.203
+        },
+        {
+          "midi": 72,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Trombone/ordinario/Tbn-ord-C5-ff-N-T24u.wav",
+          "split": "test",
+          "hold": 3.22,
+          "tail": 0.709
         }
       ]
     },
@@ -360,28 +1404,166 @@
       "kind": "sustain",
       "notes": [
         {
-          "midi": 60,
+          "midi": 54,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C4-pp-N-N.wav"
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-F#3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.2,
+          "tail": 1.2
         },
         {
-          "midi": 60,
-          "size": 0.9,
-          "dynamics": "ff",
-          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C4-ff-N-N.wav"
-        },
-        {
-          "midi": 72,
+          "midi": 54,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C5-mf-N-N.wav"
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-F#3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 7.19,
+          "tail": 0.395
         },
         {
-          "midi": 72,
+          "midi": 54,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C5-ff-N-N.wav"
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-F#3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.72,
+          "tail": 0.451
+        },
+        {
+          "midi": 59,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-B3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.4,
+          "tail": 1.2
+        },
+        {
+          "midi": 59,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-B3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 8.29,
+          "tail": 0.464
+        },
+        {
+          "midi": 59,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-B3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.67,
+          "tail": 0.398
+        },
+        {
+          "midi": 64,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-E4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.33,
+          "tail": 0.922
+        },
+        {
+          "midi": 64,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-E4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 7.73,
+          "tail": 0.335
+        },
+        {
+          "midi": 64,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-E4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.48,
+          "tail": 0.389
+        },
+        {
+          "midi": 68,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-G#4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.23,
+          "tail": 0.723
+        },
+        {
+          "midi": 68,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-G#4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 7.64,
+          "tail": 0.378
+        },
+        {
+          "midi": 68,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-G#4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.58,
+          "tail": 0.483
+        },
+        {
+          "midi": 73,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C#5-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.91,
+          "tail": 0.593
+        },
+        {
+          "midi": 73,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C#5-mf-N-N.wav",
+          "split": "valid",
+          "hold": 8,
+          "tail": 0.624
+        },
+        {
+          "midi": 73,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-C#5-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.77,
+          "tail": 0.493
+        },
+        {
+          "midi": 78,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-F#5-pp-N-N.wav",
+          "split": "test",
+          "hold": 6.51,
+          "tail": 0.59
+        },
+        {
+          "midi": 78,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-F#5-mf-N-N.wav",
+          "split": "test",
+          "hold": 7.47,
+          "tail": 0.365
+        },
+        {
+          "midi": 78,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Sax_Alto/ordinario/ASax-ord-F#5-ff-N-N.wav",
+          "split": "test",
+          "hold": 6.64,
+          "tail": 0.505
         }
       ]
     },
@@ -399,31 +1581,163 @@
           "midi": 36,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-pp-3c-N.wav"
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-pp-3c-N.wav",
+          "split": "valid",
+          "hold": 4.29,
+          "tail": 1.2
+        },
+        {
+          "midi": 36,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-mf-3c-N.wav",
+          "split": "valid",
+          "hold": 4.07,
+          "tail": 1.2
         },
         {
           "midi": 36,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-ff-3c-N.wav"
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C2-ff-3c-N.wav",
+          "split": "valid",
+          "hold": 3.9,
+          "tail": 1.2
         },
         {
-          "midi": 48,
+          "midi": 41,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-F2-pp-2c-N.wav",
+          "split": "valid",
+          "hold": 5.75,
+          "tail": 1.2
+        },
+        {
+          "midi": 41,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-mf-1c-N.wav"
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-F2-mf-2c-N.wav",
+          "split": "valid",
+          "hold": 4.35,
+          "tail": 1.2
         },
         {
-          "midi": 48,
+          "midi": 41,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Strings/Contrabass/ordinario/Cb-ord-C3-ff-1c-N.wav"
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-F2-ff-2c-N.wav",
+          "split": "valid",
+          "hold": 3.76,
+          "tail": 1.2
+        },
+        {
+          "midi": 46,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-A#2-pp-1c-N.wav",
+          "split": "valid",
+          "hold": 4.33,
+          "tail": 1.2
+        },
+        {
+          "midi": 46,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-A#2-mf-1c-N.wav",
+          "split": "valid",
+          "hold": 3.85,
+          "tail": 1.2
+        },
+        {
+          "midi": 46,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-A#2-ff-1c-N.wav",
+          "split": "valid",
+          "hold": 2.03,
+          "tail": 1.2
+        },
+        {
+          "midi": 50,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-D3-pp-1c-N.wav",
+          "split": "valid",
+          "hold": 5.45,
+          "tail": 1.2
+        },
+        {
+          "midi": 50,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-D3-mf-1c-N.wav",
+          "split": "valid",
+          "hold": 4.05,
+          "tail": 1.2
+        },
+        {
+          "midi": 50,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-D3-ff-1c-N.wav",
+          "split": "valid",
+          "hold": 2.55,
+          "tail": 1.2
+        },
+        {
+          "midi": 55,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-G3-pp-1c-T11d.wav",
+          "split": "valid",
+          "hold": 4.4,
+          "tail": 1.2
+        },
+        {
+          "midi": 55,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-G3-mf-1c-N.wav",
+          "split": "valid",
+          "hold": 3.06,
+          "tail": 1.2
+        },
+        {
+          "midi": 55,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-G3-ff-1c-N.wav",
+          "split": "valid",
+          "hold": 2.11,
+          "tail": 1.055
         },
         {
           "midi": 60,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-pp-1c-N.wav"
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-pp-1c-N.wav",
+          "split": "test",
+          "hold": 3.76,
+          "tail": 0.939
+        },
+        {
+          "midi": 60,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-mf-1c-N.wav",
+          "split": "test",
+          "hold": 3.28,
+          "tail": 1.2
+        },
+        {
+          "midi": 60,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Strings/Contrabass/ordinario/Cb-ord-C4-ff-1c-N.wav",
+          "split": "test",
+          "hold": 2.07,
+          "tail": 1.2
         }
       ]
     },
@@ -439,33 +1753,165 @@
       "notes": [
         {
           "midi": 31,
-          "size": 0.6,
-          "dynamics": "mf",
-          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-mf-N-N.wav"
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-pp-N-R100u.wav",
+          "split": "valid",
+          "hold": 2.015,
+          "tail": 0.864
         },
         {
-          "midi": 36,
+          "midi": 31,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-mf-N-N.wav",
+          "split": "valid",
+          "hold": 1.996,
+          "tail": 0.856
+        },
+        {
+          "midi": 31,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C2-ff-N-N.wav"
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G1-ff-N-T15d.wav",
+          "split": "valid",
+          "hold": 1.07,
+          "tail": 0.253
+        },
+        {
+          "midi": 37,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C#2-pp-N-N.wav",
+          "split": "valid",
+          "hold": 3.04,
+          "tail": 0.2
+        },
+        {
+          "midi": 37,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C#2-mf-N-N.wav",
+          "split": "valid",
+          "hold": 2.66,
+          "tail": 0.214
+        },
+        {
+          "midi": 37,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C#2-ff-N-N.wav",
+          "split": "valid",
+          "hold": 1.11,
+          "tail": 0.329
         },
         {
           "midi": 43,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-pp-N-N.wav"
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-pp-N-N.wav",
+          "split": "valid",
+          "hold": 3.02,
+          "tail": 0.2
+        },
+        {
+          "midi": 43,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-mf-N-T15u.wav",
+          "split": "valid",
+          "hold": 3.02,
+          "tail": 0.268
+        },
+        {
+          "midi": 43,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-G2-ff-N-N.wav",
+          "split": "valid",
+          "hold": 1.13,
+          "tail": 0.37
+        },
+        {
+          "midi": 48,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C3-pp-N-T11d.wav",
+          "split": "valid",
+          "hold": 2.95,
+          "tail": 0.2
+        },
+        {
+          "midi": 48,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C3-mf-N-T28u.wav",
+          "split": "valid",
+          "hold": 2.91,
+          "tail": 0.2
+        },
+        {
+          "midi": 48,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C3-ff-N-T18u.wav",
+          "split": "valid",
+          "hold": 1.05,
+          "tail": 0.369
+        },
+        {
+          "midi": 54,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-F#3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 3.34,
+          "tail": 0.269
+        },
+        {
+          "midi": 54,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-F#3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 3.19,
+          "tail": 0.282
+        },
+        {
+          "midi": 54,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-F#3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 1.02,
+          "tail": 0.426
+        },
+        {
+          "midi": 60,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-pp-N-N.wav",
+          "split": "test",
+          "hold": 3.05,
+          "tail": 0.2
         },
         {
           "midi": 60,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-mf-N-N.wav"
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-mf-N-N.wav",
+          "split": "test",
+          "hold": 3.18,
+          "tail": 0.285
         },
         {
           "midi": 60,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-ff-N-N.wav"
+          "archive": "Brass/Bass_Tuba/ordinario/BTb-ord-C4-ff-N-N.wav",
+          "split": "test",
+          "hold": 1.19,
+          "tail": 0.394
         }
       ]
     },
@@ -480,28 +1926,166 @@
       "kind": "sustain",
       "notes": [
         {
-          "midi": 60,
+          "midi": 58,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Oboe/ordinario/Ob-ord-C4-pp-N-N.wav"
+          "archive": "Winds/Oboe/ordinario/Ob-ord-A#3-pp-N-T12d.wav",
+          "split": "valid",
+          "hold": 6.4,
+          "tail": 0.292
         },
         {
-          "midi": 60,
-          "size": 0.9,
-          "dynamics": "ff",
-          "archive": "Winds/Oboe/ordinario/Ob-ord-C4-ff-N-N.wav"
-        },
-        {
-          "midi": 72,
+          "midi": 58,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Winds/Oboe/ordinario/Ob-ord-C5-mf-N-N.wav"
+          "archive": "Winds/Oboe/ordinario/Ob-ord-A#3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.84,
+          "tail": 0.536
         },
         {
-          "midi": 72,
+          "midi": 58,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Oboe/ordinario/Ob-ord-C5-ff-N-N.wav"
+          "archive": "Winds/Oboe/ordinario/Ob-ord-A#3-ff-N-T10d.wav",
+          "split": "valid",
+          "hold": 6.76,
+          "tail": 0.401
+        },
+        {
+          "midi": 62,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-D4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.48,
+          "tail": 0.578
+        },
+        {
+          "midi": 62,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-D4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.41,
+          "tail": 0.528
+        },
+        {
+          "midi": 62,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-D4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.35,
+          "tail": 0.46
+        },
+        {
+          "midi": 66,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-F#4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 6.14,
+          "tail": 0.294
+        },
+        {
+          "midi": 66,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-F#4-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.27,
+          "tail": 0.485
+        },
+        {
+          "midi": 66,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-F#4-ff-N-T11d.wav",
+          "split": "valid",
+          "hold": 7.19,
+          "tail": 0.35
+        },
+        {
+          "midi": 70,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-A#4-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.76,
+          "tail": 0.683
+        },
+        {
+          "midi": 70,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-A#4-mf-N-R100u.wav",
+          "split": "valid",
+          "hold": 5.89,
+          "tail": 0.487
+        },
+        {
+          "midi": 70,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-A#4-ff-N-N.wav",
+          "split": "valid",
+          "hold": 7.2,
+          "tail": 0.543
+        },
+        {
+          "midi": 74,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-D5-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.43,
+          "tail": 0.733
+        },
+        {
+          "midi": 74,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-D5-mf-N-N.wav",
+          "split": "valid",
+          "hold": 6.41,
+          "tail": 0.58
+        },
+        {
+          "midi": 74,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-D5-ff-N-N.wav",
+          "split": "valid",
+          "hold": 6.48,
+          "tail": 0.415
+        },
+        {
+          "midi": 78,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-F#5-pp-N-T12d.wav",
+          "split": "test",
+          "hold": 5.94,
+          "tail": 0.512
+        },
+        {
+          "midi": 78,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-F#5-mf-N-N.wav",
+          "split": "test",
+          "hold": 5.26,
+          "tail": 1.2
+        },
+        {
+          "midi": 78,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Oboe/ordinario/Ob-ord-F#5-ff-N-N.wav",
+          "split": "test",
+          "hold": 6.25,
+          "tail": 0.496
         }
       ]
     },
@@ -517,27 +2101,165 @@
       "notes": [
         {
           "midi": 36,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-pp-N-T11d_R100u.wav",
+          "split": "valid",
+          "hold": 5.17,
+          "tail": 0.213
+        },
+        {
+          "midi": 36,
           "size": 0.6,
           "dynamics": "mf",
-          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-mf-N-N.wav"
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-mf-N-N.wav",
+          "split": "valid",
+          "hold": 4.055,
+          "tail": 1.2
         },
         {
           "midi": 36,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-ff-N-N.wav"
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C2-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.83,
+          "tail": 0.2
+        },
+        {
+          "midi": 41,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-F2-pp-N-T17d.wav",
+          "split": "valid",
+          "hold": 4.169,
+          "tail": 1.2
+        },
+        {
+          "midi": 41,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-F2-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.55,
+          "tail": 0.275
+        },
+        {
+          "midi": 41,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-F2-ff-N-T10d.wav",
+          "split": "valid",
+          "hold": 5.81,
+          "tail": 0.203
+        },
+        {
+          "midi": 46,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-A#2-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.44,
+          "tail": 0.238
+        },
+        {
+          "midi": 46,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-A#2-mf-N-T11u.wav",
+          "split": "valid",
+          "hold": 5.17,
+          "tail": 0.283
+        },
+        {
+          "midi": 46,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-A#2-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.53,
+          "tail": 0.31
+        },
+        {
+          "midi": 50,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-D3-pp-N-T13d.wav",
+          "split": "valid",
+          "hold": 5.31,
+          "tail": 0.2
+        },
+        {
+          "midi": 50,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-D3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.18,
+          "tail": 0.2
+        },
+        {
+          "midi": 50,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-D3-ff-N-T11d.wav",
+          "split": "valid",
+          "hold": 5.9,
+          "tail": 0.227
+        },
+        {
+          "midi": 55,
+          "size": 0.3,
+          "dynamics": "pp",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-G3-pp-N-N.wav",
+          "split": "valid",
+          "hold": 5.707,
+          "tail": 0.2
+        },
+        {
+          "midi": 55,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-G3-mf-N-N.wav",
+          "split": "valid",
+          "hold": 5.5,
+          "tail": 0.294
+        },
+        {
+          "midi": 55,
+          "size": 0.9,
+          "dynamics": "ff",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-G3-ff-N-N.wav",
+          "split": "valid",
+          "hold": 5.64,
+          "tail": 0.342
         },
         {
           "midi": 60,
           "size": 0.3,
           "dynamics": "pp",
-          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-pp-N-N.wav"
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-pp-N-N.wav",
+          "split": "test",
+          "hold": 5.33,
+          "tail": 0.2
+        },
+        {
+          "midi": 60,
+          "size": 0.6,
+          "dynamics": "mf",
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-mf-N-N.wav",
+          "split": "test",
+          "hold": 5.28,
+          "tail": 0.31
         },
         {
           "midi": 60,
           "size": 0.9,
           "dynamics": "ff",
-          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-ff-N-N.wav"
+          "archive": "Winds/Bassoon/ordinario/Bn-ord-C4-ff-N-N.wav",
+          "split": "test",
+          "hold": 5.42,
+          "tail": 0.266
         }
       ]
     },
@@ -555,31 +2277,36 @@
           "midi": 48,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Marimba/Marimba_hit_Outrigger_C2_loud_01.wav",
-          "file": "Marimba_hit_Outrigger_C2_loud_01.wav"
+          "file": "Marimba_hit_Outrigger_C2_loud_01.wav",
+          "split": "valid"
         },
         {
           "midi": 59,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Marimba/Marimba_hit_Outrigger_B2_loud_01.wav",
-          "file": "Marimba_hit_Outrigger_B2_loud_01.wav"
+          "file": "Marimba_hit_Outrigger_B2_loud_01.wav",
+          "split": "valid"
         },
         {
           "midi": 65,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Marimba/Marimba_hit_Outrigger_F3_loud_01.wav",
-          "file": "Marimba_hit_Outrigger_F3_loud_01.wav"
+          "file": "Marimba_hit_Outrigger_F3_loud_01.wav",
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Marimba/Marimba_hit_Outrigger_C4_loud_01.wav",
-          "file": "Marimba_hit_Outrigger_C4_loud_01.wav"
+          "file": "Marimba_hit_Outrigger_C4_loud_01.wav",
+          "split": "valid"
         },
         {
           "midi": 79,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Marimba/Marimba_hit_Outrigger_G4_loud_01.wav",
-          "file": "Marimba_hit_Outrigger_G4_loud_01.wav"
+          "file": "Marimba_hit_Outrigger_G4_loud_01.wav",
+          "split": "test"
         }
       ]
     },
@@ -597,25 +2324,29 @@
           "midi": 60,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Xylo/Xylo_Medium_C4_ff_01_far.wav",
-          "file": "Xylo_Medium_C4_ff_01_far.wav"
+          "file": "Xylo_Medium_C4_ff_01_far.wav",
+          "split": "valid"
         },
         {
           "midi": 67,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Xylo/Xylo_Medium_G4_ff_01_far.wav",
-          "file": "Xylo_Medium_G4_ff_01_far.wav"
+          "file": "Xylo_Medium_G4_ff_01_far.wav",
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Xylo/Xylo_Medium_C5_ff_01_far.wav",
-          "file": "Xylo_Medium_C5_ff_01_far.wav"
+          "file": "Xylo_Medium_C5_ff_01_far.wav",
+          "split": "valid"
         },
         {
           "midi": 84,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Xylo/Xylo_Medium_C6_ff_01_far.wav",
-          "file": "Xylo_Medium_C6_ff_01_far.wav"
+          "file": "Xylo_Medium_C6_ff_01_far.wav",
+          "split": "test"
         }
       ]
     },
@@ -633,25 +2364,29 @@
           "midi": 67,
           "size": 0.7,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Glock/glock_medium_G4.wav",
-          "file": "glock_medium_G4.wav"
+          "file": "glock_medium_G4.wav",
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.7,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Glock/glock_medium_C5.wav",
-          "file": "glock_medium_C5.wav"
+          "file": "glock_medium_C5.wav",
+          "split": "valid"
         },
         {
           "midi": 79,
           "size": 0.7,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Glock/glock_medium_G5.wav",
-          "file": "glock_medium_G5.wav"
+          "file": "glock_medium_G5.wav",
+          "split": "valid"
         },
         {
           "midi": 84,
           "size": 0.7,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Glock/glock_medium_C6.wav",
-          "file": "glock_medium_C6.wav"
+          "file": "glock_medium_C6.wav",
+          "split": "test"
         }
       ]
     },
@@ -669,25 +2404,29 @@
           "midi": 48,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Strings/Harp/KSHarp_C3_mf.wav",
-          "file": "KSHarp_C3_mf.wav"
+          "file": "KSHarp_C3_mf.wav",
+          "split": "valid"
         },
         {
           "midi": 55,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Strings/Harp/KSHarp_G3_mf.wav",
-          "file": "KSHarp_G3_mf.wav"
+          "file": "KSHarp_G3_mf.wav",
+          "split": "valid"
         },
         {
           "midi": 65,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Strings/Harp/KSHarp_F4_mf.wav",
-          "file": "KSHarp_F4_mf.wav"
+          "file": "KSHarp_F4_mf.wav",
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Strings/Harp/KSHarp_C5_mf.wav",
-          "file": "KSHarp_C5_mf.wav"
+          "file": "KSHarp_C5_mf.wav",
+          "split": "test"
         }
       ]
     },
@@ -705,31 +2444,46 @@
           "midi": 36,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Keys/Organ/Quiet/NT5_Man3Quiet_122_rr1.wav",
-          "file": "NT5_Man3Quiet_122_rr1.wav"
+          "file": "NT5_Man3Quiet_122_rr1.wav",
+          "split": "valid",
+          "hold": 10.06,
+          "tail": 1.2
         },
         {
           "midi": 48,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Keys/Organ/Quiet/NT5_Man3Quiet_134_rr1.wav",
-          "file": "NT5_Man3Quiet_134_rr1.wav"
+          "file": "NT5_Man3Quiet_134_rr1.wav",
+          "split": "valid",
+          "hold": 10.35,
+          "tail": 1.2
         },
         {
           "midi": 60,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Keys/Organ/Quiet/NT5_Man3Quiet_146_rr1.wav",
-          "file": "NT5_Man3Quiet_146_rr1.wav"
+          "file": "NT5_Man3Quiet_146_rr1.wav",
+          "split": "valid",
+          "hold": 10.85,
+          "tail": 1.2
         },
         {
           "midi": 72,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Keys/Organ/Quiet/NT5_Man3Quiet_158_rr1.wav",
-          "file": "NT5_Man3Quiet_158_rr1.wav"
+          "file": "NT5_Man3Quiet_158_rr1.wav",
+          "split": "valid",
+          "hold": 10.55,
+          "tail": 1.2
         },
         {
           "midi": 84,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Keys/Organ/Quiet/NT5_Man3Quiet_170_rr1.wav",
-          "file": "NT5_Man3Quiet_170_rr1.wav"
+          "file": "NT5_Man3Quiet_170_rr1.wav",
+          "split": "test",
+          "hold": 10.05,
+          "tail": 1.2
         }
       ]
     },
@@ -801,31 +2555,36 @@
           "midi": 42,
           "size": 0.8,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Timpani/Timpani1_Hit_v3_rr1_Sum.wav",
-          "file": "Timpani1_Hit_v3_rr1_Sum.wav"
+          "file": "Timpani1_Hit_v3_rr1_Sum.wav",
+          "split": "valid"
         },
         {
           "midi": 46,
           "size": 0.8,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Timpani/Timpani2_Hit_v3_rr1_Sum.wav",
-          "file": "Timpani2_Hit_v3_rr1_Sum.wav"
+          "file": "Timpani2_Hit_v3_rr1_Sum.wav",
+          "split": "valid"
         },
         {
           "midi": 49,
           "size": 0.8,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Timpani/Timpani3_Hit_v3_rr1_Sum.wav",
-          "file": "Timpani3_Hit_v3_rr1_Sum.wav"
+          "file": "Timpani3_Hit_v3_rr1_Sum.wav",
+          "split": "valid"
         },
         {
           "midi": 52,
           "size": 0.8,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Timpani/Timpani4_Hit_v3_rr1_Sum.wav",
-          "file": "Timpani4_Hit_v3_rr1_Sum.wav"
+          "file": "Timpani4_Hit_v3_rr1_Sum.wav",
+          "split": "valid"
         },
         {
           "midi": 54,
           "size": 0.8,
           "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/SFZ/Percussion/Timpani/Timpani5_Hit_v3_rr1_Sum.wav",
-          "file": "Timpani5_Hit_v3_rr1_Sum.wav"
+          "file": "Timpani5_Hit_v3_rr1_Sum.wav",
+          "split": "test"
         }
       ]
     },
@@ -844,105 +2603,120 @@
           "size": 0.3,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C2v1.flac",
           "file": "C2v1.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 36,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C2v8.flac",
           "file": "C2v8.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 36,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C2v16.flac",
           "file": "C2v16.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 48,
           "size": 0.3,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C3v1.flac",
           "file": "C3v1.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 48,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C3v8.flac",
           "file": "C3v8.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 48,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C3v16.flac",
           "file": "C3v16.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 60,
           "size": 0.3,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C4v1.flac",
           "file": "C4v1.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 60,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C4v8.flac",
           "file": "C4v8.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 60,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C4v16.flac",
           "file": "C4v16.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.3,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C5v1.flac",
           "file": "C5v1.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C5v8.flac",
           "file": "C5v8.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 72,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C5v16.flac",
           "file": "C5v16.flac",
-          "flac": true
+          "flac": true,
+          "split": "valid"
         },
         {
           "midi": 84,
           "size": 0.3,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C6v1.flac",
           "file": "C6v1.flac",
-          "flac": true
+          "flac": true,
+          "split": "test"
         },
         {
           "midi": 84,
           "size": 0.6,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C6v8.flac",
           "file": "C6v8.flac",
-          "flac": true
+          "flac": true,
+          "split": "test"
         },
         {
           "midi": 84,
           "size": 0.9,
           "url": "https://raw.githubusercontent.com/sfzinstruments/SalamanderGrandPiano/master/Samples/C6v16.flac",
           "file": "C6v16.flac",
-          "flac": true
+          "flac": true,
+          "split": "test"
         }
       ]
     },
@@ -1461,6 +3235,602 @@
           "split": "valid",
           "instrument": "bass_electronic_027",
           "file": "54_1.000_bass_electronic_027.wav"
+        }
+      ]
+    },
+    {
+      "id": "nsynth-electric-piano",
+      "source": "NSynth",
+      "license": "CC-BY-4.0",
+      "url": "https://magenta.tensorflow.org/datasets/nsynth",
+      "credit": "NSynth electronic keyboards. Engel et al. 2017, CC BY 4.0.",
+      "engine": "epiano",
+      "hue": 0,
+      "kind": "sustain",
+      "hold": 3,
+      "tail": 1,
+      "notes": [
+        {
+          "midi": 72,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "keyboard_electronic_001",
+          "file": "72_0.394_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 72,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "keyboard_electronic_001",
+          "file": "72_0.787_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 72,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "keyboard_electronic_001",
+          "file": "72_1.000_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 53,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "keyboard_electronic_003",
+          "file": "53_0.394_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 53,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "keyboard_electronic_003",
+          "file": "53_0.787_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 53,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "keyboard_electronic_003",
+          "file": "53_1.000_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 57,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "57_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 57,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "57_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 63,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "63_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 69,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "69_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 69,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "69_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 75,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "75_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 75,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "75_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 84,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "keyboard_electronic_098",
+          "file": "84_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 49,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "49_0.394_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 49,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "49_0.787_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 49,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "49_1.000_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 58,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "58_0.394_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 58,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "58_0.787_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 58,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "58_1.000_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 68,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "68_0.394_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 68,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "68_0.787_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 68,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "68_1.000_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 77,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "77_0.394_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 77,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "77_0.787_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 77,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "77_1.000_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 83,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "83_0.394_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 83,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "83_0.787_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 83,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_001",
+          "file": "83_1.000_keyboard_electronic_001.wav"
+        },
+        {
+          "midi": 51,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "51_0.394_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 51,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "51_0.787_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 51,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "51_1.000_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 62,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "62_0.394_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 62,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "62_0.787_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 62,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "62_1.000_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 70,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "70_0.394_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 70,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "70_0.787_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 70,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "70_1.000_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 77,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "77_0.394_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 77,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "77_0.787_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 77,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "77_1.000_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 84,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "84_0.394_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 84,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "84_0.787_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 84,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_003",
+          "file": "84_1.000_keyboard_electronic_003.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "48_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 48,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "48_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 48,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "48_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 53,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "53_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 53,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "53_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 53,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "53_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 64,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "64_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 64,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "64_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 64,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "64_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 76,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "76_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 76,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "76_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 76,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "76_1.000_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 83,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "83_0.394_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 83,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "83_0.787_keyboard_electronic_098.wav"
+        },
+        {
+          "midi": 83,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "keyboard_electronic_098",
+          "file": "83_1.000_keyboard_electronic_098.wav"
+        }
+      ]
+    },
+    {
+      "id": "nsynth-vibraphone",
+      "source": "NSynth",
+      "license": "CC-BY-4.0",
+      "url": "https://magenta.tensorflow.org/datasets/nsynth",
+      "credit": "NSynth mallet, dry notes from mallet_acoustic_056. Engel et al. 2017, CC BY 4.0.",
+      "engine": "marimba",
+      "hue": 240,
+      "kind": "strike",
+      "hold": 3,
+      "tail": 1,
+      "notes": [
+        {
+          "midi": 58,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "test",
+          "instrument": "mallet_acoustic_056",
+          "file": "58_0.787_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 70,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "mallet_acoustic_056",
+          "file": "70_0.394_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 81,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "mallet_acoustic_056",
+          "file": "81_1.000_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 84,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "test",
+          "instrument": "mallet_acoustic_056",
+          "file": "84_0.394_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 96,
+          "size": 1,
+          "velocity": 127,
+          "split": "test",
+          "instrument": "mallet_acoustic_056",
+          "file": "96_1.000_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 53,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "53_0.787_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 53,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "53_1.000_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 63,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "63_0.394_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 72,
+          "size": 0.394,
+          "velocity": 50,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "72_0.394_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 72,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "72_0.787_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 83,
+          "size": 0.787,
+          "velocity": 100,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "83_0.787_mallet_acoustic_056.wav"
+        },
+        {
+          "midi": 94,
+          "size": 1,
+          "velocity": 127,
+          "split": "valid",
+          "instrument": "mallet_acoustic_056",
+          "file": "94_1.000_mallet_acoustic_056.wav"
         }
       ]
     }

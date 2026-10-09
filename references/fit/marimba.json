@@ -1,0 +1,93 @@
+{
+  "instrument": "marimba",
+  "set": "vsco-marimba",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.732,
+    "holdoutExcess": 1.6,
+    "params": {
+      "decays.0": 1.2,
+      "decays.1": 0.36,
+      "decays.2": 0.14,
+      "decays.3": 0.06,
+      "gains.0": 0.55,
+      "gains.1": 0.02,
+      "gains.2": 0.05,
+      "pitchPow": 1.35,
+      "noise": 0.4,
+      "ratios.1": 3.92,
+      "ratios.2": 10.08
+    }
+  },
+  "after": {
+    "fitExcess": 1.587,
+    "fitLoss": 1.587,
+    "holdoutExcess": 1.72,
+    "holdoutLoss": 1.72,
+    "params": {
+      "decays.0": 1.24375,
+      "decays.1": 0.15375,
+      "decays.2": 0.17,
+      "decays.3": 0.02,
+      "gains.0": 0.64,
+      "gains.1": 0.02,
+      "gains.2": 0.10625,
+      "pitchPow": 1.625,
+      "noise": 0.28,
+      "ratios.1": 3.92,
+      "ratios.2": 9.98
+    }
+  },
+  "notes": [
+    {
+      "file": "Marimba_hit_Outrigger_C2_loud_01.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.9,
+      "excess": 1.884,
+      "cents": 0.23,
+      "clicks": 0,
+      "worst": "奇偶泛音比 7.62"
+    },
+    {
+      "file": "Marimba_hit_Outrigger_B2_loud_01.wav",
+      "split": "valid",
+      "midi": 59,
+      "size": 0.9,
+      "excess": 1.676,
+      "cents": -0.08,
+      "clicks": 0,
+      "worst": "起音 10–90% 9.68"
+    },
+    {
+      "file": "Marimba_hit_Outrigger_F3_loud_01.wav",
+      "split": "valid",
+      "midi": 65,
+      "size": 0.9,
+      "excess": 1.605,
+      "cents": 0.32,
+      "clicks": 0,
+      "worst": "奇偶泛音比 9.61"
+    },
+    {
+      "file": "Marimba_hit_Outrigger_C4_loud_01.wav",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.9,
+      "excess": 1.183,
+      "cents": 0.23,
+      "clicks": 0,
+      "worst": "响度包络 2.85"
+    },
+    {
+      "file": "Marimba_hit_Outrigger_G4_loud_01.wav",
+      "split": "test",
+      "midi": 79,
+      "size": 0.9,
+      "excess": 1.72,
+      "cents": 0.1,
+      "clicks": 0,
+      "worst": "谐噪比 3.87"
+    }
+  ]
+}

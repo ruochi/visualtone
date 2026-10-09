@@ -1,7 +1,7 @@
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { analyzeNote, compareTimbre, noteName } from '../dist/analysis/timbre.js';
-import { loadWav, scoreAgainst } from './lib/score-note.mjs';
+import { loadWav, noteTiming, recordedFile, scoreAgainst } from './lib/score-note.mjs';
 
 const root = new URL('..', import.meta.url).pathname;
 const catalog = JSON.parse(readFileSync(join(root, 'references/catalog.json'), 'utf8'));
@@ -21,22 +21,19 @@ for (const set of catalog.sets) {
   if (!set.engine) continue;
   if (want.size && !want.has(set.id)) continue;
   const dir = join(recorded, set.id);
-  let files = [];
-  try {
-    files = readdirSync(dir).filter((f) => f.endsWith('.wav'));
-  } catch {
-    console.log(`skip ${set.id}: no recordings`);
-    continue;
-  }
-  const timing = set.hold !== undefined ? { hold: set.hold, tail: set.tail ?? 1 } : undefined;
   const recordings = [];
-  for (const file of files.sort()) {
-    const m = file.match(/^(\d+)_([\d.]+)(?:_([^.]+))?\.wav$/);
-    if (!m) continue;
-    const catalogMidi = Number(m[1]);
-    const size = Number(m[2]);
-    const instrument = m[3];
-    const refBuf = loadWav(join(dir, file));
+  for (const note of set.notes || []) {
+    const file = recordedFile(note);
+    const path = join(dir, file);
+    if (!existsSync(path)) {
+      console.log(`skip ${set.id} ${file}: missing`);
+      continue;
+    }
+    const timing = noteTiming(set, note);
+    const catalogMidi = note.midi;
+    const size = note.size;
+    const instrument = note.instrument;
+    const refBuf = loadWav(path);
     const refOpts = { midi: catalogMidi };
     if (timing?.hold !== undefined) refOpts.noteOff = timing.hold;
     let ref = analyzeNote(refBuf.mono, refBuf.sampleRate, refOpts);
@@ -55,7 +52,7 @@ for (const set of catalog.sets) {
     const scored = scoreAgainst(refBuf, set.engine, set.hue, midi, size, set.kind, timing, floorMetrics, ref);
     const { ours, cmp } = scored;
     const worst = [...cmp.metrics].sort((a, b) => b.error / scaleOf(b.id) - a.error / scaleOf(a.id))[0];
-    const split = (set.notes || []).find((n) => n.midi === catalogMidi && n.instrument === instrument && Math.abs(n.size - size) < 1e-6)?.split;
+    const split = note.split;
     const row = {
       id: set.id,
       source: set.source,

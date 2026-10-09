@@ -1,0 +1,219 @@
+{
+  "instrument": "clarinet",
+  "set": "tinysol-clarinet",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.58,
+    "holdoutExcess": 1.508,
+    "params": {
+      "jet": 1.12,
+      "jetStrike": 0.22,
+      "even": 0,
+      "evenStrike": 0,
+      "evenMix": 0.08,
+      "evenMixStrike": 0.1,
+      "attack": 0.016,
+      "shimmerRms": 0.022,
+      "wanderCents": 2
+    }
+  },
+  "after": {
+    "fitExcess": 1.487,
+    "fitLoss": 1.487,
+    "holdoutExcess": 1.456,
+    "holdoutLoss": 1.456,
+    "params": {
+      "jet": 0.97,
+      "jetStrike": 0.16,
+      "even": 0,
+      "evenStrike": 0,
+      "evenMix": 0.17375000000000002,
+      "evenMixStrike": 0.17500000000000002,
+      "attack": 0.031,
+      "shimmerRms": 0.017,
+      "wanderCents": 1.4
+    }
+  },
+  "notes": [
+    {
+      "file": "60_0.3.wav",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.3,
+      "excess": 1.505,
+      "cents": -0.31,
+      "clicks": 0,
+      "worst": "起音噪声感 3.81"
+    },
+    {
+      "file": "65_0.6.wav",
+      "split": "valid",
+      "midi": 65,
+      "size": 0.6,
+      "excess": 1.187,
+      "cents": 0,
+      "clicks": 0,
+      "worst": "各泛音衰减 4.37"
+    },
+    {
+      "file": "70_0.9.wav",
+      "split": "valid",
+      "midi": 70,
+      "size": 0.9,
+      "excess": 1.629,
+      "cents": -0.23,
+      "clicks": 0,
+      "worst": "松开后的尾巴 5.45"
+    },
+    {
+      "file": "79_0.3.wav",
+      "split": "valid",
+      "midi": 79,
+      "size": 0.3,
+      "excess": 1.538,
+      "cents": -0.04,
+      "clicks": 0,
+      "worst": "奇偶泛音比 4.64"
+    },
+    {
+      "file": "60_0.6.wav",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.6,
+      "excess": 1.101,
+      "cents": -0.24,
+      "clicks": 0,
+      "worst": "各泛音衰减 3.88"
+    },
+    {
+      "file": "65_0.9.wav",
+      "split": "valid",
+      "midi": 65,
+      "size": 0.9,
+      "excess": 1.81,
+      "cents": 0.02,
+      "clicks": 0,
+      "worst": "奇偶泛音比 3.61"
+    },
+    {
+      "file": "74_0.3.wav",
+      "split": "valid",
+      "midi": 74,
+      "size": 0.3,
+      "excess": 1.91,
+      "cents": -0.12,
+      "clicks": 0,
+      "worst": "起音噪声感 6.58"
+    },
+    {
+      "file": "79_0.6.wav",
+      "split": "valid",
+      "midi": 79,
+      "size": 0.6,
+      "excess": 1.379,
+      "cents": 0.05,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.65"
+    },
+    {
+      "file": "60_0.9.wav",
+      "split": "valid",
+      "midi": 60,
+      "size": 0.9,
+      "excess": 1.64,
+      "cents": -0.24,
+      "clicks": 0,
+      "worst": "泛音斜率 3.70"
+    },
+    {
+      "file": "70_0.3.wav",
+      "split": "valid",
+      "midi": 70,
+      "size": 0.3,
+      "excess": 1.344,
+      "cents": -0.61,
+      "clicks": 0,
+      "worst": "松开后的尾巴 3.35"
+    },
+    {
+      "file": "74_0.6.wav",
+      "split": "valid",
+      "midi": 74,
+      "size": 0.6,
+      "excess": 1.746,
+      "cents": -0.09,
+      "clicks": 0,
+      "worst": "整体衰减 3.44"
+    },
+    {
+      "file": "79_0.9.wav",
+      "split": "valid",
+      "midi": 79,
+      "size": 0.9,
+      "excess": 1.348,
+      "cents": 0.14,
+      "clicks": 0,
+      "worst": "分音起伏 3.35"
+    },
+    {
+      "file": "65_0.3.wav",
+      "split": "valid",
+      "midi": 65,
+      "size": 0.3,
+      "excess": 1.248,
+      "cents": -0.08,
+      "clicks": 0,
+      "worst": "起音噪声感 3.91"
+    },
+    {
+      "file": "70_0.6.wav",
+      "split": "valid",
+      "midi": 70,
+      "size": 0.6,
+      "excess": 1.306,
+      "cents": -0.37,
+      "clicks": 0,
+      "worst": "各泛音衰减 4.20"
+    },
+    {
+      "file": "74_0.9.wav",
+      "split": "valid",
+      "midi": 74,
+      "size": 0.9,
+      "excess": 1.619,
+      "cents": -0.06,
+      "clicks": 0,
+      "worst": "奇偶泛音比 3.34"
+    },
+    {
+      "file": "84_0.6.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.6,
+      "excess": 1.827,
+      "cents": -0.33,
+      "clicks": 0,
+      "worst": "音高 241.75"
+    },
+    {
+      "file": "84_0.9.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.9,
+      "excess": 1.262,
+      "cents": -0.32,
+      "clicks": 0,
+      "worst": "分音起伏 3.76"
+    },
+    {
+      "file": "84_0.3.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.3,
+      "excess": 1.278,
+      "cents": -0.35,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.27"
+    }
+  ]
+}

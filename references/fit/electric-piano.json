@@ -1,0 +1,621 @@
+{
+  "instrument": "electric-piano",
+  "set": "nsynth-electric-piano",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 1.919,
+    "holdoutExcess": 1.884,
+    "params": {
+      "index": 1.2,
+      "indexLight": 3.5,
+      "envDecay": 0.55,
+      "indexDecay": 0.18,
+      "indexDecayLight": 0.25
+    }
+  },
+  "after": {
+    "fitExcess": 1.846,
+    "fitLoss": 1.846,
+    "holdoutExcess": 1.771,
+    "holdoutLoss": 1.771,
+    "params": {
+      "index": 1.3875,
+      "indexLight": 3.5625,
+      "envDecay": 0.6125,
+      "indexDecay": 0.32,
+      "indexDecayLight": 0.3475
+    }
+  },
+  "notes": [
+    {
+      "file": "49_1.000_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 49,
+      "size": 1,
+      "excess": 2.068,
+      "cents": -2.58,
+      "clicks": 0,
+      "worst": "泛音斜率 7.38"
+    },
+    {
+      "file": "68_0.394_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 68,
+      "size": 0.394,
+      "excess": 1.908,
+      "cents": -3.1,
+      "clicks": 0,
+      "worst": "谐噪比 6.96"
+    },
+    {
+      "file": "77_0.787_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 77,
+      "size": 0.787,
+      "excess": 1.683,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "泛音斜率 5.35"
+    },
+    {
+      "file": "83_1.000_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 1,
+      "excess": 1.658,
+      "cents": -2.83,
+      "clicks": 0,
+      "worst": "谐噪比 5.66"
+    },
+    {
+      "file": "62_0.394_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.394,
+      "excess": 1.933,
+      "cents": -3.1,
+      "clicks": 0,
+      "worst": "奇偶泛音比 6.84"
+    },
+    {
+      "file": "70_0.787_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 70,
+      "size": 0.787,
+      "excess": 1.693,
+      "cents": -3.17,
+      "clicks": 0,
+      "worst": "起音 10–90% 10.22"
+    },
+    {
+      "file": "77_1.000_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 77,
+      "size": 1,
+      "excess": 1.724,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "起音 10–90% 8.92"
+    },
+    {
+      "file": "48_0.394_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.394,
+      "excess": 2.082,
+      "cents": -2.51,
+      "clicks": 0,
+      "worst": "分音起伏 4.32"
+    },
+    {
+      "file": "53_0.787_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.787,
+      "excess": 1.812,
+      "cents": -2.39,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.81"
+    },
+    {
+      "file": "64_1.000_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 64,
+      "size": 1,
+      "excess": 1.412,
+      "cents": -3.01,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.01"
+    },
+    {
+      "file": "83_0.394_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 0.394,
+      "excess": 1.956,
+      "cents": -2.83,
+      "clicks": 0,
+      "worst": "泛音斜率 8.84"
+    },
+    {
+      "file": "58_0.394_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.394,
+      "excess": 1.632,
+      "cents": -3.06,
+      "clicks": 0,
+      "worst": "谐噪比 5.72"
+    },
+    {
+      "file": "68_0.787_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 68,
+      "size": 0.787,
+      "excess": 1.834,
+      "cents": -3.1,
+      "clicks": 0,
+      "worst": "谐噪比 6.36"
+    },
+    {
+      "file": "77_1.000_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 77,
+      "size": 1,
+      "excess": 1.642,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "泛音斜率 5.70"
+    },
+    {
+      "file": "51_0.394_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 51,
+      "size": 0.394,
+      "excess": 2.133,
+      "cents": -2.6,
+      "clicks": 0,
+      "worst": "奇偶泛音比 6.12"
+    },
+    {
+      "file": "62_0.787_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 0.787,
+      "excess": 1.863,
+      "cents": -3.1,
+      "clicks": 0,
+      "worst": "起音 10–90% 11.32"
+    },
+    {
+      "file": "70_1.000_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 70,
+      "size": 1,
+      "excess": 1.623,
+      "cents": -3.17,
+      "clicks": 0,
+      "worst": "泛音斜率 4.72"
+    },
+    {
+      "file": "84_0.394_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 84,
+      "size": 0.394,
+      "excess": 1.902,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "泛音斜率 12.99"
+    },
+    {
+      "file": "48_0.787_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.787,
+      "excess": 1.991,
+      "cents": -2.51,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.27"
+    },
+    {
+      "file": "53_1.000_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 1,
+      "excess": 1.868,
+      "cents": -2.39,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.81"
+    },
+    {
+      "file": "76_0.394_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 76,
+      "size": 0.394,
+      "excess": 1.881,
+      "cents": -2.94,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.05"
+    },
+    {
+      "file": "83_0.787_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 0.787,
+      "excess": 1.981,
+      "cents": -2.83,
+      "clicks": 0,
+      "worst": "泛音斜率 7.72"
+    },
+    {
+      "file": "49_0.394_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 49,
+      "size": 0.394,
+      "excess": 1.916,
+      "cents": -2.58,
+      "clicks": 0,
+      "worst": "谐噪比 5.98"
+    },
+    {
+      "file": "58_0.787_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 0.787,
+      "excess": 1.759,
+      "cents": -3.06,
+      "clicks": 0,
+      "worst": "泛音斜率 5.75"
+    },
+    {
+      "file": "68_1.000_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 68,
+      "size": 1,
+      "excess": 1.833,
+      "cents": -3.1,
+      "clicks": 0,
+      "worst": "谐噪比 6.67"
+    },
+    {
+      "file": "83_0.394_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 0.394,
+      "excess": 2.206,
+      "cents": -2.83,
+      "clicks": 0,
+      "worst": "谐噪比 5.68"
+    },
+    {
+      "file": "51_0.787_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 51,
+      "size": 0.787,
+      "excess": 1.991,
+      "cents": -2.6,
+      "clicks": 0,
+      "worst": "泛音斜率 6.08"
+    },
+    {
+      "file": "62_1.000_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 62,
+      "size": 1,
+      "excess": 1.761,
+      "cents": -3.1,
+      "clicks": 0,
+      "worst": "泛音斜率 5.11"
+    },
+    {
+      "file": "77_0.394_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 77,
+      "size": 0.394,
+      "excess": 2.035,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "起音 10–90% 10.89"
+    },
+    {
+      "file": "84_0.787_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 84,
+      "size": 0.787,
+      "excess": 2.028,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "奇偶泛音比 8.42"
+    },
+    {
+      "file": "48_1.000_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 1,
+      "excess": 1.967,
+      "cents": -2.51,
+      "clicks": 0,
+      "worst": "泛音斜率 5.23"
+    },
+    {
+      "file": "64_0.394_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 64,
+      "size": 0.394,
+      "excess": 1.623,
+      "cents": -3.01,
+      "clicks": 0,
+      "worst": "松开后的尾巴 5.96"
+    },
+    {
+      "file": "76_0.787_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 76,
+      "size": 0.787,
+      "excess": 1.623,
+      "cents": -2.94,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.48"
+    },
+    {
+      "file": "83_1.000_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 1,
+      "excess": 2.015,
+      "cents": -2.83,
+      "clicks": 0,
+      "worst": "松开后的尾巴 7.05"
+    },
+    {
+      "file": "49_0.787_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 49,
+      "size": 0.787,
+      "excess": 2.025,
+      "cents": -2.58,
+      "clicks": 0,
+      "worst": "泛音斜率 7.13"
+    },
+    {
+      "file": "58_1.000_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 58,
+      "size": 1,
+      "excess": 1.821,
+      "cents": -3.06,
+      "clicks": 0,
+      "worst": "泛音斜率 6.05"
+    },
+    {
+      "file": "77_0.394_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 77,
+      "size": 0.394,
+      "excess": 2.12,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "奇偶泛音比 5.79"
+    },
+    {
+      "file": "83_0.787_keyboard_electronic_001.wav",
+      "split": "valid",
+      "midi": 83,
+      "size": 0.787,
+      "excess": 1.545,
+      "cents": -2.83,
+      "clicks": 0,
+      "worst": "谐噪比 5.60"
+    },
+    {
+      "file": "51_1.000_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 51,
+      "size": 1,
+      "excess": 2.057,
+      "cents": -2.6,
+      "clicks": 0,
+      "worst": "泛音斜率 9.25"
+    },
+    {
+      "file": "70_0.394_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 70,
+      "size": 0.394,
+      "excess": 2.036,
+      "cents": -3.17,
+      "clicks": 0,
+      "worst": "奇偶泛音比 11.13"
+    },
+    {
+      "file": "77_0.787_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 77,
+      "size": 0.787,
+      "excess": 1.589,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "起音噪声感 4.96"
+    },
+    {
+      "file": "84_1.000_keyboard_electronic_003.wav",
+      "split": "valid",
+      "midi": 84,
+      "size": 1,
+      "excess": 1.946,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "泛音斜率 5.28"
+    },
+    {
+      "file": "53_0.394_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 53,
+      "size": 0.394,
+      "excess": 1.951,
+      "cents": -2.39,
+      "clicks": 0,
+      "worst": "松开后的尾巴 4.72"
+    },
+    {
+      "file": "64_0.787_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 64,
+      "size": 0.787,
+      "excess": 1.432,
+      "cents": -3.01,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.01"
+    },
+    {
+      "file": "76_1.000_keyboard_electronic_098.wav",
+      "split": "valid",
+      "midi": 76,
+      "size": 1,
+      "excess": 1.532,
+      "cents": -2.94,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.48"
+    },
+    {
+      "file": "72_0.394_keyboard_electronic_001.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.394,
+      "excess": 2.023,
+      "cents": -3.15,
+      "clicks": 0,
+      "worst": "起音噪声感 4.87"
+    },
+    {
+      "file": "53_0.787_keyboard_electronic_003.wav",
+      "split": "test",
+      "midi": 53,
+      "size": 0.787,
+      "excess": 2.139,
+      "cents": -2.39,
+      "clicks": 0,
+      "worst": "泛音斜率 5.73"
+    },
+    {
+      "file": "63_1.000_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 63,
+      "size": 1,
+      "excess": 1.509,
+      "cents": -3.2,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.16"
+    },
+    {
+      "file": "75_1.000_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 75,
+      "size": 1,
+      "excess": 1.524,
+      "cents": -3.04,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.48"
+    },
+    {
+      "file": "72_0.787_keyboard_electronic_001.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.787,
+      "excess": 1.726,
+      "cents": -3.15,
+      "clicks": 0,
+      "worst": "谐噪比 4.03"
+    },
+    {
+      "file": "53_1.000_keyboard_electronic_003.wav",
+      "split": "test",
+      "midi": 53,
+      "size": 1,
+      "excess": 2.087,
+      "cents": -2.39,
+      "clicks": 0,
+      "worst": "泛音斜率 7.45"
+    },
+    {
+      "file": "69_0.394_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 69,
+      "size": 0.394,
+      "excess": 1.626,
+      "cents": -3.04,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.21"
+    },
+    {
+      "file": "84_0.787_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.787,
+      "excess": 1.902,
+      "cents": -2.91,
+      "clicks": 0,
+      "worst": "泛音斜率 8.74"
+    },
+    {
+      "file": "72_1.000_keyboard_electronic_001.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 1,
+      "excess": 1.708,
+      "cents": -3.15,
+      "clicks": 0,
+      "worst": "泛音斜率 4.26"
+    },
+    {
+      "file": "57_0.394_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 57,
+      "size": 0.394,
+      "excess": 1.812,
+      "cents": -2.75,
+      "clicks": 0,
+      "worst": "松开后的尾巴 5.10"
+    },
+    {
+      "file": "69_0.787_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 69,
+      "size": 0.787,
+      "excess": 1.409,
+      "cents": -3.04,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.43"
+    },
+    {
+      "file": "53_0.394_keyboard_electronic_003.wav",
+      "split": "test",
+      "midi": 53,
+      "size": 0.394,
+      "excess": 2.1,
+      "cents": -2.39,
+      "clicks": 0,
+      "worst": "谐噪比 3.63"
+    },
+    {
+      "file": "57_1.000_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 57,
+      "size": 1,
+      "excess": 1.671,
+      "cents": -2.75,
+      "clicks": 0,
+      "worst": "松开后的尾巴 5.36"
+    },
+    {
+      "file": "75_0.787_keyboard_electronic_098.wav",
+      "split": "test",
+      "midi": 75,
+      "size": 0.787,
+      "excess": 1.557,
+      "cents": -3.04,
+      "clicks": 0,
+      "worst": "松开后的尾巴 6.48"
+    }
+  ]
+}

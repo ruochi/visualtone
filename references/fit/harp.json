@@ -1,0 +1,69 @@
+{
+  "instrument": "harp",
+  "set": "vsco-harp",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 2.115,
+    "holdoutExcess": 1.983,
+    "params": {
+      "bodyHz": 220,
+      "disp": -0.02,
+      "loss": 0.992,
+      "lossLight": 0.006
+    }
+  },
+  "after": {
+    "fitExcess": 2.06,
+    "fitLoss": 2.06,
+    "holdoutExcess": 1.821,
+    "holdoutLoss": 1.821,
+    "params": {
+      "bodyHz": 295,
+      "disp": -0.05,
+      "loss": 0.992,
+      "lossLight": 0.0125
+    }
+  },
+  "notes": [
+    {
+      "file": "KSHarp_C3_mf.wav",
+      "split": "valid",
+      "midi": 48,
+      "size": 0.6,
+      "excess": 2.3,
+      "cents": 0.23,
+      "clicks": 0,
+      "worst": "奇偶泛音比 6.83"
+    },
+    {
+      "file": "KSHarp_G3_mf.wav",
+      "split": "valid",
+      "midi": 55,
+      "size": 0.6,
+      "excess": 1.999,
+      "cents": 0.27,
+      "clicks": 0,
+      "worst": "谐噪比 5.61"
+    },
+    {
+      "file": "KSHarp_F4_mf.wav",
+      "split": "valid",
+      "midi": 65,
+      "size": 0.6,
+      "excess": 1.882,
+      "cents": 0.32,
+      "clicks": 0,
+      "worst": "响度包络 4.10"
+    },
+    {
+      "file": "KSHarp_C5_mf.wav",
+      "split": "test",
+      "midi": 72,
+      "size": 0.6,
+      "excess": 1.821,
+      "cents": 0.22,
+      "clicks": 0,
+      "worst": "谐噪比 6.62"
+    }
+  ]
+}

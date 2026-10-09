@@ -1,0 +1,83 @@
+{
+  "instrument": "glockenspiel",
+  "set": "vsco-glock",
+  "rounds": 4,
+  "before": {
+    "fitExcess": 2.305,
+    "holdoutExcess": 2.215,
+    "params": {
+      "decays.0": 2.4,
+      "decays.1": 1.6,
+      "decays.2": 1.8,
+      "decays.3": 0.6,
+      "gains.0": 0.85,
+      "gains.1": 0.7,
+      "gains.2": 0.2,
+      "pitchPow": 0.45,
+      "noise": 0.22,
+      "ratios.1": 2.76,
+      "ratios.2": 5.4
+    }
+  },
+  "after": {
+    "fitExcess": 2.2,
+    "fitLoss": 2.2,
+    "holdoutExcess": 2.446,
+    "holdoutLoss": 2.446,
+    "params": {
+      "decays.0": 2.0062499999999996,
+      "decays.1": 1.31875,
+      "decays.2": 1.7700000000000002,
+      "decays.3": 0.72,
+      "gains.0": 0.85,
+      "gains.1": 0.7,
+      "gains.2": 0.2,
+      "pitchPow": 0.8,
+      "noise": 0.33999999999999997,
+      "ratios.1": 3.04125,
+      "ratios.2": 5.2
+    }
+  },
+  "notes": [
+    {
+      "file": "glock_medium_G4.wav",
+      "split": "valid",
+      "midi": 67,
+      "size": 0.7,
+      "excess": 2.385,
+      "cents": 0.26,
+      "clicks": 0,
+      "worst": "音高 241.63"
+    },
+    {
+      "file": "glock_medium_C5.wav",
+      "split": "valid",
+      "midi": 72,
+      "size": 0.7,
+      "excess": 2.081,
+      "cents": 0.22,
+      "clicks": 0,
+      "worst": "音高 242.22"
+    },
+    {
+      "file": "glock_medium_G5.wav",
+      "split": "valid",
+      "midi": 79,
+      "size": 0.7,
+      "excess": 2.134,
+      "cents": 0.11,
+      "clicks": 0,
+      "worst": "音高 242.37"
+    },
+    {
+      "file": "glock_medium_C6.wav",
+      "split": "test",
+      "midi": 84,
+      "size": 0.7,
+      "excess": 2.446,
+      "cents": -0.08,
+      "clicks": 0,
+      "worst": "音高 243.20"
+    }
+  ]
+}
