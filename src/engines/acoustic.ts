@@ -1472,3 +1472,23 @@ export function createEngine(name: AcousticEngine, sampleRate: number, hue: numb
   if (name === 'cymbal') return createCymbal(sampleRate, hue, seed);
   return createEpiano(sampleRate, hue, seed);
 }
+
+/** How long a rendered note can still be audible after note-off. Presets without a release shape keep the 180 ms track default. */
+export function acousticTailSec(
+  engine: string | undefined,
+  hue: number | undefined,
+  notes: { size: number }[] | undefined,
+  trackReleaseMs: number | undefined,
+): number {
+  const fallback = (trackReleaseMs ?? (isAcousticEngine(engine) ? 180 : 0)) / 1000;
+  if (engine !== 'bow' && engine !== 'brass' && engine !== 'bass' && engine !== 'reed') return fallback;
+  const preset = HARMONIC_PRESETS[harmonicInstrumentFor(engine, hue ?? 0)];
+  const shape = 'releaseShape' in preset ? preset.releaseShape : undefined;
+  if (!shape) return fallback;
+  const scale = (trackReleaseMs ?? 180) / 180;
+  let sec = Math.max(shape.lowSec, shape.highSec);
+  const sizes = (notes ?? []).map((n) => n.size).filter((s) => s > 0);
+  const softest = sizes.length ? Math.min(...sizes) : 0;
+  if (shape.soft) sec *= 1 + shape.soft * (1 - Math.min(1, Math.max(0, softest)));
+  return Math.max(fallback, sec * scale);
+}

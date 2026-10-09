@@ -79,6 +79,11 @@ export interface HarmonicPreset {
    * sec·(refHz/f0)^pitchPow / n^partialPow. A player keeps a bow or a breath alive, so those presets omit it.
    */
   ring?: { sec: number; refHz: number; pitchPow: number; partialPow: number };
+  /**
+   * -60 dB time follows the note. lowSec is at lowMidi, highSec at highMidi.
+   * A quieter size holds longer by soft·(1−size). Unset keeps releaseSec.
+   */
+  releaseShape?: { lowSec: number; highSec: number; lowMidi: number; highMidi: number; soft: number };
   attackSec: number;
   releaseSec: number;
   life: PitchLifeSpec;
@@ -265,6 +270,7 @@ export const HARMONIC_PRESETS = {
       vibratoDepthJitter: 0.06,
       vibratoRateJitter: 0.135,
     },
+    releaseShape: { lowSec: 0.6, highSec: 0.68, lowMidi: 60, highMidi: 84, soft: 1 },
   },
   viola: {
     partials: 28,
@@ -325,6 +331,7 @@ export const HARMONIC_PRESETS = {
       vibratoDepthJitter: 0.1,
       vibratoRateJitter: 0.075,
     },
+    releaseShape: { lowSec: 1.04, highSec: 0.92, lowMidi: 48, highMidi: 72, soft: 0.65 },
   },
   cello: {
     ...BOW,
@@ -349,6 +356,7 @@ export const HARMONIC_PRESETS = {
       vibratoDepthJitter: 0.1,
       vibratoRateJitter: 0.04875,
     },
+    releaseShape: { lowSec: 1.72, highSec: 0.4, lowMidi: 36, highMidi: 72, soft: 0.4 },
   },
   contrabass: {
     partials: 40,
@@ -403,6 +411,7 @@ export const HARMONIC_PRESETS = {
       vibratoDepthJitter: 0.06,
       vibratoRateJitter: 0.01125,
     },
+    releaseShape: { lowSec: 1.23, highSec: 0.64, lowMidi: 36, highMidi: 60, soft: 0.55 },
   },
   // Fitted to NSynth electronic basses (CC BY 4.0). Held strings decay; a finger transient dies in a few dozen milliseconds.
   'electric-bass': {
@@ -635,6 +644,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let env = 0;
   let wasOn = false;
   let releaseSec = p.releaseSec;
+  let releaseScale = 1;
   const attackCoeff = Math.exp(-1 / (p.attackSec * sampleRate));
   let nz = 0;
   let noisePole = 0.8;
@@ -671,12 +681,21 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
 
   return {
     setRelease(ms: number) {
-      releaseSec = Math.max(0.02, ms / 1000);
+      if (p.releaseShape) releaseScale = ms / 180;
+      else releaseSec = Math.max(0.02, ms / 1000);
     },
     processSample(midi, size, lightness) {
       const on = size > 1e-5;
       if (on && !wasOn) {
         freq = Math.min(sampleRate * p.maxHzRatio, Math.max(p.minHz, midiToFrequency(midi)));
+        if (p.releaseShape) {
+          const shape = p.releaseShape;
+          const span = shape.highMidi - shape.lowMidi;
+          const u = span === 0 ? 1 : clamp01((midi - shape.lowMidi) / span);
+          let sec = shape.lowSec + (shape.highSec - shape.lowSec) * u;
+          if (shape.soft) sec *= 1 + shape.soft * (1 - clamp01(size));
+          releaseSec = Math.max(0.02, sec * releaseScale);
+        }
         const strike = clamp01(size);
         const light = clamp01(lightness);
         const s = p.slope;

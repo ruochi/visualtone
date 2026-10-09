@@ -1180,1896 +1180,6 @@
       }
     },
     {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.61,
-      "excess": 1.48,
-      "excessV1": 1.64,
-      "passed": 18,
-      "total": 29,
-      "oursCents": -0.6381254405920853,
-      "refCents": -7.1835818612933515,
-      "worst": "松开后的尾巴 4.35",
-      "life": {
-        "shimmer": [
-          -27.3,
-          -28.7
-        ],
-        "flutter": [
-          1,
-          1.4
-        ],
-        "pitch.jitter": [
-          3.7,
-          2
-        ],
-        "brightnessLag": [
-          10,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.56,
-      "excess": 1.35,
-      "excessV1": 1.44,
-      "passed": 17,
-      "total": 30,
-      "oursCents": -0.6447895560468132,
-      "refCents": -8.797399123624393,
-      "worst": "松开后的尾巴 3.31",
-      "life": {
-        "shimmer": [
-          -27.2,
-          -28.9
-        ],
-        "flutter": [
-          1,
-          2.3
-        ],
-        "pitch.jitter": [
-          3.7,
-          2.9
-        ],
-        "brightnessLag": [
-          10,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.18,
-      "excess": 0.96,
-      "excessV1": 1.03,
-      "passed": 21,
-      "total": 29,
-      "oursCents": -0.6514009734107988,
-      "refCents": 0.5050689754651737,
-      "worst": "松开后的尾巴 3.74",
-      "life": {
-        "shimmer": [
-          -26.9,
-          -29.1
-        ],
-        "flutter": [
-          1,
-          1.2
-        ],
-        "pitch.jitter": [
-          3.6,
-          3.7
-        ],
-        "brightnessLag": [
-          10,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 65,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.87,
-      "excess": 1.61,
-      "excessV1": 1.76,
-      "passed": 16,
-      "total": 30,
-      "oursCents": -0.30622105227844687,
-      "refCents": -17.46219236386797,
-      "worst": "松开后的尾巴 4.96",
-      "life": {
-        "shimmer": [
-          -30.4,
-          -29.8
-        ],
-        "flutter": [
-          0.7,
-          1
-        ],
-        "pitch.jitter": [
-          2.4,
-          1.1
-        ],
-        "brightnessLag": [
-          0,
-          60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 65,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.59,
-      "excess": 1.26,
-      "excessV1": 1.4,
-      "passed": 17,
-      "total": 30,
-      "oursCents": -0.30205417034576,
-      "refCents": -2.971932336388028,
-      "worst": "松开后的尾巴 5.16",
-      "life": {
-        "shimmer": [
-          -30.4,
-          -29.9
-        ],
-        "flutter": [
-          0.7,
-          1.4
-        ],
-        "pitch.jitter": [
-          2.4,
-          1.2
-        ],
-        "brightnessLag": [
-          0,
-          30
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 65,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.43,
-      "excess": 1.11,
-      "excessV1": 1.18,
-      "passed": 18,
-      "total": 30,
-      "oursCents": -0.297505254131347,
-      "refCents": -8.997447302599683,
-      "worst": "松开后的尾巴 3.80",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -30.7
-        ],
-        "flutter": [
-          0.7,
-          1.5
-        ],
-        "pitch.jitter": [
-          2.4,
-          2.3
-        ],
-        "brightnessLag": [
-          0,
-          80
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 70,
-      "midi": 70,
-      "note": "A#4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.9,
-      "excess": 1.61,
-      "excessV1": 1.71,
-      "passed": 12,
-      "total": 27,
-      "oursCents": -0.8309023258216174,
-      "refCents": -10.410957277825002,
-      "worst": "松开后的尾巴 5.28",
-      "life": {
-        "shimmer": [
-          -30.1,
-          -29.4
-        ],
-        "flutter": [
-          0.6,
-          0.6
-        ],
-        "pitch.jitter": [
-          1.8,
-          1.6
-        ],
-        "brightnessLag": [
-          0,
-          60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 70,
-      "midi": 70,
-      "note": "A#4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.47,
-      "excess": 1.38,
-      "excessV1": 1.43,
-      "passed": 18,
-      "total": 28,
-      "oursCents": -0.830121033821174,
-      "refCents": -1.266082942331971,
-      "worst": "整体衰减 3.62",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -32.5
-        ],
-        "flutter": [
-          0.6,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.8,
-          1.3
-        ],
-        "brightnessLag": [
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 70,
-      "midi": 70,
-      "note": "A#4",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.43,
-      "excess": 1.2,
-      "excessV1": 1.15,
-      "passed": 18,
-      "total": 27,
-      "oursCents": -0.8260635396899191,
-      "refCents": -0.7539516606191357,
-      "worst": "整体衰减 3.15",
-      "life": {
-        "shimmer": [
-          -29.9,
-          -31.5
-        ],
-        "flutter": [
-          0.6,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.8,
-          2.2
-        ],
-        "brightnessLag": [
-          0,
-          10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 74,
-      "midi": 74,
-      "note": "D5",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 2.14,
-      "excess": 1.9,
-      "excessV1": 2.05,
-      "passed": 10,
-      "total": 30,
-      "oursCents": -0.4620871515656112,
-      "refCents": -15.996666121689238,
-      "worst": "松开后的尾巴 6.72",
-      "life": {
-        "shimmer": [
-          -28.2,
-          -29
-        ],
-        "flutter": [
-          0.8,
-          1.7
-        ],
-        "pitch.jitter": [
-          1.7,
-          1
-        ],
-        "brightnessLag": [
-          0,
-          60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 74,
-      "midi": 74,
-      "note": "D5",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.92,
-      "excess": 1.61,
-      "excessV1": 1.68,
-      "passed": 12,
-      "total": 28,
-      "oursCents": -0.4647147697274298,
-      "refCents": 3.7825845483997065,
-      "worst": "松开后的尾巴 5.23",
-      "life": {
-        "shimmer": [
-          -28.3,
-          -31.8
-        ],
-        "flutter": [
-          0.8,
-          1.3
-        ],
-        "pitch.jitter": [
-          1.7,
-          2.7
-        ],
-        "brightnessLag": [
-          0,
-          50
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 74,
-      "midi": 74,
-      "note": "D5",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.57,
-      "excess": 1.31,
-      "excessV1": 1.32,
-      "passed": 14,
-      "total": 29,
-      "oursCents": -0.4677209932723345,
-      "refCents": 4.36279340745063,
-      "worst": "松开后的尾巴 5.99",
-      "life": {
-        "shimmer": [
-          -28.4,
-          -30.9
-        ],
-        "flutter": [
-          0.8,
-          1.6
-        ],
-        "pitch.jitter": [
-          1.7,
-          1.3
-        ],
-        "brightnessLag": [
-          0,
-          110
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 79,
-      "midi": 79,
-      "note": "G5",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.72,
-      "excess": 1.62,
-      "excessV1": 1.78,
-      "passed": 17,
-      "total": 30,
-      "oursCents": -0.42899918318461117,
-      "refCents": -1.1876848453865243,
-      "worst": "各泛音衰减 8.50",
-      "life": {
-        "shimmer": [
-          -30.6,
-          -28.4
-        ],
-        "flutter": [
-          0.7,
-          1.7
-        ],
-        "pitch.jitter": [
-          1.7,
-          1.1
-        ],
-        "brightnessLag": [
-          -10,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 79,
-      "midi": 79,
-      "note": "G5",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.69,
-      "excess": 1.33,
-      "excessV1": 1.44,
-      "passed": 15,
-      "total": 30,
-      "oursCents": -0.39045288097655306,
-      "refCents": 5.243510647631059,
-      "worst": "松开后的尾巴 5.52",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -24.6
-        ],
-        "flutter": [
-          0.7,
-          2.1
-        ],
-        "pitch.jitter": [
-          1.7,
-          1.7
-        ],
-        "brightnessLag": [
-          -20,
-          40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 79,
-      "midi": 79,
-      "note": "G5",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.54,
-      "excess": 1.28,
-      "excessV1": 1.37,
-      "passed": 17,
-      "total": 29,
-      "oursCents": -0.3449233713250543,
-      "refCents": 5.031939263114156,
-      "worst": "松开后的尾巴 3.35",
-      "life": {
-        "shimmer": [
-          -29.7,
-          -23
-        ],
-        "flutter": [
-          0.7,
-          1.8
-        ],
-        "pitch.jitter": [
-          1.7,
-          1.5
-        ],
-        "brightnessLag": [
-          -20,
-          40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 84,
-      "midi": 84,
-      "note": "C6",
-      "size": 0.3,
-      "split": "test",
-      "distance": 1.79,
-      "excess": 1.57,
-      "excessV1": 1.75,
-      "passed": 17,
-      "total": 30,
-      "oursCents": -0.6664571416063104,
-      "refCents": -26.31203834454541,
-      "worst": "松开后的尾巴 4.44",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -24.3
-        ],
-        "flutter": [
-          0.5,
-          1.5
-        ],
-        "pitch.jitter": [
-          1.7,
-          2.3
-        ],
-        "brightnessLag": [
-          0,
-          60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 84,
-      "midi": 84,
-      "note": "C6",
-      "size": 0.6,
-      "split": "test",
-      "distance": 1.37,
-      "excess": 1.23,
-      "excessV1": 1.33,
-      "passed": 20,
-      "total": 29,
-      "oursCents": -0.6498843898685353,
-      "refCents": -2.607946680469022,
-      "worst": "松开后的尾巴 4.75",
-      "life": {
-        "shimmer": [
-          -30.3,
-          -25.5
-        ],
-        "flutter": [
-          0.5,
-          3.2
-        ],
-        "pitch.jitter": [
-          1.7,
-          1.4
-        ],
-        "brightnessLag": [
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-violin",
-      "source": "TinySOL",
-      "catalogMidi": 84,
-      "midi": 84,
-      "note": "C6",
-      "size": 0.9,
-      "split": "test",
-      "distance": 0.97,
-      "excess": 0.8,
-      "excessV1": 0.84,
-      "passed": 24,
-      "total": 29,
-      "oursCents": -0.6289593558437359,
-      "refCents": -3.0931921023374733,
-      "worst": "松开后的尾巴 2.10",
-      "life": {
-        "shimmer": [
-          -30,
-          -24.9
-        ],
-        "flutter": [
-          0.5,
-          1.6
-        ],
-        "pitch.jitter": [
-          1.7,
-          2
-        ],
-        "brightnessLag": [
-          0,
-          20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 48,
-      "midi": 48,
-      "note": "C3",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.78,
-      "excess": 1.62,
-      "excessV1": 1.76,
-      "passed": 11,
-      "total": 25,
-      "oursCents": -1.587474151382675,
-      "refCents": -0.6316609335008748,
-      "worst": "松开后的尾巴 6.61",
-      "life": {
-        "shimmer": [
-          -25.4,
-          -34.7
-        ],
-        "flutter": [
-          0.2,
-          0.3
-        ],
-        "pitch.jitter": [
-          2.6,
-          1.1
-        ],
-        "brightnessLag": [
-          -10,
-          10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 48,
-      "midi": 48,
-      "note": "C3",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.74,
-      "excess": 1.46,
-      "excessV1": 1.54,
-      "passed": 11,
-      "total": 26,
-      "oursCents": -1.663338105807147,
-      "refCents": -4.5456959650607764,
-      "worst": "松开后的尾巴 6.02",
-      "life": {
-        "shimmer": [
-          -25.3,
-          -33.1
-        ],
-        "flutter": [
-          0.2,
-          0.4
-        ],
-        "pitch.jitter": [
-          2.6,
-          0.8
-        ],
-        "brightnessLag": [
-          -10,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 48,
-      "midi": 48,
-      "note": "C3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.74,
-      "excess": 1.5,
-      "excessV1": 1.42,
-      "passed": 12,
-      "total": 26,
-      "oursCents": -1.7788484578001535,
-      "refCents": -1.5496843121926434,
-      "worst": "松开后的尾巴 6.32",
-      "life": {
-        "shimmer": [
-          -25.3,
-          -33.2
-        ],
-        "flutter": [
-          0.2,
-          1.1
-        ],
-        "pitch.jitter": [
-          2.6,
-          2
-        ],
-        "brightnessLag": [
-          -10,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 53,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 2.09,
-      "excess": 1.84,
-      "excessV1": 1.88,
-      "passed": 10,
-      "total": 25,
-      "oursCents": -0.3582830102855316,
-      "refCents": -11.262162650870268,
-      "worst": "松开后的尾巴 5.05",
-      "life": {
-        "shimmer": [
-          -25.1,
-          -30.5
-        ],
-        "flutter": [
-          0.4,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.9,
-          2.3
-        ],
-        "brightnessLag": [
-          -10,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 53,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.99,
-      "excess": 1.75,
-      "excessV1": 1.8,
-      "passed": 13,
-      "total": 29,
-      "oursCents": -0.3436432854912959,
-      "refCents": -17.38907770781449,
-      "worst": "松开后的尾巴 3.65",
-      "life": {
-        "shimmer": [
-          -25.1,
-          -29.3
-        ],
-        "flutter": [
-          0.4,
-          0.9
-        ],
-        "pitch.jitter": [
-          1.9,
-          1.9
-        ],
-        "brightnessLag": [
-          -10,
-          -110
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 53,
-      "midi": 53,
-      "note": "F3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.41,
-      "excess": 1.09,
-      "excessV1": 1.15,
-      "passed": 19,
-      "total": 30,
-      "oursCents": -0.3171490752552244,
-      "refCents": 4.990761588228422,
-      "worst": "松开后的尾巴 3.24",
-      "life": {
-        "shimmer": [
-          -25.4,
-          -28.6
-        ],
-        "flutter": [
-          0.3,
-          0.9
-        ],
-        "pitch.jitter": [
-          1.5,
-          2.3
-        ],
-        "brightnessLag": [
-          0,
-          -60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 58,
-      "midi": 58,
-      "note": "A#3",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.84,
-      "excess": 1.65,
-      "excessV1": 1.86,
-      "passed": 15,
-      "total": 30,
-      "oursCents": -1.127442213651499,
-      "refCents": -48.13311161249043,
-      "worst": "松开后的尾巴 5.77",
-      "life": {
-        "shimmer": [
-          -25.4,
-          -28.2
-        ],
-        "flutter": [
-          0.6,
-          1.9
-        ],
-        "pitch.jitter": [
-          1.6,
-          1.4
-        ],
-        "brightnessLag": [
-          -10,
-          -10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 58,
-      "midi": 58,
-      "note": "A#3",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.26,
-      "excess": 1.1,
-      "excessV1": 1.23,
-      "passed": 23,
-      "total": 29,
-      "oursCents": -1.15730892782608,
-      "refCents": -8.52783178426438,
-      "worst": "松开后的尾巴 4.18",
-      "life": {
-        "shimmer": [
-          -25.4,
-          -28.7
-        ],
-        "flutter": [
-          0.6,
-          1.9
-        ],
-        "pitch.jitter": [
-          1.6,
-          2.3
-        ],
-        "brightnessLag": [
-          -10,
-          -30
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 58,
-      "midi": 58,
-      "note": "A#3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.27,
-      "excess": 1.12,
-      "excessV1": 1.2,
-      "passed": 21,
-      "total": 30,
-      "oursCents": -1.1881445029754534,
-      "refCents": 7.240199641374406,
-      "worst": "各泛音衰减 7.96",
-      "life": {
-        "shimmer": [
-          -25.5,
-          -27.1
-        ],
-        "flutter": [
-          0.6,
-          2.2
-        ],
-        "pitch.jitter": [
-          1.6,
-          2.1
-        ],
-        "brightnessLag": [
-          -10,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 62,
-      "midi": 62,
-      "note": "D4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.59,
-      "excess": 1.34,
-      "excessV1": 1.45,
-      "passed": 15,
-      "total": 27,
-      "oursCents": -0.5140447994536648,
-      "refCents": -5.736458476267738,
-      "worst": "松开后的尾巴 5.81",
-      "life": {
-        "shimmer": [
-          -24.6,
-          -33.7
-        ],
-        "flutter": [
-          0.5,
-          1.2
-        ],
-        "pitch.jitter": [
-          1.8,
-          1
-        ],
-        "brightnessLag": [
-          0,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 62,
-      "midi": 62,
-      "note": "D4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.38,
-      "excess": 1.26,
-      "excessV1": 1.29,
-      "passed": 16,
-      "total": 26,
-      "oursCents": -0.43788330988498503,
-      "refCents": 0.9862450575886982,
-      "worst": "松开后的尾巴 6.96",
-      "life": {
-        "shimmer": [
-          -24.5,
-          -38.3
-        ],
-        "flutter": [
-          0.5,
-          0.8
-        ],
-        "pitch.jitter": [
-          1.8,
-          0.6
-        ],
-        "brightnessLag": [
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 62,
-      "midi": 62,
-      "note": "D4",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.44,
-      "excess": 1.27,
-      "excessV1": 1.28,
-      "passed": 16,
-      "total": 26,
-      "oursCents": -0.33321790719555766,
-      "refCents": -0.7051789307165636,
-      "worst": "松开后的尾巴 6.20",
-      "life": {
-        "shimmer": [
-          -24.4,
-          -36
-        ],
-        "flutter": [
-          0.5,
-          0.9
-        ],
-        "pitch.jitter": [
-          1.8,
-          0.4
-        ],
-        "brightnessLag": [
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 67,
-      "midi": 67,
-      "note": "G4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.72,
-      "excess": 1.5,
-      "excessV1": 1.63,
-      "passed": 14,
-      "total": 29,
-      "oursCents": -0.4216673529703184,
-      "refCents": -1.0523958863248057,
-      "worst": "松开后的尾巴 5.71",
-      "life": {
-        "shimmer": [
-          -24.7,
-          -26.6
-        ],
-        "flutter": [
-          0.5,
-          1.7
-        ],
-        "pitch.jitter": [
-          1.9,
-          1.1
-        ],
-        "brightnessLag": [
-          0,
-          130
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 67,
-      "midi": 67,
-      "note": "G4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.55,
-      "excess": 1.28,
-      "excessV1": 1.4,
-      "passed": 17,
-      "total": 30,
-      "oursCents": -0.4124684043307001,
-      "refCents": 1.4300221280768695,
-      "worst": "松开后的尾巴 4.67",
-      "life": {
-        "shimmer": [
-          -24.7,
-          -26.3
-        ],
-        "flutter": [
-          0.5,
-          1.6
-        ],
-        "pitch.jitter": [
-          1.9,
-          1.8
-        ],
-        "brightnessLag": [
-          -10,
-          -150
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 67,
-      "midi": 67,
-      "note": "G4",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.51,
-      "excess": 1.15,
-      "excessV1": 1.19,
-      "passed": 20,
-      "total": 30,
-      "oursCents": -0.40231992930781135,
-      "refCents": -1.123951605115644,
-      "worst": "松开后的尾巴 3.62",
-      "life": {
-        "shimmer": [
-          -25,
-          -23.5
-        ],
-        "flutter": [
-          0.5,
-          1.8
-        ],
-        "pitch.jitter": [
-          1.9,
-          1.4
-        ],
-        "brightnessLag": [
-          -10,
-          70
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.3,
-      "split": "test",
-      "distance": 1.79,
-      "excess": 1.51,
-      "excessV1": 1.66,
-      "passed": 16,
-      "total": 30,
-      "oursCents": -0.38568395748369055,
-      "refCents": -8.187202143899,
-      "worst": "松开后的尾巴 5.63",
-      "life": {
-        "shimmer": [
-          -24.8,
-          -25.7
-        ],
-        "flutter": [
-          0.6,
-          1.2
-        ],
-        "pitch.jitter": [
-          2.2,
-          1.8
-        ],
-        "brightnessLag": [
-          0,
-          40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.6,
-      "split": "test",
-      "distance": 1.5,
-      "excess": 1.21,
-      "excessV1": 1.26,
-      "passed": 21,
-      "total": 30,
-      "oursCents": -0.3696002574560253,
-      "refCents": -1.6751006463425437,
-      "worst": "松开后的尾巴 5.33",
-      "life": {
-        "shimmer": [
-          -25,
-          -24.7
-        ],
-        "flutter": [
-          0.6,
-          1.1
-        ],
-        "pitch.jitter": [
-          2.2,
-          1.4
-        ],
-        "brightnessLag": [
-          0,
-          -30
-        ]
-      }
-    },
-    {
-      "id": "tinysol-viola",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.9,
-      "split": "test",
-      "distance": 1.35,
-      "excess": 1.15,
-      "excessV1": 1.19,
-      "passed": 19,
-      "total": 29,
-      "oursCents": -0.34880438451399853,
-      "refCents": -3.6072673429623827,
-      "worst": "松开后的尾巴 4.97",
-      "life": {
-        "shimmer": [
-          -25.1,
-          -23.3
-        ],
-        "flutter": [
-          0.7,
-          1.4
-        ],
-        "pitch.jitter": [
-          2.2,
-          2.1
-        ],
-        "brightnessLag": [
-          0,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 36,
-      "midi": 36,
-      "note": "C2",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.83,
-      "excess": 1.61,
-      "excessV1": 1.72,
-      "passed": 11,
-      "total": 26,
-      "oursCents": -2.0178017312226775,
-      "refCents": 10.415008851406206,
-      "worst": "松开后的尾巴 6.28",
-      "life": {
-        "shimmer": [
-          -24.9,
-          -31.5
-        ],
-        "flutter": [
-          0.1,
-          1.2
-        ],
-        "pitch.jitter": [
-          1.3,
-          1.3
-        ],
-        "brightnessLag": [
-          -10,
-          -10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 36,
-      "midi": 36,
-      "note": "C2",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.65,
-      "excess": 1.5,
-      "excessV1": 1.46,
-      "passed": 13,
-      "total": 27,
-      "oursCents": -2.0317650329775208,
-      "refCents": 8.711553899545445,
-      "worst": "松开后的尾巴 6.71",
-      "life": {
-        "shimmer": [
-          -24.8,
-          -37
-        ],
-        "flutter": [
-          0.1,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.3,
-          0.5
-        ],
-        "brightnessLag": [
-          -10,
-          -160
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 36,
-      "midi": 36,
-      "note": "C2",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.77,
-      "excess": 1.62,
-      "excessV1": 1.49,
-      "passed": 14,
-      "total": 26,
-      "oursCents": -2.047428052914095,
-      "refCents": 19.73332850322716,
-      "worst": "松开后的尾巴 6.85",
-      "life": {
-        "shimmer": [
-          -24.6,
-          -32.5
-        ],
-        "flutter": [
-          0.1,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.3,
-          1.1
-        ],
-        "brightnessLag": [
-          -10,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 43,
-      "midi": 43,
-      "note": "G2",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.37,
-      "excess": 1.16,
-      "excessV1": 1.1,
-      "passed": 14,
-      "total": 26,
-      "oursCents": -1.2981951529466005,
-      "refCents": -2.8049631048965367,
-      "worst": "谐噪比 2.32",
-      "life": {
-        "shimmer": [
-          -24.4,
-          -33.2
-        ],
-        "flutter": [
-          0.4,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.3,
-          1.2
-        ],
-        "brightnessLag": [
-          0,
-          -10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 43,
-      "midi": 43,
-      "note": "G2",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.69,
-      "excess": 1.43,
-      "excessV1": 1.38,
-      "passed": 12,
-      "total": 26,
-      "oursCents": -1.3346664963706616,
-      "refCents": -31.83866818819328,
-      "worst": "音高 6.10",
-      "life": {
-        "shimmer": [
-          -24.4,
-          -34.6
-        ],
-        "flutter": [
-          0.4,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.3,
-          0.6
-        ],
-        "brightnessLag": [
-          0,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 43,
-      "midi": 43,
-      "note": "G2",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.93,
-      "excess": 1.69,
-      "excessV1": 1.59,
-      "passed": 12,
-      "total": 26,
-      "oursCents": -1.3740214401093855,
-      "refCents": -19.55158074036417,
-      "worst": "谐波间隙噪声 4.12",
-      "life": {
-        "shimmer": [
-          -24.2,
-          -35.3
-        ],
-        "flutter": [
-          0.4,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.3,
-          0.5
-        ],
-        "brightnessLag": [
-          0,
-          -110
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 50,
-      "midi": 50,
-      "note": "D3",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.61,
-      "excess": 1.37,
-      "excessV1": 1.38,
-      "passed": 15,
-      "total": 26,
-      "oursCents": -1.2321965019617287,
-      "refCents": -4.379605951786003,
-      "worst": "松开后的尾巴 6.46",
-      "life": {
-        "shimmer": [
-          -24.4,
-          -33
-        ],
-        "flutter": [
-          0.5,
-          0.6
-        ],
-        "pitch.jitter": [
-          1.4,
-          0.8
-        ],
-        "brightnessLag": [
-          0,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 50,
-      "midi": 50,
-      "note": "D3",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.28,
-      "excess": 1.13,
-      "excessV1": 1,
-      "passed": 19,
-      "total": 26,
-      "oursCents": -1.2474468844399522,
-      "refCents": 1.0382979643701418,
-      "worst": "松开后的尾巴 7.41",
-      "life": {
-        "shimmer": [
-          -24.5,
-          -35.5
-        ],
-        "flutter": [
-          0.5,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.4,
-          0.8
-        ],
-        "brightnessLag": [
-          0,
-          -10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 50,
-      "midi": 50,
-      "note": "D3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.56,
-      "excess": 1.23,
-      "excessV1": 1.07,
-      "passed": 15,
-      "total": 25,
-      "oursCents": -1.2627514161943347,
-      "refCents": -4.957796448540389,
-      "worst": "最高泛音 3.50",
-      "life": {
-        "shimmer": [
-          -24.5,
-          -31.3
-        ],
-        "flutter": [
-          0.5,
-          1
-        ],
-        "pitch.jitter": [
-          1.4,
-          1.4
-        ],
-        "brightnessLag": [
-          0,
-          -60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 58,
-      "midi": 58,
-      "note": "A#3",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.7,
-      "excess": 1.54,
-      "excessV1": 1.69,
-      "passed": 16,
-      "total": 30,
-      "oursCents": -0.9546323614372672,
-      "refCents": -3.8875969295345896,
-      "worst": "松开后的尾巴 5.31",
-      "life": {
-        "shimmer": [
-          -23.9,
-          -31.7
-        ],
-        "flutter": [
-          0.7,
-          1.8
-        ],
-        "pitch.jitter": [
-          1.9,
-          1.4
-        ],
-        "brightnessLag": [
-          0,
-          30
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 58,
-      "midi": 58,
-      "note": "A#3",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.82,
-      "excess": 1.49,
-      "excessV1": 1.67,
-      "passed": 15,
-      "total": 30,
-      "oursCents": -0.9630397831889373,
-      "refCents": -15.817830424470529,
-      "worst": "松开后的尾巴 5.02",
-      "life": {
-        "shimmer": [
-          -24,
-          -29.4
-        ],
-        "flutter": [
-          0.8,
-          1.1
-        ],
-        "pitch.jitter": [
-          1.9,
-          1.9
-        ],
-        "brightnessLag": [
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 58,
-      "midi": 58,
-      "note": "A#3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.5,
-      "excess": 1.33,
-      "excessV1": 1.35,
-      "passed": 19,
-      "total": 29,
-      "oursCents": -0.9702258363437991,
-      "refCents": 0.8824700514965556,
-      "worst": "松开后的尾巴 5.05",
-      "life": {
-        "shimmer": [
-          -24,
-          -28.4
-        ],
-        "flutter": [
-          0.8,
-          0.8
-        ],
-        "pitch.jitter": [
-          1.9,
-          2
-        ],
-        "brightnessLag": [
-          0,
-          10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 65,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.3,
-      "excess": 1.13,
-      "excessV1": 1.14,
-      "passed": 18,
-      "total": 29,
-      "oursCents": -0.19583050276311179,
-      "refCents": -3.2218893997165567,
-      "worst": "最高泛音 2.22",
-      "life": {
-        "shimmer": [
-          -24.3,
-          -32.5
-        ],
-        "flutter": [
-          0.8,
-          1.2
-        ],
-        "pitch.jitter": [
-          2.4,
-          1.5
-        ],
-        "brightnessLag": [
-          0,
-          10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 65,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.63,
-      "excess": 1.25,
-      "excessV1": 1.4,
-      "passed": 20,
-      "total": 30,
-      "oursCents": -0.1687657826547238,
-      "refCents": -11.813196843333976,
-      "worst": "奇偶泛音比 4.23",
-      "life": {
-        "shimmer": [
-          -24.2,
-          -27.4
-        ],
-        "flutter": [
-          0.8,
-          1.5
-        ],
-        "pitch.jitter": [
-          2.4,
-          2.9
-        ],
-        "brightnessLag": [
-          0,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 65,
-      "midi": 65,
-      "note": "F4",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.36,
-      "excess": 1.1,
-      "excessV1": 1.19,
-      "passed": 20,
-      "total": 30,
-      "oursCents": -0.14328497475097784,
-      "refCents": -0.2129802453964121,
-      "worst": "奇偶泛音比 3.32",
-      "life": {
-        "shimmer": [
-          -24.2,
-          -30
-        ],
-        "flutter": [
-          0.8,
-          1.6
-        ],
-        "pitch.jitter": [
-          2.4,
-          2.5
-        ],
-        "brightnessLag": [
-          0,
-          -80
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.3,
-      "split": "test",
-      "distance": 1.62,
-      "excess": 1.43,
-      "excessV1": 1.54,
-      "passed": 16,
-      "total": 29,
-      "oursCents": -0.21916559368233202,
-      "refCents": -1.74244778173605,
-      "worst": "松开后的尾巴 3.08",
-      "life": {
-        "shimmer": [
-          -23.9,
-          -23
-        ],
-        "flutter": [
-          0.9,
-          1.7
-        ],
-        "pitch.jitter": [
-          2.9,
-          2.7
-        ],
-        "brightnessLag": [
-          0,
-          -10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.6,
-      "split": "test",
-      "distance": 1.47,
-      "excess": 1.24,
-      "excessV1": 1.36,
-      "passed": 17,
-      "total": 29,
-      "oursCents": -0.18874077120046492,
-      "refCents": -6.364308636279125,
-      "worst": "起音噪声感 3.70",
-      "life": {
-        "shimmer": [
-          -24,
-          -20.8
-        ],
-        "flutter": [
-          0.9,
-          1.9
-        ],
-        "pitch.jitter": [
-          2.9,
-          2.5
-        ],
-        "brightnessLag": [
-          0,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-cello",
-      "source": "TinySOL",
-      "catalogMidi": 72,
-      "midi": 72,
-      "note": "C5",
-      "size": 0.9,
-      "split": "test",
-      "distance": 1.62,
-      "excess": 1.37,
-      "excessV1": 1.5,
-      "passed": 15,
-      "total": 29,
-      "oursCents": -0.1612494453762502,
-      "refCents": -11.247962920409226,
-      "worst": "整体衰减 2.76",
-      "life": {
-        "shimmer": [
-          -24,
-          -20.2
-        ],
-        "flutter": [
-          0.9,
-          3.3
-        ],
-        "pitch.jitter": [
-          2.9,
-          4.1
-        ],
-        "brightnessLag": [
-          0,
-          80
-        ]
-      }
-    },
-    {
       "id": "tinysol-trumpet",
       "source": "TinySOL",
       "catalogMidi": 60,
@@ -5410,636 +3520,6 @@
         "pitch.jitter": [
           1.1,
           1.5
-        ],
-        "brightnessLag": [
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 36,
-      "midi": 36,
-      "note": "C2",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 2.02,
-      "excess": 1.74,
-      "excessV1": 1.83,
-      "passed": 10,
-      "total": 26,
-      "oursCents": -1.5031618919419771,
-      "refCents": 18.642524257366148,
-      "worst": "松开后的尾巴 9.15",
-      "life": {
-        "shimmer": [
-          -26.8,
-          -41
-        ],
-        "flutter": [
-          0.2,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.2,
-          2.6
-        ],
-        "brightnessLag": [
-          -10,
-          -90
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 36,
-      "midi": 36,
-      "note": "C2",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.59,
-      "excess": 1.34,
-      "excessV1": 1.4,
-      "passed": 15,
-      "total": 29,
-      "oursCents": -1.5088211384908707,
-      "refCents": 7.712327706191775,
-      "worst": "松开后的尾巴 5.62",
-      "life": {
-        "shimmer": [
-          -26.4,
-          -33.8
-        ],
-        "flutter": [
-          0.2,
-          0.4
-        ],
-        "pitch.jitter": [
-          1.2,
-          1.5
-        ],
-        "brightnessLag": [
-          -10,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 36,
-      "midi": 36,
-      "note": "C2",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.7,
-      "excess": 1.37,
-      "excessV1": 1.41,
-      "passed": 13,
-      "total": 27,
-      "oursCents": -1.516946392287111,
-      "refCents": 8.46743468988886,
-      "worst": "松开后的尾巴 5.52",
-      "life": {
-        "shimmer": [
-          -26.2,
-          -33.7
-        ],
-        "flutter": [
-          0.2,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.2,
-          3.3
-        ],
-        "brightnessLag": [
-          -10,
-          -70
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 41,
-      "midi": 41,
-      "note": "F2",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.6,
-      "excess": 1.31,
-      "excessV1": 1.41,
-      "passed": 13,
-      "total": 27,
-      "oursCents": -0.7328756951139054,
-      "refCents": 3.0410943486720714,
-      "worst": "松开后的尾巴 6.89",
-      "life": {
-        "shimmer": [
-          -30.6,
-          -34
-        ],
-        "flutter": [
-          0.2,
-          0.4
-        ],
-        "pitch.jitter": [
-          1.2,
-          1.7
-        ],
-        "brightnessLag": [
-          0,
-          -30
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 41,
-      "midi": 41,
-      "note": "F2",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.73,
-      "excess": 1.59,
-      "excessV1": 1.59,
-      "passed": 12,
-      "total": 27,
-      "oursCents": -0.7269670128568531,
-      "refCents": 3.1900598820268815,
-      "worst": "松开后的尾巴 6.62",
-      "life": {
-        "shimmer": [
-          -30.6,
-          -32
-        ],
-        "flutter": [
-          0.2,
-          0.3
-        ],
-        "pitch.jitter": [
-          1.2,
-          4.5
-        ],
-        "brightnessLag": [
-          -10,
-          -30
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 41,
-      "midi": 41,
-      "note": "F2",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.31,
-      "excess": 1.08,
-      "excessV1": 1.18,
-      "passed": 20,
-      "total": 27,
-      "oursCents": -0.7211638187865493,
-      "refCents": 0.11406943807438034,
-      "worst": "松开后的尾巴 6.40",
-      "life": {
-        "shimmer": [
-          -30.6,
-          -32.4
-        ],
-        "flutter": [
-          0.2,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.2,
-          3
-        ],
-        "brightnessLag": [
-          -10,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 46,
-      "midi": 46,
-      "note": "A#2",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.58,
-      "excess": 1.45,
-      "excessV1": 1.48,
-      "passed": 15,
-      "total": 27,
-      "oursCents": -1.2322705249687398,
-      "refCents": -7.700916372798574,
-      "worst": "松开后的尾巴 6.66",
-      "life": {
-        "shimmer": [
-          -30.3,
-          -39.2
-        ],
-        "flutter": [
-          0.3,
-          0.4
-        ],
-        "pitch.jitter": [
-          1.2,
-          2.4
-        ],
-        "brightnessLag": [
-          10,
-          0
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 46,
-      "midi": 46,
-      "note": "A#2",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.66,
-      "excess": 1.37,
-      "excessV1": 1.38,
-      "passed": 17,
-      "total": 27,
-      "oursCents": -1.2370198431836223,
-      "refCents": -20.89669793765286,
-      "worst": "松开后的尾巴 7.16",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -36
-        ],
-        "flutter": [
-          0.3,
-          0.4
-        ],
-        "pitch.jitter": [
-          1.2,
-          2.3
-        ],
-        "brightnessLag": [
-          10,
-          -50
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 46,
-      "midi": 46,
-      "note": "A#2",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.58,
-      "excess": 1.44,
-      "excessV1": 1.52,
-      "passed": 16,
-      "total": 26,
-      "oursCents": -1.2437905885592142,
-      "refCents": -28.393523613830833,
-      "worst": "松开后的尾巴 6.98",
-      "life": {
-        "shimmer": [
-          -29.3,
-          -28.1
-        ],
-        "flutter": [
-          0.3,
-          0.4
-        ],
-        "pitch.jitter": [
-          1.2,
-          2.4
-        ],
-        "brightnessLag": [
-          10,
-          10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 50,
-      "midi": 50,
-      "note": "D3",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.55,
-      "excess": 1.33,
-      "excessV1": 1.45,
-      "passed": 19,
-      "total": 28,
-      "oursCents": -0.9299928234295979,
-      "refCents": 9.133646330291754,
-      "worst": "松开后的尾巴 6.74",
-      "life": {
-        "shimmer": [
-          -29.9,
-          -34.4
-        ],
-        "flutter": [
-          0.4,
-          0.8
-        ],
-        "pitch.jitter": [
-          1.1,
-          2.3
-        ],
-        "brightnessLag": [
-          0,
-          20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 50,
-      "midi": 50,
-      "note": "D3",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.36,
-      "excess": 1.16,
-      "excessV1": 1.29,
-      "passed": 20,
-      "total": 27,
-      "oursCents": -0.9381832626889717,
-      "refCents": -7.555722956381696,
-      "worst": "松开后的尾巴 7.04",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -32.9
-        ],
-        "flutter": [
-          0.4,
-          0.5
-        ],
-        "pitch.jitter": [
-          1.1,
-          2.8
-        ],
-        "brightnessLag": [
-          0,
-          -40
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 50,
-      "midi": 50,
-      "note": "D3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.92,
-      "excess": 1.74,
-      "excessV1": 1.85,
-      "passed": 14,
-      "total": 28,
-      "oursCents": -0.9464251944420156,
-      "refCents": -28.191617215294922,
-      "worst": "松开后的尾巴 7.25",
-      "life": {
-        "shimmer": [
-          -30.1,
-          -28.7
-        ],
-        "flutter": [
-          0.4,
-          1.3
-        ],
-        "pitch.jitter": [
-          1.1,
-          5.7
-        ],
-        "brightnessLag": [
-          0,
-          10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 55,
-      "midi": 55,
-      "note": "G3",
-      "size": 0.3,
-      "split": "valid",
-      "distance": 1.54,
-      "excess": 1.3,
-      "excessV1": 1.38,
-      "passed": 16,
-      "total": 27,
-      "oursCents": -0.3928321878411059,
-      "refCents": 1.6000352788793126,
-      "worst": "松开后的尾巴 6.16",
-      "life": {
-        "shimmer": [
-          -29.1,
-          -31.8
-        ],
-        "flutter": [
-          0.3,
-          0.8
-        ],
-        "pitch.jitter": [
-          1,
-          1.3
-        ],
-        "brightnessLag": [
-          10,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 55,
-      "midi": 55,
-      "note": "G3",
-      "size": 0.6,
-      "split": "valid",
-      "distance": 1.84,
-      "excess": 1.65,
-      "excessV1": 1.78,
-      "passed": 13,
-      "total": 28,
-      "oursCents": -0.3991930129295879,
-      "refCents": -36.33290941661258,
-      "worst": "松开后的尾巴 4.92",
-      "life": {
-        "shimmer": [
-          -28.7,
-          -31.7
-        ],
-        "flutter": [
-          0.3,
-          1.9
-        ],
-        "pitch.jitter": [
-          1,
-          5.1
-        ],
-        "brightnessLag": [
-          10,
-          -10
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 55,
-      "midi": 55,
-      "note": "G3",
-      "size": 0.9,
-      "split": "valid",
-      "distance": 1.64,
-      "excess": 1.46,
-      "excessV1": 1.61,
-      "passed": 18,
-      "total": 30,
-      "oursCents": -0.4052087684247901,
-      "refCents": -7.306421013940491,
-      "worst": "各泛音衰减 7.97",
-      "life": {
-        "shimmer": [
-          -28.9,
-          -29.5
-        ],
-        "flutter": [
-          0.3,
-          1
-        ],
-        "pitch.jitter": [
-          1,
-          1.8
-        ],
-        "brightnessLag": [
-          10,
-          -20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.3,
-      "split": "test",
-      "distance": 1.79,
-      "excess": 1.54,
-      "excessV1": 1.61,
-      "passed": 13,
-      "total": 28,
-      "oursCents": -0.4014209015889065,
-      "refCents": -34.52961421162242,
-      "worst": "整体衰减 4.57",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -30.3
-        ],
-        "flutter": [
-          0.3,
-          0.8
-        ],
-        "pitch.jitter": [
-          1.1,
-          3.5
-        ],
-        "brightnessLag": [
-          0,
-          20
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.6,
-      "split": "test",
-      "distance": 1.48,
-      "excess": 1.21,
-      "excessV1": 1.22,
-      "passed": 13,
-      "total": 27,
-      "oursCents": -0.40452064291045947,
-      "refCents": -6.565831050751387,
-      "worst": "各泛音衰减 7.88",
-      "life": {
-        "shimmer": [
-          -30.2,
-          -35.2
-        ],
-        "flutter": [
-          0.3,
-          0.9
-        ],
-        "pitch.jitter": [
-          1.1,
-          2.7
-        ],
-        "brightnessLag": [
-          0,
-          60
-        ]
-      }
-    },
-    {
-      "id": "tinysol-bass",
-      "source": "TinySOL",
-      "catalogMidi": 60,
-      "midi": 60,
-      "note": "C4",
-      "size": 0.9,
-      "split": "test",
-      "distance": 1.77,
-      "excess": 1.54,
-      "excessV1": 1.51,
-      "passed": 13,
-      "total": 28,
-      "oursCents": -0.40729874887154177,
-      "refCents": -41.47691408645799,
-      "worst": "音高 8.21",
-      "life": {
-        "shimmer": [
-          -30.6,
-          -28.1
-        ],
-        "flutter": [
-          0.3,
-          1.6
-        ],
-        "pitch.jitter": [
-          1.1,
-          7.9
         ],
         "brightnessLag": [
           0,
@@ -13728,6 +11208,2526 @@
         "pitch.jitter": [
           2.7,
           3.6
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.51,
+      "excess": 1.37,
+      "excessV1": 1.51,
+      "passed": 19,
+      "total": 29,
+      "oursCents": -0.6381254405920853,
+      "refCents": -7.1835818612933515,
+      "worst": "各泛音衰减 7.20",
+      "life": {
+        "shimmer": [
+          -27.3,
+          -28.7
+        ],
+        "flutter": [
+          1,
+          1.4
+        ],
+        "pitch.jitter": [
+          3.7,
+          2
+        ],
+        "brightnessLag": [
+          10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.47,
+      "excess": 1.24,
+      "excessV1": 1.31,
+      "passed": 18,
+      "total": 30,
+      "oursCents": -0.6447895560468132,
+      "refCents": -8.797399123624393,
+      "worst": "起音 10–90% 5.24",
+      "life": {
+        "shimmer": [
+          -27.2,
+          -28.9
+        ],
+        "flutter": [
+          1,
+          2.3
+        ],
+        "pitch.jitter": [
+          3.7,
+          2.9
+        ],
+        "brightnessLag": [
+          10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.05,
+      "excess": 0.79,
+      "excessV1": 0.81,
+      "passed": 22,
+      "total": 29,
+      "oursCents": -0.6514009734107988,
+      "refCents": 0.5050689754651737,
+      "worst": "各泛音衰减 2.72",
+      "life": {
+        "shimmer": [
+          -26.9,
+          -29.1
+        ],
+        "flutter": [
+          1,
+          1.2
+        ],
+        "pitch.jitter": [
+          3.6,
+          3.7
+        ],
+        "brightnessLag": [
+          10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 65,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.79,
+      "excess": 1.51,
+      "excessV1": 1.65,
+      "passed": 17,
+      "total": 30,
+      "oursCents": -0.30622105227844687,
+      "refCents": -17.46219236386797,
+      "worst": "起音 10–90% 7.36",
+      "life": {
+        "shimmer": [
+          -30.4,
+          -29.8
+        ],
+        "flutter": [
+          0.7,
+          1
+        ],
+        "pitch.jitter": [
+          2.4,
+          1.1
+        ],
+        "brightnessLag": [
+          0,
+          60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 65,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.5,
+      "excess": 1.14,
+      "excessV1": 1.27,
+      "passed": 18,
+      "total": 30,
+      "oursCents": -0.30205417034576,
+      "refCents": -2.971932336388028,
+      "worst": "谐噪比 2.55",
+      "life": {
+        "shimmer": [
+          -30.4,
+          -29.9
+        ],
+        "flutter": [
+          0.7,
+          1.4
+        ],
+        "pitch.jitter": [
+          2.4,
+          1.2
+        ],
+        "brightnessLag": [
+          0,
+          30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 65,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.32,
+      "excess": 0.97,
+      "excessV1": 1,
+      "passed": 19,
+      "total": 30,
+      "oursCents": -0.297505254131347,
+      "refCents": -8.997447302599683,
+      "worst": "整体衰减 2.13",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -30.7
+        ],
+        "flutter": [
+          0.7,
+          1.5
+        ],
+        "pitch.jitter": [
+          2.4,
+          2.3
+        ],
+        "brightnessLag": [
+          0,
+          80
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 70,
+      "midi": 70,
+      "note": "A#4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.81,
+      "excess": 1.51,
+      "excessV1": 1.59,
+      "passed": 13,
+      "total": 27,
+      "oursCents": -0.8309023258216174,
+      "refCents": -10.410957277825002,
+      "worst": "起音噪声感 3.73",
+      "life": {
+        "shimmer": [
+          -30.1,
+          -29.4
+        ],
+        "flutter": [
+          0.6,
+          0.6
+        ],
+        "pitch.jitter": [
+          1.8,
+          1.6
+        ],
+        "brightnessLag": [
+          0,
+          60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 70,
+      "midi": 70,
+      "note": "A#4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.37,
+      "excess": 1.27,
+      "excessV1": 1.29,
+      "passed": 19,
+      "total": 28,
+      "oursCents": -0.830121033821174,
+      "refCents": -1.266082942331971,
+      "worst": "整体衰减 3.62",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -32.5
+        ],
+        "flutter": [
+          0.6,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.8,
+          1.3
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 70,
+      "midi": 70,
+      "note": "A#4",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.47,
+      "excess": 1.25,
+      "excessV1": 1.22,
+      "passed": 18,
+      "total": 27,
+      "oursCents": -0.8260635396899191,
+      "refCents": -0.7539516606191357,
+      "worst": "整体衰减 3.15",
+      "life": {
+        "shimmer": [
+          -29.9,
+          -31.5
+        ],
+        "flutter": [
+          0.6,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.8,
+          2.2
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 74,
+      "midi": 74,
+      "note": "D5",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 2.1,
+      "excess": 1.85,
+      "excessV1": 1.99,
+      "passed": 10,
+      "total": 30,
+      "oursCents": -0.4620871515656112,
+      "refCents": -15.996666121689238,
+      "worst": "非谐性 B 10.42",
+      "life": {
+        "shimmer": [
+          -28.2,
+          -29
+        ],
+        "flutter": [
+          0.8,
+          1.7
+        ],
+        "pitch.jitter": [
+          1.7,
+          1
+        ],
+        "brightnessLag": [
+          0,
+          60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 74,
+      "midi": 74,
+      "note": "D5",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.84,
+      "excess": 1.51,
+      "excessV1": 1.56,
+      "passed": 13,
+      "total": 28,
+      "oursCents": -0.4647147697274298,
+      "refCents": 3.7825845483997065,
+      "worst": "整体衰减 3.19",
+      "life": {
+        "shimmer": [
+          -28.3,
+          -31.8
+        ],
+        "flutter": [
+          0.8,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.7,
+          2.7
+        ],
+        "brightnessLag": [
+          0,
+          50
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 74,
+      "midi": 74,
+      "note": "D5",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.52,
+      "excess": 1.25,
+      "excessV1": 1.24,
+      "passed": 14,
+      "total": 29,
+      "oursCents": -0.4677209932723345,
+      "refCents": 4.36279340745063,
+      "worst": "高频滞后 5.50",
+      "life": {
+        "shimmer": [
+          -28.4,
+          -30.9
+        ],
+        "flutter": [
+          0.8,
+          1.6
+        ],
+        "pitch.jitter": [
+          1.7,
+          1.3
+        ],
+        "brightnessLag": [
+          0,
+          110
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 79,
+      "midi": 79,
+      "note": "G5",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.64,
+      "excess": 1.53,
+      "excessV1": 1.67,
+      "passed": 18,
+      "total": 30,
+      "oursCents": -0.42899918318461117,
+      "refCents": -1.1876848453865243,
+      "worst": "各泛音衰减 8.53",
+      "life": {
+        "shimmer": [
+          -30.6,
+          -28.4
+        ],
+        "flutter": [
+          0.7,
+          1.7
+        ],
+        "pitch.jitter": [
+          1.7,
+          1.1
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 79,
+      "midi": 79,
+      "note": "G5",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.61,
+      "excess": 1.22,
+      "excessV1": 1.31,
+      "passed": 16,
+      "total": 30,
+      "oursCents": -0.39045288097655306,
+      "refCents": 5.243510647631059,
+      "worst": "起音 10–90% 4.64",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -24.6
+        ],
+        "flutter": [
+          0.7,
+          2.1
+        ],
+        "pitch.jitter": [
+          1.7,
+          1.7
+        ],
+        "brightnessLag": [
+          -20,
+          40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 79,
+      "midi": 79,
+      "note": "G5",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.44,
+      "excess": 1.16,
+      "excessV1": 1.22,
+      "passed": 18,
+      "total": 29,
+      "oursCents": -0.3449233713250543,
+      "refCents": 5.031939263114156,
+      "worst": "整体衰减 2.83",
+      "life": {
+        "shimmer": [
+          -29.7,
+          -23
+        ],
+        "flutter": [
+          0.7,
+          1.8
+        ],
+        "pitch.jitter": [
+          1.7,
+          1.5
+        ],
+        "brightnessLag": [
+          -20,
+          40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 84,
+      "midi": 84,
+      "note": "C6",
+      "size": 0.3,
+      "split": "test",
+      "distance": 1.71,
+      "excess": 1.48,
+      "excessV1": 1.64,
+      "passed": 18,
+      "total": 30,
+      "oursCents": -0.6664571416063104,
+      "refCents": -26.31203834454541,
+      "worst": "各泛音衰减 6.34",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -24.3
+        ],
+        "flutter": [
+          0.5,
+          1.5
+        ],
+        "pitch.jitter": [
+          1.7,
+          2.3
+        ],
+        "brightnessLag": [
+          0,
+          60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 84,
+      "midi": 84,
+      "note": "C6",
+      "size": 0.6,
+      "split": "test",
+      "distance": 1.25,
+      "excess": 1.09,
+      "excessV1": 1.17,
+      "passed": 21,
+      "total": 29,
+      "oursCents": -0.6498843898685353,
+      "refCents": -2.607946680469022,
+      "worst": "各泛音衰减 4.79",
+      "life": {
+        "shimmer": [
+          -30.3,
+          -25.5
+        ],
+        "flutter": [
+          0.5,
+          3.2
+        ],
+        "pitch.jitter": [
+          1.7,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-violin",
+      "source": "TinySOL",
+      "catalogMidi": 84,
+      "midi": 84,
+      "note": "C6",
+      "size": 0.9,
+      "split": "test",
+      "distance": 1.03,
+      "excess": 0.82,
+      "excessV1": 0.86,
+      "passed": 24,
+      "total": 29,
+      "oursCents": -0.6289593558437359,
+      "refCents": -3.0931921023374733,
+      "worst": "各泛音衰减 2.96",
+      "life": {
+        "shimmer": [
+          -30,
+          -24.9
+        ],
+        "flutter": [
+          0.5,
+          1.6
+        ],
+        "pitch.jitter": [
+          1.7,
+          2
+        ],
+        "brightnessLag": [
+          0,
+          20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.68,
+      "excess": 1.51,
+      "excessV1": 1.63,
+      "passed": 12,
+      "total": 25,
+      "oursCents": -1.587474151382675,
+      "refCents": -0.6316609335008748,
+      "worst": "起音噪声感 4.26",
+      "life": {
+        "shimmer": [
+          -25.4,
+          -34.7
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          2.6,
+          1.1
+        ],
+        "brightnessLag": [
+          -10,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.67,
+      "excess": 1.36,
+      "excessV1": 1.42,
+      "passed": 12,
+      "total": 26,
+      "oursCents": -1.663338105807147,
+      "refCents": -4.5456959650607764,
+      "worst": "谐噪比 3.42",
+      "life": {
+        "shimmer": [
+          -25.3,
+          -33.1
+        ],
+        "flutter": [
+          0.2,
+          0.4
+        ],
+        "pitch.jitter": [
+          2.6,
+          0.8
+        ],
+        "brightnessLag": [
+          -10,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 48,
+      "midi": 48,
+      "note": "C3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.65,
+      "excess": 1.41,
+      "excessV1": 1.28,
+      "passed": 12,
+      "total": 26,
+      "oursCents": -1.7788484578001535,
+      "refCents": -1.5496843121926434,
+      "worst": "各泛音衰减 8.66",
+      "life": {
+        "shimmer": [
+          -25.3,
+          -33.2
+        ],
+        "flutter": [
+          0.2,
+          1.1
+        ],
+        "pitch.jitter": [
+          2.6,
+          2
+        ],
+        "brightnessLag": [
+          -10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 53,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 2.01,
+      "excess": 1.74,
+      "excessV1": 1.77,
+      "passed": 11,
+      "total": 25,
+      "oursCents": -0.3582830102855316,
+      "refCents": -11.262162650870268,
+      "worst": "起音噪声感 4.14",
+      "life": {
+        "shimmer": [
+          -25.1,
+          -30.5
+        ],
+        "flutter": [
+          0.4,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.9,
+          2.3
+        ],
+        "brightnessLag": [
+          -10,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 53,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.93,
+      "excess": 1.69,
+      "excessV1": 1.73,
+      "passed": 13,
+      "total": 29,
+      "oursCents": -0.3436432854912959,
+      "refCents": -17.38907770781449,
+      "worst": "奇偶泛音比 3.57",
+      "life": {
+        "shimmer": [
+          -25.1,
+          -29.3
+        ],
+        "flutter": [
+          0.4,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.9
+        ],
+        "brightnessLag": [
+          -10,
+          -110
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 53,
+      "midi": 53,
+      "note": "F3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.33,
+      "excess": 0.99,
+      "excessV1": 1.03,
+      "passed": 19,
+      "total": 30,
+      "oursCents": -0.3171490752552244,
+      "refCents": 4.990761588228422,
+      "worst": "奇偶泛音比 2.02",
+      "life": {
+        "shimmer": [
+          -25.4,
+          -28.6
+        ],
+        "flutter": [
+          0.3,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.5,
+          2.3
+        ],
+        "brightnessLag": [
+          0,
+          -60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 58,
+      "midi": 58,
+      "note": "A#3",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.75,
+      "excess": 1.56,
+      "excessV1": 1.76,
+      "passed": 16,
+      "total": 30,
+      "oursCents": -1.127442213651499,
+      "refCents": -48.13311161249043,
+      "worst": "音高 9.40",
+      "life": {
+        "shimmer": [
+          -25.4,
+          -28.2
+        ],
+        "flutter": [
+          0.6,
+          1.9
+        ],
+        "pitch.jitter": [
+          1.6,
+          1.4
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 58,
+      "midi": 58,
+      "note": "A#3",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.16,
+      "excess": 0.99,
+      "excessV1": 1.1,
+      "passed": 23,
+      "total": 29,
+      "oursCents": -1.15730892782608,
+      "refCents": -8.52783178426438,
+      "worst": "各泛音衰减 3.87",
+      "life": {
+        "shimmer": [
+          -25.4,
+          -28.7
+        ],
+        "flutter": [
+          0.6,
+          1.9
+        ],
+        "pitch.jitter": [
+          1.6,
+          2.3
+        ],
+        "brightnessLag": [
+          -10,
+          -30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 58,
+      "midi": 58,
+      "note": "A#3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.18,
+      "excess": 1,
+      "excessV1": 1.06,
+      "passed": 21,
+      "total": 30,
+      "oursCents": -1.1881445029754534,
+      "refCents": 7.240199641374406,
+      "worst": "各泛音衰减 8.09",
+      "life": {
+        "shimmer": [
+          -25.5,
+          -27.1
+        ],
+        "flutter": [
+          0.6,
+          2.2
+        ],
+        "pitch.jitter": [
+          1.6,
+          2.1
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 62,
+      "midi": 62,
+      "note": "D4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.48,
+      "excess": 1.22,
+      "excessV1": 1.3,
+      "passed": 16,
+      "total": 27,
+      "oursCents": -0.5140447994536648,
+      "refCents": -5.736458476267738,
+      "worst": "起音噪声感 5.25",
+      "life": {
+        "shimmer": [
+          -24.6,
+          -33.7
+        ],
+        "flutter": [
+          0.5,
+          1.2
+        ],
+        "pitch.jitter": [
+          1.8,
+          1
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 62,
+      "midi": 62,
+      "note": "D4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.28,
+      "excess": 1.16,
+      "excessV1": 1.16,
+      "passed": 16,
+      "total": 26,
+      "oursCents": -0.43788330988498503,
+      "refCents": 0.9862450575886982,
+      "worst": "各泛音衰减 6.05",
+      "life": {
+        "shimmer": [
+          -24.5,
+          -38.3
+        ],
+        "flutter": [
+          0.5,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.8,
+          0.6
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 62,
+      "midi": 62,
+      "note": "D4",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.34,
+      "excess": 1.17,
+      "excessV1": 1.14,
+      "passed": 16,
+      "total": 26,
+      "oursCents": -0.33321790719555766,
+      "refCents": -0.7051789307165636,
+      "worst": "各泛音衰减 8.59",
+      "life": {
+        "shimmer": [
+          -24.4,
+          -36
+        ],
+        "flutter": [
+          0.5,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.8,
+          0.4
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 67,
+      "midi": 67,
+      "note": "G4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.63,
+      "excess": 1.4,
+      "excessV1": 1.51,
+      "passed": 15,
+      "total": 29,
+      "oursCents": -0.4216673529703184,
+      "refCents": -1.0523958863248057,
+      "worst": "起音噪声感 4.46",
+      "life": {
+        "shimmer": [
+          -24.7,
+          -26.6
+        ],
+        "flutter": [
+          0.5,
+          1.7
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.1
+        ],
+        "brightnessLag": [
+          0,
+          130
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 67,
+      "midi": 67,
+      "note": "G4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.46,
+      "excess": 1.16,
+      "excessV1": 1.26,
+      "passed": 18,
+      "total": 30,
+      "oursCents": -0.4124684043307001,
+      "refCents": 1.4300221280768695,
+      "worst": "高频滞后 7.00",
+      "life": {
+        "shimmer": [
+          -24.7,
+          -26.3
+        ],
+        "flutter": [
+          0.5,
+          1.6
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.8
+        ],
+        "brightnessLag": [
+          -10,
+          -150
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 67,
+      "midi": 67,
+      "note": "G4",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.42,
+      "excess": 1.03,
+      "excessV1": 1.03,
+      "passed": 20,
+      "total": 30,
+      "oursCents": -0.40231992930781135,
+      "refCents": -1.123951605115644,
+      "worst": "奇偶泛音比 2.15",
+      "life": {
+        "shimmer": [
+          -25,
+          -23.5
+        ],
+        "flutter": [
+          0.5,
+          1.8
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.4
+        ],
+        "brightnessLag": [
+          -10,
+          70
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.3,
+      "split": "test",
+      "distance": 1.7,
+      "excess": 1.37,
+      "excessV1": 1.49,
+      "passed": 17,
+      "total": 30,
+      "oursCents": -0.38568395748369055,
+      "refCents": -8.187202143899,
+      "worst": "起音噪声感 5.29",
+      "life": {
+        "shimmer": [
+          -24.8,
+          -25.7
+        ],
+        "flutter": [
+          0.6,
+          1.2
+        ],
+        "pitch.jitter": [
+          2.2,
+          1.8
+        ],
+        "brightnessLag": [
+          0,
+          40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.6,
+      "split": "test",
+      "distance": 1.39,
+      "excess": 1.11,
+      "excessV1": 1.14,
+      "passed": 22,
+      "total": 30,
+      "oursCents": -0.3696002574560253,
+      "refCents": -1.6751006463425437,
+      "worst": "各泛音衰减 4.78",
+      "life": {
+        "shimmer": [
+          -25,
+          -24.7
+        ],
+        "flutter": [
+          0.6,
+          1.1
+        ],
+        "pitch.jitter": [
+          2.2,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          -30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-viola",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.9,
+      "split": "test",
+      "distance": 1.22,
+      "excess": 1.01,
+      "excessV1": 1,
+      "passed": 20,
+      "total": 29,
+      "oursCents": -0.34880438451399853,
+      "refCents": -3.6072673429623827,
+      "worst": "各泛音衰减 4.32",
+      "life": {
+        "shimmer": [
+          -25.1,
+          -23.3
+        ],
+        "flutter": [
+          0.7,
+          1.4
+        ],
+        "pitch.jitter": [
+          2.2,
+          2.1
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.72,
+      "excess": 1.5,
+      "excessV1": 1.59,
+      "passed": 12,
+      "total": 26,
+      "oursCents": -2.0178017312226775,
+      "refCents": 10.415008851406206,
+      "worst": "整体衰减 3.41",
+      "life": {
+        "shimmer": [
+          -24.9,
+          -31.5
+        ],
+        "flutter": [
+          0.1,
+          1.2
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.3
+        ],
+        "brightnessLag": [
+          -10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.55,
+      "excess": 1.39,
+      "excessV1": 1.31,
+      "passed": 14,
+      "total": 27,
+      "oursCents": -2.0317650329775208,
+      "refCents": 8.711553899545445,
+      "worst": "高频滞后 7.50",
+      "life": {
+        "shimmer": [
+          -24.8,
+          -37
+        ],
+        "flutter": [
+          0.1,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.5
+        ],
+        "brightnessLag": [
+          -10,
+          -160
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.72,
+      "excess": 1.53,
+      "excessV1": 1.37,
+      "passed": 15,
+      "total": 26,
+      "oursCents": -2.047428052914095,
+      "refCents": 19.73332850322716,
+      "worst": "起音噪声感 4.22",
+      "life": {
+        "shimmer": [
+          -24.6,
+          -32.5
+        ],
+        "flutter": [
+          0.1,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.1
+        ],
+        "brightnessLag": [
+          -10,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 43,
+      "midi": 43,
+      "note": "G2",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.35,
+      "excess": 1.15,
+      "excessV1": 1.09,
+      "passed": 14,
+      "total": 26,
+      "oursCents": -1.2981951529466005,
+      "refCents": -2.8049631048965367,
+      "worst": "谐噪比 2.32",
+      "life": {
+        "shimmer": [
+          -24.4,
+          -33.2
+        ],
+        "flutter": [
+          0.4,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.3,
+          1.2
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 43,
+      "midi": 43,
+      "note": "G2",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.7,
+      "excess": 1.44,
+      "excessV1": 1.39,
+      "passed": 12,
+      "total": 26,
+      "oursCents": -1.3346664963706616,
+      "refCents": -31.83866818819328,
+      "worst": "音高 6.10",
+      "life": {
+        "shimmer": [
+          -24.4,
+          -34.6
+        ],
+        "flutter": [
+          0.4,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.6
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 43,
+      "midi": 43,
+      "note": "G2",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.91,
+      "excess": 1.67,
+      "excessV1": 1.56,
+      "passed": 12,
+      "total": 26,
+      "oursCents": -1.3740214401093855,
+      "refCents": -19.55158074036417,
+      "worst": "谐波间隙噪声 4.12",
+      "life": {
+        "shimmer": [
+          -24.2,
+          -35.3
+        ],
+        "flutter": [
+          0.4,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.3,
+          0.5
+        ],
+        "brightnessLag": [
+          0,
+          -110
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.5,
+      "excess": 1.22,
+      "excessV1": 1.19,
+      "passed": 16,
+      "total": 26,
+      "oursCents": -1.2321965019617287,
+      "refCents": -4.379605951786003,
+      "worst": "起音噪声感 2.87",
+      "life": {
+        "shimmer": [
+          -24.4,
+          -33
+        ],
+        "flutter": [
+          0.5,
+          0.6
+        ],
+        "pitch.jitter": [
+          1.4,
+          0.8
+        ],
+        "brightnessLag": [
+          0,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.18,
+      "excess": 1.01,
+      "excessV1": 0.82,
+      "passed": 19,
+      "total": 26,
+      "oursCents": -1.2474468844399522,
+      "refCents": 1.0382979643701418,
+      "worst": "最高泛音 2.88",
+      "life": {
+        "shimmer": [
+          -24.5,
+          -35.5
+        ],
+        "flutter": [
+          0.5,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.4,
+          0.8
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.52,
+      "excess": 1.2,
+      "excessV1": 1.03,
+      "passed": 15,
+      "total": 25,
+      "oursCents": -1.2627514161943347,
+      "refCents": -4.957796448540389,
+      "worst": "最高泛音 3.50",
+      "life": {
+        "shimmer": [
+          -24.5,
+          -31.3
+        ],
+        "flutter": [
+          0.5,
+          1
+        ],
+        "pitch.jitter": [
+          1.4,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          -60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 58,
+      "midi": 58,
+      "note": "A#3",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.61,
+      "excess": 1.44,
+      "excessV1": 1.57,
+      "passed": 17,
+      "total": 30,
+      "oursCents": -0.9546323614372672,
+      "refCents": -3.8875969295345896,
+      "worst": "各泛音衰减 7.86",
+      "life": {
+        "shimmer": [
+          -23.9,
+          -31.7
+        ],
+        "flutter": [
+          0.7,
+          1.8
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.4
+        ],
+        "brightnessLag": [
+          0,
+          30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 58,
+      "midi": 58,
+      "note": "A#3",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.75,
+      "excess": 1.39,
+      "excessV1": 1.56,
+      "passed": 16,
+      "total": 30,
+      "oursCents": -0.9630397831889373,
+      "refCents": -15.817830424470529,
+      "worst": "谐噪比 2.90",
+      "life": {
+        "shimmer": [
+          -24,
+          -29.4
+        ],
+        "flutter": [
+          0.8,
+          1.1
+        ],
+        "pitch.jitter": [
+          1.9,
+          1.9
+        ],
+        "brightnessLag": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 58,
+      "midi": 58,
+      "note": "A#3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.4,
+      "excess": 1.21,
+      "excessV1": 1.2,
+      "passed": 20,
+      "total": 29,
+      "oursCents": -0.9702258363437991,
+      "refCents": 0.8824700514965556,
+      "worst": "起音噪声感 4.57",
+      "life": {
+        "shimmer": [
+          -24,
+          -28.4
+        ],
+        "flutter": [
+          0.8,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.9,
+          2
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 65,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.29,
+      "excess": 1.13,
+      "excessV1": 1.14,
+      "passed": 18,
+      "total": 29,
+      "oursCents": -0.19583050276311179,
+      "refCents": -3.2218893997165567,
+      "worst": "最高泛音 2.22",
+      "life": {
+        "shimmer": [
+          -24.3,
+          -32.5
+        ],
+        "flutter": [
+          0.8,
+          1.2
+        ],
+        "pitch.jitter": [
+          2.4,
+          1.5
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 65,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.55,
+      "excess": 1.16,
+      "excessV1": 1.29,
+      "passed": 20,
+      "total": 30,
+      "oursCents": -0.1687657826547238,
+      "refCents": -11.813196843333976,
+      "worst": "奇偶泛音比 4.23",
+      "life": {
+        "shimmer": [
+          -24.2,
+          -27.4
+        ],
+        "flutter": [
+          0.8,
+          1.5
+        ],
+        "pitch.jitter": [
+          2.4,
+          2.9
+        ],
+        "brightnessLag": [
+          0,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 65,
+      "midi": 65,
+      "note": "F4",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.34,
+      "excess": 1.07,
+      "excessV1": 1.16,
+      "passed": 20,
+      "total": 30,
+      "oursCents": -0.14328497475097784,
+      "refCents": -0.2129802453964121,
+      "worst": "奇偶泛音比 3.32",
+      "life": {
+        "shimmer": [
+          -24.2,
+          -30
+        ],
+        "flutter": [
+          0.8,
+          1.6
+        ],
+        "pitch.jitter": [
+          2.4,
+          2.5
+        ],
+        "brightnessLag": [
+          0,
+          -80
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.3,
+      "split": "test",
+      "distance": 1.52,
+      "excess": 1.31,
+      "excessV1": 1.41,
+      "passed": 17,
+      "total": 29,
+      "oursCents": -0.21916559368233202,
+      "refCents": -1.74244778173605,
+      "worst": "起音 10–90% 5.45",
+      "life": {
+        "shimmer": [
+          -23.9,
+          -23
+        ],
+        "flutter": [
+          0.9,
+          1.7
+        ],
+        "pitch.jitter": [
+          2.9,
+          2.7
+        ],
+        "brightnessLag": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.6,
+      "split": "test",
+      "distance": 1.38,
+      "excess": 1.13,
+      "excessV1": 1.24,
+      "passed": 18,
+      "total": 29,
+      "oursCents": -0.18874077120046492,
+      "refCents": -6.364308636279125,
+      "worst": "起音噪声感 3.70",
+      "life": {
+        "shimmer": [
+          -24,
+          -20.8
+        ],
+        "flutter": [
+          0.9,
+          1.9
+        ],
+        "pitch.jitter": [
+          2.9,
+          2.5
+        ],
+        "brightnessLag": [
+          0,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-cello",
+      "source": "TinySOL",
+      "catalogMidi": 72,
+      "midi": 72,
+      "note": "C5",
+      "size": 0.9,
+      "split": "test",
+      "distance": 1.57,
+      "excess": 1.3,
+      "excessV1": 1.42,
+      "passed": 16,
+      "total": 29,
+      "oursCents": -0.1612494453762502,
+      "refCents": -11.247962920409226,
+      "worst": "整体衰减 2.76",
+      "life": {
+        "shimmer": [
+          -24,
+          -20.2
+        ],
+        "flutter": [
+          0.9,
+          3.3
+        ],
+        "pitch.jitter": [
+          2.9,
+          4.1
+        ],
+        "brightnessLag": [
+          0,
+          80
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 2.01,
+      "excess": 1.73,
+      "excessV1": 1.83,
+      "passed": 10,
+      "total": 26,
+      "oursCents": -1.5031618919419771,
+      "refCents": 18.642524257366148,
+      "worst": "整体衰减 4.73",
+      "life": {
+        "shimmer": [
+          -26.8,
+          -41
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.2,
+          2.6
+        ],
+        "brightnessLag": [
+          -10,
+          -90
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.5,
+      "excess": 1.23,
+      "excessV1": 1.26,
+      "passed": 16,
+      "total": 29,
+      "oursCents": -1.5088211384908707,
+      "refCents": 7.712327706191775,
+      "worst": "整体衰减 2.75",
+      "life": {
+        "shimmer": [
+          -26.4,
+          -33.8
+        ],
+        "flutter": [
+          0.2,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.2,
+          1.5
+        ],
+        "brightnessLag": [
+          -10,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 36,
+      "midi": 36,
+      "note": "C2",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.59,
+      "excess": 1.27,
+      "excessV1": 1.28,
+      "passed": 14,
+      "total": 27,
+      "oursCents": -1.516946392287111,
+      "refCents": 8.46743468988886,
+      "worst": "各泛音衰减 5.40",
+      "life": {
+        "shimmer": [
+          -26.2,
+          -33.7
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.2,
+          3.3
+        ],
+        "brightnessLag": [
+          -10,
+          -70
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.5,
+      "excess": 1.2,
+      "excessV1": 1.28,
+      "passed": 14,
+      "total": 27,
+      "oursCents": -0.7328756951139054,
+      "refCents": 3.0410943486720714,
+      "worst": "谐噪比 3.05",
+      "life": {
+        "shimmer": [
+          -30.6,
+          -34
+        ],
+        "flutter": [
+          0.2,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.2,
+          1.7
+        ],
+        "brightnessLag": [
+          0,
+          -30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.64,
+      "excess": 1.48,
+      "excessV1": 1.44,
+      "passed": 13,
+      "total": 27,
+      "oursCents": -0.7269670128568531,
+      "refCents": 3.1900598820268815,
+      "worst": "谐噪比 4.15",
+      "life": {
+        "shimmer": [
+          -30.6,
+          -32
+        ],
+        "flutter": [
+          0.2,
+          0.3
+        ],
+        "pitch.jitter": [
+          1.2,
+          4.5
+        ],
+        "brightnessLag": [
+          -10,
+          -30
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 41,
+      "midi": 41,
+      "note": "F2",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.17,
+      "excess": 0.92,
+      "excessV1": 0.99,
+      "passed": 20,
+      "total": 27,
+      "oursCents": -0.7211638187865493,
+      "refCents": 0.11406943807438034,
+      "worst": "起音 10–90% 5.28",
+      "life": {
+        "shimmer": [
+          -30.6,
+          -32.4
+        ],
+        "flutter": [
+          0.2,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.2,
+          3
+        ],
+        "brightnessLag": [
+          -10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 46,
+      "midi": 46,
+      "note": "A#2",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.48,
+      "excess": 1.36,
+      "excessV1": 1.37,
+      "passed": 15,
+      "total": 27,
+      "oursCents": -1.2322705249687398,
+      "refCents": -7.700916372798574,
+      "worst": "整体衰减 4.08",
+      "life": {
+        "shimmer": [
+          -30.3,
+          -39.2
+        ],
+        "flutter": [
+          0.3,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.2,
+          2.4
+        ],
+        "brightnessLag": [
+          10,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 46,
+      "midi": 46,
+      "note": "A#2",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.58,
+      "excess": 1.29,
+      "excessV1": 1.27,
+      "passed": 18,
+      "total": 27,
+      "oursCents": -1.2370198431836223,
+      "refCents": -20.89669793765286,
+      "worst": "奇偶泛音比 2.96",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -36
+        ],
+        "flutter": [
+          0.3,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.2,
+          2.3
+        ],
+        "brightnessLag": [
+          10,
+          -50
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 46,
+      "midi": 46,
+      "note": "A#2",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.53,
+      "excess": 1.38,
+      "excessV1": 1.45,
+      "passed": 16,
+      "total": 26,
+      "oursCents": -1.2437905885592142,
+      "refCents": -28.393523613830833,
+      "worst": "各泛音衰减 7.72",
+      "life": {
+        "shimmer": [
+          -29.3,
+          -28.1
+        ],
+        "flutter": [
+          0.3,
+          0.4
+        ],
+        "pitch.jitter": [
+          1.2,
+          2.4
+        ],
+        "brightnessLag": [
+          10,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.46,
+      "excess": 1.23,
+      "excessV1": 1.32,
+      "passed": 19,
+      "total": 28,
+      "oursCents": -0.9299928234295979,
+      "refCents": 9.133646330291754,
+      "worst": "谐噪比 3.06",
+      "life": {
+        "shimmer": [
+          -29.9,
+          -34.4
+        ],
+        "flutter": [
+          0.4,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.1,
+          2.3
+        ],
+        "brightnessLag": [
+          0,
+          20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.29,
+      "excess": 1.1,
+      "excessV1": 1.21,
+      "passed": 20,
+      "total": 27,
+      "oursCents": -0.9381832626889717,
+      "refCents": -7.555722956381696,
+      "worst": "谐噪比 2.68",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -32.9
+        ],
+        "flutter": [
+          0.4,
+          0.5
+        ],
+        "pitch.jitter": [
+          1.1,
+          2.8
+        ],
+        "brightnessLag": [
+          0,
+          -40
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 50,
+      "midi": 50,
+      "note": "D3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.85,
+      "excess": 1.67,
+      "excessV1": 1.77,
+      "passed": 14,
+      "total": 28,
+      "oursCents": -0.9464251944420156,
+      "refCents": -28.191617215294922,
+      "worst": "起音 10–90% 11.81",
+      "life": {
+        "shimmer": [
+          -30.1,
+          -28.7
+        ],
+        "flutter": [
+          0.4,
+          1.3
+        ],
+        "pitch.jitter": [
+          1.1,
+          5.7
+        ],
+        "brightnessLag": [
+          0,
+          10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 55,
+      "midi": 55,
+      "note": "G3",
+      "size": 0.3,
+      "split": "valid",
+      "distance": 1.47,
+      "excess": 1.22,
+      "excessV1": 1.3,
+      "passed": 16,
+      "total": 27,
+      "oursCents": -0.3928321878411059,
+      "refCents": 1.6000352788793126,
+      "worst": "谐噪比 3.77",
+      "life": {
+        "shimmer": [
+          -29.1,
+          -31.8
+        ],
+        "flutter": [
+          0.3,
+          0.8
+        ],
+        "pitch.jitter": [
+          1,
+          1.3
+        ],
+        "brightnessLag": [
+          10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 55,
+      "midi": 55,
+      "note": "G3",
+      "size": 0.6,
+      "split": "valid",
+      "distance": 1.68,
+      "excess": 1.48,
+      "excessV1": 1.56,
+      "passed": 13,
+      "total": 28,
+      "oursCents": -0.3991930129295879,
+      "refCents": -36.33290941661258,
+      "worst": "音高 7.19",
+      "life": {
+        "shimmer": [
+          -28.7,
+          -31.7
+        ],
+        "flutter": [
+          0.3,
+          1.9
+        ],
+        "pitch.jitter": [
+          1,
+          5.1
+        ],
+        "brightnessLag": [
+          10,
+          -10
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 55,
+      "midi": 55,
+      "note": "G3",
+      "size": 0.9,
+      "split": "valid",
+      "distance": 1.55,
+      "excess": 1.36,
+      "excessV1": 1.48,
+      "passed": 19,
+      "total": 30,
+      "oursCents": -0.4052087684247901,
+      "refCents": -7.306421013940491,
+      "worst": "各泛音衰减 10.38",
+      "life": {
+        "shimmer": [
+          -28.9,
+          -29.5
+        ],
+        "flutter": [
+          0.3,
+          1
+        ],
+        "pitch.jitter": [
+          1,
+          1.8
+        ],
+        "brightnessLag": [
+          10,
+          -20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.3,
+      "split": "test",
+      "distance": 1.72,
+      "excess": 1.46,
+      "excessV1": 1.51,
+      "passed": 13,
+      "total": 28,
+      "oursCents": -0.4014209015889065,
+      "refCents": -34.52961421162242,
+      "worst": "整体衰减 4.57",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -30.3
+        ],
+        "flutter": [
+          0.3,
+          0.8
+        ],
+        "pitch.jitter": [
+          1.1,
+          3.5
+        ],
+        "brightnessLag": [
+          0,
+          20
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.6,
+      "split": "test",
+      "distance": 1.55,
+      "excess": 1.3,
+      "excessV1": 1.33,
+      "passed": 13,
+      "total": 27,
+      "oursCents": -0.40452064291045947,
+      "refCents": -6.565831050751387,
+      "worst": "各泛音衰减 8.16",
+      "life": {
+        "shimmer": [
+          -30.2,
+          -35.2
+        ],
+        "flutter": [
+          0.3,
+          0.9
+        ],
+        "pitch.jitter": [
+          1.1,
+          2.7
+        ],
+        "brightnessLag": [
+          0,
+          60
+        ]
+      }
+    },
+    {
+      "id": "tinysol-bass",
+      "source": "TinySOL",
+      "catalogMidi": 60,
+      "midi": 60,
+      "note": "C4",
+      "size": 0.9,
+      "split": "test",
+      "distance": 1.69,
+      "excess": 1.43,
+      "excessV1": 1.37,
+      "passed": 14,
+      "total": 28,
+      "oursCents": -0.40729874887154177,
+      "refCents": -41.47691408645799,
+      "worst": "音高 8.21",
+      "life": {
+        "shimmer": [
+          -30.6,
+          -28.1
+        ],
+        "flutter": [
+          0.3,
+          1.6
+        ],
+        "pitch.jitter": [
+          1.1,
+          7.9
+        ],
+        "brightnessLag": [
+          0,
+          0
         ]
       }
     }

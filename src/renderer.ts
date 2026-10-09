@@ -1,5 +1,5 @@
 import { measureLoudness } from './analysis/loudness.js';
-import { createEngine, isAcousticEngine, type Engine } from './engines/acoustic.js';
+import { acousticTailSec, createEngine, isAcousticEngine, type Engine } from './engines/acoustic.js';
 import {
   Ducker,
   FdnReverb,
@@ -220,9 +220,9 @@ function activityBounds(
     t1 = Math.max(t1, c.at + clipLengthSec(c, clipAudio?.[c.src]));
   }
   if (!any || !Number.isFinite(t0)) return [0, 0];
-  // Acoustic engines sustain into setRelease (default 180 ms). The window has to
-  // include that tail, or a held organ is cut while it is still loud.
-  const releaseSec = (track.release ?? (isAcousticEngine(track.engine) ? 180 : 0)) / 1000;
+  // The window has to include the tail, or a held note is cut while it is still loud.
+  // A release shape follows pitch and loudness, so the window uses that preset's longest tail.
+  const releaseSec = acousticTailSec(track.engine, track.hue, track.notes, track.release);
   const start = Math.max(0, Math.floor(t0 * sampleRate) - 1);
   const end = Math.min(numSamples, Math.ceil((t1 + releaseSec + 0.05) * sampleRate));
   return [start, Math.max(start, end)];
