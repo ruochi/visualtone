@@ -24,6 +24,13 @@ export interface PitchLifeSpec {
   vibratoHighCents?: number;
   vibratoLowMidi?: number;
   vibratoHighMidi?: number;
+  /**
+   * Each vibrato cycle aims for a new depth, this fraction above or below the mean.
+   * 0.1 is about ±10%. Unset keeps a steady sine, sample for sample.
+   */
+  vibratoDepthJitter?: number;
+  /** Same, for the vibrato rate. */
+  vibratoRateJitter?: number;
 }
 
 export interface PitchLife {
@@ -52,6 +59,13 @@ export function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: n
   let w1 = 0;
   let wPos = 0;
   let depthCents = spec.vibratoCents;
+  const depthJitter = spec.vibratoDepthJitter ?? 0;
+  const rateJitter = spec.vibratoRateJitter ?? 0;
+  const jittered = depthJitter > 0 || rateJitter > 0;
+  let depthScale = 1;
+  let rateScale = 1;
+  let depthTarget = 1;
+  let rateTarget = 1;
   const life: PitchLife = {
     ratio: 1,
     gain: 1,
@@ -89,9 +103,22 @@ export function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: n
       if (depthCents > 0) {
         const grow = Math.max(0, Math.min(1, (t - spec.vibratoDelaySec) / rampSec));
         const depth = depthCents * grow * grow * (3 - 2 * grow);
-        phase += (2 * Math.PI * spec.vibratoHz * (1 + wander * 0.03)) / sampleRate;
-        if (phase > Math.PI * 2) phase -= Math.PI * 2;
-        vib = Math.sin(phase) * (depth / Math.max(1e-9, depthCents));
+        const rate = spec.vibratoHz * (1 + wander * 0.03) * (jittered ? rateScale : 1);
+        phase += (2 * Math.PI * rate) / sampleRate;
+        if (phase > Math.PI * 2) {
+          phase -= Math.PI * 2;
+          if (jittered) {
+            if (depthJitter > 0) depthTarget = 1 + (rng() * 2 - 1) * depthJitter;
+            if (rateJitter > 0) rateTarget = 1 + (rng() * 2 - 1) * rateJitter;
+          }
+        }
+        if (jittered) {
+          const follow = 1 - Math.exp(-1 / (0.12 * sampleRate));
+          depthScale += (depthTarget - depthScale) * follow;
+          rateScale += (rateTarget - rateScale) * follow;
+        }
+        const used = jittered ? depth * depthScale : depth;
+        vib = Math.sin(phase) * (used / Math.max(1e-9, depthCents));
         cents += vib * depthCents;
       }
       t += 1 / sampleRate;

@@ -63,6 +63,13 @@ export interface HarmonicPreset {
    */
   modes?: { hz: number; q: number; db: number }[];
   /**
+   * A dense body, rebuilt from `seed` so a fit can search shapes without storing every peak.
+   * Narrow peaks and dips sit on a log-frequency table. While the note sounds, each partial
+   * looks up its own instantaneous frequency, so vibrato sweeps it up and down the slope.
+   * Absent leaves the partials on the slope and on `modes`.
+   */
+  body?: { seed: number; count: number; qLo: number; qHi: number; db: number; loHz: number; hiHz: number };
+  /**
    * A brighter copy of the harmonics that dies after the attack, plus a short noise burst.
    * Finger attack on an electric bass.
    */
@@ -243,17 +250,20 @@ export const HARMONIC_PRESETS = {
       { hz: 1209.6, q: 3, db: -12.42 },
       { hz: 4160, q: 6, db: 10.52 },
     ],
+    body: { seed: 1, count: 36, qLo: 28, qHi: 70, db: 7, loHz: 160, hiHz: 12000 },
     attackSec: 0.0455,
     life: {
       vibratoCents: 18,
       vibratoHz: 5.375,
       vibratoDelaySec: 0.22,
       wanderCents: 2.3,
-      vibratoGain: 0.05,
+      vibratoGain: 0,
       shimmerRms: 0.0515,
       vibratoHighCents: 6,
       vibratoLowMidi: 60,
       vibratoHighMidi: 68,
+      vibratoDepthJitter: 0.1,
+      vibratoRateJitter: 0.06,
     },
   },
   viola: {
@@ -300,17 +310,20 @@ export const HARMONIC_PRESETS = {
       mix: 0.195,
       mixStrike: 0,
     },
+    body: { seed: 1, count: 36, qLo: 28, qHi: 70, db: 7, loHz: 120, hiHz: 10000 },
     attackSec: 0.0645,
     life: {
       vibratoCents: 1,
       vibratoHz: 5.4,
       vibratoDelaySec: 0.22,
       wanderCents: 2.3,
-      vibratoGain: 0.05,
+      vibratoGain: 0,
       shimmerRms: 0.0375,
       vibratoHighCents: 13.5,
       vibratoLowMidi: 48,
       vibratoHighMidi: 72,
+      vibratoDepthJitter: 0.1,
+      vibratoRateJitter: 0.06,
     },
   },
   cello: {
@@ -326,11 +339,15 @@ export const HARMONIC_PRESETS = {
       { hz: 4864, q: 1.6, db: 10.72 },
     ],
     attackSec: 0.055,
+    body: { seed: 1, count: 40, qLo: 28, qHi: 72, db: 8, loHz: 70, hiHz: 8000 },
     life: {
       ...bowLife(2, 5.2, 0.053),
+      vibratoGain: 0,
       vibratoHighCents: 17.5,
       vibratoLowMidi: 48,
       vibratoHighMidi: 72,
+      vibratoDepthJitter: 0.1,
+      vibratoRateJitter: 0.06,
     },
   },
   contrabass: {
@@ -372,16 +389,19 @@ export const HARMONIC_PRESETS = {
       directHz: 4500,
     },
     attackSec: 0.06575,
+    body: { seed: 1, count: 48, qLo: 28, qHi: 70, db: 7, loHz: 40, hiHz: 6000 },
     life: {
       vibratoCents: 7,
       vibratoHz: 4.45,
       vibratoDelaySec: 0.3,
       wanderCents: 1.6,
-      vibratoGain: 0.04,
+      vibratoGain: 0,
       shimmerRms: 0.0235,
       vibratoHighCents: 2,
       vibratoLowMidi: 36,
       vibratoHighMidi: 50,
+      vibratoDepthJitter: 0.1,
+      vibratoRateJitter: 0.06,
     },
   },
   // Fitted to NSynth electronic basses (CC BY 4.0). Held strings decay; a finger transient dies in a few dozen milliseconds.
@@ -547,6 +567,62 @@ export type HarmonicInstrument = keyof typeof HARMONIC_PRESETS;
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 
+const BODY_PER_OCT = 400;
+const BODY_BLOCK = 32;
+
+function buildBodyTable(
+  body: NonNullable<HarmonicPreset['body']>,
+  modes: HarmonicPreset['modes'],
+): { db: Float64Array; logLo: number } | null {
+  const lo = body.loHz;
+  const hi = body.hiHz;
+  const count = Math.round(body.count);
+  if (!(hi > lo) || count < 1 || !(body.db > 0)) return null;
+  const logLo = Math.log2(lo);
+  const octaves = Math.log2(hi) - logLo;
+  const n = Math.max(8, Math.ceil(octaves * BODY_PER_OCT));
+  const table = new Float64Array(n);
+  const rng = mulberry32((Math.round(body.seed) >>> 0) || 1);
+  const peaks: { hz: number; q: number; db: number }[] = [];
+  for (let i = 0; i < count; i++) {
+    const hz = Math.pow(2, logLo + rng() * octaves);
+    const q = body.qLo + rng() * Math.max(0, body.qHi - body.qLo);
+    const amp = body.db * (0.6 + 0.8 * rng());
+    peaks.push({ hz, q: Math.max(1.5, q), db: (rng() < 0.5 ? -1 : 1) * amp });
+  }
+  if (modes) for (const m of modes) peaks.push(m);
+  for (const m of peaks) {
+    const half = Math.max(0.03, 8 / Math.max(1.5, m.q));
+    const center = (Math.log2(m.hz) - logLo) * BODY_PER_OCT;
+    const i0 = Math.max(0, Math.floor(center - half * BODY_PER_OCT));
+    const i1 = Math.min(n - 1, Math.ceil(center + half * BODY_PER_OCT));
+    for (let k = i0; k <= i1; k++) {
+      const f = Math.pow(2, logLo + (k + 0.5) / BODY_PER_OCT);
+      const r = f / m.hz;
+      const rq = r / m.q;
+      const d = (1 - r * r) * (1 - r * r) + rq * rq;
+      table[k] += m.db * (rq / Math.sqrt(d));
+    }
+  }
+  return { db: table, logLo };
+}
+
+function lookupBody(table: { db: Float64Array; logLo: number }, hz: number): number {
+  const x = (Math.log2(Math.max(1, hz)) - table.logLo) * BODY_PER_OCT - 0.5;
+  if (x <= 0) return table.db[0];
+  const last = table.db.length - 1;
+  if (x >= last) return table.db[last];
+  const i = Math.floor(x);
+  const f = x - i;
+  return table.db[i] * (1 - f) + table.db[i + 1] * f;
+}
+
+function clampDb(db: number): number {
+  if (db > 18) return 18;
+  if (db < -24) return -24;
+  return db;
+}
+
 export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed: number): Engine {
   const p = preset;
   const rng = mulberry32(seed || 1);
@@ -585,6 +661,13 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
   const life = createPitchLife(sampleRate, p.life, seed);
+  const bodyTable = p.body ? buildBodyTable(p.body, p.modes) : null;
+  const nominalDb = new Float64Array(N);
+  const bodyNow = new Float64Array(N);
+  const bodyTarget = new Float64Array(N);
+  const bodyInc = new Float64Array(N);
+  let bodyTick = 0;
+  for (let n = 0; n < N; n++) bodyNow[n] = 1;
 
   return {
     setRelease(ms: number) {
@@ -605,12 +688,16 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
           (s.base + s.soft * shade + high * (s.high + s.highSoft * shade)) * (1 - s.lowFlatten * low) - (light - 0.5) * s.light,
         );
         const brightTilt = tr ? Math.max(tr.minSlope, tilt - tr.brighten) : 0;
-        const modes = p.modes;
+        const modes = bodyTable ? undefined : p.modes;
         let energy = 0;
         for (let n = 1; n <= N; n++) {
           const audible = freq * n < sampleRate * 0.45;
           let g = audible ? Math.exp(-tilt * (n - 1)) : 0;
-          if (modes && g > 0) {
+          if (bodyTable && g > 0) {
+            const db = clampDb(lookupBody(bodyTable, freq * n));
+            nominalDb[n - 1] = db;
+            g *= Math.pow(10, db / 20);
+          } else if (modes && g > 0) {
             const f = freq * n;
             let db = 0;
             for (let i = 0; i < modes.length; i++) {
@@ -662,6 +749,10 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         bz1 = 0;
         bz2 = 0;
         env = 0;
+        if (bodyTable) {
+          bodyTick = 0;
+          for (let n = 0; n < N; n++) bodyNow[n] = 1;
+        }
         life.pitch(midi);
         life.start();
       }
@@ -675,6 +766,23 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         finger *= fingerDec;
       }
       life.step();
+      if (bodyTable) {
+        if (bodyTick === 0) {
+          const ratio = life.ratio;
+          for (let n = 0; n < N; n++) {
+            let target = 1;
+            if (gains[n] !== 0) {
+              const db = clampDb(lookupBody(bodyTable, freq * (n + 1) * ratio));
+              target = Math.pow(10, (db - nominalDb[n]) / 20);
+            }
+            bodyTarget[n] = target;
+            bodyInc[n] = (target - bodyNow[n]) / BODY_BLOCK;
+          }
+        }
+        const last = bodyTick === BODY_BLOCK - 1;
+        for (let n = 0; n < N; n++) bodyNow[n] = last ? bodyTarget[n] : bodyNow[n] + bodyInc[n];
+        bodyTick = last ? 0 : bodyTick + 1;
+      }
       const step = (2 * Math.PI * freq * life.ratio) / sampleRate;
       let sum = 0;
       let bright = 0;
@@ -687,8 +795,9 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
         const sine = Math.sin(phases[n]);
-        sum += sine * gains[n];
-        if (tr) bright += sine * brightGains[n];
+        const shaped = bodyTable ? gains[n] * bodyNow[n] : gains[n];
+        sum += sine * shaped;
+        if (tr) bright += sine * (bodyTable ? brightGains[n] * bodyNow[n] : brightGains[n]);
       }
       const white = rng() * 2 - 1;
       nz = white * (1 - noisePole) + nz * noisePole;

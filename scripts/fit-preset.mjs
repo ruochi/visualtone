@@ -173,12 +173,27 @@ function pictureSpec(preset) {
     span('slope.base', 0.04, 0.55, 0.05),
     span('slope.soft', 0, 0.55, 0.06),
     span('noise.direct', 0, 0.55, 0.05, 0),
+    span('noise.directHz', 800, 6000, 700),
     span('noise.level', 0, 0.16, 0.02),
-    span('life.vibratoCents', 0, 18, 1.5),
+    span('life.vibratoCents', 0, 24, 1.5),
+    span('life.shimmerRms', 0, 0.06, 0.01),
     span('resonance.mix', 0, 0.45, 0.05),
     span('resonance.hz', 60, 800, 70),
   ];
   if (preset.lowpass) specs.push(span('lowpass.hz', 2800, 14000, 1200));
+  if (preset.body) {
+    specs.push(
+      span('body.count', 12, 64, 8),
+      span('body.qLo', 20, 50, 6),
+      span('body.qHi', 40, 90, 10),
+      span('body.db', 2, 16, 2),
+      span('life.vibratoDepthJitter', 0, 0.2, 0.04),
+      span('life.vibratoRateJitter', 0, 0.15, 0.03),
+    );
+  }
+  // High notes sit on vibratoHighCents. The holdout is up there, and partials only
+  // wobble when that depth is wide enough to cross a body peak.
+  if (preset.life?.vibratoHighCents !== undefined) specs.push(span('life.vibratoHighCents', 0, 28, 2));
   return specs;
 }
 
@@ -281,6 +296,22 @@ if (usesRing) {
   console.log(`ring start loss ${bestLoss.toFixed(3)}`);
 }
 
+if (picture && preset.body) {
+  best['body.seed'] = Math.round(preset.body.seed ?? 1);
+  let seedLoss = bestLoss;
+  for (let seed = 1; seed <= 24; seed++) {
+    const trial = { ...best, 'body.seed': seed };
+    const { loss } = await evaluate(trial, false, ['valid']);
+    if (loss < seedLoss - 1e-4) {
+      best = trial;
+      bestLoss = loss;
+      seedLoss = loss;
+      console.log(`  body.seed -> ${seed}  loss ${loss.toFixed(3)}`);
+    } else process.stdout.write('.');
+  }
+  console.log(`\nbody seed ${best['body.seed']} loss ${bestLoss.toFixed(3)}`);
+}
+
 const clamp = (value, spec) => Math.min(spec.max, Math.max(spec.min, value));
 for (let round = 0; round < rounds; round++) {
   for (const spec of specs) {
@@ -304,40 +335,66 @@ for (let round = 0; round < rounds; round++) {
   console.log(`\nround ${round} loss ${bestLoss.toFixed(3)}`);
 }
 
+if (best['body.count'] !== undefined) best['body.count'] = Math.round(best['body.count']);
+if (best['body.seed'] !== undefined) best['body.seed'] = Math.round(best['body.seed']);
 const fit = await evaluate(best, false, ['valid']);
 const holdout = await evaluate(best, false, ['test']);
-const report = {
-  instrument,
-  set: setId,
-  rounds,
-  before: {
-    fitExcess: Number(meanExcess(beforeEval.rows).toFixed(3)),
-    holdoutExcess: Number(meanExcess(beforeHold.rows).toFixed(3)),
-    params: Object.fromEntries(specs.filter((s) => !s.path.startsWith('ring.')).map((s) => [s.path, start[s.path]])),
-  },
-  after: {
-    fitExcess: Number(meanExcess(fit.rows).toFixed(3)),
-    fitLoss: Number(fit.loss.toFixed(3)),
-    holdoutExcess: Number(meanExcess(holdout.rows).toFixed(3)),
-    holdoutLoss: Number(holdout.loss.toFixed(3)),
-    params: usesRing ? { ...best, 'ring.refHz': 55 } : { ...best },
-  },
-  notes: [...fit.rows, ...holdout.rows].map((r) => ({
-    file: r.file,
-    split: r.split,
-    midi: r.midi,
-    size: r.size,
-    excess: Number(r.excess.toFixed(3)),
-    cents: r.cents === null ? null : Number(r.cents.toFixed(2)),
-    clicks: r.clicks,
-    worst: r.worst,
-  })),
-};
+const params = usesRing ? { ...best, 'ring.refHz': 55 } : { ...best };
+const noteRows = [...fit.rows, ...holdout.rows].map((r) => ({
+  file: r.file,
+  split: r.split,
+  midi: r.midi,
+  size: r.size,
+  excess: Number(r.excess.toFixed(3)),
+  cents: r.cents === null ? null : Number(r.cents.toFixed(2)),
+  clicks: r.clicks,
+  worst: r.worst,
+}));
 const outDir = join(root, 'references/fit');
 mkdirSync(outDir, { recursive: true });
 const outPath = join(outDir, `${instrument}.json`);
+let previous = null;
+try {
+  previous = JSON.parse(readFileSync(outPath, 'utf8'));
+} catch {
+  previous = null;
+}
+const run = {
+  why: 'Dynamic body: seeded narrow peaks plus the old modes, looked up from each partial’s instantaneous frequency. Vibrato no longer lifts every partial together. Seed 1..24 picked on the valid split.',
+  rounds,
+  fitExcess: Number(meanExcess(fit.rows).toFixed(3)),
+  fitLoss: Number(fit.loss.toFixed(3)),
+  holdoutExcess: Number(meanExcess(holdout.rows).toFixed(3)),
+  holdoutLoss: Number(holdout.loss.toFixed(3)),
+  params,
+  notes: noteRows,
+};
+// A picture fit of an instrument that already has a record appends under followup.body
+// so the earlier before/after numbers stay comparable.
+const report =
+  previous && picture && preset.body
+    ? { ...previous, followup: { ...(previous.followup ?? {}), body: run } }
+    : {
+        instrument,
+        set: setId,
+        rounds,
+        before: {
+          fitExcess: Number(meanExcess(beforeEval.rows).toFixed(3)),
+          holdoutExcess: Number(meanExcess(beforeHold.rows).toFixed(3)),
+          params: Object.fromEntries(specs.filter((s) => !s.path.startsWith('ring.')).map((s) => [s.path, start[s.path]])),
+        },
+        after: {
+          fitExcess: run.fitExcess,
+          fitLoss: run.fitLoss,
+          holdoutExcess: run.holdoutExcess,
+          holdoutLoss: run.holdoutLoss,
+          params,
+        },
+        notes: noteRows,
+      };
 writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
-console.log(`fit excess ${report.before.fitExcess} -> ${report.after.fitExcess}`);
-console.log(`holdout excess ${report.before.holdoutExcess} -> ${report.after.holdoutExcess}`);
+const shown = report.followup?.body ?? report.after;
+console.log(`fit excess ${report.before?.fitExcess} -> ${shown.fitExcess}  loss ${shown.fitLoss}`);
+console.log(`holdout excess ${report.before?.holdoutExcess} -> ${shown.holdoutExcess}  loss ${shown.holdoutLoss}`);
 console.log('wrote', outPath);
 for (const w of workers) await w.worker.terminate();
