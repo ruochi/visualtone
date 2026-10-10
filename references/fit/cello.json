@@ -269,6 +269,213 @@
           "worst": "松开后的尾巴 3.08"
         }
       ]
+    },
+    "polish": {
+      "why": "Polish of the presence peak, the bite, the bow arc, and the bow-noise highpass. Body shape, seed, and the older picture search were left alone.",
+      "rounds": 4,
+      "fitExcess": 1.207,
+      "fitLoss": 1.296,
+      "holdoutExcess": 1.118,
+      "holdoutLoss": 1.26,
+      "params": {
+        "modes.4.hz": 2650,
+        "modes.4.q": 1.65,
+        "modes.4.db": 0,
+        "transient.level": 0.63125,
+        "transient.brighten": 0.28,
+        "transient.sec": 0.02,
+        "transient.noise": 0.31,
+        "bowArc.swellFrom": 0.575,
+        "bowArc.swellSec": 0.4,
+        "bowArc.dbPerSec": 0.22499999999999998,
+        "bowArc.tiltPerSec": 0.010000000000000002,
+        "noise.lowCut": 0,
+        "slope.base": 0.19425,
+        "noise.level": 0.0625
+      },
+      "notes": [
+        {
+          "file": "36_0.3.wav",
+          "split": "valid",
+          "midi": 36,
+          "size": 0.3,
+          "excess": 1.413,
+          "cents": -2.07,
+          "clicks": 0,
+          "worst": "起音 10–90% 6.22"
+        },
+        {
+          "file": "43_0.6.wav",
+          "split": "valid",
+          "midi": 43,
+          "size": 0.6,
+          "excess": 1.253,
+          "cents": -1.43,
+          "clicks": 0,
+          "worst": "音高 6.08"
+        },
+        {
+          "file": "50_0.9.wav",
+          "split": "valid",
+          "midi": 50,
+          "size": 0.9,
+          "excess": 1.178,
+          "cents": -1.29,
+          "clicks": 0,
+          "worst": "最高泛音 3.38"
+        },
+        {
+          "file": "65_0.3.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.3,
+          "excess": 1.05,
+          "cents": -0.19,
+          "clicks": 0,
+          "worst": "泛音斜率 2.21"
+        },
+        {
+          "file": "36_0.6.wav",
+          "split": "valid",
+          "midi": 36,
+          "size": 0.6,
+          "excess": 1.287,
+          "cents": -2.07,
+          "clicks": 0,
+          "worst": "高频滞后 8.00"
+        },
+        {
+          "file": "43_0.9.wav",
+          "split": "valid",
+          "midi": 43,
+          "size": 0.9,
+          "excess": 1.417,
+          "cents": -1.48,
+          "clicks": 0,
+          "worst": "谐波间隙噪声 3.78"
+        },
+        {
+          "file": "58_0.3.wav",
+          "split": "valid",
+          "midi": 58,
+          "size": 0.3,
+          "excess": 1.386,
+          "cents": -0.97,
+          "clicks": 0,
+          "worst": "各泛音衰减 6.45"
+        },
+        {
+          "file": "65_0.6.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.6,
+          "excess": 1.123,
+          "cents": -0.16,
+          "clicks": 0,
+          "worst": "奇偶泛音比 3.23"
+        },
+        {
+          "file": "36_0.9.wav",
+          "split": "valid",
+          "midi": 36,
+          "size": 0.9,
+          "excess": 1.384,
+          "cents": -2.08,
+          "clicks": 0,
+          "worst": "最高泛音 3.31"
+        },
+        {
+          "file": "50_0.3.wav",
+          "split": "valid",
+          "midi": 50,
+          "size": 0.3,
+          "excess": 1.266,
+          "cents": -1.24,
+          "clicks": 0,
+          "worst": "各泛音衰减 5.22"
+        },
+        {
+          "file": "58_0.6.wav",
+          "split": "valid",
+          "midi": 58,
+          "size": 0.6,
+          "excess": 1.16,
+          "cents": -0.98,
+          "clicks": 0,
+          "worst": "谐噪比 2.65"
+        },
+        {
+          "file": "65_0.9.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.9,
+          "excess": 0.986,
+          "cents": -0.13,
+          "clicks": 0,
+          "worst": "泛音斜率 2.27"
+        },
+        {
+          "file": "43_0.3.wav",
+          "split": "valid",
+          "midi": 43,
+          "size": 0.3,
+          "excess": 1.084,
+          "cents": -1.39,
+          "clicks": 0,
+          "worst": "谐噪比 2.21"
+        },
+        {
+          "file": "50_0.6.wav",
+          "split": "valid",
+          "midi": 50,
+          "size": 0.6,
+          "excess": 1.019,
+          "cents": -1.26,
+          "clicks": 0,
+          "worst": "最高泛音 2.56"
+        },
+        {
+          "file": "58_0.9.wav",
+          "split": "valid",
+          "midi": 58,
+          "size": 0.9,
+          "excess": 1.098,
+          "cents": -0.99,
+          "clicks": 0,
+          "worst": "起音噪声感 3.54"
+        },
+        {
+          "file": "72_0.6.wav",
+          "split": "test",
+          "midi": 72,
+          "size": 0.6,
+          "excess": 0.937,
+          "cents": -0.12,
+          "clicks": 0,
+          "worst": "起音噪声感 2.74"
+        },
+        {
+          "file": "72_0.9.wav",
+          "split": "test",
+          "midi": 72,
+          "size": 0.9,
+          "excess": 1.2,
+          "cents": -0.09,
+          "clicks": 0,
+          "worst": "分音起伏 2.41"
+        },
+        {
+          "file": "72_0.3.wav",
+          "split": "test",
+          "midi": 72,
+          "size": 0.3,
+          "excess": 1.216,
+          "cents": -0.15,
+          "clicks": 0,
+          "worst": "起音 10–90% 5.33"
+        }
+      ],
+      "nudge": "Presence peak and the small slope/noise steps were put back. They made the quartet cello band error larger than the baseline."
     }
   },
   "notes": [

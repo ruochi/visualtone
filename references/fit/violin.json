@@ -62,7 +62,11 @@
     ],
     "body": {
       "why": "Dynamic body: seeded narrow peaks plus the old modes, looked up from each partial’s instantaneous frequency. Vibrato no longer lifts every partial together. Seed 1..24 picked on the valid split. After the search, slope.base, noise.level and lowpass.hz were nudged so the old excess on the holdout stayed within 0.05.",
-      "landed": { "slope.base": 0.2, "noise.level": 0.07, "lowpass.hz": 9000 },
+      "landed": {
+        "slope.base": 0.2,
+        "noise.level": 0.07,
+        "lowpass.hz": 9000
+      },
       "rounds": 4,
       "fitExcess": 1.372,
       "fitLoss": 1.198,
@@ -270,6 +274,213 @@
           "worst": "松开后的尾巴 4.43"
         }
       ]
+    },
+    "polish": {
+      "why": "Polish of the presence peak, the bite, the bow arc, and the bow-noise highpass. Body shape, seed, and the older picture search were left alone.",
+      "rounds": 4,
+      "fitExcess": 1.128,
+      "fitLoss": 1.316,
+      "holdoutExcess": 1.063,
+      "holdoutLoss": 1.284,
+      "params": {
+        "modes.4.hz": 3000,
+        "modes.4.q": 1.2,
+        "modes.4.db": 14,
+        "transient.level": 0.48124999999999996,
+        "transient.brighten": 0.28,
+        "transient.sec": 0.02,
+        "transient.noise": 0.31,
+        "bowArc.swellFrom": 0.6000000000000001,
+        "bowArc.swellSec": 0.4,
+        "bowArc.dbPerSec": 0.5624999999999999,
+        "bowArc.tiltPerSec": 0.0025000000000000022,
+        "noise.lowCut": 0.2,
+        "slope.base": 0.1675,
+        "noise.level": 0.08750000000000001
+      },
+      "notes": [
+        {
+          "file": "60_0.3.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.3,
+          "excess": 1.297,
+          "cents": -0.67,
+          "clicks": 0,
+          "worst": "起音 10–90% 5.56"
+        },
+        {
+          "file": "65_0.6.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.6,
+          "excess": 0.922,
+          "cents": -0.31,
+          "clicks": 0,
+          "worst": "谐噪比 2.32"
+        },
+        {
+          "file": "70_0.9.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.9,
+          "excess": 1.088,
+          "cents": -0.87,
+          "clicks": 0,
+          "worst": "谐波间隙噪声 3.28"
+        },
+        {
+          "file": "79_0.3.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.3,
+          "excess": 1.508,
+          "cents": -0.35,
+          "clicks": 0,
+          "worst": "各泛音衰减 6.33"
+        },
+        {
+          "file": "60_0.6.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.6,
+          "excess": 1.1,
+          "cents": -0.68,
+          "clicks": 0,
+          "worst": "起音 10–90% 5.12"
+        },
+        {
+          "file": "65_0.9.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.9,
+          "excess": 0.705,
+          "cents": -0.31,
+          "clicks": 0,
+          "worst": "高频滞后 4.00"
+        },
+        {
+          "file": "74_0.3.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.3,
+          "excess": 1.606,
+          "cents": -0.46,
+          "clicks": 0,
+          "worst": "非谐性 B 9.77"
+        },
+        {
+          "file": "79_0.6.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.6,
+          "excess": 1.059,
+          "cents": -0.28,
+          "clicks": 0,
+          "worst": "起音 10–90% 4.75"
+        },
+        {
+          "file": "60_0.9.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.9,
+          "excess": 0.671,
+          "cents": -0.69,
+          "clicks": 0,
+          "worst": "频段占比 1.69"
+        },
+        {
+          "file": "70_0.3.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.3,
+          "excess": 1.299,
+          "cents": -0.84,
+          "clicks": 0,
+          "worst": "起音噪声感 3.01"
+        },
+        {
+          "file": "74_0.6.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.6,
+          "excess": 1.12,
+          "cents": -0.46,
+          "clicks": 0,
+          "worst": "起音 10–90% 4.76"
+        },
+        {
+          "file": "79_0.9.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.9,
+          "excess": 0.941,
+          "cents": -0.22,
+          "clicks": 0,
+          "worst": "谐波间隙噪声 2.48"
+        },
+        {
+          "file": "65_0.3.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.3,
+          "excess": 1.496,
+          "cents": -0.31,
+          "clicks": 0,
+          "worst": "起音 10–90% 7.26"
+        },
+        {
+          "file": "70_0.6.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.6,
+          "excess": 1.064,
+          "cents": -0.86,
+          "clicks": 0,
+          "worst": "起音 10–90% 5.70"
+        },
+        {
+          "file": "74_0.9.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.9,
+          "excess": 1.041,
+          "cents": -0.46,
+          "clicks": 0,
+          "worst": "高频滞后 5.50"
+        },
+        {
+          "file": "84_0.6.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.6,
+          "excess": 0.936,
+          "cents": -0.62,
+          "clicks": 0,
+          "worst": "分音起伏 2.70"
+        },
+        {
+          "file": "84_0.9.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.9,
+          "excess": 0.802,
+          "cents": -0.58,
+          "clicks": 0,
+          "worst": "松开后的尾巴 1.89"
+        },
+        {
+          "file": "84_0.3.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.3,
+          "excess": 1.449,
+          "cents": -0.64,
+          "clicks": 0,
+          "worst": "各泛音衰减 4.83"
+        }
+      ],
+      "nudge": "Presence peak set to 3 kHz, Q 1.2, +14 dB so D5 at 2–3.5 kHz is within 3 dB of the recording."
     }
   },
   "notes": [

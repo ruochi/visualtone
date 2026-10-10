@@ -18,10 +18,12 @@ import { noteTiming } from './lib/score-note.mjs';
 const root = new URL('..', import.meta.url).pathname;
 const positionals = process.argv.slice(2).filter((arg) => !arg.startsWith('--'));
 const picture = process.argv.includes('--picture');
+const polish = process.argv.includes('--polish');
+const usePicture = picture || polish;
 const instrument = positionals[0];
 const setId = positionals[1];
 if (!instrument || !setId) {
-  console.error('usage: node scripts/fit-preset.mjs <instrument> <set-id> [--picture]');
+  console.error('usage: node scripts/fit-preset.mjs <instrument> <set-id> [--picture] [--polish]');
   process.exit(1);
 }
 
@@ -168,6 +170,28 @@ function windSpec() {
   ];
 }
 
+function polishSpec(preset) {
+  const mode = Math.max(0, (preset.modes?.length ?? 1) - 1);
+  const slope = preset.slope?.base ?? 0.2;
+  const noise = preset.noise?.level ?? 0.05;
+  return [
+    span(`modes.${mode}.hz`, 1600, 4500, 400),
+    span(`modes.${mode}.q`, 0.8, 3, 0.4),
+    span(`modes.${mode}.db`, 0, 14, 2),
+    span('transient.level', 0, 0.8, 0.15),
+    span('transient.brighten', 0, 0.6, 0.1),
+    span('transient.sec', 0.02, 0.12, 0.02),
+    span('transient.noise', 0, 0.4, 0.08),
+    span('bowArc.swellFrom', 0.4, 0.95, 0.1),
+    span('bowArc.swellSec', 0.05, 0.4, 0.07),
+    span('bowArc.dbPerSec', 0, 2, 0.3),
+    span('bowArc.tiltPerSec', 0, 0.15, 0.03),
+    span('noise.lowCut', 0, 1.2, 0.2, 0),
+    span('slope.base', Math.max(0.02, slope - 0.06), slope + 0.06, 0.02),
+    span('noise.level', Math.max(0, noise - 0.03), noise + 0.03, 0.01),
+  ];
+}
+
 function pictureSpec(preset) {
   const specs = [
     span('slope.base', 0.04, 0.55, 0.05),
@@ -197,9 +221,11 @@ function pictureSpec(preset) {
   return specs;
 }
 
-const specs = picture
-  ? pictureSpec(preset)
-  : SPECS[instrument] || MODEL_SPECS[instrument] || (FAMILIES[instrument] ? familySpec(preset, FAMILIES[instrument]) : null);
+const specs = polish
+  ? polishSpec(preset)
+  : picture
+    ? pictureSpec(preset)
+    : SPECS[instrument] || MODEL_SPECS[instrument] || (FAMILIES[instrument] ? familySpec(preset, FAMILIES[instrument]) : null);
 if (!specs) throw new Error(`no parameter spec for ${instrument}`);
 
 const catalog = JSON.parse(readFileSync(join(root, 'references/catalog.json'), 'utf8'));
@@ -241,7 +267,7 @@ function chunk(list, n) {
 
 const workers = chunk(notes, workersN).map((part) => {
   const worker = new Worker(new URL('./fit-worker.mjs', import.meta.url), {
-    workerData: { instrument, model, notes: part, floor, picture },
+    workerData: { instrument, model, notes: part, floor, picture: usePicture },
   });
   const ready = new Promise((resolve, reject) => {
     const onReady = (msg) => {
@@ -277,7 +303,7 @@ function ask(worker, msg) {
 async function evaluate(values, clearRing, splits) {
   const parts = await Promise.all(workers.map((w) => ask(w.worker, { values, clearRing, splits, refHz: 55 })));
   const rows = parts.flatMap((p) => p.rows);
-  const loss = rows.reduce((s, r) => s + (picture ? r.picture : r.excess) + r.penalty, 0) / rows.length;
+  const loss = rows.reduce((s, r) => s + (usePicture ? r.picture : r.excess) + r.penalty, 0) / rows.length;
   return { loss, rows };
 }
 
@@ -324,7 +350,9 @@ async function descend(fromRound, toRound) {
 }
 
 const warm = process.env.FIT_WARM === '1';
-if (warm) {
+if (polish) {
+  await descend(0, rounds);
+} else if (warm) {
   try {
     const saved = JSON.parse(readFileSync(join(root, 'references/fit', `${instrument}.json`), 'utf8'));
     const params = saved.followup?.body?.params;
@@ -339,7 +367,7 @@ if (warm) {
 } else if (process.env.FIT_DENSE !== '1') {
   await descend(0, rounds);
 }
-if (process.env.FIT_DENSE === '1' && preset.body) {
+if (!polish && process.env.FIT_DENSE === '1' && preset.body) {
   best['body.count'] = 320;
   best['body.qLo'] = 50;
   best['body.qHi'] = 160;
@@ -352,7 +380,7 @@ if (process.env.FIT_DENSE === '1' && preset.body) {
 // Sparse peaks leave most partials on a flat stretch, so vibrato does not move them.
 // These corners pack narrow peaks densely enough that the median partial sits on a slope.
 let bodyMoved = false;
-if (picture && preset.body && best['body.db'] !== undefined) {
+if (!polish && picture && preset.body && best['body.db'] !== undefined) {
   const countSpec = specs.find((s) => s.path === 'body.count');
   const qLoSpec = specs.find((s) => s.path === 'body.qLo');
   const qHiSpec = specs.find((s) => s.path === 'body.qHi');
@@ -389,7 +417,7 @@ if (picture && preset.body && best['body.db'] !== undefined) {
 }
 
 // Peak locations matter once the peaks are steep. Search seeds on that shape, then retune.
-if (picture && preset.body) {
+if (!polish && picture && preset.body) {
   const seedBefore = best['body.seed'];
   let seedLoss = bestLoss;
   for (let seed = 1; seed <= 24; seed++) {
@@ -432,7 +460,9 @@ try {
   previous = null;
 }
 const run = {
-  why: 'Dynamic body: seeded narrow peaks plus the old modes, looked up from each partial’s instantaneous frequency. Vibrato no longer lifts every partial together. Seed 1..24 picked on the valid split.',
+  why: polish
+    ? 'Polish of the presence peak, the bite, the bow arc, and the bow-noise highpass. Body shape, seed, and the older picture search were left alone.'
+    : 'Dynamic body: seeded narrow peaks plus the old modes, looked up from each partial’s instantaneous frequency. Vibrato no longer lifts every partial together. Seed 1..24 picked on the valid split.',
   rounds,
   fitExcess: Number(meanExcess(fit.rows).toFixed(3)),
   fitLoss: Number(fit.loss.toFixed(3)),
@@ -444,7 +474,9 @@ const run = {
 // A picture fit of an instrument that already has a record appends under followup.body
 // so the earlier before/after numbers stay comparable.
 const report =
-  previous && picture && preset.body
+  previous && polish
+    ? { ...previous, followup: { ...(previous.followup ?? {}), polish: run } }
+    : previous && picture && preset.body
     ? { ...previous, followup: { ...(previous.followup ?? {}), body: run } }
     : {
         instrument,
@@ -465,7 +497,7 @@ const report =
         notes: noteRows,
       };
 writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
-const shown = report.followup?.body ?? report.after;
+const shown = report.followup?.polish ?? report.followup?.body ?? report.after;
 console.log(
   `valid excess ${meanExcess(beforeEval.rows).toFixed(3)} -> ${shown.fitExcess}  loss ${beforeEval.loss.toFixed(3)} -> ${shown.fitLoss}`,
 );
