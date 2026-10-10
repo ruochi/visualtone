@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { analyzeNote } from './analysis/timbre.js';
 import { buildWavetable, clearWavetableCache } from './wavetable.js';
 import { hueToTimbreVector } from './timbre.js';
+import { createWind } from './engines/acoustic.js';
 import { createHarmonic, HARMONIC_PRESETS, type HarmonicPreset } from './engines/harmonic.js';
 import { spectralCentroid, stereoCorrelation, measureRmsDb } from './fx.js';
 import { render } from './renderer.js';
@@ -500,6 +501,30 @@ test('a bow arc fades and darkens a held note', () => {
   const breathEarly = windowRms(breath.buf, breath.sr, 0.5);
   const breathLate = windowRms(breath.buf, breath.sr, 2);
   assert.ok(breathLate < breathEarly * 0.5, `note arc ${breathEarly.toFixed(4)} -> ${breathLate.toFixed(4)}`);
+});
+
+test('a wind note arc fades a held note', () => {
+  const sr = 48000;
+  const play = (dbPerSec: number) => {
+    const engine = createWind(sr, 0, 3, dbPerSec ? { noteArc: { swellFrom: 0.5, swellSec: 0.2, dbPerSec } } : undefined);
+    const n = Math.round(2.4 * sr);
+    const buf = new Float32Array(n);
+    const off = Math.round(2.2 * sr);
+    for (let i = 0; i < n; i++) {
+      const [l, r] = engine.processSample(72, i < off ? 0.6 : 0, 0.5);
+      buf[i] = (l + r) * 0.5;
+    }
+    return buf;
+  };
+  const faded = play(8);
+  const early = windowRms(faded, sr, 0.5);
+  const late = windowRms(faded, sr, 2);
+  assert.ok(late < early * 0.5, `wind arc ${early.toFixed(4)} -> ${late.toFixed(4)}`);
+  const steady = play(0);
+  const again = play(0);
+  for (let i = 0; i < steady.length; i++) {
+    if (steady[i] !== again[i]) assert.fail(`unset wind arc changed sample ${i}`);
+  }
 });
 
 test('instruments without a bow arc keep their samples', () => {

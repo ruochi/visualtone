@@ -832,6 +832,17 @@ export const WIND_PRESETS = {
   },
 };
 
+type WindPolish = {
+  /** Wide peak on the bore output. db 0 leaves the sample unchanged. */
+  presence?: { hz: number; q: number; db: number };
+  /** Opens from swellFrom, then falls by dbPerSec. Unset keeps a flat held level. */
+  noteArc?: { swellFrom: number; swellSec: number; dbPerSec: number };
+  /** A noise burst at the attack. level 0 leaves the sample unchanged. */
+  bite?: { level: number; sec: number };
+  /** Highpass the breath noise at this multiple of the fundamental. 0 leaves it. */
+  airCut?: number;
+};
+
 export function windInstrumentFor(hue: number): keyof typeof WIND_PRESETS {
   return ((hue % 360) + 360) % 360 >= 180 ? 'clarinet' : 'flute';
 }
@@ -842,9 +853,11 @@ export function windInstrumentFor(hue: number): keyof typeof WIND_PRESETS {
  * Even partials are added after the bore: a little in the chalumeau, a lot above the break.
  * An odd saturation sits in the loop, so the zeros — and the pitch — stay on the delay.
  */
-export function createWind(sampleRate: number, hue: number, seed: number): Engine {
+export function createWind(sampleRate: number, hue: number, seed: number, overlay?: WindPolish): Engine {
   const windId = windInstrumentFor(hue);
-  const wind = WIND_PRESETS[windId];
+  const wind: (typeof WIND_PRESETS)[typeof windId] & WindPolish = overlay
+    ? { ...WIND_PRESETS[windId], ...overlay }
+    : WIND_PRESETS[windId];
   const clarinet = windId === 'clarinet';
   const rng = mulberry32(seed || 1);
   const buf = new Float32Array(4096);
@@ -889,6 +902,23 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
   let dcY = 0;
   let dcX2 = 0;
   let dcY2 = 0;
+  let sounding = 440;
+  let arcSamples = 0;
+  let biteLeft = 0;
+  let biteDec = 1;
+  let airHp = 0;
+  let airHpPole = 0;
+  let useAirHp = false;
+  let peakOn = false;
+  let pb0 = 1;
+  let pb1 = 0;
+  let pb2 = 0;
+  let pa1 = 0;
+  let pa2 = 0;
+  let px1 = 0;
+  let px2 = 0;
+  let py1 = 0;
+  let py2 = 0;
 
   return {
     setRelease(ms: number) {
@@ -899,6 +929,34 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
       const on = size > 1e-5;
       if (on && !wasOn) {
         const freq = Math.min(sampleRate * 0.2, Math.max(50, midiToFrequency(midi)));
+        sounding = freq;
+        arcSamples = 0;
+        const bite = wind.bite;
+        biteLeft = bite && bite.level > 0 ? bite.level : 0;
+        biteDec = bite && bite.sec > 0 ? Math.exp(-1 / (bite.sec * sampleRate)) : 1;
+        useAirHp = (wind.airCut ?? 0) > 0;
+        if (useAirHp) {
+          airHp = 0;
+          airHpPole = Math.exp((-2 * Math.PI * Math.max(20, (wind.airCut ?? 0) * freq)) / sampleRate);
+        }
+        const presence = wind.presence;
+        peakOn = !!(presence && presence.db);
+        if (peakOn && presence) {
+          const A = Math.pow(10, presence.db / 40);
+          const w0 = (2 * Math.PI * presence.hz) / sampleRate;
+          const alpha = Math.sin(w0) / (2 * Math.max(0.2, presence.q));
+          const cos = Math.cos(w0);
+          const b0 = 1 + alpha * A;
+          const b1 = -2 * cos;
+          const b2 = 1 - alpha * A;
+          const a0 = 1 + alpha / A;
+          pb0 = b0 / a0;
+          pb1 = b1 / a0;
+          pb2 = b2 / a0;
+          pa1 = b1 / a0;
+          pa2 = (1 - alpha / A) / a0;
+          px1 = px2 = py1 = py2 = 0;
+        }
         const period = sampleRate / freq;
         strike = Math.min(1, Math.max(0, size));
         const light = Math.min(1, Math.max(0, lightness));
@@ -1046,7 +1104,37 @@ export function createWind(sampleRate: number, hue: number, seed: number): Engin
       out = hp2;
       const air = nz * env * (0.008 + strike * 0.02);
       const g = life.gain;
-      return [(out + air) * g, (out + air * 0.9) * g];
+      const arc = wind.noteArc;
+      const useArc = !!(arc && (arc.swellFrom < 0.999 || arc.dbPerSec > 0));
+      const useBite = !!(wind.bite && wind.bite.level > 0);
+      if (!peakOn && !useArc && !useBite && !useAirHp) return [(out + air) * g, (out + air * 0.9) * g];
+      let airOut = air;
+      if (useAirHp) {
+        airHp = airOut * (1 - airHpPole) + airHp * airHpPole;
+        airOut -= airHp;
+      }
+      if (useBite) {
+        airOut += (rng() * 2 - 1) * biteLeft * env;
+        biteLeft *= biteDec;
+      }
+      let y = out;
+      if (peakOn) {
+        const yn = pb0 * y + pb1 * px1 + pb2 * px2 - pa1 * py1 - pa2 * py2;
+        px2 = px1;
+        px1 = y;
+        py2 = py1;
+        py1 = yn;
+        y = yn;
+      }
+      if (useArc && arc && on) {
+        const swellN = Math.min(0.4, Math.max(0.02, arc.swellSec)) * sampleRate;
+        const u = Math.min(1, arcSamples / swellN);
+        const opened = arc.swellFrom + (1 - arc.swellFrom) * u;
+        const fallen = arcSamples > swellN ? (arcSamples - swellN) / sampleRate : 0;
+        y *= opened * Math.pow(10, (-arc.dbPerSec * fallen) / 20);
+        arcSamples++;
+      }
+      return [(y + airOut) * g, (y + airOut * 0.9) * g];
     },
   };
 }

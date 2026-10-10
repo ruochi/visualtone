@@ -111,8 +111,8 @@ const TABLES = {
 const model = positionals[2] || MODEL_OF[instrument] || 'harmonic';
 const preset = TABLES[model]?.[instrument];
 if (!preset) throw new Error(`${instrument} is not a ${model} preset`);
-if (polish && model !== 'harmonic') {
-  console.error('--polish fits harmonic presets. Other engines do not share the presence peak, the bite, or the long-note arc.');
+if (polish && model !== 'harmonic' && model !== 'wind') {
+  console.error('--polish fits harmonic and wind presets.');
   process.exit(1);
 }
 
@@ -174,6 +174,25 @@ function windSpec() {
   ];
 }
 
+function windPolishSpec(preset) {
+  const presence = preset.presence;
+  const arc = preset.noteArc;
+  const bite = preset.bite;
+  return [
+    span('presence.hz', 1600, 4500, 400, presence?.hz ?? 2800),
+    span('presence.q', 0.8, 3, 0.4, presence?.q ?? 1.6),
+    span('presence.db', 0, 14, 2, presence?.db ?? 0),
+    span('bite.level', 0, 0.8, 0.15, bite?.level ?? 0),
+    span('bite.sec', 0.02, 0.12, 0.02, bite?.sec ?? 0.04),
+    span('noteArc.swellFrom', 0.4, 0.95, 0.1, arc?.swellFrom ?? 1),
+    span('noteArc.swellSec', 0.05, 0.4, 0.07, arc?.swellSec ?? 0.05),
+    span('noteArc.dbPerSec', 0, 2, 0.3, arc?.dbPerSec ?? 0),
+    span('airCut', 0, 1.2, 0.2, preset.airCut ?? 0),
+    span('jet', Math.max(0.4, preset.jet - 0.24), preset.jet + 0.24, 0.08),
+    span('even', Math.max(0, preset.even - 0.08), preset.even + 0.16, 0.04),
+  ];
+}
+
 function polishSpec(preset) {
   const hasModes = (preset.modes?.length ?? 0) > 0;
   const mode = hasModes ? preset.modes.length - 1 : 0;
@@ -232,7 +251,9 @@ function pictureSpec(preset) {
 }
 
 const specs = polish
-  ? polishSpec(preset)
+  ? model === 'wind'
+    ? windPolishSpec(preset)
+    : polishSpec(preset)
   : picture
     ? pictureSpec(preset)
     : SPECS[instrument] || MODEL_SPECS[instrument] || (FAMILIES[instrument] ? familySpec(preset, FAMILIES[instrument]) : null);
@@ -310,7 +331,7 @@ function ask(worker, msg) {
   });
 }
 
-const polishFill = polish
+const polishFill = polish && model === 'harmonic'
   ? {
       'transient.minSlope': preset.transient?.minSlope ?? 0.06,
       'transient.noiseStrike': preset.transient?.noiseStrike ?? 0,
