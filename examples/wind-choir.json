@@ -1,0 +1,188 @@
+{
+  "sampleRate": 48000,
+  "duration": 58,
+  "bpm": 56,
+  "meter": [4, 4],
+  "seed": 41,
+  "master": {
+    "lufs": -18,
+    "saturation": 0.04,
+    "room": {
+      "size": 0.32,
+      "decay": 0.22,
+      "preDelayMs": 10,
+      "damping": 0.55,
+      "width": 0.72
+    },
+    "reverb": {
+      "size": 0.36,
+      "decay": 0.26,
+      "preDelayMs": 16,
+      "damping": 0.6,
+      "width": 0.8
+    }
+  },
+  "tracks": [
+    {
+      "id": "oboe",
+      "instrument": "oboe",
+      "pan": -0.28,
+      "seed": 17,
+      "room": 0.14,
+      "space": 0.08,
+      "humanize": { "timeMs": 10, "size": 0.02 },
+      "notes": [
+        { "at": "5:1", "pitch": "D5", "len": "1/4", "size": 0.74 },
+        { "at": "5:2", "pitch": "D5", "len": "3/4", "size": 0.7 },
+        { "at": "6:1", "pitch": "Bb4", "len": "1/1", "size": 0.68 },
+        { "at": "7:1", "pitch": "G4", "len": "1/1", "size": 0.66 },
+        { "at": "8:1", "pitch": "A4", "len": "1/1", "size": 0.68 },
+        { "at": "9:1", "pitch": "D5", "len": "1/2", "size": 0.76 },
+        { "at": "9:3", "pitch": "F5", "len": "1/2", "size": 0.74 },
+        { "at": "10:1", "pitch": "Eb5", "len": "1/1", "size": 0.7 },
+        { "at": "11:1", "pitch": "F5", "len": "1/2", "size": 0.74 },
+        { "at": "11:3", "pitch": "C5", "len": "1/2", "size": 0.68 },
+        { "at": "12:1", "pitch": "D5", "len": "2/1", "size": 0.64 }
+      ]
+    },
+    {
+      "id": "clarinet",
+      "instrument": "clarinet",
+      "pan": 0.46,
+      "automation": { "gain": [{ "t": 0, "v": 0.55 }] },
+      "seed": 23,
+      "room": 0.16,
+      "space": 0.1,
+      "humanize": { "timeMs": 12, "size": 0.02 },
+      "notes": [
+        { "at": "3:1", "pitch": "Bb4", "len": "1/1", "size": 0.66 },
+        { "at": "4:1", "pitch": "F4", "len": "1/1", "size": 0.64 },
+        { "at": "5:1", "pitch": "D5", "len": "1/1", "size": 0.7 },
+        { "at": "6:1", "pitch": "Bb4", "len": "1/1", "size": 0.66 },
+        { "at": "7:1", "pitch": "G4", "len": "1/2", "size": 0.64 },
+        { "at": "7:3", "pitch": "Bb4", "len": "1/2", "size": 0.66 },
+        { "at": "8:1", "pitch": "C5", "len": "1/1", "size": 0.68 },
+        { "at": "9:1", "pitch": "F5", "len": "1/1", "size": 0.74 },
+        { "at": "10:1", "pitch": "Eb5", "len": "1/1", "size": 0.7 },
+        { "at": "11:1", "pitch": "C5", "len": "1/2", "size": 0.7 },
+        { "at": "11:3", "pitch": "A4", "len": "1/2", "size": 0.66 },
+        { "at": "12:1", "pitch": "D5", "len": "2/1", "size": 0.62 }
+      ]
+    },
+    {
+      "id": "trumpet",
+      "instrument": "trumpet",
+      "pan": 0.22,
+      "seed": 11,
+      "room": 0.12,
+      "space": 0.06,
+      "humanize": { "timeMs": 11, "size": 0.02 },
+      "notes": [
+        { "at": "5:1", "pitch": "Bb4", "len": "1/4", "size": 0.74 },
+        { "at": "5:2", "pitch": "Bb4", "len": "3/4", "size": 0.7 },
+        { "at": "6:1", "pitch": "G4", "len": "1/1", "size": 0.68 },
+        { "at": "7:1", "pitch": "Eb4", "len": "1/2", "size": 0.66 },
+        { "at": "7:3", "pitch": "F4", "len": "1/2", "size": 0.68 },
+        { "at": "8:1", "pitch": "F4", "len": "1/1", "size": 0.68 },
+        { "at": "9:1", "pitch": "Bb4", "len": "1/2", "size": 0.76 },
+        { "at": "9:3", "pitch": "D5", "len": "1/2", "size": 0.74 },
+        { "at": "10:1", "pitch": "Bb4", "len": "1/1", "size": 0.7 },
+        { "at": "11:1", "pitch": "C5", "len": "1/2", "size": 0.74 },
+        { "at": "11:3", "pitch": "A4", "len": "1/2", "size": 0.68 },
+        { "at": "12:1", "pitch": "F4", "len": "2/1", "size": 0.64 }
+      ]
+    },
+    {
+      "id": "saxophone",
+      "instrument": "saxophone",
+      "pan": -0.12,
+      "seed": 29,
+      "room": 0.16,
+      "space": 0.08,
+      "humanize": { "timeMs": 14, "size": 0.025 },
+      "notes": [
+        { "at": "1:1", "pitch": "Bb3", "len": "1/1", "size": 0.6 },
+        { "at": "2:1", "pitch": "C4", "len": "1/1", "size": 0.6 },
+        { "at": "3:1", "pitch": "Eb4", "len": "1/1", "size": 0.62 },
+        { "at": "4:1", "pitch": "Bb3", "len": "1/1", "size": 0.6 },
+        { "at": "5:1", "pitch": "F4", "len": "1/1", "size": 0.66 },
+        { "at": "6:1", "pitch": "G3", "len": "1/1", "size": 0.62 },
+        { "at": "7:1", "pitch": "Eb4", "len": "1/1", "size": 0.62 },
+        { "at": "8:1", "pitch": "C4", "len": "1/1", "size": 0.64 },
+        { "at": "9:1", "pitch": "Bb3", "len": "1/1", "size": 0.66 },
+        { "at": "10:1", "pitch": "Eb4", "len": "1/1", "size": 0.64 },
+        { "at": "11:1", "pitch": "F4", "len": "1/1", "size": 0.66 },
+        { "at": "12:1", "pitch": "Bb3", "len": "2/1", "size": 0.6 }
+      ]
+    },
+    {
+      "id": "horn",
+      "instrument": "horn",
+      "pan": -0.42,
+      "seed": 13,
+      "room": 0.18,
+      "space": 0.08,
+      "humanize": { "timeMs": 16, "size": 0.025 },
+      "notes": [
+        { "at": "1:1", "pitch": "D4", "len": "1/1", "size": 0.62 },
+        { "at": "2:1", "pitch": "C4", "len": "1/1", "size": 0.62 },
+        { "at": "3:1", "pitch": "Bb3", "len": "1/1", "size": 0.62 },
+        { "at": "4:1", "pitch": "D4", "len": "1/1", "size": 0.62 },
+        { "at": "5:1", "pitch": "D4", "len": "1/1", "size": 0.66 },
+        { "at": "6:1", "pitch": "Bb3", "len": "1/1", "size": 0.64 },
+        { "at": "7:1", "pitch": "G3", "len": "1/1", "size": 0.62 },
+        { "at": "8:1", "pitch": "A3", "len": "1/1", "size": 0.64 },
+        { "at": "9:1", "pitch": "D4", "len": "1/1", "size": 0.68 },
+        { "at": "10:1", "pitch": "Bb3", "len": "1/1", "size": 0.64 },
+        { "at": "11:1", "pitch": "C4", "len": "1/1", "size": 0.66 },
+        { "at": "12:1", "pitch": "D4", "len": "2/1", "size": 0.6 }
+      ]
+    },
+    {
+      "id": "trombone",
+      "instrument": "trombone",
+      "pan": 0.36,
+      "seed": 19,
+      "room": 0.16,
+      "space": 0.06,
+      "humanize": { "timeMs": 14, "size": 0.02 },
+      "notes": [
+        { "at": "1:1", "pitch": "F3", "len": "1/1", "size": 0.62 },
+        { "at": "2:1", "pitch": "A3", "len": "1/1", "size": 0.62 },
+        { "at": "3:1", "pitch": "G3", "len": "1/1", "size": 0.62 },
+        { "at": "4:1", "pitch": "F3", "len": "1/1", "size": 0.62 },
+        { "at": "5:1", "pitch": "F3", "len": "1/1", "size": 0.66 },
+        { "at": "6:1", "pitch": "D3", "len": "1/1", "size": 0.64 },
+        { "at": "7:1", "pitch": "Bb3", "len": "1/1", "size": 0.62 },
+        { "at": "8:1", "pitch": "C3", "len": "1/1", "size": 0.64 },
+        { "at": "9:1", "pitch": "F3", "len": "1/1", "size": 0.68 },
+        { "at": "10:1", "pitch": "G3", "len": "1/1", "size": 0.64 },
+        { "at": "11:1", "pitch": "A3", "len": "1/1", "size": 0.66 },
+        { "at": "12:1", "pitch": "F3", "len": "2/1", "size": 0.6 }
+      ]
+    },
+    {
+      "id": "tuba",
+      "instrument": "tuba",
+      "pan": 0.04,
+      "seed": 7,
+      "room": 0.2,
+      "space": 0.04,
+      "humanize": { "timeMs": 18, "size": 0.02 },
+      "notes": [
+        { "at": "1:1", "pitch": "Bb1", "len": "1/1", "size": 0.64 },
+        { "at": "2:1", "pitch": "F2", "len": "1/1", "size": 0.62 },
+        { "at": "3:1", "pitch": "Eb2", "len": "1/1", "size": 0.62 },
+        { "at": "4:1", "pitch": "Bb1", "len": "1/1", "size": 0.64 },
+        { "at": "5:1", "pitch": "Bb2", "len": "1/1", "size": 0.66 },
+        { "at": "6:1", "pitch": "G2", "len": "1/1", "size": 0.64 },
+        { "at": "7:1", "pitch": "Eb2", "len": "1/1", "size": 0.62 },
+        { "at": "8:1", "pitch": "F2", "len": "1/1", "size": 0.64 },
+        { "at": "9:1", "pitch": "Bb1", "len": "1/1", "size": 0.68 },
+        { "at": "10:1", "pitch": "Eb2", "len": "1/1", "size": 0.64 },
+        { "at": "11:1", "pitch": "F2", "len": "1/1", "size": 0.66 },
+        { "at": "12:1", "pitch": "Bb1", "len": "2/1", "size": 0.62 }
+      ]
+    }
+  ]
+}
