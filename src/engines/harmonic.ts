@@ -87,11 +87,13 @@ export interface HarmonicPreset {
    */
   releaseShape?: { lowSec: number; highSec: number; lowMidi: number; highMidi: number; soft: number };
   /**
-   * A bow does not sit still. The note reaches swellFrom quickly, then opens to full
-   * level over swellSec (capped at 0.4 s). After that the level falls by dbPerSec and
-   * the slope steepens by tiltPerSec, so higher partials die first.
+   * The note reaches swellFrom quickly, then opens to full level over swellSec
+   * (capped at 0.4 s). After that the level falls by dbPerSec and the slope steepens
+   * by tiltPerSec, so higher partials die first. A bow uses `bowArc`. A breath or a
+   * lip uses `noteArc`. Unset on both leaves the held level flat.
    */
   bowArc?: { swellFrom: number; swellSec: number; dbPerSec: number; tiltPerSec: number };
+  noteArc?: { swellFrom: number; swellSec: number; dbPerSec: number; tiltPerSec: number };
   attackSec: number;
   releaseSec: number;
   life: PitchLifeSpec;
@@ -811,14 +813,15 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       if (!on && env < 1e-5 && finger < 1e-4) return [0, 0];
       const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
       let dest = on ? size : 0;
-      if (on && p.bowArc) {
-        const swellN = Math.min(0.4, Math.max(0.02, p.bowArc.swellSec)) * sampleRate;
+      const arc = p.bowArc ?? p.noteArc;
+      if (on && arc) {
+        const swellN = Math.min(0.4, Math.max(0.02, arc.swellSec)) * sampleRate;
         const u = Math.min(1, arcSamples / swellN);
-        dest = size * (p.bowArc.swellFrom + (1 - p.bowArc.swellFrom) * u);
+        dest = size * (arc.swellFrom + (1 - arc.swellFrom) * u);
         if (arcSamples >= swellN && arcTick === 0) {
           const dt = BODY_BLOCK / sampleRate;
-          const decay = Math.pow(10, (-p.bowArc.dbPerSec * dt) / 20);
-          const tilt = p.bowArc.tiltPerSec * dt;
+          const decay = Math.pow(10, (-arc.dbPerSec * dt) / 20);
+          const tilt = arc.tiltPerSec * dt;
           for (let n = 0; n < N; n++) {
             if (gains[n] !== 0) gains[n] *= decay * Math.exp(-tilt * n);
           }

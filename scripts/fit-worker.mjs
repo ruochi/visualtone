@@ -37,8 +37,12 @@ function setPath(obj, path, value) {
   const parts = path.split('.');
   let cur = obj;
   for (let i = 0; i < parts.length - 1; i++) {
-    if (cur[parts[i]] == null || typeof cur[parts[i]] !== 'object') cur[parts[i]] = {};
-    cur = cur[parts[i]];
+    const key = parts[i];
+    const wantArray = /^\d+$/.test(parts[i + 1]);
+    if (cur[key] == null || typeof cur[key] !== 'object' || (wantArray && !Array.isArray(cur[key]))) {
+      cur[key] = wantArray ? [] : {};
+    }
+    cur = cur[key];
   }
   cur[parts[parts.length - 1]] = value;
 }

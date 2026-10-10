@@ -111,6 +111,10 @@ const TABLES = {
 const model = positionals[2] || MODEL_OF[instrument] || 'harmonic';
 const preset = TABLES[model]?.[instrument];
 if (!preset) throw new Error(`${instrument} is not a ${model} preset`);
+if (polish && model !== 'harmonic') {
+  console.error('--polish fits harmonic presets. Other engines do not share the presence peak, the bite, or the long-note arc.');
+  process.exit(1);
+}
 
 function span(path, min, max, step, start) {
   return { path, min, max, step, ...(start === undefined ? {} : { start }) };
@@ -171,22 +175,28 @@ function windSpec() {
 }
 
 function polishSpec(preset) {
-  const mode = Math.max(0, (preset.modes?.length ?? 1) - 1);
+  const hasModes = (preset.modes?.length ?? 0) > 0;
+  const mode = hasModes ? preset.modes.length - 1 : 0;
+  const mode0 = preset.modes?.[mode];
   const slope = preset.slope?.base ?? 0.2;
   const noise = preset.noise?.level ?? 0.05;
+  const tr = preset.transient;
+  // Bows already have bowArc. A breath or a lip gets the same curve under noteArc.
+  const arcKey = preset.bowArc ? 'bowArc' : 'noteArc';
+  const arc = preset.bowArc ?? preset.noteArc;
   return [
-    span(`modes.${mode}.hz`, 1600, 4500, 400),
-    span(`modes.${mode}.q`, 0.8, 3, 0.4),
-    span(`modes.${mode}.db`, 0, 14, 2),
-    span('transient.level', 0, 0.8, 0.15),
-    span('transient.brighten', 0, 0.6, 0.1),
-    span('transient.sec', 0.02, 0.12, 0.02),
-    span('transient.noise', 0, 0.4, 0.08),
-    span('bowArc.swellFrom', 0.4, 0.95, 0.1),
-    span('bowArc.swellSec', 0.05, 0.4, 0.07),
-    span('bowArc.dbPerSec', 0, 2, 0.3),
-    span('bowArc.tiltPerSec', 0, 0.15, 0.03),
-    span('noise.lowCut', 0, 1.2, 0.2, 0),
+    span(`modes.${mode}.hz`, 1600, 4500, 400, mode0?.hz ?? 2800),
+    span(`modes.${mode}.q`, 0.8, 3, 0.4, mode0?.q ?? 1.6),
+    span(`modes.${mode}.db`, 0, 14, 2, mode0?.db ?? 0),
+    span('transient.level', 0, 0.8, 0.15, tr?.level ?? 0),
+    span('transient.brighten', 0, 0.6, 0.1, tr?.brighten ?? 0.28),
+    span('transient.sec', 0.02, 0.12, 0.02, tr?.sec ?? 0.04),
+    span('transient.noise', 0, 0.4, 0.08, tr?.noise ?? 0),
+    span(`${arcKey}.swellFrom`, 0.4, 0.95, 0.1, arc?.swellFrom ?? 1),
+    span(`${arcKey}.swellSec`, 0.05, 0.4, 0.07, arc?.swellSec ?? 0.05),
+    span(`${arcKey}.dbPerSec`, 0, 2, 0.3, arc?.dbPerSec ?? 0),
+    span(`${arcKey}.tiltPerSec`, 0, 0.15, 0.03, arc?.tiltPerSec ?? 0),
+    span('noise.lowCut', 0, 1.2, 0.2, preset.noise?.lowCut ?? 0),
     span('slope.base', Math.max(0.02, slope - 0.06), slope + 0.06, 0.02),
     span('noise.level', Math.max(0, noise - 0.03), noise + 0.03, 0.01),
   ];
@@ -300,8 +310,17 @@ function ask(worker, msg) {
   });
 }
 
+const polishFill = polish
+  ? {
+      'transient.minSlope': preset.transient?.minSlope ?? 0.06,
+      'transient.noiseStrike': preset.transient?.noiseStrike ?? 0,
+      'transient.noiseSec': preset.transient?.noiseSec ?? 0.04,
+    }
+  : {};
+
 async function evaluate(values, clearRing, splits) {
-  const parts = await Promise.all(workers.map((w) => ask(w.worker, { values, clearRing, splits, refHz: 55 })));
+  const sent = { ...polishFill, ...values };
+  const parts = await Promise.all(workers.map((w) => ask(w.worker, { values: sent, clearRing, splits, refHz: 55 })));
   const rows = parts.flatMap((p) => p.rows);
   const loss = rows.reduce((s, r) => s + (usePicture ? r.picture : r.excess) + r.penalty, 0) / rows.length;
   return { loss, rows };
@@ -461,7 +480,7 @@ try {
 }
 const run = {
   why: polish
-    ? 'Polish of the presence peak, the bite, the bow arc, and the bow-noise highpass. Body shape, seed, and the older picture search were left alone.'
+    ? 'Polish of the presence peak, the bite, the long-note arc, and the noise highpass. Body shape, seed, and the older picture search were left alone.'
     : 'Dynamic body: seeded narrow peaks plus the old modes, looked up from each partial’s instantaneous frequency. Vibrato no longer lifts every partial together. Seed 1..24 picked on the valid split.',
   rounds,
   fitExcess: Number(meanExcess(fit.rows).toFixed(3)),

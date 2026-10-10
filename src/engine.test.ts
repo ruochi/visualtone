@@ -486,6 +486,20 @@ test('a bow arc fades and darkens a held note', () => {
   const heldEarly = windowRms(steady.buf, steady.sr, 0.5);
   const heldLate = windowRms(steady.buf, steady.sr, 2);
   assert.ok(heldLate > heldEarly * 0.9, `unset arc fell ${heldEarly.toFixed(4)} -> ${heldLate.toFixed(4)}`);
+
+  const breath = playHarmonic(
+    {
+      ...HARMONIC_PRESETS.trumpet,
+      life: { ...HARMONIC_PRESETS.trumpet.life, wanderCents: 0, shimmerRms: 0 },
+      bowArc: undefined,
+      noteArc: { swellFrom: 0.5, swellSec: 0.2, dbPerSec: 6, tiltPerSec: 0.2 },
+    },
+    2.4,
+    62,
+  );
+  const breathEarly = windowRms(breath.buf, breath.sr, 0.5);
+  const breathLate = windowRms(breath.buf, breath.sr, 2);
+  assert.ok(breathLate < breathEarly * 0.5, `note arc ${breathEarly.toFixed(4)} -> ${breathLate.toFixed(4)}`);
 });
 
 test('instruments without a bow arc keep their samples', () => {
