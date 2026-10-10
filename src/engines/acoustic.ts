@@ -829,6 +829,8 @@ export const WIND_PRESETS = {
     evenMix: 0.08,
     evenMixStrike: 0.1,
     attack: 0.016,
+    presence: { hz: 3100, q: 1.25, db: 2.5 },
+    noteArc: { swellFrom: 0.8625, swellSec: 0.12, dbPerSec: 0.0375 },
   },
 };
 

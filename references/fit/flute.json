@@ -215,5 +215,212 @@
       "clicks": 0,
       "worst": "松开后的尾巴 8.64"
     }
-  ]
+  ],
+  "followup": {
+    "polish": {
+      "why": "Polish of the presence peak, the bite, the long-note arc, and the noise highpass. Body shape, seed, and the older picture search were left alone.",
+      "rounds": 4,
+      "fitExcess": 1.301,
+      "fitLoss": 1.469,
+      "holdoutExcess": 1.275,
+      "holdoutLoss": 1.411,
+      "params": {
+        "presence.hz": 2750,
+        "presence.q": 1.5,
+        "presence.db": 1.25,
+        "bite.level": 0.0375,
+        "bite.sec": 0.042499999999999996,
+        "noteArc.swellFrom": 1,
+        "noteArc.swellSec": 0.05,
+        "noteArc.dbPerSec": 0,
+        "airCut": 0.025,
+        "jet": 1.04,
+        "even": 0.045000000000000005
+      },
+      "notes": [
+        {
+          "file": "60_0.3.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.3,
+          "excess": 1.532,
+          "cents": 3.88,
+          "clicks": 0,
+          "worst": "亮度（质心） 3.67"
+        },
+        {
+          "file": "65_0.6.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.6,
+          "excess": 1.356,
+          "cents": -1.59,
+          "clicks": 0,
+          "worst": "各泛音衰减 5.00"
+        },
+        {
+          "file": "70_0.9.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.9,
+          "excess": 1.009,
+          "cents": -1.94,
+          "clicks": 0,
+          "worst": "起音噪声感 1.81"
+        },
+        {
+          "file": "79_0.3.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.3,
+          "excess": 1.524,
+          "cents": 3.03,
+          "clicks": 0,
+          "worst": "奇偶泛音比 4.02"
+        },
+        {
+          "file": "60_0.6.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.6,
+          "excess": 1.116,
+          "cents": -1.63,
+          "clicks": 0,
+          "worst": "各泛音衰减 5.63"
+        },
+        {
+          "file": "65_0.9.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.9,
+          "excess": 1.423,
+          "cents": -1.5,
+          "clicks": 0,
+          "worst": "各泛音衰减 4.47"
+        },
+        {
+          "file": "74_0.3.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.3,
+          "excess": 0.992,
+          "cents": 3.23,
+          "clicks": 0,
+          "worst": "各泛音衰减 3.45"
+        },
+        {
+          "file": "79_0.6.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.6,
+          "excess": 1.586,
+          "cents": 0.35,
+          "clicks": 0,
+          "worst": "奇偶泛音比 4.62"
+        },
+        {
+          "file": "60_0.9.wav",
+          "split": "valid",
+          "midi": 60,
+          "size": 0.9,
+          "excess": 1.237,
+          "cents": -1.99,
+          "clicks": 0,
+          "worst": "分音一起动 2.72"
+        },
+        {
+          "file": "70_0.3.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.3,
+          "excess": 1.185,
+          "cents": 3.3,
+          "clicks": 0,
+          "worst": "各泛音衰减 6.19"
+        },
+        {
+          "file": "74_0.6.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.6,
+          "excess": 1.224,
+          "cents": -1.16,
+          "clicks": 0,
+          "worst": "奇偶泛音比 4.50"
+        },
+        {
+          "file": "79_0.9.wav",
+          "split": "valid",
+          "midi": 79,
+          "size": 0.9,
+          "excess": 1.72,
+          "cents": 1.08,
+          "clicks": 0,
+          "worst": "各泛音衰减 14.72"
+        },
+        {
+          "file": "65_0.3.wav",
+          "split": "valid",
+          "midi": 65,
+          "size": 0.3,
+          "excess": 1.372,
+          "cents": 3.91,
+          "clicks": 0,
+          "worst": "各泛音衰减 8.92"
+        },
+        {
+          "file": "70_0.6.wav",
+          "split": "valid",
+          "midi": 70,
+          "size": 0.6,
+          "excess": 0.964,
+          "cents": -2.29,
+          "clicks": 0,
+          "worst": "分音一起动 3.48"
+        },
+        {
+          "file": "74_0.9.wav",
+          "split": "valid",
+          "midi": 74,
+          "size": 0.9,
+          "excess": 1.271,
+          "cents": -0.45,
+          "clicks": 0,
+          "worst": "奇偶泛音比 4.32"
+        },
+        {
+          "file": "84_0.6.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.6,
+          "excess": 1.13,
+          "cents": 0.3,
+          "clicks": 0,
+          "worst": "分音一起动 2.36"
+        },
+        {
+          "file": "84_0.9.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.9,
+          "excess": 1.289,
+          "cents": 1.33,
+          "clicks": 0,
+          "worst": "频段占比 3.40"
+        },
+        {
+          "file": "84_0.3.wav",
+          "split": "test",
+          "midi": 84,
+          "size": 0.3,
+          "excess": 1.405,
+          "cents": 1.95,
+          "clicks": 0,
+          "worst": "松开后的尾巴 8.63"
+        }
+      ],
+      "copied": false,
+      "note": "Not copied. Per-partial decay rose, so the preset stayed at the previous numbers."
+    }
+  }
 }

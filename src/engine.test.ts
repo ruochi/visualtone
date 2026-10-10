@@ -527,14 +527,14 @@ test('a wind note arc fades a held note', () => {
   }
 });
 
-test('instruments without a bow arc keep their samples', () => {
+test('locked instrument samples do not drift', () => {
   const expected: Record<string, string> = {
-    trumpet: 'f11620eaa49dd83ce163c3cefa5da9db044f0bafa6288259cc7ef48091351b43',
-    horn: '723e097728770e265b7944c7562cfc0bc6220c4b0d37297ef03f3df6fd045ea9',
-    trombone: '339d2756e5ffa8f3e36d688051531497fc6290e8d1477ffe8628658d099c19a0',
-    tuba: '43fdb1236e87845385ceefd1d13fb20049437feb1d4bb4e1e442069e4d6ea441',
-    saxophone: 'fee2b9ad5364f801f427bd7961494871aac41ee706a7bbac401c0b86f55a2f6b',
-    oboe: 'ac1bbf9bd47bc832dd5dd4f4c6d87877a83df9d0ed367b55e6bbf6bde04548b9',
+    trumpet: 'd129bfd6df2939ab6623a1d8c48bfd27ec393e5e10ad1f8f42d1e6e68daec76e',
+    horn: 'd5a1f7c684160735d0e4731768359d4ed3ee3a7a8cf818fb1f53e99ae1c72d0d',
+    trombone: '4037b174699059e40ba2f66e71adcdf49990dc088968df3c3af26723a412f7a4',
+    tuba: 'e731c58ec743674a731d07a13fcbdea97445a16d55dd9951553bb945ebfe6c0f',
+    saxophone: 'c06ec1f017a4f9f71fbaac4ed92d2d0ee3edc76609cf24183034316e5ff982fd',
+    oboe: 'c2d1df5cd1a9ef0e8c67689bf56942a9bd19819628574d580501c42ab40ea0db',
     bassoon: '59862eb88f532c5fb8dde3a8320a99a06562e6522cfeeb32ecd499d438a42459',
     'electric-bass': '10e71521f25e2d867c2d0419176f67bbd91871f7d8399e64a2266e2d68c4464d',
     piano: '97bf30bad3f18bb86c1d2fce0fbd8f9547c7b8019ebe756d11b4d258d0856650',
