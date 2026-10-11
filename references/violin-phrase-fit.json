@@ -1,0 +1,36 @@
+{
+  "piece": "Bach Partita 3 Menuet I, bars 1-8",
+  "fitOn": "bars 1-4",
+  "checkOn": "bars 5-8",
+  "changes": {
+    "vibratoDelaySec": 0.05,
+    "vibratoRampSec": 0.1,
+    "vibratoHighCents": 10,
+    "bowArch": {
+      "from": 0.46,
+      "peak": 0.58,
+      "end": 0.44
+    },
+    "downbeatGain": 1.18,
+    "weakBeatGain": 0.94
+  },
+  "bars1to4HarmonicMeanAbsDb": 2.63,
+  "bars5to8HarmonicMeanAbsDb": 3.67,
+  "phrase": {
+    "envelopeCorrelation": 0.267,
+    "loudnessSpanDb": {
+      "recording": 8.62,
+      "candidate": 4.97
+    }
+  },
+  "vibratoBars1to4": {
+    "recordingDepthCents": 11.61,
+    "depthCents": 11.7,
+    "depthErrorCents": 2.23
+  },
+  "previousWrittenScore": {
+    "bars5to8HarmonicMeanAbsDb": 3.58,
+    "envelopeCorrelation": 0.037,
+    "vibratoDepthCents": 3.92
+  }
+}

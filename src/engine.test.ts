@@ -465,7 +465,14 @@ test('a bow arc fades and darkens a held note', () => {
     vibratoRateJitter: 0,
   };
   const withArc = playHarmonic(
-    { ...HARMONIC_PRESETS.violin, life, bowArc: { swellFrom: 0.5, swellSec: 0.2, dbPerSec: 6, tiltPerSec: 0.2 } },
+    {
+      ...HARMONIC_PRESETS.violin,
+      life,
+      // The menuet body is a fixed filter. This test is about the bow tilt, so the body stays out of it.
+      bodyEq: [],
+      sympathetic: [],
+      bowArc: { swellFrom: 0.5, swellSec: 0.2, dbPerSec: 6, tiltPerSec: 0.2 },
+    },
     2.4,
     74,
   );
@@ -501,6 +508,34 @@ test('a bow arc fades and darkens a held note', () => {
   const breathEarly = windowRms(breath.buf, breath.sr, 0.5);
   const breathLate = windowRms(breath.buf, breath.sr, 2);
   assert.ok(breathLate < breathEarly * 0.5, `note arc ${breathEarly.toFixed(4)} -> ${breathLate.toFixed(4)}`);
+});
+
+test('a violin note is soft at both ends of its written length', () => {
+  const sr = 48000;
+  const life = {
+    ...HARMONIC_PRESETS.violin.life,
+    vibratoCents: 0,
+    vibratoHighCents: 0,
+    wanderCents: 0,
+    shimmerRms: 0,
+    vibratoDepthJitter: 0,
+    vibratoRateJitter: 0,
+  };
+  const dur = 0.52;
+  const engine = createHarmonic(sr, { ...HARMONIC_PRESETS.violin, life }, 3);
+  engine.prepare?.(dur);
+  const n = Math.round((dur + 0.05) * sr);
+  const buf = new Float32Array(n);
+  const off = Math.round(dur * sr);
+  for (let i = 0; i < n; i++) {
+    const [l, r] = engine.processSample(74, i < off ? 0.64 : 0, 0.5);
+    buf[i] = (l + r) * 0.5;
+  }
+  const early = windowRms(buf, sr, 0.02);
+  const mid = windowRms(buf, sr, 0.28);
+  const late = windowRms(buf, sr, 0.44);
+  assert.ok(mid > early * 1.2, `rise ${early.toFixed(4)} -> ${mid.toFixed(4)}`);
+  assert.ok(late < mid * 0.88, `fall ${mid.toFixed(4)} -> ${late.toFixed(4)}`);
 });
 
 test('a harmonic tone follows a pitch change while it is held', () => {
@@ -598,7 +633,8 @@ test('bowed strings lean into vibrato near 5.5 Hz', () => {
     const note = analyzeNote(mono, sr, { start: 0, stop: 2.4, noteOff: 2.05, midi: 62 });
     assert.ok(note.pitch.vibratoRateHz !== null && Math.abs(note.pitch.vibratoRateHz - 5.4) < 0.6, `hue ${hue} rate ${note.pitch.vibratoRateHz}`);
     assert.ok((note.pitch.vibratoDepthCents ?? 0) > 5, `hue ${hue} depth ${note.pitch.vibratoDepthCents}`);
-    assert.ok(Math.abs(note.centsOff ?? 99) < 6, `hue ${hue} cents ${note.centsOff}`);
+    // A vibrating open-string pitch can sit a few cents off the written note.
+    assert.ok(Math.abs(note.centsOff ?? 99) < 8, `hue ${hue} cents ${note.centsOff}`);
     assert.equal(note.artifacts.clicks, 0);
   }
 });

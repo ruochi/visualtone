@@ -1,3 +1,4 @@
+import { Biquad } from '../mix.js';
 import { midiToFrequency, mulberry32 } from '../synth.js';
 import { createPitchLife, type Engine, type PitchLifeSpec } from './core.js';
 
@@ -72,6 +73,16 @@ export interface HarmonicPreset {
    */
   body?: { seed: number; count: number; qLo: number; qHi: number; db: number; loHz: number; hiHz: number };
   /**
+   * Fixed-frequency body, applied to harmonics and bow noise together.
+   * Peaks here are the bridge and the air, so a partial and the noise under it move as one.
+   */
+  bodyEq?: { hz: number; q: number; db: number }[];
+  /**
+   * Open strings ringing off the bridge. Each bandpass is fed by the harmonic sum.
+   * `mix` is the fraction added back. Absent leaves the bridge dry.
+   */
+  sympathetic?: { hz: number; q: number; mix: number }[];
+  /**
    * A brighter copy of the harmonics that dies after the attack, plus a short noise burst.
    * Finger attack on an electric bass.
    */
@@ -91,8 +102,19 @@ export interface HarmonicPreset {
    * (capped at 0.4 s). After that the level falls by dbPerSec and the slope steepens
    * by tiltPerSec, so higher partials die first. A bow uses `bowArc`. A breath or a
    * lip uses `noteArc`. Unset on both leaves the held level flat.
+   * When archFrom, archPeak, and archEnd are set, amplitude follows the written
+   * length instead: archFrom at the attack, full at archPeak (a fraction of the
+   * note), archEnd at the release. Partial gains still use dbPerSec.
    */
-  bowArc?: { swellFrom: number; swellSec: number; dbPerSec: number; tiltPerSec: number };
+  bowArc?: {
+    swellFrom: number;
+    swellSec: number;
+    dbPerSec: number;
+    tiltPerSec: number;
+    archFrom?: number;
+    archPeak?: number;
+    archEnd?: number;
+  };
   noteArc?: { swellFrom: number; swellSec: number; dbPerSec: number; tiltPerSec: number };
   attackSec: number;
   releaseSec: number;
@@ -262,23 +284,40 @@ export const HARMONIC_PRESETS = {
     },
     modes: [
       { hz: 173.6, q: 1.6, db: 9.57 },
-      { hz: 530, q: 6, db: 9.81 },
+      { hz: 530, q: 6, db: 3 },
       { hz: 1209.6, q: 3, db: 4 },
       { hz: 4160, q: 6, db: 10.52 },
-      { hz: 3000, q: 1.2, db: 14 },
+      { hz: 3000, q: 1.2, db: 6 },
+    ],
+    // Fitted to bars 1–4 of the menuet. A harder curve overfit those bars and lost the holdout.
+    bodyEq: [
+      { hz: 500, q: 1.7, db: -4 },
+      { hz: 1000, q: 1.6, db: 4 },
+      { hz: 3150, q: 1.4, db: -3 },
+      { hz: 6500, q: 1.3, db: 5 },
+    ],
+    sympathetic: [
+      { hz: 196.0, q: 40, mix: 0.035 },
+      { hz: 293.7, q: 40, mix: 0.035 },
+      { hz: 440.0, q: 40, mix: 0.03 },
+      { hz: 659.3, q: 40, mix: 0.025 },
     ],
     transient: { level: 0.48125, brighten: 0.28, minSlope: 0.06, sec: 0.02, noise: 0.31, noiseStrike: 0, noiseSec: 0.04 },
-    bowArc: { swellFrom: 0.6, swellSec: 0.4, dbPerSec: 0.5625, tiltPerSec: 0.0025 },
+    // Bars 1–4 of the menuet: soft attack, peak near 58% of the note, then a fall to about half.
+    bowArc: { swellFrom: 0.6, swellSec: 0.4, dbPerSec: 0.5625, tiltPerSec: 0.0025, archFrom: 0.46, archPeak: 0.58, archEnd: 0.44 },
     body: { seed: 23, count: 368, qLo: 59, qHi: 173.5, db: 2.875, loHz: 160, hiHz: 12000 },
     attackSec: 0.0455,
     life: {
       vibratoCents: 17.4375,
       vibratoHz: 5.375,
-      vibratoDelaySec: 0.22,
+      // A quarter at this tempo is about half a second. The old 0.22 s delay plus
+      // 0.35 s ramp never reached the high-register depth inside that note.
+      vibratoDelaySec: 0.05,
+      vibratoRampSec: 0.1,
       wanderCents: 2.3,
       vibratoGain: 0,
       shimmerRms: 0.02775,
-      vibratoHighCents: 5.75,
+      vibratoHighCents: 10,
       vibratoLowMidi: 60,
       vibratoHighMidi: 68,
       vibratoDepthJitter: 0.06,
@@ -725,6 +764,12 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
   const life = createPitchLife(sampleRate, scaleLife(p.life, clamp01(pitchLife)), seed);
+  const bodyEq = (p.bodyEq ?? [])
+    .filter((band) => band.db !== 0)
+    .map((band) => new Biquad('peak', sampleRate, band.hz, Math.max(0.3, band.q), band.db));
+  const sympathetic = (p.sympathetic ?? [])
+    .filter((s) => s.mix !== 0)
+    .map((s) => ({ bp: new Biquad('bandpass', sampleRate, s.hz, Math.max(1, s.q)), mix: s.mix }));
   const nyquist = sampleRate * 0.45;
   const partialGate = new Float64Array(N);
   const bodyTable = p.body ? buildBodyTable(p.body, p.modes) : null;
@@ -735,6 +780,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let bodyTick = 0;
   let arcSamples = 0;
   let arcTick = 0;
+  let noteDur = 0;
   let noiseHp = 0;
   let noiseHpPole = 0;
   for (let n = 0; n < N; n++) bodyNow[n] = 1;
@@ -743,6 +789,9 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
     setRelease(ms: number) {
       if (p.releaseShape) releaseScale = ms / 180;
       else releaseSec = Math.max(0.02, ms / 1000);
+    },
+    prepare(durationSec: number) {
+      noteDur = durationSec;
     },
     processSample(midi, size, lightness) {
       const on = size > 1e-5;
@@ -854,11 +903,31 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       }
       const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
       let dest = on ? size : 0;
-      const arc = p.bowArc ?? p.noteArc;
+      const bow = p.bowArc;
+      const arc = bow ?? p.noteArc;
       if (on && arc) {
         const swellN = Math.min(0.4, Math.max(0.02, arc.swellSec)) * sampleRate;
-        const u = Math.min(1, arcSamples / swellN);
-        dest = size * (arc.swellFrom + (1 - arc.swellFrom) * u);
+        const arch =
+          bow && bow.archFrom !== undefined && bow.archPeak !== undefined && bow.archEnd !== undefined && noteDur > 0.02
+            ? { from: bow.archFrom, peak: bow.archPeak, end: bow.archEnd }
+            : null;
+        if (arch) {
+          const peakT = Math.min(noteDur * 0.92, Math.max(0.015, arch.peak * noteDur));
+          const tNote = arcSamples / sampleRate;
+          let amp: number;
+          if (tNote <= peakT) {
+            const u = peakT <= 1e-4 ? 1 : tNote / peakT;
+            amp = arch.from + (1 - arch.from) * u;
+          } else {
+            const span = Math.max(1e-3, noteDur - peakT);
+            const u = Math.min(1, (tNote - peakT) / span);
+            amp = 1 + (arch.end - 1) * u;
+          }
+          dest = size * amp;
+        } else {
+          const u = Math.min(1, arcSamples / swellN);
+          dest = size * (arc.swellFrom + (1 - arc.swellFrom) * u);
+        }
         if (arcSamples >= swellN && arcTick === 0) {
           const dt = BODY_BLOCK / sampleRate;
           const decay = Math.pow(10, (-arc.dbPerSec * dt) / 20);
@@ -934,7 +1003,13 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       const body = bodyB0 * src + bz1;
       bz1 = -bodyA1 * body + bz2;
       bz2 = bodyB2 * src - bodyA2 * body;
-      const out = (src + body * bodyMix + noise + air * airAmp) * env * life.gain * p.gain;
+      let mixed = src + body * bodyMix + noise + air * airAmp;
+      for (let i = 0; i < sympathetic.length; i++) {
+        const s = sympathetic[i];
+        mixed += s.bp.process(src) * s.mix;
+      }
+      for (let i = 0; i < bodyEq.length; i++) mixed = bodyEq[i].process(mixed);
+      const out = mixed * env * life.gain * p.gain;
       return [out * p.stereo[0], out * p.stereo[1]];
     },
   };

@@ -279,6 +279,7 @@ function renderTrackDry(
     poly = (placed.notes ?? []).map((n, i) => {
       const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed + i + 1, engineOptions);
       eng.setRelease(placed.release ?? 180);
+      eng.prepare?.(n.duration);
       return { sampler: createTrackSampler(expandNotes([n]), defaultLightness), eng };
     });
     if ((placed.points?.length ?? 0) > 0) {

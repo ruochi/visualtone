@@ -3,6 +3,8 @@ import { mulberry32 } from '../synth.js';
 export interface Engine {
   setRelease(ms: number): void;
   processSample(midi: number, size: number, lightness: number): [number, number];
+  /** Written length in seconds. A note-relative bow arch uses it. Other engines ignore it. */
+  prepare?(durationSec: number): void;
 }
 
 export interface PitchLifeSpec {
@@ -11,6 +13,11 @@ export interface PitchLifeSpec {
   vibratoHz: number;
   /** A player starts the note straight and leans into vibrato after this long. */
   vibratoDelaySec: number;
+  /**
+   * Seconds to grow from silence to full depth after the delay. Unset keeps 0.35,
+   * which is what the locked presets were rendered with.
+   */
+  vibratoRampSec?: number;
   /** Slow random pitch motion, standard deviation in cents. */
   wanderCents: number;
   /** Bow pressure follows the vibrato, so the level moves with it by this fraction. */
@@ -49,7 +56,7 @@ export function createPitchLife(sampleRate: number, spec: PitchLifeSpec, seed: n
   const gauss = () => (rng() + rng() + rng() - 1.5) * 2;
   const wanderAmp = spec.wanderCents * 1.25;
   const wanderInc = 1 / (0.3 * sampleRate);
-  const rampSec = 0.35;
+  const rampSec = spec.vibratoRampSec ?? 0.35;
   const shimmerHz = [8.6, 11.4, 14.2, 17.5];
   const shimmerPhase = [0, 0, 0, 0];
   const shimmerFreq = [0, 0, 0, 0];
