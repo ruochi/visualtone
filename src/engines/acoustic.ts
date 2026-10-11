@@ -1548,7 +1548,18 @@ export function isAcousticEngine(name: string | undefined): name is AcousticEngi
   );
 }
 
-export function createEngine(name: AcousticEngine, sampleRate: number, hue: number, seed: number): Engine {
+export interface EngineOptions {
+  /** 0–1. Scales vibrato, wander, and shimmer on harmonic instruments. Default 1. */
+  pitchLife?: number;
+}
+
+export function createEngine(
+  name: AcousticEngine,
+  sampleRate: number,
+  hue: number,
+  seed: number,
+  options?: EngineOptions,
+): Engine {
   if (name === 'pluck') return createPluck(sampleRate, hue, seed);
   if (name === 'marimba') return createMarimba(sampleRate, hue, seed);
   if (name === 'organ') return createOrgan(sampleRate, hue, seed);
@@ -1556,7 +1567,12 @@ export function createEngine(name: AcousticEngine, sampleRate: number, hue: numb
   if (name === 'wind') return createWind(sampleRate, hue, seed);
   if (name === 'piano') return createPiano(sampleRate, hue, seed);
   if (name === 'bow' || name === 'brass' || name === 'bass' || name === 'reed') {
-    return createHarmonic(sampleRate, HARMONIC_PRESETS[harmonicInstrumentFor(name, hue)], seed);
+    return createHarmonic(
+      sampleRate,
+      HARMONIC_PRESETS[harmonicInstrumentFor(name, hue)],
+      seed,
+      options?.pitchLife ?? 1,
+    );
   }
   if (name === 'sub') return createSub(sampleRate, hue, seed);
   if (name === 'cymbal') return createCymbal(sampleRate, hue, seed);

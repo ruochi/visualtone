@@ -674,7 +674,19 @@ function clampDb(db: number): number {
   return db;
 }
 
-export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed: number): Engine {
+function scaleLife(spec: PitchLifeSpec, scale: number): PitchLifeSpec {
+  if (scale === 1) return spec;
+  return {
+    ...spec,
+    vibratoCents: spec.vibratoCents * scale,
+    vibratoHighCents: spec.vibratoHighCents === undefined ? undefined : spec.vibratoHighCents * scale,
+    wanderCents: spec.wanderCents * scale,
+    vibratoGain: spec.vibratoGain * scale,
+    shimmerRms: spec.shimmerRms * scale,
+  };
+}
+
+export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed: number, pitchLife = 1): Engine {
   const p = preset;
   const rng = mulberry32(seed || 1);
   const N = p.partials;
@@ -712,7 +724,9 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   let bodyMix = p.resonance.mix;
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
-  const life = createPitchLife(sampleRate, p.life, seed);
+  const life = createPitchLife(sampleRate, scaleLife(p.life, clamp01(pitchLife)), seed);
+  const nyquist = sampleRate * 0.45;
+  const partialGate = new Float64Array(N);
   const bodyTable = p.body ? buildBodyTable(p.body, p.modes) : null;
   const nominalDb = new Float64Array(N);
   const bodyNow = new Float64Array(N);
@@ -756,13 +770,14 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         const modes = bodyTable ? undefined : p.modes;
         let energy = 0;
         for (let n = 1; n <= N; n++) {
-          const audible = freq * n < sampleRate * 0.45;
-          let g = audible ? Math.exp(-tilt * (n - 1)) : 0;
-          if (bodyTable && g > 0) {
+          // Keep partials that sit above Nyquist. A later pitch drop can bring them back.
+          const audible = freq * n < nyquist;
+          let g = Math.exp(-tilt * (n - 1));
+          if (bodyTable) {
             const db = clampDb(lookupBody(bodyTable, freq * n));
             nominalDb[n - 1] = db;
             g *= Math.pow(10, db / 20);
-          } else if (modes && g > 0) {
+          } else if (modes) {
             const f = freq * n;
             let db = 0;
             for (let i = 0; i < modes.length; i++) {
@@ -777,8 +792,9 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
             g *= Math.pow(10, db / 20);
           }
           gains[n - 1] = g;
-          brightGains[n - 1] = audible && tr ? Math.exp(-brightTilt * (n - 1)) : 0;
-          energy += g * g;
+          brightGains[n - 1] = tr ? Math.exp(-brightTilt * (n - 1)) : 0;
+          if (audible) energy += g * g;
+          partialGate[n - 1] = audible ? 1 : 0;
           phases[n - 1] = n * n * p.phaseSpread;
         }
         const norm = energy > 1e-12 ? 1 / Math.sqrt(energy) : 0;
@@ -829,6 +845,13 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
       }
       wasOn = on;
       if (!on && env < 1e-5 && finger < 1e-4) return [0, 0];
+      if (on) {
+        freq = Math.min(sampleRate * p.maxHzRatio, Math.max(p.minHz, midiToFrequency(midi)));
+        // Once per block: a rising pitch must not keep partials that now alias.
+        if (bodyTick === 0) {
+          for (let n = 0; n < N; n++) partialGate[n] = freq * (n + 1) < nyquist ? 1 : 0;
+        }
+      }
       const releaseCoeff = Math.exp(-6.9 / (releaseSec * sampleRate));
       let dest = on ? size : 0;
       const arc = p.bowArc ?? p.noteArc;
@@ -884,6 +907,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         }
         phases[n] += step * (n + 1);
         if (phases[n] > Math.PI * 2) phases[n] -= Math.PI * 2;
+        if (partialGate[n] === 0) continue;
         const sine = Math.sin(phases[n]);
         const shaped = bodyTable ? gains[n] * bodyNow[n] : gains[n];
         sum += sine * shaped;

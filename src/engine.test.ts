@@ -503,6 +503,45 @@ test('a bow arc fades and darkens a held note', () => {
   assert.ok(breathLate < breathEarly * 0.5, `note arc ${breathEarly.toFixed(4)} -> ${breathLate.toFixed(4)}`);
 });
 
+test('a harmonic tone follows a pitch change while it is held', () => {
+  const sr = 48000;
+  const engine = createHarmonic(sr, HARMONIC_PRESETS.violin, 3, 0);
+  const n = Math.round(1.4 * sr);
+  const buf = new Float32Array(n);
+  const jump = Math.round(0.7 * sr);
+  for (let i = 0; i < n; i++) {
+    const [l, r] = engine.processSample(i < jump ? 60 : 72, 0.6, 0.5);
+    buf[i] = (l + r) * 0.5;
+  }
+  const low = analyzeNote(buf, sr, { start: 0.3, stop: 0.62, midi: 60 });
+  const high = analyzeNote(buf, sr, { start: 0.95, stop: 1.3, midi: 72 });
+  assert.ok(low.centsOff !== null && Math.abs(low.centsOff) < 40, `low cents ${low.centsOff} f0 ${low.f0Hz}`);
+  assert.ok(high.centsOff !== null && Math.abs(high.centsOff) < 40, `high cents ${high.centsOff} f0 ${high.f0Hz}`);
+});
+
+test('pitchLife 0 holds a harmonic tone on the written pitch', () => {
+  const sr = 48000;
+  const play = (pitchLife: number) => {
+    const engine = createHarmonic(sr, HARMONIC_PRESETS.violin, 3, pitchLife);
+    const n = Math.round(1.6 * sr);
+    const buf = new Float32Array(n);
+    const off = Math.round(1.5 * sr);
+    for (let i = 0; i < n; i++) {
+      const [l, r] = engine.processSample(62, i < off ? 0.6 : 0, 0.5);
+      buf[i] = (l + r) * 0.5;
+    }
+    return analyzeNote(buf, sr, { start: 0.05, stop: 1.45, midi: 62, noteOff: 1.5 });
+  };
+  const still = play(0);
+  const alive = play(1);
+  assert.ok((still.pitch.stdCents ?? 99) < 8, `still std ${still.pitch.stdCents}`);
+  assert.ok((alive.pitch.vibratoDepthCents ?? 0) > 4, `vibrato ${alive.pitch.vibratoDepthCents}`);
+  assert.ok(
+    (alive.pitch.stdCents ?? 0) > (still.pitch.stdCents ?? 0) + 3,
+    `std ${still.pitch.stdCents} vs ${alive.pitch.stdCents}`,
+  );
+});
+
 test('a wind note arc fades a held note', () => {
   const sr = 48000;
   const play = (dbPerSec: number) => {

@@ -1,0 +1,650 @@
+{
+  "piece": "J.S. Bach, Violin Partita No. 3 BWV 1006, Menuet I, bars 1-8",
+  "phraseSec": 12.5217,
+  "levels": {
+    "L0": "recording",
+    "L1": {
+      "rmsMatchDb": -0.11,
+      "shapeDb": 13.18,
+      "harmonic": {
+        "meanAbsDb": 0.52,
+        "noteMeanAbsDb": 2.89,
+        "lowNotesMeanAbsDb": 0.18,
+        "highNotesMeanAbsDb": 0.66,
+        "partialDb": [
+          {
+            "h": 1,
+            "db": 0.0,
+            "notes": 42
+          },
+          {
+            "h": 2,
+            "db": 0.0,
+            "notes": 38
+          },
+          {
+            "h": 3,
+            "db": 0.0,
+            "notes": 37
+          },
+          {
+            "h": 4,
+            "db": 0.05,
+            "notes": 31
+          },
+          {
+            "h": 5,
+            "db": -0.77,
+            "notes": 28
+          },
+          {
+            "h": 6,
+            "db": -0.98,
+            "notes": 25
+          },
+          {
+            "h": 7,
+            "db": -1.81,
+            "notes": 22
+          },
+          {
+            "h": 8,
+            "db": -0.64,
+            "notes": 32
+          },
+          {
+            "h": 9,
+            "db": -0.89,
+            "notes": 32
+          },
+          {
+            "h": 10,
+            "db": 0.04,
+            "notes": 22
+          }
+        ],
+        "notes": 43
+      },
+      "distribution": {
+        "median": 1.96,
+        "mean": 2.89,
+        "p90": 6.47,
+        "notes": 43
+      },
+      "holdout": {
+        "bars1to4": {
+          "harmonicMeanAbsDb": 0.44,
+          "median": 2.38,
+          "mean": 2.83,
+          "p90": 4.47,
+          "notes": 22
+        },
+        "bars5to8": {
+          "harmonicMeanAbsDb": 1.05,
+          "median": 1.79,
+          "mean": 2.96,
+          "p90": 6.56,
+          "notes": 21
+        }
+      },
+      "byHz": [
+        {
+          "hz": 400,
+          "db": 0.0,
+          "n": 3
+        },
+        {
+          "hz": 500,
+          "db": -0.04,
+          "n": 7
+        },
+        {
+          "hz": 630,
+          "db": 0.01,
+          "n": 13
+        },
+        {
+          "hz": 800,
+          "db": 0.0,
+          "n": 19
+        },
+        {
+          "hz": 1000,
+          "db": 0.0,
+          "n": 10
+        },
+        {
+          "hz": 1250,
+          "db": 0.16,
+          "n": 15
+        },
+        {
+          "hz": 1600,
+          "db": 0.0,
+          "n": 23
+        },
+        {
+          "hz": 2000,
+          "db": 0.34,
+          "n": 28
+        },
+        {
+          "hz": 2500,
+          "db": -0.67,
+          "n": 26
+        },
+        {
+          "hz": 3150,
+          "db": -0.48,
+          "n": 25
+        },
+        {
+          "hz": 4000,
+          "db": 0.26,
+          "n": 37
+        },
+        {
+          "hz": 5000,
+          "db": -1.12,
+          "n": 47
+        },
+        {
+          "hz": 6300,
+          "db": -0.62,
+          "n": 41
+        },
+        {
+          "hz": 8000,
+          "db": -1.64,
+          "n": 14
+        }
+      ],
+      "hnrDb": [
+        {
+          "hz": [
+            200,
+            800
+          ],
+          "db": 5.54
+        },
+        {
+          "hz": [
+            800,
+            2000
+          ],
+          "db": 4.77
+        },
+        {
+          "hz": [
+            2000,
+            5000
+          ],
+          "db": 5.41
+        },
+        {
+          "hz": [
+            5000,
+            10000
+          ],
+          "db": 4.18
+        }
+      ],
+      "attack": {
+        "centroid30MsCents": 154.8,
+        "centroid100MsCents": 91.5,
+        "steadyLagMs": 0.0,
+        "notes": 48
+      },
+      "vibrato": {
+        "recordingDepthCents": 17.34,
+        "depthCents": 13.45,
+        "depthErrorCents": -2.73,
+        "recordingRateHz": 5.88,
+        "rateHz": 3.85,
+        "partialF0AbsCorr": 0.35,
+        "recordingPartialF0AbsCorr": 0.33,
+        "notes": 27
+      },
+      "phrase": {
+        "envelopeCorrelation": 0.958,
+        "loudnessSpanDb": {
+          "recording": 8.62,
+          "candidate": 23.26
+        }
+      }
+    },
+    "L2": {
+      "rmsMatchDb": 4.29,
+      "shapeDb": 13.36,
+      "harmonic": {
+        "meanAbsDb": 3.33,
+        "noteMeanAbsDb": 7.08,
+        "lowNotesMeanAbsDb": 3.89,
+        "highNotesMeanAbsDb": 3.14,
+        "partialDb": [
+          {
+            "h": 1,
+            "db": 2.19,
+            "notes": 42
+          },
+          {
+            "h": 2,
+            "db": 0.6,
+            "notes": 38
+          },
+          {
+            "h": 3,
+            "db": -1.58,
+            "notes": 37
+          },
+          {
+            "h": 4,
+            "db": 1.51,
+            "notes": 31
+          },
+          {
+            "h": 5,
+            "db": 3.43,
+            "notes": 28
+          },
+          {
+            "h": 6,
+            "db": 2.56,
+            "notes": 26
+          },
+          {
+            "h": 7,
+            "db": -3.86,
+            "notes": 23
+          },
+          {
+            "h": 8,
+            "db": -1.43,
+            "notes": 32
+          },
+          {
+            "h": 9,
+            "db": -7.76,
+            "notes": 31
+          },
+          {
+            "h": 10,
+            "db": -8.39,
+            "notes": 22
+          }
+        ],
+        "notes": 43
+      },
+      "distribution": {
+        "median": 6.47,
+        "mean": 7.08,
+        "p90": 11.13,
+        "notes": 43
+      },
+      "holdout": {
+        "bars1to4": {
+          "harmonicMeanAbsDb": 3.57,
+          "median": 6.08,
+          "mean": 6.74,
+          "p90": 9.9,
+          "notes": 22
+        },
+        "bars5to8": {
+          "harmonicMeanAbsDb": 3.92,
+          "median": 7.67,
+          "mean": 7.44,
+          "p90": 11.79,
+          "notes": 21
+        }
+      },
+      "byHz": [
+        {
+          "hz": 400,
+          "db": 0.0,
+          "n": 3
+        },
+        {
+          "hz": 500,
+          "db": 11.62,
+          "n": 7
+        },
+        {
+          "hz": 630,
+          "db": 2.41,
+          "n": 13
+        },
+        {
+          "hz": 800,
+          "db": 0.0,
+          "n": 19
+        },
+        {
+          "hz": 1000,
+          "db": -7.33,
+          "n": 10
+        },
+        {
+          "hz": 1250,
+          "db": 1.76,
+          "n": 15
+        },
+        {
+          "hz": 1600,
+          "db": 3.54,
+          "n": 23
+        },
+        {
+          "hz": 2000,
+          "db": 1.05,
+          "n": 28
+        },
+        {
+          "hz": 2500,
+          "db": -1.57,
+          "n": 26
+        },
+        {
+          "hz": 3150,
+          "db": 4.22,
+          "n": 26
+        },
+        {
+          "hz": 4000,
+          "db": 0.25,
+          "n": 38
+        },
+        {
+          "hz": 5000,
+          "db": -1.93,
+          "n": 46
+        },
+        {
+          "hz": 6300,
+          "db": -13.4,
+          "n": 41
+        },
+        {
+          "hz": 8000,
+          "db": -3.53,
+          "n": 14
+        }
+      ],
+      "hnrDb": [
+        {
+          "hz": [
+            200,
+            800
+          ],
+          "db": 4.23
+        },
+        {
+          "hz": [
+            800,
+            2000
+          ],
+          "db": 7.16
+        },
+        {
+          "hz": [
+            2000,
+            5000
+          ],
+          "db": 5.85
+        },
+        {
+          "hz": [
+            5000,
+            10000
+          ],
+          "db": -0.01
+        }
+      ],
+      "attack": {
+        "centroid30MsCents": 632.9,
+        "centroid100MsCents": 656.6,
+        "steadyLagMs": -15.0,
+        "notes": 48
+      },
+      "vibrato": {
+        "recordingDepthCents": 17.34,
+        "depthCents": 11.74,
+        "depthErrorCents": -2.11,
+        "recordingRateHz": 5.88,
+        "rateHz": 4.17,
+        "partialF0AbsCorr": 0.32,
+        "recordingPartialF0AbsCorr": 0.32,
+        "notes": 27
+      },
+      "phrase": {
+        "envelopeCorrelation": 0.45,
+        "loudnessSpanDb": {
+          "recording": 8.62,
+          "candidate": 10.63
+        }
+      }
+    },
+    "L3": {
+      "rmsMatchDb": 4.6,
+      "shapeDb": 13.85,
+      "harmonic": {
+        "meanAbsDb": 2.96,
+        "noteMeanAbsDb": 6.38,
+        "lowNotesMeanAbsDb": 4.63,
+        "highNotesMeanAbsDb": 3.32,
+        "partialDb": [
+          {
+            "h": 1,
+            "db": 1.22,
+            "notes": 43
+          },
+          {
+            "h": 2,
+            "db": 1.14,
+            "notes": 40
+          },
+          {
+            "h": 3,
+            "db": 0.28,
+            "notes": 39
+          },
+          {
+            "h": 4,
+            "db": 3.45,
+            "notes": 34
+          },
+          {
+            "h": 5,
+            "db": 8.51,
+            "notes": 29
+          },
+          {
+            "h": 6,
+            "db": 5.79,
+            "notes": 28
+          },
+          {
+            "h": 7,
+            "db": 0.16,
+            "notes": 25
+          },
+          {
+            "h": 8,
+            "db": 0.47,
+            "notes": 33
+          },
+          {
+            "h": 9,
+            "db": -1.53,
+            "notes": 34
+          },
+          {
+            "h": 10,
+            "db": -7.08,
+            "notes": 24
+          }
+        ],
+        "notes": 45
+      },
+      "distribution": {
+        "median": 5.99,
+        "mean": 6.38,
+        "p90": 9.87,
+        "notes": 45
+      },
+      "holdout": {
+        "bars1to4": {
+          "harmonicMeanAbsDb": 3.39,
+          "median": 5.96,
+          "mean": 6.34,
+          "p90": 9.92,
+          "notes": 24
+        },
+        "bars5to8": {
+          "harmonicMeanAbsDb": 3.58,
+          "median": 6.16,
+          "mean": 6.43,
+          "p90": 9.04,
+          "notes": 21
+        }
+      },
+      "byHz": [
+        {
+          "hz": 400,
+          "db": 0.0,
+          "n": 3
+        },
+        {
+          "hz": 500,
+          "db": 13.81,
+          "n": 6
+        },
+        {
+          "hz": 630,
+          "db": 0.8,
+          "n": 14
+        },
+        {
+          "hz": 800,
+          "db": 0.0,
+          "n": 20
+        },
+        {
+          "hz": 1000,
+          "db": -9.14,
+          "n": 10
+        },
+        {
+          "hz": 1250,
+          "db": 1.78,
+          "n": 16
+        },
+        {
+          "hz": 1600,
+          "db": 5.7,
+          "n": 25
+        },
+        {
+          "hz": 2000,
+          "db": -0.64,
+          "n": 30
+        },
+        {
+          "hz": 2500,
+          "db": 1.21,
+          "n": 27
+        },
+        {
+          "hz": 3150,
+          "db": 7.66,
+          "n": 26
+        },
+        {
+          "hz": 4000,
+          "db": 3.91,
+          "n": 42
+        },
+        {
+          "hz": 5000,
+          "db": 2.43,
+          "n": 50
+        },
+        {
+          "hz": 6300,
+          "db": -9.35,
+          "n": 44
+        },
+        {
+          "hz": 8000,
+          "db": -1.62,
+          "n": 15
+        }
+      ],
+      "hnrDb": [
+        {
+          "hz": [
+            200,
+            800
+          ],
+          "db": 4.11
+        },
+        {
+          "hz": [
+            800,
+            2000
+          ],
+          "db": 3.82
+        },
+        {
+          "hz": [
+            2000,
+            5000
+          ],
+          "db": 4.51
+        },
+        {
+          "hz": [
+            5000,
+            10000
+          ],
+          "db": 1.36
+        }
+      ],
+      "attack": {
+        "centroid30MsCents": 450.6,
+        "centroid100MsCents": 357.5,
+        "steadyLagMs": -30.0,
+        "notes": 46
+      },
+      "vibrato": {
+        "recordingDepthCents": 12.89,
+        "depthCents": 3.92,
+        "depthErrorCents": -5.37,
+        "recordingRateHz": 4.76,
+        "rateHz": 3.7,
+        "partialF0AbsCorr": 0.29,
+        "recordingPartialF0AbsCorr": 0.36,
+        "notes": 23
+      },
+      "phrase": {
+        "envelopeCorrelation": 0.037,
+        "loudnessSpanDb": {
+          "recording": 8.62,
+          "candidate": 4.59
+        }
+      }
+    }
+  },
+  "verdict": {
+    "bottleneck": "both",
+    "timbreGapDb": {
+      "engine": 2.81,
+      "control": -0.37
+    },
+    "phraseGap": {
+      "engine": 0.508,
+      "control": 0.413
+    },
+    "summary": "稳态音色差在引擎，乐句差在演奏控制。稳态谐波斜率：重合成 0.52 dB，真实控制 3.33 dB，乐谱 2.96 dB。谐波模型本身能贴到 0.52 dB，所以不是表示不够。换成我们的琴之后升到 3.33 dB，再换成乐谱也还是 2.96 dB，多出来的是引擎（2.81 dB），不是谱面。乐句响度相关：重合成 0.958，真实控制 0.45，乐谱 0.037。乐谱几乎跟录音对不上，真实控制能补回一截。整段频谱形状差三级都在 13.18、13.36、13.85 dB，拉不开，因为房间和分音之间的噪声盖过了音色，这组数不参与判定。下一步分两路，都用第 5–8 小节验收。引擎先补固定频率上的琴体：500 Hz 一带偏高，1 kHz 和 6 kHz 一带偏低，噪声也要经过同一个琴体。控制先补乐句力度和揉弦深度，老师就是这次提取的曲线。先不上物理弦。重合成的谐波斜率已经接近零，稳态音色用谐波就装得下。"
+  },
+  "note": "L1 is partials plus residual noise driven by the recording. L2 is the violin engine driven by the extracted pitch and loudness, with pitchLife 0. L3 is the written score. Shape and harmonic numbers are after loudness removal. Bars 5-8 are the holdout."
+}

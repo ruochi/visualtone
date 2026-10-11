@@ -30,6 +30,12 @@ export const TimbreOverrideSchema = z
     drive: z.number().optional(),
     velocity: z.number().min(0).max(1).optional().describe('How much note size opens the filter'),
     drift: z.number().min(0).max(1).optional().describe('Slow pitch drift and per-note randomness'),
+    pitchLife: z
+      .number()
+      .min(0)
+      .max(1)
+      .optional()
+      .describe('Scales vibrato, wander, and shimmer on harmonic instruments. 0 follows the written pitch exactly. Default 1'),
   })
   .partial();
 

@@ -275,13 +275,14 @@ function renderTrackDry(
 
   if (isAcousticEngine(placed.engine) && ((placed.notes?.length ?? 0) > 0 || (placed.points?.length ?? 0) > 0)) {
     const engineName = placed.engine;
+    const engineOptions = placed.timbre?.pitchLife === undefined ? undefined : { pitchLife: placed.timbre.pitchLife };
     poly = (placed.notes ?? []).map((n, i) => {
-      const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed + i + 1);
+      const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed + i + 1, engineOptions);
       eng.setRelease(placed.release ?? 180);
       return { sampler: createTrackSampler(expandNotes([n]), defaultLightness), eng };
     });
     if ((placed.points?.length ?? 0) > 0) {
-      const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed);
+      const eng = createEngine(engineName, sampleRate, placed.hue ?? 110, voiceSeed, engineOptions);
       eng.setRelease(placed.release ?? 180);
       poly.push({ sampler: createTrackSampler(placed.points ?? [], defaultLightness), eng });
     }
