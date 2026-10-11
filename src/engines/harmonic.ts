@@ -78,6 +78,11 @@ export interface HarmonicPreset {
    */
   bodyEq?: { hz: number; q: number; db: number }[];
   /**
+   * Minimum-phase residual body, applied after `bodyEq` to the same mix.
+   * Coefficients are the impulse response. Empty or absent is a bypass, sample for sample.
+   */
+  bodyFir?: number[];
+  /**
    * Open strings ringing off the bridge. Each bandpass is fed by the harmonic sum.
    * `mix` is the fraction added back. Absent leaves the bridge dry.
    */
@@ -295,6 +300,19 @@ export const HARMONIC_PRESETS = {
       { hz: 1000, q: 1.6, db: 4 },
       { hz: 3150, q: 1.4, db: -3 },
       { hz: 6500, q: 1.3, db: 5 },
+    ],
+    // Residual body from bars 1–4, minimum phase, tilt removed. Alpha 5 was the
+    // holdout minimum; alpha 7 started to give the later bars back.
+    bodyFir: [
+      1.032738, 0.021822, -0.012425, -0.032269, -0.016293, 0.025690, 0.059964, 0.057327,
+      0.017792, -0.029640, -0.051266, -0.035532, 0.000127, 0.026555, 0.027604, 0.010914,
+      -0.002618, 0.001013, 0.017710, 0.031524, 0.030510, 0.016876, 0.003178, -0.000192,
+      0.006166, 0.012941, 0.011914, 0.003352, -0.005393, -0.007590, -0.003182, 0.002111,
+      0.002847, -0.001234, -0.005793, -0.006620, -0.003520, 0.000109, 0.000953, -0.001194,
+      -0.003758, -0.004224, -0.002444, -0.000372, 0.000108, -0.001090, -0.002497, -0.002726,
+      -0.001732, -0.000601, -0.000335, -0.000942, -0.001625, -0.001671, -0.001089, -0.000464,
+      -0.000314, -0.000634, -0.001000, -0.001027, -0.000708, -0.000360, -0.000290, -0.000523,
+      -0.000804,
     ],
     sympathetic: [
       { hz: 196.0, q: 40, mix: 0.035 },
@@ -770,6 +788,10 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   const sympathetic = (p.sympathetic ?? [])
     .filter((s) => s.mix !== 0)
     .map((s) => ({ bp: new Biquad('bandpass', sampleRate, s.hz, Math.max(1, s.q)), mix: s.mix }));
+  const bodyFir = (p.bodyFir ?? []).slice();
+  const firN = bodyFir.length;
+  const firHist = new Float64Array(Math.max(1, firN));
+  let firPos = 0;
   const nyquist = sampleRate * 0.45;
   const partialGate = new Float64Array(N);
   const bodyTable = p.body ? buildBodyTable(p.body, p.modes) : null;
@@ -1009,6 +1031,16 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         mixed += s.bp.process(src) * s.mix;
       }
       for (let i = 0; i < bodyEq.length; i++) mixed = bodyEq[i].process(mixed);
+      if (firN > 1 || (firN === 1 && bodyFir[0] !== 1)) {
+        firHist[firPos] = mixed;
+        let acc = 0;
+        for (let k = 0; k < firN; k++) {
+          const idx = firPos - k;
+          acc += bodyFir[k] * firHist[idx < 0 ? idx + firN : idx];
+        }
+        firPos = firPos + 1 === firN ? 0 : firPos + 1;
+        mixed = acc;
+      }
       const out = mixed * env * life.gain * p.gain;
       return [out * p.stereo[0], out * p.stereo[1]];
     },

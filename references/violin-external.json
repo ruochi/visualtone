@@ -1,0 +1,37 @@
+{
+  "body": {
+    "method": "Minimum-phase FIR on the residual by-frequency error of bars 1–4, with the log-frequency tilt removed. Harmonics and bow noise both pass through it.",
+    "alpha": 5,
+    "limitDb": 8,
+    "knee": "Alpha 7 gave the holdout back, so 5 is the one in the preset.",
+    "bars1to4HarmonicMeanAbsDb": 1.99,
+    "bars5to8HarmonicMeanAbsDb": 3.54,
+    "before": {
+      "bars1to4HarmonicMeanAbsDb": 2.63,
+      "bars5to8HarmonicMeanAbsDb": 3.67
+    },
+    "phrase": {
+      "envelopeCorrelation": 0.251,
+      "loudnessSpanDb": { "recording": 8.62, "candidate": 5.08 }
+    },
+    "bowNoise": "Raising the bow noise left the harmonic-to-noise gap where it was, about 5 dB too tonal in the low band. The preset noise was left as it was. The gap tracks the room in the recording."
+  },
+  "licenses": {
+    "URMP": "The University of Rochester page asks for a registration form and does not state an open license. Not used.",
+    "Bach10": "Described as freely downloadable, with no license text on the dataset page. Not redistributed.",
+    "MusicNet": "CC BY 4.0 on Zenodo. The archive is the whole 330-recording set, so it was not downloaded for this check."
+  },
+  "gavotte": {
+    "piece": "Bach Partita 3, Gavotte en Rondeau, rondeau theme",
+    "recording": "Wikimedia Commons J.S.Bach partita No.3 Gavotte in Rondeau.ogg",
+    "license": "CC BY 3.0, performer Vicond",
+    "scoreSource": "Mutopia bwv-1006_3.ly, CC BY-SA 3.0, Hajo Dezelski, after the Bach-Gesellschaft edition of 1879",
+    "player": "Same player as the menuet, different movement. Nothing here was used to choose a parameter.",
+    "bpm": 154,
+    "offsetSec": 0.25,
+    "identityHarmonicMeanAbsDb": 10.4,
+    "notesScored": 21,
+    "notesWritten": 54,
+    "openingPitchesMatch": true
+  }
+}

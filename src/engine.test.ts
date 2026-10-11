@@ -538,6 +538,29 @@ test('a violin note is soft at both ends of its written length', () => {
   assert.ok(late < mid * 0.88, `fall ${mid.toFixed(4)} -> ${late.toFixed(4)}`);
 });
 
+test('a bypass body fir matches the unfiltered violin', () => {
+  const sr = 48000;
+  const life = {
+    ...HARMONIC_PRESETS.violin.life,
+    vibratoCents: 0,
+    vibratoHighCents: 0,
+    wanderCents: 0,
+    shimmerRms: 0,
+    vibratoDepthJitter: 0,
+    vibratoRateJitter: 0,
+  };
+  const plain = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bodyFir: undefined }, 0.4, 67);
+  const bypass = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bodyFir: [1] }, 0.4, 67);
+  assert.equal(plain.buf.length, bypass.buf.length);
+  for (let i = 0; i < plain.buf.length; i++) {
+    if (plain.buf[i] !== bypass.buf[i]) assert.fail(`body fir bypass changed sample ${i}`);
+  }
+  const quieter = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bodyFir: [0.5] }, 0.4, 67);
+  const a = windowRms(plain.buf, sr, 0.2);
+  const b = windowRms(quieter.buf, sr, 0.2);
+  assert.ok(Math.abs(b / a - 0.5) < 0.05, `half fir ${b.toFixed(4)} vs ${a.toFixed(4)}`);
+});
+
 test('a harmonic tone follows a pitch change while it is held', () => {
   const sr = 48000;
   const engine = createHarmonic(sr, HARMONIC_PRESETS.violin, 3, 0);
