@@ -1,0 +1,92 @@
+{
+  "piece": "J.S. Bach, Violin Partita No. 3 BWV 1006, Menuet I, bars 1-8",
+  "recording": {
+    "file": "Partita_No.3_J.S.Bach_(Minuet_1).ogg",
+    "url": "https://commons.wikimedia.org/wiki/File:Partita_No.3_J.S.Bach_(Minuet_1).ogg",
+    "author": "Vicond",
+    "license": "CC BY 3.0",
+    "offsetSec": 13.3,
+    "phraseSec": 12.5217
+  },
+  "score": "examples/violin-minuet.json",
+  "bpm": 115,
+  "rmsMatchDb": 5.64,
+  "envelopeLagSec": 0.0707,
+  "lagApplied": false,
+  "loudnessSpanDb": {
+    "recording": 8.62,
+    "synth": 4.6
+  },
+  "chroma": {
+    "synthVsRecording": 0.9157,
+    "symbolicVsRecording": 0.8127,
+    "synthVsSymbolic": 0.8706,
+    "frameSynthVsRecording": 0.6981
+  },
+  "melMeanAbsDb": 11.78,
+  "envelopeCorrelation": 0.0322,
+  "thirdOctaveMeanAbsDb": 6.73,
+  "thirdOctaveDb": [
+    {
+      "hz": 315,
+      "db": 18.13
+    },
+    {
+      "hz": 400,
+      "db": 13.86
+    },
+    {
+      "hz": 500,
+      "db": 8.2
+    },
+    {
+      "hz": 630,
+      "db": 4.18
+    },
+    {
+      "hz": 800,
+      "db": -1.87
+    },
+    {
+      "hz": 1000,
+      "db": -14.91
+    },
+    {
+      "hz": 1250,
+      "db": -11.45
+    },
+    {
+      "hz": 1600,
+      "db": 2.67
+    },
+    {
+      "hz": 2000,
+      "db": 0.55
+    },
+    {
+      "hz": 2500,
+      "db": -2.11
+    },
+    {
+      "hz": 3150,
+      "db": 3.68
+    },
+    {
+      "hz": 4000,
+      "db": 9.31
+    },
+    {
+      "hz": 5000,
+      "db": 6.48
+    },
+    {
+      "hz": 6300,
+      "db": -0.52
+    },
+    {
+      "hz": 8000,
+      "db": 2.98
+    }
+  ],
+  "note": "The recording includes a room. The synth is the current violin plus a short room send. The body, bow, and seed were not refit on this fragment. Timing is the score grid, not the player\u2019s rubato."
+}
