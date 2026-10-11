@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Images that compare one violin-solo fragment with the current violin.
 
+The number that judges timbre is the harmonic slope after a pitch-class
+time warp, with loudness removed. A raw spectrogram difference also charges
+the room, the player's rubato, and dynamics the score does not write.
+
 The recording is not in the repo. WAVs stay in /tmp. This does not change
-the violin preset. A room in the recording stays in the pictures.
+the violin preset.
 """
 import argparse
 import json
@@ -195,6 +199,207 @@ def envelope(x, sr, win=0.03, hop=0.01):
     return t, e
 
 
+def dtw_path(a, b, energy_a, energy_b, band):
+    """Banded DTW. a and b are frame-normalized chroma, shape (12, T)."""
+    n, m = a.shape[1], b.shape[1]
+    thr_a = np.median(energy_a) * 0.25
+    thr_b = np.median(energy_b) * 0.25
+    inf = 1e6
+    prev = np.full(m + 1, inf)
+    prev[0] = 0.0
+    choice = np.full((n, m), -1, dtype=np.int8)
+    for i in range(1, n + 1):
+        cur = np.full(m + 1, inf)
+        j0 = max(1, i - band)
+        j1 = min(m, i + band)
+        ai = a[:, i - 1]
+        silent_a = energy_a[i - 1] < thr_a
+        for j in range(j0, j1 + 1):
+            if silent_a and energy_b[j - 1] < thr_b:
+                cost = 0.0
+            else:
+                cost = 1.0 - float(np.dot(ai, b[:, j - 1]))
+            opts = (prev[j - 1], prev[j], cur[j - 1])
+            k = 0 if opts[0] <= opts[1] and opts[0] <= opts[2] else (1 if opts[1] <= opts[2] else 2)
+            cur[j] = cost + opts[k]
+            choice[i - 1, j - 1] = k
+        prev = cur
+    i, j = n - 1, m - 1
+    if not np.isfinite(prev[m]) or prev[m] >= inf / 2 or choice[i, j] < 0:
+        return []
+    path = []
+    while i >= 0 and j >= 0 and choice[i, j] >= 0:
+        path.append((i, j))
+        step = int(choice[i, j])
+        if step == 0:
+            i, j = i - 1, j - 1
+        elif step == 1:
+            i -= 1
+        else:
+            j -= 1
+        if i < 0 or j < 0:
+            break
+    path.reverse()
+    return path
+
+
+def path_times(path, hop, sr):
+    """path items are (query_index, reference_index).
+
+    Returns the query times and the reference time to read for each of them.
+    """
+    buckets = {}
+    for query, ref in path:
+        buckets.setdefault(query, []).append(ref)
+    qs = np.array(sorted(buckets), dtype=np.float64)
+    query_t = qs * hop / sr
+    ref_t = np.array([np.mean(buckets[int(q)]) * hop / sr for q in qs])
+    return query_t, ref_t
+
+
+def warp_mag(mag_rec, times_rec, syn_t, rec_t, times_syn):
+    """Recording magnitude placed on the synth time grid."""
+    mapped = np.interp(times_syn, syn_t, rec_t)
+    idx = np.clip(np.searchsorted(times_rec, mapped), 0, len(times_rec) - 1)
+    prev = np.clip(idx - 1, 0, len(times_rec) - 1)
+    take_prev = np.abs(times_rec[prev] - mapped) < np.abs(times_rec[idx] - mapped)
+    idx = np.where(take_prev, prev, idx)
+    return mag_rec[:, idx]
+
+
+def shape_distance(mag_a, mag_b, freqs, fmin=250.0, fmax=6000.0):
+    """Mean |dB| after each frame loses its own loudness. Level is not timbre."""
+    band = (freqs >= fmin) & (freqs <= fmax)
+    cols = min(mag_a.shape[1], mag_b.shape[1])
+    a = mag_a[band, :cols]
+    b = mag_b[band, :cols]
+    da = 20 * np.log10(a + 1e-10)
+    db_ = 20 * np.log10(b + 1e-10)
+    da -= np.median(da, axis=0, keepdims=True)
+    db_ -= np.median(db_, axis=0, keepdims=True)
+    ea = np.mean(a ** 2, axis=0)
+    eb = np.mean(b ** 2, axis=0)
+    gate = (ea > np.median(ea) * 0.2) & (eb > np.median(eb) * 0.2)
+    if int(gate.sum()) < 8:
+        gate = np.ones(cols, dtype=bool)
+    return float(np.mean(np.abs(da[:, gate] - db_[:, gate])))
+
+
+N_HARM = 10
+
+
+def partial_db(mag, freqs, f0, other_f0):
+    """Level of partials 1..N relative to the strongest clear partial, in dB."""
+    peaks = np.full(N_HARM, np.nan)
+    df = float(freqs[1] - freqs[0]) if len(freqs) > 1 else 1.0
+    for h in range(1, N_HARM + 1):
+        f = f0 * h
+        if f < 180 or f > 7500:
+            continue
+        blocked = False
+        for f0b in other_f0:
+            for hb in range(1, N_HARM + 1):
+                fb = f0b * hb
+                if fb < 150 or fb > 9000:
+                    continue
+                if abs(1200 * np.log2(f / fb)) < 70:
+                    blocked = True
+                    break
+            if blocked:
+                break
+        if blocked:
+            continue
+        half = max(f * (2 ** (40 / 1200) - 1), df * 1.25)
+        sl = (freqs >= f - half) & (freqs <= f + half)
+        if not np.any(sl):
+            continue
+        peak = float(np.max(mag[sl]))
+        wide = (freqs >= f * 2 ** (-1.5 / 12)) & (freqs <= f * 2 ** (1.5 / 12))
+        floor = float(np.median(mag[wide])) if np.any(wide) else 0.0
+        if peak < floor * 1.6:
+            continue
+        peaks[h - 1] = peak
+    ref = np.nanmax(peaks)
+    if not np.isfinite(ref) or ref <= 0:
+        return np.full(N_HARM, np.nan)
+    return 20 * np.log10(peaks / ref + 1e-12)
+
+
+def midi_hz(midi):
+    return 440.0 * 2 ** ((midi - 69) / 12)
+
+
+def mag_span(mag, times, t0, t1):
+    sl = (times >= t0) & (times < t1)
+    if int(sl.sum()) == 0:
+        i = int(np.argmin(np.abs(times - 0.5 * (t0 + t1))))
+        return mag[:, i]
+    return np.mean(mag[:, sl], axis=1)
+
+
+def harmonic_slopes(notes, mag_syn, mag_rec, times, freqs, syn_t, rec_t):
+    """Relative partial levels. Recording windows follow the time warp."""
+    rows = []
+    for n in notes:
+        if n['dur'] < 0.2:
+            continue
+        a = n['t'] + 0.22 * n['dur']
+        b = n['t'] + 0.72 * n['dur']
+        if b <= a:
+            continue
+        others = [
+            midi_hz(o['midi']) for o in notes
+            if o is not n and o['t'] < b and o['t'] + o['dur'] > a and abs(o['midi'] - n['midi']) > 0.4
+        ]
+        f0 = midi_hz(n['midi'])
+        syn = partial_db(mag_span(mag_syn, times, a, b), freqs, f0, others)
+        ra, rb = np.interp([a, b], syn_t, rec_t)
+        if rb < ra:
+            ra, rb = rb, ra
+        if rb - ra < 0.04:
+            rb = ra + 0.04
+        rec = partial_db(mag_span(mag_rec, times, ra, rb), freqs, f0, others)
+        both = np.isfinite(syn) & np.isfinite(rec)
+        if int(both.sum()) < 4:
+            continue
+        rows.append({'midi': n['midi'], 't': n['t'], 'syn': syn, 'rec': rec, 'both': both})
+    return rows
+
+
+def slope_summary(rows):
+    if not rows:
+        return {'meanAbsDb': None, 'partialDb': [], 'notes': 0}
+    acc = []
+    per = []
+    for h in range(N_HARM):
+        vals = [r['syn'][h] - r['rec'][h] for r in rows if r['both'][h]]
+        if len(vals) >= 3:
+            med = float(np.median(vals))
+            acc.append(abs(med))
+            per.append({'h': h + 1, 'db': round(med, 2), 'notes': len(vals)})
+    note_err = []
+    for r in rows:
+        d = np.abs(r['syn'][r['both']] - r['rec'][r['both']])
+        note_err.append(float(np.mean(d)))
+
+    def mean_abs(subset):
+        got = []
+        for h in range(N_HARM):
+            vals = [r['syn'][h] - r['rec'][h] for r in subset if r['both'][h]]
+            if len(vals) >= 3:
+                got.append(abs(float(np.median(vals))))
+        return round(float(np.mean(got)), 2) if got else None
+
+    return {
+        'meanAbsDb': round(float(np.mean(acc)), 2) if acc else None,
+        'noteMeanAbsDb': round(float(np.mean(note_err)), 2) if note_err else None,
+        'lowNotesMeanAbsDb': mean_abs([r for r in rows if r['midi'] < 70]),
+        'highNotesMeanAbsDb': mean_abs([r for r in rows if r['midi'] >= 70]),
+        'partialDb': per,
+        'notes': len(rows),
+    }
+
+
 def third_octave(x, sr):
     freqs, times, mag = stft_mag(x, sr, 4096, 1024)
     power = mag ** 2
@@ -375,6 +580,44 @@ def main():
     th_db = 20 * np.log10((th_s + 1e-12) / (th_r + 1e-12))
     th_mean = float(np.mean(np.abs(th_db)))
 
+    # Timbre: warp on pitch class, then drop loudness. Harmonic peaks ignore
+    # the room between partials.
+    chroma_hop = 1024
+    band_frames = int(round(1.6 * sr / chroma_hop))
+    pc_rn, pc_sn = frame_norm(pc_r), frame_norm(pc_s)
+    path = dtw_path(pc_sn, pc_rn, pc_s.sum(0), pc_r.sum(0), band_frames)
+    if len(path) < 8:
+        raise SystemExit('time warp failed')
+    syn_t, rec_t = path_times(path, chroma_hop, sr)
+    rubato_ms = float(np.median(np.abs(rec_t - syn_t)) * 1000)
+    warped_rec = warp_mag(mag_r, times_c, syn_t, rec_t, times_c)
+    shape_raw = shape_distance(mag_r, mag_s, freqs_c)
+    shape_warp = shape_distance(warped_rec, mag_s, freqs_c)
+    slopes = harmonic_slopes(notes, mag_s, mag_r, times_c, freqs_c, syn_t, rec_t)
+    slope = slope_summary(slopes)
+
+    shift_n = int(round(0.08 * sr))
+    rec_shift = np.concatenate([np.zeros(shift_n), rec[:-shift_n]])
+    _, times_sh, mag_sh = stft_mag(rec_shift, sr, 4096, chroma_hop)
+    msh = min(mag_r.shape[1], mag_sh.shape[1], len(times_sh))
+    pc_sh = chroma_from_mag(mag_sh[:, :msh], freqs_c)
+    path_sh = dtw_path(frame_norm(pc_r[:, :msh]), frame_norm(pc_sh), pc_r[:, :msh].sum(0), pc_sh.sum(0), band_frames)
+    syn_sh, rec_sh = path_times(path_sh, chroma_hop, sr)
+    warped_sh = warp_mag(mag_sh[:, :msh], times_sh[:msh], syn_sh, rec_sh, times_c[:msh])
+    identity = np.array([0.0, phrase])
+    slopes_grid = harmonic_slopes(notes, mag_s, mag_r, times_c, freqs_c, identity, identity)
+    # The shifted file at time t is the recording from t-80ms, so the same
+    # moment is 80ms later. That pair should agree if the partial meter is stable.
+    slopes_shift = harmonic_slopes(
+        notes, mag_r[:, :msh], mag_sh[:, :msh], times_c[:msh], freqs_c, identity, identity + 0.08,
+    )
+    shift_check = {
+        'unwarpedShapeMeanAbsDb': round(shape_distance(mag_r[:, :msh], mag_sh[:, :msh], freqs_c), 2),
+        'warpedShapeMeanAbsDb': round(shape_distance(warped_sh, mag_r[:, :msh], freqs_c), 2),
+        'harmonicMeanAbsDb': slope_summary(slopes_shift)['meanAbsDb'],
+    }
+    grid_harmonic = slope_summary(slopes_grid)['meanAbsDb']
+
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     bpm = score['bpm']
@@ -437,7 +680,7 @@ def main():
     for ax, img, title, cmap, vmin, vmax in (
         (axes[0], dbr, '录音  对数频谱', 'magma', -78, 0),
         (axes[1], dbs, '合成  对数频谱', 'magma', -78, 0),
-        (axes[2], diff, '合成减录音  dB（红更响，蓝更轻）', 'RdBu_r', -18, 18),
+        (axes[2], diff, '未对齐的整段相减（房间、速度、力度都算进去了）', 'RdBu_r', -18, 18),
     ):
         im = ax.imshow(img, origin='lower', aspect='auto', extent=extent, cmap=cmap, vmin=vmin, vmax=vmax, interpolation='nearest')
         ax.set_yscale('log')
@@ -546,6 +789,95 @@ def main():
     axes[2].set_xlabel('秒')
     save(fig, out / 'bar8.png')
 
+    # Timbre on the score clock: recording frames follow the pitch-class warp.
+    f_img, t_img, mag_img_r = stft_mag(rec, sr, 2048, 256)
+    _, _, mag_img_s = stft_mag(synth_a, sr, 2048, 256)
+    mt = min(mag_img_r.shape[1], mag_img_s.shape[1], len(t_img))
+    mag_img_r, mag_img_s, t_img = mag_img_r[:, :mt], mag_img_s[:, :mt], t_img[:mt]
+    mag_img_w = warp_mag(mag_img_r, t_img, syn_t, rec_t, t_img)
+    band = (f_img >= 180) & (f_img <= 8000)
+    def centered(mag):
+        spec = 20 * np.log10(mag[band] + 1e-10)
+        return spec - np.median(spec, axis=0, keepdims=True)
+    shape_r = centered(mag_img_w)
+    shape_s = centered(mag_img_s)
+    shape_diff = np.clip(shape_s - shape_r, -12, 12)
+    show_r = db(mag_img_w, max(mag_img_w.max(), mag_img_s.max()))
+    show_s = db(mag_img_s, max(mag_img_w.max(), mag_img_s.max()))
+    fig, axes = plt.subplots(3, 1, figsize=(13.2, 9.2), sharex=True, layout='constrained')
+    fig.set_facecolor(PAPER)
+    extent = [t_img[0], t_img[-1], f_img[band][0], f_img[band][-1]]
+    panels = (
+        (show_r[band], '录音  已对齐到乐谱', 'magma', -78, 0),
+        (show_s[band], '合成  乐谱格子', 'magma', -78, 0),
+        (shape_diff, f'去掉响度后的形状差  {shape_warp:.1f} dB（未对齐 {shape_raw:.1f} dB）', 'RdBu_r', -12, 12),
+    )
+    for ax, (img, title, cmap, vmin, vmax) in zip(axes, panels):
+        im = ax.imshow(img, origin='lower', aspect='auto', extent=extent, cmap=cmap, vmin=vmin, vmax=vmax, interpolation='nearest')
+        ax.set_yscale('log')
+        ax.set_ylim(180, 8000)
+        ax.set_ylabel('Hz')
+        ax.set_title(title, color=INK, loc='left')
+        ax.tick_params(colors=INK, labelsize=9)
+        fig.colorbar(im, ax=ax, fraction=0.015, pad=0.01)
+    axes[2].set_xlabel('秒')
+    fig.suptitle(f'音级对齐  演奏相对格子的中位偏移 {rubato_ms:.0f} ms', color=INK, fontsize=13)
+    save(fig, out / 'aligned_shape.png')
+
+    fig, axes = plt.subplots(2, 1, figsize=(11.5, 7.2), layout='constrained')
+    fig.set_facecolor(PAPER)
+    hs = np.arange(1, N_HARM + 1)
+    for r in slopes:
+        axes[0].plot(hs, r['rec'], color=REC, alpha=0.18, linewidth=0.8)
+        axes[0].plot(hs, r['syn'], color=SYN, alpha=0.18, linewidth=0.8)
+    med_r = np.nanmedian(np.stack([r['rec'] for r in slopes]), axis=0) if slopes else np.full(N_HARM, np.nan)
+    med_s = np.nanmedian(np.stack([r['syn'] for r in slopes]), axis=0) if slopes else np.full(N_HARM, np.nan)
+    axes[0].plot(hs, med_r, color=REC, linewidth=2.2, label='录音中位')
+    axes[0].plot(hs, med_s, color=SYN, linewidth=2.2, label='合成中位')
+    axes[0].set_xticks(hs)
+    axes[0].set_xlabel('谐波次数')
+    axes[0].set_ylabel('相对最强谐波 dB')
+    axes[0].set_title(
+        f'谐波斜率  中位绝对差 {slope["meanAbsDb"]} dB  （{slope["notes"]} 个音，短于八分的不算）',
+        color=INK, loc='left',
+    )
+    axes[0].legend(frameon=False)
+    style_ax(axes[0])
+    labels = [str(p['h']) for p in slope['partialDb']]
+    vals = [p['db'] for p in slope['partialDb']]
+    axes[1].bar(labels, vals, color=[SYN if v >= 0 else REC for v in vals], width=0.72)
+    axes[1].axhline(0, color=INK, linewidth=0.6)
+    axes[1].set_xlabel('谐波次数')
+    axes[1].set_ylabel('合成减录音 dB')
+    axes[1].set_title('同一谐波上，合成比录音多多少', color=INK, loc='left')
+    style_ax(axes[1])
+    axes[1].text(0.02, 0.92, '第 1 次差为 0：两边都以基频为最强', transform=axes[1].transAxes, color=MUTED, fontsize=9)
+    save(fig, out / 'harmonic_slope.png')
+
+    fig, ax = plt.subplots(figsize=(10.5, 4.6), layout='constrained')
+    fig.set_facecolor(PAPER)
+    names = [
+        '同一录音\n平移 80 ms\n整段相减',
+        '同一录音\n平移后再对齐',
+        '同一录音\n谐波斜率',
+        '合成对录音\n谐波斜率',
+    ]
+    heights = [
+        shift_check['unwarpedShapeMeanAbsDb'],
+        shift_check['warpedShapeMeanAbsDb'],
+        shift_check['harmonicMeanAbsDb'] or 0,
+        slope['meanAbsDb'] or 0,
+    ]
+    colors = ['#9a3412', '#0f766e', '#0f766e', SYN]
+    ax.bar(names, heights, color=colors, width=0.72)
+    for i, v in enumerate(heights):
+        ax.text(i, v + 0.25, f'{v:.1f} dB', ha='center', color=INK, fontsize=11)
+    ax.set_ylabel('平均绝对差 dB')
+    ax.set_ylim(0, max(heights) * 1.25)
+    ax.set_title('同一段录音平移 80 ms，旧的整段相减仍报很大的差', color=INK, loc='left')
+    style_ax(ax)
+    save(fig, out / 'method_check.png')
+
     report = {
         'piece': 'J.S. Bach, Violin Partita No. 3 BWV 1006, Menuet I, bars 1-8',
         'recording': {
@@ -567,10 +899,18 @@ def main():
         'envelopeCorrelation': round(env_corr, 4),
         'thirdOctaveMeanAbsDb': round(th_mean, 2),
         'thirdOctaveDb': [{'hz': hz, 'db': round(float(v), 2)} for hz, v in zip(THIRDS, th_db)],
-        'note': 'The recording includes a room. The synth is the current violin plus a short room send. The body, bow, and seed were not refit on this fragment. Timing is the score grid, not the player’s rubato.',
+        'timbre': {
+            'warpedShapeMeanAbsDb': round(shape_warp, 2),
+            'unwarpedShapeMeanAbsDb': round(shape_raw, 2),
+            'rubatoMedianMs': round(rubato_ms, 1),
+            'harmonic': slope,
+            'gridHarmonicMeanAbsDb': grid_harmonic,
+            'shift80ms': shift_check,
+        },
+        'note': 'Timbre is the harmonic slope after a pitch-class time warp, with per-frame loudness removed. melMeanAbsDb, the envelope correlation, and the third-octave bars also charge the room, rubato, and dynamics the score does not write. shift80ms is the same recording delayed by 80 ms: the unwarped shape distance moves, the warped one should stay small. The body, bow, and seed were not refit.',
     }
     Path(args.json).write_text(json.dumps(report, indent=2) + '\n')
-    print(json.dumps({k: report[k] for k in ('chroma', 'melMeanAbsDb', 'envelopeCorrelation', 'thirdOctaveMeanAbsDb', 'envelopeLagSec', 'rmsMatchDb')}, indent=2))
+    print(json.dumps(report['timbre'], indent=2, ensure_ascii=False))
 
 
 if __name__ == '__main__':

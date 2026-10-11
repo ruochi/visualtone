@@ -88,5 +88,75 @@
       "db": 2.98
     }
   ],
-  "note": "The recording includes a room. The synth is the current violin plus a short room send. The body, bow, and seed were not refit on this fragment. Timing is the score grid, not the player\u2019s rubato."
+  "timbre": {
+    "warpedShapeMeanAbsDb": 13.94,
+    "unwarpedShapeMeanAbsDb": 14.23,
+    "rubatoMedianMs": 64.0,
+    "harmonic": {
+      "meanAbsDb": 6.26,
+      "noteMeanAbsDb": 7.91,
+      "lowNotesMeanAbsDb": 7.11,
+      "highNotesMeanAbsDb": 6.07,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0.0,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -5.65,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -0.66,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 5.23,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 12.63,
+          "notes": 31
+        },
+        {
+          "h": 6,
+          "db": 11.49,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 7.31,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 7.66,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": 6.09,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": 5.85,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    "gridHarmonicMeanAbsDb": 6.72,
+    "shift80ms": {
+      "unwarpedShapeMeanAbsDb": 10.22,
+      "warpedShapeMeanAbsDb": 2.17,
+      "harmonicMeanAbsDb": 0.05
+    }
+  },
+  "note": "Timbre is the harmonic slope after a pitch-class time warp, with per-frame loudness removed. melMeanAbsDb, the envelope correlation, and the third-octave bars also charge the room, rubato, and dynamics the score does not write. shift80ms is the same recording delayed by 80 ms: the unwarped shape distance moves, the warped one should stay small. The body, bow, and seed were not refit."
 }
