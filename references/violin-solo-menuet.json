@@ -10,148 +10,148 @@
   },
   "score": "examples/violin-minuet.json",
   "bpm": 115,
-  "rmsMatchDb": 5.64,
-  "envelopeLagSec": 0.0707,
+  "rmsMatchDb": 4.6,
+  "envelopeLagSec": 0.08,
   "lagApplied": false,
   "loudnessSpanDb": {
     "recording": 8.62,
-    "synth": 4.6
+    "synth": 4.59
   },
   "chroma": {
-    "synthVsRecording": 0.9157,
+    "synthVsRecording": 0.8674,
     "symbolicVsRecording": 0.8127,
-    "synthVsSymbolic": 0.8706,
-    "frameSynthVsRecording": 0.6981
+    "synthVsSymbolic": 0.9788,
+    "frameSynthVsRecording": 0.6707
   },
-  "melMeanAbsDb": 11.78,
-  "envelopeCorrelation": 0.0322,
-  "thirdOctaveMeanAbsDb": 6.73,
+  "melMeanAbsDb": 11.39,
+  "envelopeCorrelation": -0.0107,
+  "thirdOctaveMeanAbsDb": 5.56,
   "thirdOctaveDb": [
     {
       "hz": 315,
-      "db": 18.13
+      "db": 18.04
     },
     {
       "hz": 400,
-      "db": 13.86
+      "db": 13.68
     },
     {
       "hz": 500,
-      "db": 8.2
+      "db": 8.84
     },
     {
       "hz": 630,
-      "db": 4.18
+      "db": 6.41
     },
     {
       "hz": 800,
-      "db": -1.87
+      "db": 2.75
     },
     {
       "hz": 1000,
-      "db": -14.91
+      "db": -6.51
     },
     {
       "hz": 1250,
-      "db": -11.45
+      "db": -0.16
     },
     {
       "hz": 1600,
-      "db": 2.67
+      "db": 8.61
     },
     {
       "hz": 2000,
-      "db": 0.55
+      "db": 1.83
     },
     {
       "hz": 2500,
-      "db": -2.11
+      "db": -3.43
     },
     {
       "hz": 3150,
-      "db": 3.68
+      "db": 0.51
     },
     {
       "hz": 4000,
-      "db": 9.31
+      "db": 3.92
     },
     {
       "hz": 5000,
-      "db": 6.48
+      "db": 1.41
     },
     {
       "hz": 6300,
-      "db": -0.52
+      "db": -4.86
     },
     {
       "hz": 8000,
-      "db": 2.98
+      "db": -2.42
     }
   ],
   "timbre": {
-    "warpedShapeMeanAbsDb": 13.94,
-    "unwarpedShapeMeanAbsDb": 14.23,
+    "warpedShapeMeanAbsDb": 13.85,
+    "unwarpedShapeMeanAbsDb": 14.06,
     "rubatoMedianMs": 64.0,
     "harmonic": {
-      "meanAbsDb": 6.26,
-      "noteMeanAbsDb": 7.91,
-      "lowNotesMeanAbsDb": 7.11,
-      "highNotesMeanAbsDb": 6.07,
+      "meanAbsDb": 2.96,
+      "noteMeanAbsDb": 6.38,
+      "lowNotesMeanAbsDb": 4.63,
+      "highNotesMeanAbsDb": 3.32,
       "partialDb": [
         {
           "h": 1,
-          "db": 0.0,
+          "db": 1.22,
           "notes": 43
         },
         {
           "h": 2,
-          "db": -5.65,
-          "notes": 41
+          "db": 1.14,
+          "notes": 40
         },
         {
           "h": 3,
-          "db": -0.66,
+          "db": 0.28,
           "notes": 39
         },
         {
           "h": 4,
-          "db": 5.23,
+          "db": 3.45,
           "notes": 34
         },
         {
           "h": 5,
-          "db": 12.63,
-          "notes": 31
+          "db": 8.51,
+          "notes": 29
         },
         {
           "h": 6,
-          "db": 11.49,
+          "db": 5.79,
           "notes": 28
         },
         {
           "h": 7,
-          "db": 7.31,
+          "db": 0.16,
           "notes": 25
         },
         {
           "h": 8,
-          "db": 7.66,
+          "db": 0.47,
           "notes": 33
         },
         {
           "h": 9,
-          "db": 6.09,
+          "db": -1.53,
           "notes": 34
         },
         {
           "h": 10,
-          "db": 5.85,
-          "notes": 25
+          "db": -7.08,
+          "notes": 24
         }
       ],
-      "notes": 46
+      "notes": 45
     },
-    "gridHarmonicMeanAbsDb": 6.72,
+    "gridHarmonicMeanAbsDb": 3.16,
     "shift80ms": {
       "unwarpedShapeMeanAbsDb": 10.22,
       "warpedShapeMeanAbsDb": 2.17,

@@ -1,0 +1,1185 @@
+{
+  "target": "menuet harmonic slope, median absolute partial error",
+  "fixed": [
+    "body.seed",
+    "body.count",
+    "body.qLo",
+    "body.qHi",
+    "body.db",
+    "modes.0",
+    "modes.1"
+  ],
+  "start": {
+    "slope.base": 0.1675,
+    "modes.4.db": 14,
+    "modes.2.db": -12.42,
+    "modes.3.db": 10.52
+  },
+  "startLoss": 6.26,
+  "best": {
+    "slope.base": 0.28,
+    "modes.4.db": 14,
+    "modes.2.db": 4,
+    "modes.3.db": 10.52
+  },
+  "bestLoss": 2.96,
+  "partialDb": [
+    {
+      "h": 1,
+      "db": 1.22,
+      "notes": 43
+    },
+    {
+      "h": 2,
+      "db": 1.14,
+      "notes": 40
+    },
+    {
+      "h": 3,
+      "db": 0.28,
+      "notes": 39
+    },
+    {
+      "h": 4,
+      "db": 3.45,
+      "notes": 34
+    },
+    {
+      "h": 5,
+      "db": 8.51,
+      "notes": 29
+    },
+    {
+      "h": 6,
+      "db": 5.79,
+      "notes": 28
+    },
+    {
+      "h": 7,
+      "db": 0.16,
+      "notes": 25
+    },
+    {
+      "h": 8,
+      "db": 0.47,
+      "notes": 33
+    },
+    {
+      "h": 9,
+      "db": -1.53,
+      "notes": 34
+    },
+    {
+      "h": 10,
+      "db": -7.08,
+      "notes": 24
+    }
+  ],
+  "trace": [
+    {
+      "values": {
+        "slope.base": 0.1675,
+        "modes.4.db": 14,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 6.26,
+      "noteMeanAbsDb": 7.91,
+      "lowNotesMeanAbsDb": 7.11,
+      "highNotesMeanAbsDb": 6.07,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -5.65,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -0.66,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 5.23,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 12.63,
+          "notes": 31
+        },
+        {
+          "h": 6,
+          "db": 11.49,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 7.31,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 7.66,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": 6.09,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": 5.85,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.12,
+        "modes.4.db": 14,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 7.39,
+      "noteMeanAbsDb": 8.49,
+      "lowNotesMeanAbsDb": 7.43,
+      "highNotesMeanAbsDb": 7.18,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -6.51,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -0.27,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 5.84,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 13.89,
+          "notes": 31
+        },
+        {
+          "h": 6,
+          "db": 12.67,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 8.36,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 9.49,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": 8.18,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": 8.65,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.22,
+        "modes.4.db": 14,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 4.66,
+      "noteMeanAbsDb": 7.39,
+      "lowNotesMeanAbsDb": 6.11,
+      "highNotesMeanAbsDb": 4.61,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0,
+          "notes": 44
+        },
+        {
+          "h": 2,
+          "db": -4.72,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": 0,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 4.7,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 11.17,
+          "notes": 31
+        },
+        {
+          "h": 6,
+          "db": 10.39,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 6.14,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 5.49,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": 2.94,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": 1.05,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.71,
+      "noteMeanAbsDb": 7.08,
+      "lowNotesMeanAbsDb": 4.95,
+      "highNotesMeanAbsDb": 4.09,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0.4,
+          "notes": 44
+        },
+        {
+          "h": 2,
+          "db": -4.74,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -0.76,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 4.34,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 9.77,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 9.07,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 2.93,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 3.1,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -0.4,
+          "notes": 33
+        },
+        {
+          "h": 10,
+          "db": -1.55,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.36,
+        "modes.4.db": 14,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.76,
+      "noteMeanAbsDb": 6.9,
+      "lowNotesMeanAbsDb": 5.34,
+      "highNotesMeanAbsDb": 3.77,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -4.74,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -1.54,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 3.01,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 8.42,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 5.88,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 0.88,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 0.2,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -5.2,
+          "notes": 33
+        },
+        {
+          "h": 10,
+          "db": -7.7,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.46,
+        "modes.4.db": 14,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 4.8,
+      "noteMeanAbsDb": 7.62,
+      "lowNotesMeanAbsDb": 6.71,
+      "highNotesMeanAbsDb": 4.64,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.22,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -5.76,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -2.62,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 0.79,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 6.21,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 2.61,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": -3,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": -4.65,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -9.72,
+          "notes": 32
+        },
+        {
+          "h": 10,
+          "db": -11.39,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 8,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.82,
+      "noteMeanAbsDb": 7.12,
+      "lowNotesMeanAbsDb": 4.61,
+      "highNotesMeanAbsDb": 4.1,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0.72,
+          "notes": 44
+        },
+        {
+          "h": 2,
+          "db": -5.62,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -2.65,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": -0.21,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 7.52,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 8.87,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 4.24,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 2.15,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -0.34,
+          "notes": 33
+        },
+        {
+          "h": 10,
+          "db": -5.91,
+          "notes": 24
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 4,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.97,
+      "noteMeanAbsDb": 7.22,
+      "lowNotesMeanAbsDb": 5.22,
+      "highNotesMeanAbsDb": 4.24,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.22,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -6.78,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -4.33,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": -0.89,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 4.61,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 8.27,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 2.06,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 0.9,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -3.68,
+          "notes": 33
+        },
+        {
+          "h": 10,
+          "db": -6.98,
+          "notes": 24
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 0,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 4.33,
+      "noteMeanAbsDb": 7.61,
+      "lowNotesMeanAbsDb": 5.86,
+      "highNotesMeanAbsDb": 4.51,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.21,
+          "notes": 44
+        },
+        {
+          "h": 2,
+          "db": -7.97,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -7.35,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": -5,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 1.38,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 6.13,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 0.39,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": -1.29,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -4.71,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -7.84,
+          "notes": 24
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": -4,
+        "modes.2.db": -12.42,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 4.92,
+      "noteMeanAbsDb": 7.99,
+      "lowNotesMeanAbsDb": 6.49,
+      "highNotesMeanAbsDb": 4.86,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.21,
+          "notes": 44
+        },
+        {
+          "h": 2,
+          "db": -8.47,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -9.72,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": -7.91,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": -1.63,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 3.5,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": -1.02,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": -2.7,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -4.75,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -8.34,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": -8,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.44,
+      "noteMeanAbsDb": 6.7,
+      "lowNotesMeanAbsDb": 4.26,
+      "highNotesMeanAbsDb": 3.65,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 0,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -2.65,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": 0,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 4.55,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 9.64,
+          "notes": 30
+        },
+        {
+          "h": 6,
+          "db": 8.41,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 2.61,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 3.85,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": 0.32,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -2.33,
+          "notes": 25
+        }
+      ],
+      "notes": 46
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": -4,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.56,
+      "noteMeanAbsDb": 6.51,
+      "lowNotesMeanAbsDb": 3.44,
+      "highNotesMeanAbsDb": 3.77,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.85,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": -1.33,
+          "notes": 40
+        },
+        {
+          "h": 3,
+          "db": 0,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 4.59,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 9.45,
+          "notes": 29
+        },
+        {
+          "h": 6,
+          "db": 7.55,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 2.58,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 2.15,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -2.33,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -3.78,
+          "notes": 24
+        }
+      ],
+      "notes": 45
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": 0,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 3.49,
+      "noteMeanAbsDb": 6.5,
+      "lowNotesMeanAbsDb": 3.97,
+      "highNotesMeanAbsDb": 3.63,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.85,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": 0.43,
+          "notes": 40
+        },
+        {
+          "h": 3,
+          "db": -0.01,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 4.11,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 9.88,
+          "notes": 29
+        },
+        {
+          "h": 6,
+          "db": 7.26,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 1.31,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 1.48,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -1.37,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -7.22,
+          "notes": 24
+        }
+      ],
+      "notes": 45
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": 4,
+        "modes.3.db": 10.52
+      },
+      "meanAbsDb": 2.96,
+      "noteMeanAbsDb": 6.38,
+      "lowNotesMeanAbsDb": 4.63,
+      "highNotesMeanAbsDb": 3.32,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.22,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": 1.14,
+          "notes": 40
+        },
+        {
+          "h": 3,
+          "db": 0.28,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 3.45,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 8.51,
+          "notes": 29
+        },
+        {
+          "h": 6,
+          "db": 5.79,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": 0.16,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": 0.47,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -1.53,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -7.08,
+          "notes": 24
+        }
+      ],
+      "notes": 45
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": 4,
+        "modes.3.db": 6
+      },
+      "meanAbsDb": 2.96,
+      "noteMeanAbsDb": 6.31,
+      "lowNotesMeanAbsDb": 4.53,
+      "highNotesMeanAbsDb": 3.7,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.23,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": 1.32,
+          "notes": 40
+        },
+        {
+          "h": 3,
+          "db": -0.33,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 3.05,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 7.91,
+          "notes": 29
+        },
+        {
+          "h": 6,
+          "db": 4.4,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": -1.07,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": -0.77,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -2,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -7.52,
+          "notes": 24
+        }
+      ],
+      "notes": 45
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": 4,
+        "modes.3.db": 2
+      },
+      "meanAbsDb": 3.2,
+      "noteMeanAbsDb": 6.34,
+      "lowNotesMeanAbsDb": 6.56,
+      "highNotesMeanAbsDb": 3.45,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.12,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": 1.6,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -0.71,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 2.78,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 7.5,
+          "notes": 29
+        },
+        {
+          "h": 6,
+          "db": 3.38,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": -1.76,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": -1.33,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -3.32,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -8.47,
+          "notes": 24
+        }
+      ],
+      "notes": 45
+    },
+    {
+      "values": {
+        "slope.base": 0.28,
+        "modes.4.db": 14,
+        "modes.2.db": 4,
+        "modes.3.db": 0
+      },
+      "meanAbsDb": 3.26,
+      "noteMeanAbsDb": 6.29,
+      "lowNotesMeanAbsDb": 6.59,
+      "highNotesMeanAbsDb": 3.41,
+      "partialDb": [
+        {
+          "h": 1,
+          "db": 1.13,
+          "notes": 43
+        },
+        {
+          "h": 2,
+          "db": 1.59,
+          "notes": 41
+        },
+        {
+          "h": 3,
+          "db": -0.91,
+          "notes": 39
+        },
+        {
+          "h": 4,
+          "db": 2.51,
+          "notes": 34
+        },
+        {
+          "h": 5,
+          "db": 6.12,
+          "notes": 29
+        },
+        {
+          "h": 6,
+          "db": 3.15,
+          "notes": 28
+        },
+        {
+          "h": 7,
+          "db": -2.12,
+          "notes": 25
+        },
+        {
+          "h": 8,
+          "db": -1.37,
+          "notes": 33
+        },
+        {
+          "h": 9,
+          "db": -4.34,
+          "notes": 34
+        },
+        {
+          "h": 10,
+          "db": -9.35,
+          "notes": 24
+        }
+      ],
+      "notes": 45
+    }
+  ]
+}

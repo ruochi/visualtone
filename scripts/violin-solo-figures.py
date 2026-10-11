@@ -513,6 +513,7 @@ def main():
     p.add_argument('--offset', type=float, default=13.3)
     p.add_argument('--phrase', type=float, default=24 * 60 / 115)
     p.add_argument('--align-only', action='store_true')
+    p.add_argument('--slope-only', action='store_true')
     args = p.parse_args()
 
     score = json.loads(Path(args.score).read_text())
@@ -523,7 +524,10 @@ def main():
         print(json.dumps(report, indent=2))
         return
 
-    if not args.synth or not args.out or not args.json:
+    if args.slope_only:
+        if not args.synth:
+            raise SystemExit('slope-only needs --synth')
+    elif not args.synth or not args.out or not args.json:
         raise SystemExit('figures need --synth --out --json')
 
     sr_s, synth = mono(args.synth)
@@ -557,6 +561,17 @@ def main():
             cosine(frame_norm(pc_r)[:, i], frame_norm(pc_s)[:, i]) for i in range(m)
         ])),
     }
+
+    if args.slope_only:
+        chroma_hop = 1024
+        band_frames = int(round(1.6 * sr / chroma_hop))
+        path = dtw_path(frame_norm(pc_s), frame_norm(pc_r), pc_s.sum(0), pc_r.sum(0), band_frames)
+        if len(path) < 8:
+            raise SystemExit('time warp failed')
+        syn_t, rec_t = path_times(path, chroma_hop, sr)
+        slopes = harmonic_slopes(notes, mag_s, mag_r, times_c, freqs_c, syn_t, rec_t)
+        print(json.dumps(slope_summary(slopes)))
+        return
 
     weights, mel_hz = mel_filterbank(sr, 2048)
     fr, tr, mr = stft_mag(rec, sr, 2048, 512)
@@ -851,7 +866,6 @@ def main():
     axes[1].set_ylabel('合成减录音 dB')
     axes[1].set_title('同一谐波上，合成比录音多多少', color=INK, loc='left')
     style_ax(axes[1])
-    axes[1].text(0.02, 0.92, '第 1 次差为 0：两边都以基频为最强', transform=axes[1].transAxes, color=MUTED, fontsize=9)
     save(fig, out / 'harmonic_slope.png')
 
     fig, ax = plt.subplots(figsize=(10.5, 4.6), layout='constrained')

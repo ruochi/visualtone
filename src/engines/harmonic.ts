@@ -236,7 +236,7 @@ export const HARMONIC_PRESETS = {
     gain: 0.55,
     stereo: [1.03, 0.97],
     slope: {
-      base: 0.1675,
+      base: 0.28,
       soft: 0.15,
       softPow: 1,
       high: 0,
@@ -263,7 +263,7 @@ export const HARMONIC_PRESETS = {
     modes: [
       { hz: 173.6, q: 1.6, db: 9.57 },
       { hz: 530, q: 6, db: 9.81 },
-      { hz: 1209.6, q: 3, db: -12.42 },
+      { hz: 1209.6, q: 3, db: 4 },
       { hz: 4160, q: 6, db: 10.52 },
       { hz: 3000, q: 1.2, db: 14 },
     ],
