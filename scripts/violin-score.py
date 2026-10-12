@@ -11,8 +11,11 @@ sawtooth reaches when it plays the written notes with no vibrato, no body,
 and no bow. 100 points is no error. The anchors are frozen in
 references/violin-score.json so later runs share one ruler.
 
-Only music the preset was not fitted on decides: menuet bars 5–8, and the
-gavotte theme by the same player. Menuet bars 1–4 are reported, never decide.
+Only music the preset was not fitted on decides: menuet bars 5–8, and
+gavotte bars 5–9. Menuet bars 1–4 are reported, never decide. The gavotte
+recording is darker than the menuet; a smooth mic curve, fit on gavotte
+bars 1–4 against menuet bars 1–4, is removed from the gavotte reference
+before those later bars are scored. The violin preset is not fit to it.
 Every candidate is rendered with several seeds. The spread between seeds is
 the noise; a change has to beat it.
 
@@ -52,7 +55,9 @@ PIECES = {
         'url': 'https://commons.wikimedia.org/wiki/Special:FilePath/J.S.Bach_partita_No.3_Gavotte_in_Rondeau.ogg',
         'offsetSec': 0.25,
         'score': 'examples/violin-gavotte-theme.json',
-        'splits': {'unseen': (1, 99)},
+        # Bars 1–4 estimate the microphone. Bars 5–9 are the transfer check.
+        'splits': {'unseen': (5, 99)},
+        'mic': 'gavotte',
     },
 }
 DECIDING = (('menuet', 'check'), ('gavotte', 'unseen'))
@@ -72,6 +77,10 @@ DIMENSIONS = (
 PROGRESS_MIN = 1.0
 DIMENSION_DROP = 5.0
 TRANSFER_DROP = 2.0
+
+# 0.75 octave. Narrower than a broad EQ, wider than one partial of a low note.
+MIC_OCTAVE = 0.75
+_MIC_FN = None
 
 
 def load_eval():
@@ -198,7 +207,91 @@ def phrase_window(rec, cand, sr, syn_t, rec_t, t0, t1, ev):
     return (None if not np.isfinite(corr) else 1 - corr), abs(span(c) - span(w))
 
 
-def measure_pair(rec, cand, sr, notes, splits):
+def clip_bars(rec, notes, sr, lo, hi):
+    sub = [n for n in notes if lo <= n['bar'] <= hi]
+    t0 = min(n['t'] for n in sub)
+    t1 = max(n['t'] + n['dur'] for n in sub)
+    a, b = int(round(t0 * sr)), int(round(t1 * sr))
+    return rec[max(0, a):max(a + 1, b)]
+
+
+def build_mic_curve():
+    """Gavotte bars 1–4 minus menuet bars 1–4, smoothed, 0 dB on 500–1000 Hz.
+
+    This is a difference between two recordings. It is not a violin parameter.
+    """
+    from scipy.ndimage import gaussian_filter1d
+    from scipy.signal import welch
+
+    sr, menuet = recording('menuet')
+    sr_g, gavotte = recording('gavotte')
+    if sr_g != sr:
+        raise SystemExit(f'gavotte sample rate {sr_g} != {sr}')
+    a = clip_bars(menuet, piece_notes(ROOT / PIECES['menuet']['score']), sr, 1, 4)
+    b = clip_bars(gavotte, piece_notes(ROOT / PIECES['gavotte']['score']), sr, 1, 4)
+
+    def db(x):
+        f, p = welch(x, fs=sr, nperseg=min(8192, len(x) // 2))
+        return f, 10 * np.log10(p + 1e-20)
+
+    fa, dba = db(a)
+    fb, dbb = db(b)
+    n_oct = np.log2(12000 / 80)
+    grid = np.logspace(np.log10(80), np.log10(12000), int(round(n_oct * 16)) + 1)
+    diff = np.interp(grid, fb, dbb) - np.interp(grid, fa, dba)
+    ppo = len(grid) / n_oct
+    smooth = gaussian_filter1d(diff, MIC_OCTAVE * ppo, mode='nearest')
+    ref = (grid >= 500) & (grid <= 1000)
+    smooth = smooth - float(np.mean(smooth[ref]))
+    hz = [round(float(x), 2) for x in grid]
+    curve = [round(float(x), 4) for x in smooth]
+    return {'hz': hz, 'db': curve, 'octave': MIC_OCTAVE, 'refHz': [500, 1000],
+            'from': 'gavotte bars 1-4 minus menuet bars 1-4'}
+
+
+def mic_fn_from(curve):
+    grid = np.array(curve['hz'], dtype=float)
+    smooth = np.array(curve['db'], dtype=float)
+    logg = np.log(grid)
+
+    def fn(freq):
+        f = min(max(float(freq), grid[0]), grid[-1])
+        return float(np.interp(np.log(f), logg, smooth))
+
+    return fn
+
+
+def gavotte_mic():
+    """Frozen curve when the card has one, otherwise the live estimate."""
+    global _MIC_FN
+    if _MIC_FN is not None:
+        return _MIC_FN
+    if CARD.exists():
+        curve = json.loads(CARD.read_text()).get('gavotteMic')
+        if curve:
+            _MIC_FN = mic_fn_from(curve)
+            return _MIC_FN
+    _MIC_FN = mic_fn_from(build_mic_curve())
+    return _MIC_FN
+
+
+def compensate_rows(rows, fn):
+    """Remove the mic curve from recording partials, then re-peak each note."""
+    out = []
+    for r in rows:
+        rec = np.array(r['rec'], dtype=float, copy=True)
+        f0 = midi_hz(r['midi'])
+        for h in range(len(rec)):
+            if np.isfinite(rec[h]):
+                rec[h] -= fn(f0 * (h + 1))
+        peak = np.nanmax(rec)
+        if np.isfinite(peak):
+            rec -= peak
+        out.append({**r, 'rec': rec})
+    return out
+
+
+def measure_pair(rec, cand, sr, notes, splits, mic_split=None):
     ev = load_eval()
     n = int(round(phrase_sec(notes) * sr))
     rec = rec[:n]
@@ -212,6 +305,8 @@ def measure_pair(rec, cand, sr, notes, splits):
     for split, (lo, hi) in splits.items():
         sub_notes = [x for x in notes if lo <= x['bar'] <= hi]
         sub_rows = [r for r in rows if lo <= r.get('bar', 0) <= hi]
+        if mic_split == split:
+            sub_rows = compensate_rows(sub_rows, gavotte_mic())
         by_hz = ev.by_frequency(sub_rows)
         note_err = ev.note_errors(sub_rows)
         hnr = [b['db'] for b in ev.hnr_gap(sub_notes, mag_c, mag_r, times, freqs, syn_t, rec_t) if b['db'] is not None]
@@ -249,7 +344,8 @@ def measure_wav(job):
     _sr, cand = mono(wav)
     if _sr != sr:
         raise SystemExit(f'{wav}: sample rate {_sr} != {sr}')
-    return name, wav, measure_pair(rec, cand, sr, notes, piece['splits'])
+    mic_split = 'unseen' if piece.get('mic') else None
+    return name, wav, measure_pair(rec, cand, sr, notes, piece['splits'], mic_split)
 
 
 def naive_take(notes, sr):
@@ -376,7 +472,7 @@ def decide(base, cand, n_seeds):
     return verdict, lines
 
 
-VERDICT_ZH = {'progress': '进步', 'flat': '持平', 'regression': '退步'}
+VERDICT_ZH = {'progress': '进步', 'flat': '持平', 'regression': '退步', 'ruler': '换尺子'}
 
 
 def print_card(cand, base):
@@ -400,7 +496,11 @@ def print_card(cand, base):
 
 
 def split_label(split):
-    return {'fit': '前四小节（拟合）', 'check': '第 5–8 小节（验收）', 'unseen': '（未参与拟合）'}[split]
+    return {
+        'fit': '前四小节（拟合）',
+        'check': '第 5–8 小节（验收）',
+        'unseen': '第 5–9 小节（麦克补偿后）',
+    }[split]
 
 
 def draw(card, cand, label, path):
@@ -489,14 +589,16 @@ def freeze_anchors():
         notes = piece_notes(ROOT / piece['score'])
         sr, rec = recording(name)
         print('anchor', name)
+        mic_split = 'unseen' if piece.get('mic') else None
         anchors[name] = {s: v['metrics'] for s, v in
-                         measure_pair(rec, naive_take(notes, sr), sr, notes, piece['splits']).items()}
+                         measure_pair(rec, naive_take(notes, sr), sr, notes, piece['splits'], mic_split).items()}
         self_check[name] = {s: v['metrics'] for s, v in
-                            measure_pair(rec, self_take(rec, sr), sr, notes, piece['splits']).items()}
+                            measure_pair(rec, self_take(rec, sr), sr, notes, piece['splits'], mic_split).items()}
     return anchors, self_check
 
 
 def main():
+    global _MIC_FN
     parser = argparse.ArgumentParser()
     parser.add_argument('--root', default=str(ROOT), help='checkout whose dist/ and examples/ are scored')
     parser.add_argument('--label', default='now')
@@ -504,6 +606,8 @@ def main():
     parser.add_argument('--init', action='store_true', help='freeze anchors and take this run as the baseline')
     parser.add_argument('--accept', action='store_true', help='keep this run as the baseline if it is progress')
     parser.add_argument('--history', action='store_true', help='append this run to the history without judging')
+    parser.add_argument('--refreeze-gavotte', action='store_true',
+                        help='re-anchor the gavotte on bars 5–9 with a mic curve, and rescore the current build as that baseline only')
     parser.add_argument('--workers', type=int, default=3)
     parser.add_argument('--figure', default=str(WORK / 'score.png'))
     args = parser.parse_args()
@@ -536,11 +640,44 @@ def main():
         }
         print('self check', json.dumps(card['selfCheck']))
 
+    if args.refreeze_gavotte:
+        if 'anchors' not in card or 'baseline' not in card:
+            raise SystemExit('refreeze needs an existing baseline')
+        curve = build_mic_curve()
+        card['gavotteMic'] = curve
+        _MIC_FN = mic_fn_from(curve)
+        print('gavotte mic (gavotte − menuet)',
+              ' '.join(f'{hz}:{_MIC_FN(hz):+.1f}dB' for hz in (250, 500, 1000, 2000, 4000, 8000)))
+        piece = PIECES['gavotte']
+        notes = piece_notes(ROOT / piece['score'])
+        sr, rec = recording('gavotte')
+        print('anchor gavotte bars 5-9')
+        measured = measure_pair(rec, naive_take(notes, sr), sr, notes, piece['splits'], 'unseen')
+        card['anchors']['gavotte'] = {s: v['metrics'] for s, v in measured.items()}
+        self_m = measure_pair(rec, self_take(rec, sr), sr, notes, piece['splits'], 'unseen')
+        card['selfCheck']['gavotte'] = {
+            s: to_points(v['metrics'], card['anchors']['gavotte'][s])['total'] for s, v in self_m.items()
+        }
+        print('gavotte self check', json.dumps(card['selfCheck']['gavotte']))
+        card['rule']['deciding'] = [
+            'menuet bars 5-8',
+            'gavotte bars 5-9 after a mic curve from bars 1-4',
+        ]
+        card['rule']['gavotteMic'] = (
+            'Smooth 0.75-octave difference of long-term spectra, gavotte bars 1-4 minus menuet bars 1-4, '
+            '0 dB from 500 to 1000 Hz. Subtracted from recording partials when scoring gavotte bars 5-9. '
+            'The violin is not fit to the gavotte.'
+        )
+        CARD.write_text(json.dumps(card, indent=2, ensure_ascii=False) + '\n')
+
     jobs = render_takes(root, args.label, SEEDS)
     takes = score_jobs(jobs, args.workers)
     cand = {name: summarize(takes[name], card['anchors'][name]) for name in PIECES}
     base = card.get('baseline')
-    print_card(cand, base['pieces'] if base and not args.init else None)
+    if args.refreeze_gavotte:
+        print_card(cand, None)
+    else:
+        print_card(cand, base['pieces'] if base and not args.init else None)
 
     entry = {
         'label': args.label,
@@ -554,6 +691,35 @@ def main():
     def remember(e):
         card['history'] = [h for h in card['history'] if (h['label'], h['commit']) != (e['label'], e['commit'])]
         card['history'].append(e)
+
+    if args.refreeze_gavotte:
+        kept_check = base['pieces']['menuet']['check']['total']
+        kept_fit = base['pieces']['menuet']['fit']['total']
+        print(f'小步舞曲验收分重跑 {cand["menuet"]["check"]["total"]:.2f}，公布的基线仍是 {kept_check:.2f}')
+        print(f'加沃特新基线 {cand["gavotte"]["unseen"]["total"]:.2f}。旧的 17.25 是另一把尺子，不能拿来比。')
+        base['pieces']['gavotte'] = cand['gavotte']
+        entry = {
+            'label': args.label,
+            'commit': commit,
+            'menuetCheck': kept_check,
+            'gavotte': cand['gavotte']['unseen']['total'],
+            'menuetFit': kept_fit,
+            'verdict': 'ruler',
+            'why': [
+                '加沃特改为第 5–9 小节，并减去前四小节估计的麦克曲线。',
+                '小提琴预设没有按加沃特调。',
+                '小步舞曲的锚点和验收分保持不变。',
+            ],
+        }
+        remember(entry)
+        card['latest'] = {'label': args.label, 'commit': commit, 'verdict': 'ruler', 'pieces': cand}
+        CARD.write_text(json.dumps(card, indent=2, ensure_ascii=False) + '\n')
+        print('wrote', CARD)
+        args.figure = str(ROOT / 'references/violin-score.png')
+        draw(card, cand, args.label, Path(args.figure))
+        for job in jobs:
+            Path(job[1]).unlink(missing_ok=True)
+        sys.exit(0)
 
     if args.init or not base:
         card['baseline'] = {'label': args.label, 'commit': commit, 'pieces': cand}

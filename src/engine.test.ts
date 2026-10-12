@@ -549,16 +549,73 @@ test('a bypass body fir matches the unfiltered violin', () => {
     vibratoDepthJitter: 0,
     vibratoRateJitter: 0,
   };
-  const plain = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bodyFir: undefined }, 0.4, 67);
-  const bypass = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bodyFir: [1] }, 0.4, 67);
+  // The measured partial table bypasses the body fir. This test is the fir itself.
+  const plain = playHarmonic({ ...HARMONIC_PRESETS.violin, life, partialTable: undefined, bodyFir: undefined }, 0.4, 67);
+  const bypass = playHarmonic({ ...HARMONIC_PRESETS.violin, life, partialTable: undefined, bodyFir: [1] }, 0.4, 67);
   assert.equal(plain.buf.length, bypass.buf.length);
   for (let i = 0; i < plain.buf.length; i++) {
     if (plain.buf[i] !== bypass.buf[i]) assert.fail(`body fir bypass changed sample ${i}`);
   }
-  const quieter = playHarmonic({ ...HARMONIC_PRESETS.violin, life, bodyFir: [0.5] }, 0.4, 67);
+  const quieter = playHarmonic({ ...HARMONIC_PRESETS.violin, life, partialTable: undefined, bodyFir: [0.5] }, 0.4, 67);
   const a = windowRms(plain.buf, sr, 0.2);
   const b = windowRms(quieter.buf, sr, 0.2);
   assert.ok(Math.abs(b / a - 0.5) < 0.05, `half fir ${b.toFixed(4)} vs ${a.toFixed(4)}`);
+});
+
+test('a measured partial table is the held spectrum', () => {
+  const life = {
+    ...HARMONIC_PRESETS.violin.life,
+    vibratoCents: 0,
+    vibratoHighCents: 0,
+    wanderCents: 0,
+    shimmerRms: 0,
+    vibratoDepthJitter: 0,
+    vibratoRateJitter: 0,
+  };
+  const noise = { ...HARMONIC_PRESETS.violin.noise, level: 0, direct: 0, strike: 0, strike2: 0 };
+  const db = [0, -12, -24, -36, -48, -60, -72, -84, -96, -108];
+  const shaped = playHarmonic(
+    {
+      ...HARMONIC_PRESETS.violin,
+      life,
+      noise,
+      transient: undefined,
+      bowArc: undefined,
+      partialTable: [{ midi: 69, db }],
+    },
+    0.5,
+    69,
+  );
+  const tone = (freq: number) => {
+    const n = 2048;
+    const a = Math.round(0.12 * shaped.sr);
+    let re = 0;
+    let im = 0;
+    for (let i = 0; i < n; i++) {
+      const w = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (n - 1));
+      const th = (2 * Math.PI * freq * i) / shaped.sr;
+      re += shaped.buf[a + i] * w * Math.cos(th);
+      im -= shaped.buf[a + i] * w * Math.sin(th);
+    }
+    return Math.sqrt(re * re + im * im);
+  };
+  const ratio = 20 * Math.log10(tone(880) / tone(440));
+  assert.ok(Math.abs(ratio + 12) < 1.5, `second partial ${ratio.toFixed(2)} dB`);
+  const plain = playHarmonic(
+    {
+      ...HARMONIC_PRESETS.violin,
+      life,
+      noise,
+      transient: undefined,
+      bowArc: undefined,
+      partialTable: undefined,
+    },
+    0.5,
+    69,
+  );
+  let diff = 0;
+  for (let i = 0; i < shaped.buf.length; i++) diff += Math.abs(shaped.buf[i] - plain.buf[i]);
+  assert.ok(diff > 1, 'partial table did not change the held tone');
 });
 
 test('a harmonic tone follows a pitch change while it is held', () => {

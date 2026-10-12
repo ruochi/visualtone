@@ -83,6 +83,15 @@ export interface HarmonicPreset {
    */
   bodyFir?: number[];
   /**
+   * Held partials measured at real pitches, in dB relative to the strongest partial.
+   * Levels are interpolated in MIDI between rows. Outside the measured range they
+   * follow a per-harmonic trend, capped so a few semitones cannot run away.
+   * Present, this replaces the shared slope, body modes, and body filters for the
+   * held tone. The bright transient still uses `slope`. Absent leaves every other
+   * preset sample-identical.
+   */
+  partialTable?: { midi: number; db: number[] }[];
+  /**
    * Open strings ringing off the bridge. Each bandpass is fed by the harmonic sum.
    * `mix` is the fraction added back. Absent leaves the bridge dry.
    */
@@ -314,6 +323,10 @@ export const HARMONIC_PRESETS = {
       -0.000314, -0.000634, -0.001000, -0.001027, -0.000708, -0.000360, -0.000290, -0.000523,
       -0.000804,
     ],
+    // A per-pitch table measured from menuet bars 1–4 lives in
+    // references/violin-partial-table.json. Wired in, it took the held
+    // harmonics to the recording's own ceiling on bars 5–8, and lost the
+    // gavotte, so the preset does not use it.
     sympathetic: [
       { hz: 196.0, q: 40, mix: 0.035 },
       { hz: 293.7, q: 40, mix: 0.035 },
@@ -733,6 +746,94 @@ function clampDb(db: number): number {
   return db;
 }
 
+const PARTIAL_SLOPE_CAP = 1.5;
+
+function medianOf(values: number[]): number {
+  const s = values.slice().sort((a, b) => a - b);
+  const i = Math.floor(s.length / 2);
+  return s.length % 2 === 1 ? s[i] : (s[i - 1] + s[i]) / 2;
+}
+
+/** Partials past the measured ones keep falling, so the spectrum has no shelf. */
+function extendPartialDb(src: number[], n: number): Float64Array {
+  const out = new Float64Array(n);
+  const m = Math.min(src.length, n);
+  for (let i = 0; i < m; i++) out[i] = src[i];
+  let step = -3;
+  if (m >= 2) {
+    const k = Math.min(3, m - 1);
+    const steps: number[] = [];
+    for (let i = m - k; i < m; i++) steps.push(src[i] - src[i - 1]);
+    step = medianOf(steps);
+  }
+  if (step > -2) step = -2;
+  if (step < -8) step = -8;
+  for (let i = m; i < n; i++) out[i] = out[i - 1] + step;
+  return out;
+}
+
+function renormDb(row: Float64Array): Float64Array {
+  let peak = row[0];
+  for (let i = 1; i < row.length; i++) if (row[i] > peak) peak = row[i];
+  if (peak !== 0) for (let i = 0; i < row.length; i++) row[i] -= peak;
+  return row;
+}
+
+function buildPartialLookup(rows: NonNullable<HarmonicPreset['partialTable']>, nPartials: number) {
+  const sorted = rows.slice().sort((a, b) => a.midi - b.midi);
+  const midis = sorted.map((row) => row.midi);
+  const db = sorted.map((row) => extendPartialDb(row.db, nPartials));
+  const slope = new Float64Array(nPartials);
+  const n = midis.length;
+  if (n >= 2) {
+    const meanM = midis.reduce((a, b) => a + b, 0) / n;
+    for (let h = 0; h < nPartials; h++) {
+      let meanDb = 0;
+      for (let i = 0; i < n; i++) meanDb += db[i][h];
+      meanDb /= n;
+      let num = 0;
+      let den = 0;
+      for (let i = 0; i < n; i++) {
+        const dm = midis[i] - meanM;
+        num += dm * (db[i][h] - meanDb);
+        den += dm * dm;
+      }
+      const s = den > 1e-9 ? num / den : 0;
+      slope[h] = Math.min(PARTIAL_SLOPE_CAP, Math.max(-PARTIAL_SLOPE_CAP, s));
+    }
+  }
+  return { midis, db, slope };
+}
+
+function partialDbRow(
+  table: { midis: number[]; db: Float64Array[]; slope: Float64Array },
+  midi: number,
+): Float64Array {
+  const { midis, db, slope } = table;
+  const n = midis.length;
+  const width = db[0].length;
+  if (midi <= midis[0]) {
+    const out = new Float64Array(width);
+    const step = midi - midis[0];
+    for (let h = 0; h < width; h++) out[h] = db[0][h] + slope[h] * step;
+    return renormDb(out);
+  }
+  if (midi >= midis[n - 1]) {
+    const out = new Float64Array(width);
+    const step = midi - midis[n - 1];
+    for (let h = 0; h < width; h++) out[h] = db[n - 1][h] + slope[h] * step;
+    return renormDb(out);
+  }
+  let i = 0;
+  while (i < n - 1 && midis[i + 1] <= midi) i++;
+  if (midis[i] === midi) return db[i];
+  const span = midis[i + 1] - midis[i];
+  const u = span === 0 ? 0 : (midi - midis[i]) / span;
+  const out = new Float64Array(width);
+  for (let h = 0; h < width; h++) out[h] = db[i][h] * (1 - u) + db[i + 1][h] * u;
+  return renormDb(out);
+}
+
 function scaleLife(spec: PitchLifeSpec, scale: number): PitchLifeSpec {
   if (scale === 1) return spec;
   return {
@@ -780,23 +881,25 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
   const bodyA2 = (1 - bodyAlpha) / bodyA0;
   let bz1 = 0;
   let bz2 = 0;
-  let bodyMix = p.resonance.mix;
+  const measured = (p.partialTable?.length ?? 0) > 0;
+  const partialLookup = measured && p.partialTable ? buildPartialLookup(p.partialTable, N) : null;
+  let bodyMix = measured ? 0 : p.resonance.mix;
   let smoothPole = 0.5;
   const smooth = [0, 0, 0, 0];
   const life = createPitchLife(sampleRate, scaleLife(p.life, clamp01(pitchLife)), seed);
-  const bodyEq = (p.bodyEq ?? [])
+  const bodyEq = (measured ? [] : (p.bodyEq ?? []))
     .filter((band) => band.db !== 0)
     .map((band) => new Biquad('peak', sampleRate, band.hz, Math.max(0.3, band.q), band.db));
-  const sympathetic = (p.sympathetic ?? [])
+  const sympathetic = (measured ? [] : (p.sympathetic ?? []))
     .filter((s) => s.mix !== 0)
     .map((s) => ({ bp: new Biquad('bandpass', sampleRate, s.hz, Math.max(1, s.q)), mix: s.mix }));
-  const bodyFir = (p.bodyFir ?? []).slice();
+  const bodyFir = measured ? [] : (p.bodyFir ?? []).slice();
   const firN = bodyFir.length;
   const firHist = new Float64Array(Math.max(1, firN));
   let firPos = 0;
   const nyquist = sampleRate * 0.45;
   const partialGate = new Float64Array(N);
-  const bodyTable = p.body ? buildBodyTable(p.body, p.modes) : null;
+  const bodyTable = !measured && p.body ? buildBodyTable(p.body, p.modes) : null;
   const nominalDb = new Float64Array(N);
   const bodyNow = new Float64Array(N);
   const bodyTarget = new Float64Array(N);
@@ -841,12 +944,18 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         );
         const brightTilt = tr ? Math.max(tr.minSlope, tilt - tr.brighten) : 0;
         const modes = bodyTable ? undefined : p.modes;
+        const rowDb = partialLookup ? partialDbRow(partialLookup, midi) : null;
+        // The bright copy used to share the steady fundamental. A measured spectrum
+        // often peaks on a higher partial, and an unscaled chiff then shouts the fundamental.
+        const fundamental = rowDb ? Math.pow(10, rowDb[0] / 20) : 1;
         let energy = 0;
         for (let n = 1; n <= N; n++) {
           // Keep partials that sit above Nyquist. A later pitch drop can bring them back.
           const audible = freq * n < nyquist;
           let g = Math.exp(-tilt * (n - 1));
-          if (bodyTable) {
+          if (rowDb) {
+            g = Math.pow(10, rowDb[n - 1] / 20);
+          } else if (bodyTable) {
             const db = clampDb(lookupBody(bodyTable, freq * n));
             nominalDb[n - 1] = db;
             g *= Math.pow(10, db / 20);
@@ -865,7 +974,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
             g *= Math.pow(10, db / 20);
           }
           gains[n - 1] = g;
-          brightGains[n - 1] = tr ? Math.exp(-brightTilt * (n - 1)) : 0;
+          brightGains[n - 1] = tr ? Math.exp(-brightTilt * (n - 1)) * fundamental : 0;
           if (audible) energy += g * g;
           partialGate[n - 1] = audible ? 1 : 0;
           phases[n - 1] = n * n * p.phaseSpread;
@@ -893,7 +1002,7 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         }
         arcSamples = 0;
         arcTick = 0;
-        bodyMix = p.resonance.mix + strike * p.resonance.mixStrike;
+        bodyMix = measured ? 0 : p.resonance.mix + strike * p.resonance.mixStrike;
         trEnv = tr ? tr.level : 0;
         finger = tr ? tr.level * (tr.noise + strike * tr.noiseStrike) : 0;
         useRing = p.ring !== undefined;
@@ -1016,12 +1125,23 @@ export function createHarmonic(sampleRate: number, preset: HarmonicPreset, seed:
         noise -= noiseHp;
       }
       if (p.lowpass) {
-        src += noise;
-        noise = 0;
         const a = 1 - smoothPole;
-        for (let i = 0; i < 4; i++) {
-          smooth[i] = src * a + smooth[i] * smoothPole;
-          src = smooth[i];
+        if (measured) {
+          // The table already has the recorded brightness. Filtering the harmonics
+          // would pull the upper partials down by a couple of dB.
+          let n = noise;
+          for (let i = 0; i < 4; i++) {
+            smooth[i] = n * a + smooth[i] * smoothPole;
+            n = smooth[i];
+          }
+          noise = n;
+        } else {
+          src += noise;
+          noise = 0;
+          for (let i = 0; i < 4; i++) {
+            smooth[i] = src * a + smooth[i] * smoothPole;
+            src = smooth[i];
+          }
         }
       }
       const body = bodyB0 * src + bz1;
