@@ -1,0 +1,874 @@
+{
+  "about": "Each metric is an error against the recording. 0 points is what a textbook sawtooth reaches when it plays the written notes with no vibrato, no body, and no bow. 100 points is no error. The anchors are frozen in references/violin-score.json so later runs share one ruler.",
+  "seeds": [
+    1006,
+    7,
+    23,
+    101,
+    2024
+  ],
+  "weights": {
+    "harmonic": 20,
+    "body": 15,
+    "worst": 10,
+    "noise": 10,
+    "attack": 10,
+    "vibrato": 10,
+    "pitch": 5,
+    "phrase": 20
+  },
+  "dimensions": {
+    "harmonic": {
+      "label": "谐波斜率",
+      "metrics": [
+        "harmonicDb"
+      ]
+    },
+    "body": {
+      "label": "琴体",
+      "metrics": [
+        "bodyDb"
+      ]
+    },
+    "worst": {
+      "label": "最差的音",
+      "metrics": [
+        "worstNoteDb"
+      ]
+    },
+    "noise": {
+      "label": "弓噪",
+      "metrics": [
+        "hnrGapDb"
+      ]
+    },
+    "attack": {
+      "label": "起音",
+      "metrics": [
+        "attackCents"
+      ]
+    },
+    "vibrato": {
+      "label": "揉弦",
+      "metrics": [
+        "vibratoDepthCents"
+      ]
+    },
+    "pitch": {
+      "label": "音准",
+      "metrics": [
+        "intonationCents"
+      ]
+    },
+    "phrase": {
+      "label": "乐句",
+      "metrics": [
+        "envelopeMiss",
+        "loudnessSpanDb"
+      ]
+    }
+  },
+  "rule": {
+    "deciding": [
+      "menuet bars 5-8",
+      "gavotte theme"
+    ],
+    "progressMinPoints": 1.0,
+    "dimensionDropPoints": 5.0,
+    "transferDropPoints": 2.0,
+    "noise": "Twice the standard error of the per-seed difference (same seeds paired), when that is larger."
+  },
+  "anchors": {
+    "menuet": {
+      "fit": {
+        "harmonicDb": 3.48,
+        "bodyDb": 4.334,
+        "worstNoteDb": 9.941,
+        "hnrGapDb": 12.565,
+        "attackCents": 964.9,
+        "vibratoDepthCents": 8.4,
+        "intonationCents": 10.0,
+        "envelopeMiss": 0.654,
+        "loudnessSpanDb": 3.859
+      },
+      "check": {
+        "harmonicDb": 3.78,
+        "bodyDb": 4.438,
+        "worstNoteDb": 13.838,
+        "hnrGapDb": 9.1,
+        "attackCents": 755.7,
+        "vibratoDepthCents": 12.05,
+        "intonationCents": 12.0,
+        "envelopeMiss": 1.191,
+        "loudnessSpanDb": 6.503
+      }
+    },
+    "gavotte": {
+      "unseen": {
+        "harmonicDb": 16.77,
+        "bodyDb": 12.291,
+        "worstNoteDb": 22.906,
+        "hnrGapDb": 12.348,
+        "attackCents": 475.6,
+        "vibratoDepthCents": 11.59,
+        "intonationCents": 4.0,
+        "envelopeMiss": 0.984,
+        "loudnessSpanDb": 10.558
+      }
+    }
+  },
+  "selfCheck": {
+    "menuet": {
+      "fit": 96.19797692402389,
+      "check": 96.66328633482532
+    },
+    "gavotte": {
+      "unseen": 97.51690076758229
+    }
+  },
+  "history": [
+    {
+      "label": "original",
+      "commit": "2f2c5e5",
+      "menuetCheck": 17.3,
+      "gavotte": 6.68,
+      "menuetFit": 18.05,
+      "verdict": "baseline"
+    },
+    {
+      "label": "refit",
+      "commit": "d4b7759",
+      "menuetCheck": 21.42,
+      "gavotte": 9.85,
+      "menuetFit": 19.09,
+      "verdict": "flat"
+    },
+    {
+      "label": "played",
+      "commit": "3bf7468",
+      "menuetCheck": 25.24,
+      "gavotte": 18.78,
+      "menuetFit": 30.97,
+      "verdict": "regression"
+    },
+    {
+      "label": "body",
+      "commit": "645b060",
+      "menuetCheck": 27.13,
+      "gavotte": 18.91,
+      "menuetFit": 33.73,
+      "verdict": "regression",
+      "why": [
+        "第 5–8 小节 +9.83（门槛 ±3.92）",
+        "加沃特 +12.23（允许下降 2.04）",
+        "前四小节 +15.68，只作参考",
+        "有维度掉得太多：起音 -39.4"
+      ]
+    }
+  ],
+  "baseline": {
+    "label": "original",
+    "commit": "2f2c5e5",
+    "pieces": {
+      "menuet": {
+        "fit": {
+          "total": 18.05,
+          "totalSd": 1.86,
+          "seedTotals": [
+            19.44,
+            15.56,
+            16.72,
+            18.56,
+            19.96
+          ],
+          "dims": {
+            "harmonic": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "body": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "worst": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "noise": {
+              "mean": 71.86,
+              "sd": 1.99,
+              "seeds": [
+                73.54,
+                70.42,
+                73.2,
+                73.06,
+                69.08
+              ]
+            },
+            "attack": {
+              "mean": 50.63,
+              "sd": 5.99,
+              "seeds": [
+                51.64,
+                42.52,
+                47.06,
+                54.07,
+                57.85
+              ]
+            },
+            "vibrato": {
+              "mean": 8.5,
+              "sd": 7.62,
+              "seeds": [
+                8.33,
+                2.92,
+                1.96,
+                8.21,
+                21.07
+              ]
+            },
+            "pitch": {
+              "mean": 8.0,
+              "sd": 10.96,
+              "seeds": [
+                20.02,
+                0.0,
+                0.0,
+                20.0,
+                0.0
+              ]
+            },
+            "phrase": {
+              "mean": 22.74,
+              "sd": 2.82,
+              "seeds": [
+                25.46,
+                19.87,
+                22.47,
+                20.13,
+                25.79
+              ]
+            }
+          },
+          "metrics": {
+            "harmonicDb": 6.978,
+            "bodyDb": 5.763,
+            "worstNoteDb": 11.069,
+            "hnrGapDb": 3.536,
+            "attackCents": 476.38,
+            "vibratoDepthCents": 7.686,
+            "intonationCents": 9.799,
+            "envelopeMiss": 0.587,
+            "loudnessSpanDb": 2.5
+          },
+          "notesScored": 25,
+          "notesWritten": 25
+        },
+        "check": {
+          "total": 17.3,
+          "totalSd": 2.37,
+          "seedTotals": [
+            14.8,
+            16.19,
+            19.31,
+            15.92,
+            20.3
+          ],
+          "dims": {
+            "harmonic": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "body": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "worst": {
+              "mean": 23.5,
+              "sd": 5.29,
+              "seeds": [
+                18.15,
+                25.08,
+                17.65,
+                27.9,
+                28.7
+              ]
+            },
+            "noise": {
+              "mean": 51.36,
+              "sd": 3.36,
+              "seeds": [
+                53.05,
+                52.91,
+                46.04,
+                54.58,
+                50.2
+              ]
+            },
+            "attack": {
+              "mean": 47.48,
+              "sd": 15.89,
+              "seeds": [
+                36.76,
+                40.44,
+                70.04,
+                32.33,
+                57.84
+              ]
+            },
+            "vibrato": {
+              "mean": 5.81,
+              "sd": 12.99,
+              "seeds": [
+                0.0,
+                0.0,
+                29.05,
+                0.0,
+                0.0
+              ]
+            },
+            "pitch": {
+              "mean": 6.67,
+              "sd": 14.9,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                33.33
+              ]
+            },
+            "phrase": {
+              "mean": 20.78,
+              "sd": 3.58,
+              "seeds": [
+                20.02,
+                21.72,
+                15.17,
+                22.21,
+                24.8
+              ]
+            }
+          },
+          "metrics": {
+            "harmonicDb": 5.358,
+            "bodyDb": 6.46,
+            "worstNoteDb": 10.586,
+            "hnrGapDb": 4.426,
+            "attackCents": 396.88,
+            "vibratoDepthCents": 13.536,
+            "intonationCents": 14.005,
+            "envelopeMiss": 1.252,
+            "loudnessSpanDb": 3.8
+          },
+          "notesScored": 21,
+          "notesWritten": 23
+        }
+      },
+      "gavotte": {
+        "unseen": {
+          "total": 6.68,
+          "totalSd": 0.93,
+          "seedTotals": [
+            7.97,
+            6.6,
+            6.87,
+            6.58,
+            5.36
+          ],
+          "dims": {
+            "harmonic": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "body": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "worst": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "noise": {
+              "mean": 45.64,
+              "sd": 5.21,
+              "seeds": [
+                54.57,
+                43.35,
+                45.82,
+                42.5,
+                41.96
+              ]
+            },
+            "attack": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "vibrato": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "pitch": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "phrase": {
+              "mean": 10.57,
+              "sd": 2.69,
+              "seeds": [
+                12.59,
+                11.32,
+                11.42,
+                11.66,
+                5.84
+              ]
+            }
+          },
+          "metrics": {
+            "harmonicDb": 19.544,
+            "bodyDb": 14.38,
+            "worstNoteDb": 25.804,
+            "hnrGapDb": 6.712,
+            "attackCents": 1328.0,
+            "vibratoDepthCents": 19.211,
+            "intonationCents": 5.397,
+            "envelopeMiss": 0.844,
+            "loudnessSpanDb": 9.864
+          },
+          "notesScored": 21,
+          "notesWritten": 54
+        }
+      }
+    }
+  },
+  "latest": {
+    "label": "body",
+    "commit": "645b060",
+    "verdict": "regression",
+    "pieces": {
+      "menuet": {
+        "fit": {
+          "total": 33.73,
+          "totalSd": 1.88,
+          "seedTotals": [
+            35.97,
+            34.84,
+            33.08,
+            33.74,
+            31.0
+          ],
+          "dims": {
+            "harmonic": {
+              "mean": 35.4,
+              "sd": 5.0,
+              "seeds": [
+                42.82,
+                33.33,
+                29.31,
+                37.07,
+                34.48
+              ]
+            },
+            "body": {
+              "mean": 17.07,
+              "sd": 3.38,
+              "seeds": [
+                14.7,
+                19.22,
+                16.98,
+                21.44,
+                13.04
+              ]
+            },
+            "worst": {
+              "mean": 11.83,
+              "sd": 1.72,
+              "seeds": [
+                11.26,
+                11.63,
+                14.52,
+                11.94,
+                9.79
+              ]
+            },
+            "noise": {
+              "mean": 68.93,
+              "sd": 3.69,
+              "seeds": [
+                73.82,
+                66.88,
+                64.54,
+                67.99,
+                71.4
+              ]
+            },
+            "attack": {
+              "mean": 43.16,
+              "sd": 6.7,
+              "seeds": [
+                39.36,
+                53.62,
+                43.92,
+                43.18,
+                35.72
+              ]
+            },
+            "vibrato": {
+              "mean": 30.61,
+              "sd": 13.67,
+              "seeds": [
+                46.25,
+                42.26,
+                29.17,
+                13.75,
+                21.61
+              ]
+            },
+            "pitch": {
+              "mean": 18.01,
+              "sd": 8.35,
+              "seeds": [
+                10.07,
+                20.0,
+                19.99,
+                29.99,
+                10.0
+              ]
+            },
+            "phrase": {
+              "mean": 38.66,
+              "sd": 2.92,
+              "seeds": [
+                38.17,
+                34.23,
+                42.29,
+                39.62,
+                39.0
+              ]
+            }
+          },
+          "metrics": {
+            "harmonicDb": 2.248,
+            "bodyDb": 3.594,
+            "worstNoteDb": 8.765,
+            "hnrGapDb": 3.904,
+            "attackCents": 548.44,
+            "vibratoDepthCents": 5.829,
+            "intonationCents": 8.199,
+            "envelopeMiss": 0.499,
+            "loudnessSpanDb": 1.788
+          },
+          "notesScored": 24,
+          "notesWritten": 25
+        },
+        "check": {
+          "total": 27.13,
+          "totalSd": 4.95,
+          "seedTotals": [
+            22.97,
+            29.84,
+            22.66,
+            25.87,
+            34.32
+          ],
+          "dims": {
+            "harmonic": {
+              "mean": 10.85,
+              "sd": 10.6,
+              "seeds": [
+                6.35,
+                20.11,
+                0.0,
+                3.7,
+                24.07
+              ]
+            },
+            "body": {
+              "mean": 37.24,
+              "sd": 5.53,
+              "seeds": [
+                29.2,
+                40.85,
+                33.75,
+                40.4,
+                42.0
+              ]
+            },
+            "worst": {
+              "mean": 37.24,
+              "sd": 4.84,
+              "seeds": [
+                30.49,
+                41.19,
+                33.94,
+                39.1,
+                41.49
+              ]
+            },
+            "noise": {
+              "mean": 60.59,
+              "sd": 3.55,
+              "seeds": [
+                56.54,
+                65.55,
+                62.42,
+                58.13,
+                60.33
+              ]
+            },
+            "attack": {
+              "mean": 8.04,
+              "sd": 4.95,
+              "seeds": [
+                0.0,
+                8.68,
+                7.91,
+                10.28,
+                13.31
+              ]
+            },
+            "vibrato": {
+              "mean": 21.36,
+              "sd": 23.07,
+              "seeds": [
+                22.24,
+                4.4,
+                19.83,
+                1.16,
+                59.17
+              ]
+            },
+            "pitch": {
+              "mean": 21.66,
+              "sd": 20.08,
+              "seeds": [
+                16.68,
+                33.33,
+                0.01,
+                50.0,
+                8.25
+              ]
+            },
+            "phrase": {
+              "mean": 27.84,
+              "sd": 1.64,
+              "seeds": [
+                27.79,
+                30.2,
+                25.91,
+                28.5,
+                26.82
+              ]
+            }
+          },
+          "metrics": {
+            "harmonicDb": 3.414,
+            "bodyDb": 2.785,
+            "worstNoteDb": 8.684,
+            "hnrGapDb": 3.586,
+            "attackCents": 703.16,
+            "vibratoDepthCents": 9.476,
+            "intonationCents": 9.401,
+            "envelopeMiss": 0.999,
+            "loudnessSpanDb": 3.931
+          },
+          "notesScored": 21,
+          "notesWritten": 23
+        }
+      },
+      "gavotte": {
+        "unseen": {
+          "total": 18.91,
+          "totalSd": 3.09,
+          "seedTotals": [
+            22.79,
+            17.76,
+            21.43,
+            17.17,
+            15.39
+          ],
+          "dims": {
+            "harmonic": {
+              "mean": 21.35,
+              "sd": 5.5,
+              "seeds": [
+                23.38,
+                20.27,
+                28.62,
+                21.05,
+                13.42
+              ]
+            },
+            "body": {
+              "mean": 24.9,
+              "sd": 2.2,
+              "seeds": [
+                27.08,
+                25.28,
+                26.91,
+                22.35,
+                22.9
+              ]
+            },
+            "worst": {
+              "mean": 20.61,
+              "sd": 2.15,
+              "seeds": [
+                19.61,
+                19.15,
+                22.02,
+                18.61,
+                23.66
+              ]
+            },
+            "noise": {
+              "mean": 54.22,
+              "sd": 5.7,
+              "seeds": [
+                62.53,
+                50.78,
+                57.7,
+                51.09,
+                49.02
+              ]
+            },
+            "attack": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "vibrato": {
+              "mean": 6.71,
+              "sd": 11.1,
+              "seeds": [
+                26.14,
+                0.0,
+                5.78,
+                0.52,
+                1.12
+              ]
+            },
+            "pitch": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "seeds": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "phrase": {
+              "mean": 13.74,
+              "sd": 2.7,
+              "seeds": [
+                16.15,
+                14.61,
+                15.59,
+                12.91,
+                9.43
+              ]
+            }
+          },
+          "metrics": {
+            "harmonicDb": 13.19,
+            "bodyDb": 9.23,
+            "worstNoteDb": 18.185,
+            "hnrGapDb": 5.653,
+            "attackCents": 542.72,
+            "vibratoDepthCents": 11.0,
+            "intonationCents": 6.101,
+            "envelopeMiss": 0.827,
+            "loudnessSpanDb": 9.337
+          },
+          "notesScored": 20,
+          "notesWritten": 54
+        }
+      }
+    }
+  }
+}
