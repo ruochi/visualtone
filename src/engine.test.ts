@@ -510,7 +510,7 @@ test('a bow arc fades and darkens a held note', () => {
   assert.ok(breathLate < breathEarly * 0.5, `note arc ${breathEarly.toFixed(4)} -> ${breathLate.toFixed(4)}`);
 });
 
-test('a violin note is soft at both ends of its written length', () => {
+test('a violin note speaks at once and eases off at the end', () => {
   const sr = 48000;
   const life = {
     ...HARMONIC_PRESETS.violin.life,
@@ -532,9 +532,9 @@ test('a violin note is soft at both ends of its written length', () => {
     buf[i] = (l + r) * 0.5;
   }
   const early = windowRms(buf, sr, 0.02);
-  const mid = windowRms(buf, sr, 0.28);
+  const mid = windowRms(buf, sr, 0.18);
   const late = windowRms(buf, sr, 0.44);
-  assert.ok(mid > early * 1.2, `rise ${early.toFixed(4)} -> ${mid.toFixed(4)}`);
+  assert.ok(early > mid * 0.7, `speaks ${early.toFixed(4)} vs mid ${mid.toFixed(4)}`);
   assert.ok(late < mid * 0.88, `fall ${mid.toFixed(4)} -> ${late.toFixed(4)}`);
 });
 

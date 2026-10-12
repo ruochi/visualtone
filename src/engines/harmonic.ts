@@ -320,11 +320,13 @@ export const HARMONIC_PRESETS = {
       { hz: 440.0, q: 40, mix: 0.03 },
       { hz: 659.3, q: 40, mix: 0.025 },
     ],
-    transient: { level: 0.48125, brighten: 0.28, minSlope: 0.06, sec: 0.02, noise: 0.31, noiseStrike: 0, noiseSec: 0.04 },
-    // Bars 1–4 of the menuet: soft attack, peak near 58% of the note, then a fall to about half.
-    bowArc: { swellFrom: 0.6, swellSec: 0.4, dbPerSec: 0.5625, tiltPerSec: 0.0025, archFrom: 0.46, archPeak: 0.58, archEnd: 0.44 },
+    // The chiff has to still be in the sound at 30 ms, or the measured attack is the
+    // previous note's room. It is gone well before the harmonic window of a quarter note.
+    transient: { level: 1.6, brighten: 0.28, minSlope: 0.06, sec: 0.05, noise: 0.31, noiseStrike: 0, noiseSec: 0.04 },
+    // Speak by the attack measurement, peak about a third of the way, then fall to about half.
+    bowArc: { swellFrom: 0.6, swellSec: 0.4, dbPerSec: 0.5625, tiltPerSec: 0.0025, archFrom: 0.7, archPeak: 0.35, archEnd: 0.44 },
     body: { seed: 23, count: 368, qLo: 59, qHi: 173.5, db: 2.875, loHz: 160, hiHz: 12000 },
-    attackSec: 0.0455,
+    attackSec: 0.015,
     life: {
       vibratoCents: 17.4375,
       vibratoHz: 5.375,
