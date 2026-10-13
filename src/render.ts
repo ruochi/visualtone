@@ -33,6 +33,10 @@ export interface RenderOptions {
   /** Base directory for clip paths. */
   baseDir?: string;
   loadClip?: (path: string) => DecodedWav;
+  /** Runs on each track after gain/pan/cuts, before ducking and sends. Edit in place. */
+  processTrack?: (track: Track, audio: Stereo, sampleRate: number) => void;
+  /** Runs on the summed mix (after reverb/delay returns), before loudness match and limiting. */
+  processMaster?: (mix: Stereo, sampleRate: number) => void;
 }
 
 export interface RenderResult {
@@ -184,6 +188,7 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
         x[i] = v * gains[c];
       }
     }
+    opts.processTrack?.(track, buf, sr);
     return buf;
   });
 
@@ -239,6 +244,8 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
       mix[1][i] += wr[i];
     }
   }
+
+  opts.processMaster?.(mix, sr);
 
   // 4. Remove DC (asymmetric saturation leaves some), match loudness, then limit.
   for (let c = 0; c < 2; c++) {

@@ -56,6 +56,7 @@ export const TrackSchema = z
     reverb: z.number().min(0).max(1).default(0).describe('Send to master reverb'),
     delay: z.number().min(0).max(1).default(0).describe('Send to master delay'),
     duck: DuckSchema.optional(),
+    params: z.record(z.string(), z.unknown()).optional().describe('Engine-specific settings. Engines ignore keys they do not know'),
     notes: z.array(NoteSchema).default([]),
     sfx: z.array(SfxSchema).default([]),
     clips: z.array(ClipSchema).default([]),
