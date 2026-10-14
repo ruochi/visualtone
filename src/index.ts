@@ -22,6 +22,7 @@ export {
   type NoteContext,
   type RenderOptions,
   type RenderResult,
+  type TrackEnvelope,
   type ClipBuffer,
   type Stereo,
 } from './render.js';

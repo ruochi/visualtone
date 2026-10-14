@@ -52,16 +52,25 @@ export const ClipSchema = z
   })
   .strict();
 
-export const DuckSchema = z.union([
-  z.enum(['auto', 'off']),
-  z
-    .object({
-      by: z.string().min(1),
-      amount: z.number().min(0).max(1).default(0.5),
-      release: z.number().positive().default(0.25),
-    })
-    .strict(),
-]);
+const DuckObject = z
+  .object({
+    by: z.string().min(1),
+    amount: z.number().min(0).max(1).default(0.5),
+    release: z.number().positive().default(0.25),
+  })
+  .strict();
+
+export const DuckSchema = z.union([z.enum(['auto', 'off']), DuckObject, z.boolean()]).transform((value, ctx) => {
+  if (value === false) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'false is not a value; did you mean "off"?' });
+    return z.NEVER;
+  }
+  if (value === true) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'true is not a value; did you mean "auto"?' });
+    return z.NEVER;
+  }
+  return value;
+});
 
 const InSchema = z.union([
   z.array(z.string().min(1)).min(1),
@@ -109,10 +118,7 @@ export const TrackSchema = z
     sfx: z.array(SfxSchema).default([]),
     clips: z.array(ClipSchema).default([]),
   })
-  .strict()
-  .refine((t) => t.notes.length + t.patterns.length + t.chords.length + t.sfx.length + t.clips.length > 0, {
-    message: 'a track needs notes, patterns, chords, sfx or clips',
-  });
+  .strict();
 
 export const ScoreSchema = z
   .object({
@@ -139,7 +145,7 @@ export const ScoreSchema = z
           .strict(),
       )
       .default([]),
-    tracks: z.array(TrackSchema).min(1),
+    tracks: z.array(TrackSchema),
     mix: z
       .object({
         loudness: z.number().default(-16),
@@ -205,9 +211,28 @@ function kindOf(path: (string | number)[]): string {
   return 'score';
 }
 
+type ZodIssue = ZodError['issues'][number];
+
+/** Union failures keep the variant that named a real field, and drop "expected boolean". */
+function flattenIssues(issues: ZodIssue[]): ZodIssue[] {
+  const out: ZodIssue[] = [];
+  for (const issue of issues) {
+    if (issue.code !== 'invalid_union') {
+      out.push(issue);
+      continue;
+    }
+    const nested = issue.unionErrors.flatMap((err) =>
+      err.issues.map((inner) => ({ ...inner, path: [...issue.path, ...inner.path] }) as ZodIssue),
+    );
+    const useful = nested.filter((inner) => inner.code !== 'invalid_type');
+    out.push(...flattenIssues(useful.length ? useful : nested.slice(0, 1)));
+  }
+  return out;
+}
+
 function formatZod(error: ZodError): string {
   const lines: string[] = [];
-  for (const issue of error.issues) {
+  for (const issue of flattenIssues(error.issues)) {
     if (lines.length >= 8) break;
     const path = pathString(issue.path);
     if (issue.code === 'unrecognized_keys') {
@@ -220,13 +245,24 @@ function formatZod(error: ZodError): string {
       }
       continue;
     }
-    if (issue.code === 'invalid_enum_value' && issue.path[issue.path.length - 1] === 'instrument') {
-      lines.push(`${path}: unknown instrument "${String(issue.received)}"`);
+    if (issue.code === 'invalid_enum_value') {
+      const received = String(issue.received);
+      const field = String(issue.path[issue.path.length - 1] ?? '');
+      if (field === 'instrument') {
+        lines.push(`${path}: unknown instrument "${received}"`);
+        continue;
+      }
+      const aliases: Record<string, string> = field === 'type'
+        ? { swoosh: 'whoosh', woosh: 'whoosh', swish: 'whoosh', ding: 'chime' }
+        : {};
+      const hint = suggest(received, issue.options.map(String), aliases);
+      const noun = field === 'type' ? 'sound' : 'value';
+      lines.push(`${path}: unknown ${noun} "${received}"${hint ? `; did you mean "${hint}"?` : ''}`);
       continue;
     }
     lines.push(`${path}: ${issue.message}`);
   }
-  const extra = error.issues.length - lines.length;
+  const extra = flattenIssues(error.issues).length - lines.length;
   if (extra > 0) lines.push(`and ${extra} more`);
   return lines.join('\n');
 }

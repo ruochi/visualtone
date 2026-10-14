@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { compile, parseChord, parseScore, render, toMidi, voiceChord } from './index.js';
+import { compile, parseChord, parseKey, parseScore, render, toMidi, voiceChord } from './index.js';
 import { decodeWav, encodeWav } from './wav.js';
 
 const rms = (x: Float32Array, from = 0, to = x.length) => {
@@ -56,9 +56,12 @@ test('unknown fields are rejected with a suggestion', () => {
   assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'keys', hue: 10, notes: [{ at: 0, pitch: 'C4' }] }] }), /did you mean "brightness"/);
   assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'keys', notes: [{ at: 0, pitch: 'C4' }] }] }), /did you mean "epiano"/);
   assert.throws(() => compile(parseScore({ tracks: [{ id: 'a', instrument: 'drums', notes: [{ at: 0, pitch: 'snar' }] }] })), /did you mean "snare"/);
-  assert.throws(() => parseScore({ tracks: [] }), /at least 1/);
-  assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'piano' }] }), /notes, patterns, chords, sfx or clips/);
   assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'piano', notes: [{ at: 0, pitch: 'C4' }], duck: { by: 'nope' } }] }), /duck.by/);
+  assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'piano', notes: [{ at: 0, pitch: 'C4' }], duck: { track: 'a' } }] }), /did you mean "by"/);
+  assert.throws(() => parseScore({ tracks: [{ id: 'a', role: 'sfx', sfx: [{ type: 'swoosh', at: 0 }] }] }), /did you mean "whoosh"/);
+  assert.throws(() => parseScore({ tracks: [{ id: 'a', role: 'sfx', sfx: [{ type: 'ding', at: 0 }] }] }), /did you mean "chime"/);
+  assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'piano', notes: [{ at: 0, pitch: 'C4' }], duck: false }] }), /did you mean "off"/);
+  assert.throws(() => parseScore({ tracks: [{ id: 'a', instrument: 'piano', notes: [{ at: 0, pitch: 'C4' }], duck: true }] }), /did you mean "auto"/);
 });
 
 test('bars, sections and swing', () => {
@@ -311,6 +314,110 @@ test('funk example is in key, in range, and much shorter than a note list', () =
   assert.equal(compiled.tracks.find((t) => t.id === 'bass')!.notes[0].midi % 12, 2); // D, bar 3 of Em7 A7 Dmaj7 Bm7
   assert.ok(compiled.contentEnd > 34 && compiled.contentEnd < 34.3);
   assert.ok(readFileSync(new URL('../examples/funk.json', import.meta.url), 'utf8').length < 8000);
+});
+
+test('empty tracks render silence, and a missing clip names its src', () => {
+  const empty = parseScore({ duration: 0.25, sampleRate: 8000, tracks: [{ id: 'a', instrument: 'piano' }] });
+  const none = parseScore({ duration: 0.25, sampleRate: 8000, tracks: [] });
+  const silent = render(empty, { envelopes: true });
+  assert.ok(silent.left.every((v) => v === 0));
+  assert.equal(silent.envelopes?.length, 1);
+  assert.ok(silent.envelopes![0].level.every((v) => v === 0));
+  assert.equal(render(none).left.length, silent.left.length);
+  assert.equal(render(none).envelopes, undefined);
+  assert.throws(
+    () => render(parseScore({ tracks: [{ id: 'v', role: 'voice', clips: [{ src: 'voice/missing.wav', at: 0 }] }] })),
+    /voice\/missing\.wav/,
+  );
+});
+
+test('a drum row of x is accented, and short keys and extended chords parse', () => {
+  const drums = compile(parseScore({
+    tempo: { bpm: 120 },
+    duration: 2,
+    tracks: [{ id: 'd', instrument: 'drums', patterns: [{ grid: '1/16', steps: { hat: 'xxxxxxxxxxxxxxxx' } }] }],
+  }));
+  assert.equal(drums.issues.some((i) => i.code === 'flat-velocity'), false);
+  const velocities = drums.tracks[0].notes.map((n) => n.velocity);
+  assert.ok(Math.max(...velocities) - Math.min(...velocities) > 0.05);
+
+  const ext = parseChord('Dmaj13#11');
+  assert.equal(ext.root, 2);
+  assert.ok(ext.voicing.includes(18));
+  assert.ok(ext.voicing.map((i) => (ext.root + i) % 12).includes((ext.root + 6) % 12));
+  const six = parseChord('C6/9');
+  assert.equal(six.bass, undefined);
+  assert.ok(six.voicing.includes(9) && six.voicing.includes(14));
+  assert.equal(six.members[7], 11);
+  assert.equal(parseChord('C/E').bass, 4);
+  assert.equal(parseChord('Em7').members[3], 3);
+
+  const em = parseKey('Em');
+  const full = parseKey('E minor');
+  assert.equal(em.root, full.root);
+  assert.deepEqual([...em.pitchClasses].sort(), [...full.pitchClasses].sort());
+  const bb = parseKey('Bb');
+  assert.equal(bb.root, 10);
+  assert.equal(bb.pitchClasses.has(2), true);
+  assert.equal(bb.pitchClasses.has(1), false);
+  assert.equal(parseKey('F#m').root, 6);
+});
+
+test('envelopes are post-duck levels, and the vocal dip follows the voice', () => {
+  const sr = 16000;
+  const n = sr * 2;
+  const voice = new Float32Array(n);
+  for (let i = 0; i < sr; i++) voice[i] = 0.5 * Math.sin((2 * Math.PI * 180 * i) / sr);
+  const tone = new Float32Array(n);
+  for (let i = 0; i < n; i++) tone[i] = 0.25 * Math.sin((2 * Math.PI * 2500 * i) / sr);
+  const clips = { 'v.wav': { sampleRate: sr, channels: [voice] }, 'm.wav': { sampleRate: sr, channels: [tone] } };
+  const tracks = [
+    { id: 'vo', role: 'voice' as const, space: 0, clips: [{ src: 'v.wav', at: 0 }] },
+    { id: 'bed', role: 'music' as const, instrument: 'pad', space: 0, clips: [{ src: 'm.wav', at: 0 }] },
+    { id: 'bassbed', role: 'music' as const, instrument: 'bass', space: 0, clips: [{ src: 'm.wav', at: 0 }] },
+    { id: 'empty', instrument: 'piano' },
+  ];
+  const score = parseScore({ sampleRate: sr, duration: 2, tracks });
+  const rendered = render(score, { clips, envelopes: true });
+  assert.equal(rendered.envelopes?.length, 4);
+  assert.equal(rendered.envelopes![1].level.length, rendered.left.length);
+  assert.ok(rendered.envelopes!.find((e) => e.id === 'empty')!.level.every((v) => v === 0));
+  assert.equal(render(score, { clips }).envelopes, undefined);
+
+  const mean = (x: Float32Array, a: number, b: number) => {
+    let s = 0;
+    const i0 = Math.floor(a * sr);
+    const i1 = Math.floor(b * sr);
+    for (let i = i0; i < i1; i++) s += x[i];
+    return s / Math.max(1, i1 - i0);
+  };
+  const pad = rendered.envelopes!.find((e) => e.id === 'bed')!.level;
+  const bass = rendered.envelopes!.find((e) => e.id === 'bassbed')!.level;
+  const padRatio = mean(pad, 0.35, 0.7) / mean(pad, 1.6, 1.9);
+  const bassRatio = mean(bass, 0.35, 0.7) / mean(bass, 1.6, 1.9);
+  assert.ok(bassRatio < 0.7 && bassRatio > 0.25, `duck ratio ${bassRatio.toFixed(2)}`);
+  assert.ok(padRatio < bassRatio * 0.75, `pad ${padRatio.toFixed(2)} bass ${bassRatio.toFixed(2)}`);
+});
+
+test('a 1 kHz sine lands on the K-weighted loudness target', () => {
+  const sr = 48000;
+  const result = render(parseScore({
+    sampleRate: sr,
+    duration: 1.2,
+    mix: { loudness: -16, ceiling: 0 },
+    tracks: [{ id: 't', role: 'sfx', space: 0, sfx: [{ type: 'tick', at: 0.1 }] }],
+  }), {
+    processMaster(mix) {
+      for (let i = 0; i < mix[0].length; i++) {
+        mix[0][i] = Math.sin((2 * Math.PI * 1000 * i) / sr);
+        mix[1][i] = 0;
+      }
+    },
+  });
+  assert.ok(Math.abs(result.report.loudnessDb + 16) < 0.5, `report ${result.report.loudnessDb}`);
+  const mid = rms(result.left, Math.floor(0.4 * sr), Math.floor(0.8 * sr));
+  const approx = 20 * Math.log10(mid);
+  assert.ok(Math.abs(approx + 16) < 0.5, `rms ${approx}`);
 });
 
 test('WAV round trip', () => {

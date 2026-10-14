@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { compile } from './compile.js';
 import { baseDirOf, render } from './render.js';
 import { parseScore } from './schema.js';
@@ -41,10 +42,11 @@ if (cmd === 'validate') {
     console.error(`${input}: ${(e as Error).message}`);
     process.exit(1);
   }
+  mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, encodeWav(rendered.left, rendered.right, rendered.sampleRate));
   const { duration, loudnessDb, peakDb, limiterDb, issues } = rendered.report;
   console.log(
-    `${out}: ${duration.toFixed(1)}s, loudness ${loudnessDb.toFixed(1)} dBFS, peak ${peakDb.toFixed(1)} dBFS, ` +
+    `${out}: ${duration.toFixed(1)}s, loudness ${loudnessDb.toFixed(1)} LUFS, peak ${peakDb.toFixed(1)} dBFS, ` +
       `limiter ${limiterDb.toFixed(1)} dB, rendered in ${((performance.now() - t0) / 1000).toFixed(1)}s`,
   );
   for (const issue of issues) console.log(`! ${issue.code}: ${issue.message}`);

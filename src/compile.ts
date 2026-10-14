@@ -325,7 +325,11 @@ export function compile(score: Score, opts: CompileOptions = {}): CompiledScore 
   };
 
   const shaped = (step: number, grid: number): number => {
-    if (!tempo) return 0.8;
+    if (!tempo) {
+      if (step % 4 === 0) return 0.95;
+      if (step % 2 === 0) return 0.8;
+      return 0.65;
+    }
     const barPos = ((step * grid) / tempo.beatSec) % tempo.beatsPerBar;
     if (barPos < 0.03) return 0.95;
     const into = barPos - Math.floor(barPos);
@@ -454,7 +458,7 @@ export function compile(score: Score, opts: CompileOptions = {}): CompiledScore 
             loop(region, steps.length, grid, (i, at) => {
               const ch = steps[i];
               if (ch === '.') return;
-              const velocity = checkStepChar(ch, where(track, name));
+              const velocity = Math.min(1, checkStepChar(ch, where(track, name)) * (shaped(i, grid) / 0.8));
               notes.push({
                 at, duration: grid, midi: DRUM_MIDI[name as DrumName], velocity, drum: name as DrumName, source: 'drums',
               });

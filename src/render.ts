@@ -45,6 +45,18 @@ export interface RenderOptions {
   processTrack?: (track: Track, audio: Stereo, sampleRate: number) => void;
   /** Runs on the summed mix, before loudness match and limiting. */
   processMaster?: (mix: Stereo, sampleRate: number) => void;
+  /**
+   * Per-track level after ducking, one value per sample, same clock as `left`.
+   * Omitted, the render does not build them.
+   */
+  envelopes?: boolean;
+}
+
+export interface TrackEnvelope {
+  id: string;
+  role: 'music' | 'sfx' | 'voice';
+  /** Linear amplitude after ducking and the loudness-match gain. Not peak-normalized. */
+  level: Float32Array;
 }
 
 export interface RenderResult {
@@ -62,6 +74,8 @@ export interface RenderResult {
     limiterDb: number;
     issues: Issue[];
   };
+  /** Present when `envelopes: true`. One entry per track, including silent tracks. */
+  envelopes?: TrackEnvelope[];
 }
 
 function hash(s: string): number {
@@ -104,13 +118,14 @@ function addPanned(dst: Stereo, src: Float32Array | Stereo, at: number, pan: num
   }
 }
 
-/** A few dB out of the vocal band, so a pad doesn't sit on the voice. */
-function dipVocal(x: Float32Array, sampleRate: number, amount: number): void {
+/** A few dB out of the vocal band, scaled by the duck envelope so it lifts when the voice is quiet. */
+function dipVocal(x: Float32Array, sampleRate: number, amount: number, env: Float32Array): void {
   if (amount <= 0) return;
   const f = new Svf(sampleRate);
   for (let i = 0; i < x.length; i++) {
     const band = f.process(x[i], 2500, 0.9)[1];
-    x[i] -= amount * band;
+    const depth = env[i];
+    if (depth > 0) x[i] -= amount * depth * band;
   }
 }
 
@@ -130,20 +145,111 @@ function envelope(x: Stereo, sampleRate: number, releaseSec: number): Float32Arr
   return env;
 }
 
-function loudness(l: Float32Array, r: Float32Array, sampleRate: number): number {
-  const block = Math.round(0.4 * sampleRate);
-  let sum = 0;
-  let count = 0;
-  for (let s = 0; s + block <= l.length; s += block) {
-    let e = 0;
-    for (let i = s; i < s + block; i++) e += l[i] * l[i] + r[i] * r[i];
-    e /= block * 2;
-    if (e > 1e-5) {
-      sum += e;
-      count++;
-    }
+/** Direct form II transposed. `a1` and `a2` use the 1 + a1 z^-1 + a2 z^-2 convention. */
+class Biquad {
+  private z1 = 0;
+  private z2 = 0;
+  constructor(
+    private readonly b0: number,
+    private readonly b1: number,
+    private readonly b2: number,
+    private readonly a1: number,
+    private readonly a2: number,
+  ) {}
+  process(x: number): number {
+    const y = this.b0 * x + this.z1;
+    this.z1 = this.b1 * x - this.a1 * y + this.z2;
+    this.z2 = this.b2 * x - this.a2 * y;
+    return y;
   }
-  return count ? 10 * Math.log10(sum / count) : -120;
+}
+
+/**
+ * ITU-R BS.1770 K-weighting: a +4 dB high shelf near 1.5 kHz, then the RLB high-pass.
+ * The shelf is fully normalized. The high-pass numerator stays 1, -2, 1, matching the
+ * published coefficients (the denominator is normalized).
+ */
+function kWeightCoeffs(sampleRate: number): { shelf: [number, number, number, number, number]; hp: [number, number, number, number, number] } {
+  const fShelf = 1681.974450955533;
+  const gainDb = 3.999843853973347;
+  const qShelf = 0.7071752369554196;
+  const kShelf = Math.tan((Math.PI * fShelf) / sampleRate);
+  const vh = 10 ** (gainDb / 20);
+  const vb = vh ** 0.4996667741545416;
+  const aShelf = 1 + kShelf / qShelf + kShelf * kShelf;
+  const shelf: [number, number, number, number, number] = [
+    (vh + (vb * kShelf) / qShelf + kShelf * kShelf) / aShelf,
+    (2 * (kShelf * kShelf - vh)) / aShelf,
+    (vh - (vb * kShelf) / qShelf + kShelf * kShelf) / aShelf,
+    (2 * (kShelf * kShelf - 1)) / aShelf,
+    (1 - kShelf / qShelf + kShelf * kShelf) / aShelf,
+  ];
+  const fHp = 38.13547087602444;
+  const qHp = 0.5003270373238773;
+  const kHp = Math.tan((Math.PI * fHp) / sampleRate);
+  const aHp = 1 + kHp / qHp + kHp * kHp;
+  const hp: [number, number, number, number, number] = [
+    1, -2, 1,
+    (2 * (kHp * kHp - 1)) / aHp,
+    (1 - kHp / qHp + kHp * kHp) / aHp,
+  ];
+  return { shelf, hp };
+}
+
+function kWeight(x: Float32Array, sampleRate: number): Float32Array {
+  const { shelf, hp } = kWeightCoeffs(sampleRate);
+  const pre = new Biquad(...shelf);
+  const rlb = new Biquad(...hp);
+  const out = new Float32Array(x.length);
+  for (let i = 0; i < x.length; i++) out[i] = rlb.process(pre.process(x[i]));
+  return out;
+}
+
+const LUFS_OFFSET = -0.691;
+
+function powerToLufs(power: number): number {
+  return power > 0 ? LUFS_OFFSET + 10 * Math.log10(power) : -120;
+}
+
+/**
+ * Integrated loudness, close to ITU-R BS.1770.
+ * 400 ms blocks, 75% overlap. Channel mean squares are summed (L and R each weight 1),
+ * then gated at -70 LUFS and 10 LU below the absolute-gated loudness.
+ */
+function loudness(l: Float32Array, r: Float32Array, sampleRate: number): number {
+  const wl = kWeight(l, sampleRate);
+  const wr = kWeight(r, sampleRate);
+  const block = Math.max(1, Math.round(0.4 * sampleRate));
+  const hop = Math.max(1, Math.round(0.1 * sampleRate));
+  const powers: number[] = [];
+  const measure = (from: number, to: number) => {
+    let e = 0;
+    for (let i = from; i < to; i++) e += wl[i] * wl[i] + wr[i] * wr[i];
+    powers.push(e / Math.max(1, to - from));
+  };
+  if (wl.length < block) measure(0, wl.length);
+  else for (let s = 0; s + block <= wl.length; s += hop) measure(s, s + block);
+  const absolute = powers.filter((p) => powerToLufs(p) > -70);
+  if (!absolute.length) return -120;
+  const ungated = absolute.reduce((a, b) => a + b, 0) / absolute.length;
+  const relativeGate = powerToLufs(ungated) - 10;
+  const relative = absolute.filter((p) => powerToLufs(p) >= relativeGate);
+  const used = relative.length ? relative : absolute;
+  return powerToLufs(used.reduce((a, b) => a + b, 0) / used.length);
+}
+
+/** Un-normalized amplitude follower. The ducking envelope stays separate, so levels stay absolute. */
+function levelFollower(x: Stereo, sampleRate: number): Float32Array {
+  const atk = Math.exp(-1 / (0.005 * sampleRate));
+  const rel = Math.exp(-1 / (0.08 * sampleRate));
+  const env = new Float32Array(x[0].length);
+  let e = 0;
+  for (let i = 0; i < env.length; i++) {
+    const v = Math.max(Math.abs(x[0][i]), Math.abs(x[1][i]));
+    e = v > e ? atk * e + (1 - atk) * v : rel * e + (1 - rel) * v;
+    env[i] = e;
+  }
+  return env;
 }
 
 function bandEnergy(x: Float32Array, sampleRate: number, hz: number, gate: Float32Array): number {
@@ -190,7 +296,20 @@ function loadScoreClips(score: Score, opts: RenderOptions): { buffers: Map<strin
   const srcs = [...new Set(score.tracks.flatMap((t) => t.clips.map((c) => c.src)))];
   for (const src of srcs) {
     const given = opts.clips?.[src];
-    const wav = given ?? (opts.loadClip ?? ((p: string) => decodeWav(readFileSync(p))))(resolve(baseDir, src));
+    let wav: ClipBuffer | DecodedWav;
+    if (given) wav = given;
+    else {
+      const path = resolve(baseDir, src);
+      try {
+        wav = (opts.loadClip ?? ((p: string) => decodeWav(readFileSync(p))))(path);
+      } catch (e) {
+        const err = e as NodeJS.ErrnoException;
+        if (err.code === 'ENOENT') {
+          throw new Error(`clip "${src}" was not in render({ clips }) and was not found at ${path}`);
+        }
+        throw new Error(`clip "${src}": ${(e as Error).message}`);
+      }
+    }
     const l = resample(wav.channels[0] ?? new Float32Array(), wav.sampleRate, sr);
     const r = wav.channels[1] ? resample(wav.channels[1], wav.sampleRate, sr) : l;
     buffers.set(src, [l, r]);
@@ -238,10 +357,6 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
       for (let i = 0; i < n; i++) x[i] = (track.lowCut ? hp.high(x[i], track.lowCut) : x[i]) * gains[c];
     }
     opts.processTrack?.(track.source, buf, sr);
-    if (track.vocalDip) {
-      dipVocal(buf[0], sr, track.vocalDip);
-      dipVocal(buf[1], sr, track.vocalDip);
-    }
     return buf;
   });
 
@@ -268,12 +383,18 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
       }
     }
     if (!env) return;
+    if (track.vocalDip) {
+      dipVocal(buses[ti][0], sr, track.vocalDip, env);
+      dipVocal(buses[ti][1], sr, track.vocalDip, env);
+    }
     for (let i = 0; i < n; i++) {
       const g = 1 - duck.amount * env[i];
       buses[ti][0][i] *= g;
       buses[ti][1][i] *= g;
     }
   });
+
+  const levels = opts.envelopes ? buses.map((bus) => levelFollower(bus, sr)) : undefined;
 
   if (compiled.tracks.some((t) => t.role === 'voice')) {
     const music: Stereo = [new Float32Array(n), new Float32Array(n)];
@@ -331,6 +452,7 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
     mix[0][i] *= matched;
     mix[1][i] *= matched;
   }
+  if (levels) for (const level of levels) for (let i = 0; i < n; i++) level[i] *= matched;
   const limiterDb = limit(mix[0], mix[1], compiled.mix.ceiling, sr);
   if (limiterDb > 8) {
     issues.push({
@@ -351,6 +473,11 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
     left: mix[0],
     right: mix[1],
     sampleRate: sr,
+    envelopes: levels?.map((level, i) => ({
+      id: compiled.tracks[i].id,
+      role: compiled.tracks[i].role,
+      level,
+    })),
     report: {
       duration: n / sr,
       contentDuration: compiled.contentEnd,

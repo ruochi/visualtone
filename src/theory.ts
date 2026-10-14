@@ -119,13 +119,23 @@ const MODE_OFFSETS: Record<string, number[]> = {
   locrian: [0, 1, 3, 5, 6, 8, 10],
 };
 
-export function parseKey(name: string): ParsedKey {
-  const m = /^([A-G][#b]?) (major|minor|ionian|aeolian|dorian|phrygian|lydian|mixolydian|locrian)$/.exec(name);
-  if (!m) throw new Error(`key "${name}" must look like "E minor" or "C major"`);
-  const root = LETTERS[m[1][0]] + (m[1][1] === '#' ? 1 : m[1][1] === 'b' ? -1 : 0);
+function makeKey(letter: string, acc: string, mode: string, label: string): ParsedKey {
+  const root = LETTERS[letter] + (acc === '#' ? 1 : acc === 'b' ? -1 : 0);
   const pc = ((root % 12) + 12) % 12;
-  const pitchClasses = new Set(MODE_OFFSETS[m[2]].map((d) => (pc + d) % 12));
-  return { name, root: pc, pitchClasses };
+  const pitchClasses = new Set(MODE_OFFSETS[mode].map((d) => (pc + d) % 12));
+  return { name: label, root: pc, pitchClasses };
+}
+
+/** "E minor", "C major", and the short forms models write: "Em", "F#m", "Bb" (major). */
+export function parseKey(name: string): ParsedKey {
+  const full = /^([A-G])([#b]?) (major|minor|ionian|aeolian|dorian|phrygian|lydian|mixolydian|locrian)$/.exec(name);
+  if (full) return makeKey(full[1], full[2], full[3], name);
+  const short = /^([A-G])([#b]?)(m|min|minor)?$/.exec(name);
+  if (short) {
+    const mode = short[3] ? 'minor' : 'major';
+    return makeKey(short[1], short[2], mode, `${short[1]}${short[2]} ${mode}`);
+  }
+  throw new Error(`key "${name}" must look like "E minor", "Em", "C major" or "Bb"`);
 }
 
 export function inKey(midi: number, key: ParsedKey): boolean {
@@ -149,10 +159,14 @@ interface Quality {
   fifth?: number;
   seventh?: number;
   ninth?: number;
+  eleventh?: number;
+  thirteenth?: number;
   /** Extra interval kept in the voicing (the 6th of a 6 chord). */
   color?: number;
   /** Drop the fifth when a color tone needs the slot. */
   omitFifth?: boolean;
+  /** Root, third, sixth and ninth. The seventh stays on `members` so degree 7 still resolves. */
+  sixNine?: boolean;
 }
 
 const QUALITIES: Record<string, Quality> = {
@@ -198,23 +212,86 @@ function pitchClass(letter: string): number {
   return (pc + 12) % 12;
 }
 
+function canonQuality(name: string): string {
+  return name.replace(/^(Maj|MAJ)/, 'maj').replace(/^(Min|MIN)/, 'min');
+}
+
+/** Extensions and alterations the quality table does not list, such as maj13#11 and 6/9. */
+function resolveQuality(raw: string): Quality | undefined {
+  const name = canonQuality(raw);
+  const known = QUALITIES[name];
+  if (known) return known;
+  if (name === '6/9' || name === '69') return { third: 4, fifth: 7, seventh: 11, ninth: 14, color: 9, sixNine: true };
+  if (name === 'm6/9' || name === 'min6/9' || name === 'm69') {
+    return { third: 3, fifth: 7, seventh: 10, ninth: 14, color: 9, sixNine: true };
+  }
+
+  let rest = name;
+  const alts: { sign: number; deg: number }[] = [];
+  for (;;) {
+    const found = /([#b])(5|9|11|13)$/.exec(rest);
+    if (!found) break;
+    alts.unshift({ sign: found[1] === '#' ? 1 : -1, deg: Number(found[2]) });
+    rest = rest.slice(0, found.index);
+  }
+  const base = QUALITIES[rest] ?? extensionQuality(rest);
+  if (!base) return undefined;
+  const quality = { ...base };
+  for (const alt of alts) {
+    if (alt.deg === 5) quality.fifth = 7 + alt.sign;
+    if (alt.deg === 9) quality.ninth = 14 + alt.sign;
+    if (alt.deg === 11) quality.eleventh = 17 + alt.sign;
+    if (alt.deg === 13) quality.thirteenth = 21 + alt.sign;
+  }
+  return quality;
+}
+
+function extensionQuality(rest: string): Quality | undefined {
+  const m = /^(maj|min|m|M|-|dim|aug|\+|sus2|sus4|sus)?(13|11|9|7|6)?$/.exec(rest);
+  if (!m?.[2]) return undefined;
+  const qual = m[1] ?? '';
+  const ext = Number(m[2]);
+  const folded = qual.toLowerCase();
+  const minor = folded === 'm' || folded === 'min' || qual === '-';
+  const dim = folded === 'dim';
+  const aug = folded === 'aug' || qual === '+';
+  const majorSeventh = folded === 'maj' || qual === 'M';
+  const quality: Quality = {
+    third: minor || dim ? 3 : 4,
+    fifth: dim ? 6 : aug ? 8 : 7,
+    seventh: dim ? 9 : majorSeventh ? 11 : 10,
+  };
+  if (ext === 6) {
+    quality.color = 9;
+    quality.seventh = minor ? 10 : 11;
+    return quality;
+  }
+  if (ext >= 9) quality.ninth = 14;
+  if (ext >= 11) quality.eleventh = 17;
+  if (ext >= 13) quality.thirteenth = 21;
+  return quality;
+}
+
 export function parseChord(symbol: string): ParsedChord {
-  const slash = symbol.split('/');
-  const head = slash[0];
+  const parts = symbol.split('/');
+  let head = symbol;
+  let bass: number | undefined;
+  // "C/E" is a slash bass. "C6/9" is a sixth plus a ninth: the right side is not a note name.
+  if (parts.length === 2 && /^[A-Ga-g][#b]?$/.test(parts[1])) {
+    head = parts[0];
+    bass = pitchClass(parts[1]);
+  } else if (parts.length > 2) {
+    throw new Error(`invalid chord "${symbol}" (examples: Em7, A7, Dmaj7, C6/9, C/E)`);
+  }
   const m = /^([A-Ga-g][#b]?)(.*)$/.exec(head);
-  if (!m) throw new Error(`invalid chord "${symbol}" (examples: Em7, A7, Dmaj7, Bm7)`);
+  if (!m) throw new Error(`invalid chord "${symbol}" (examples: Em7, A7, Dmaj7, C6/9)`);
   const qualityName = m[2];
-  const quality = QUALITIES[qualityName];
+  const quality = resolveQuality(qualityName);
   if (!quality) {
     const near = QUALITY_NAMES.find((q) => q.toLowerCase() === qualityName.toLowerCase());
     throw new Error(
-      `invalid chord "${symbol}"${near ? `; did you mean ${m[1][0].toUpperCase()}${m[1].slice(1)}${near}?` : '. Examples: Em7, A7, Dmaj7, C#m7b5, Asus4'}`,
+      `invalid chord "${symbol}"${near ? `; did you mean ${m[1][0].toUpperCase()}${m[1].slice(1)}${near}?` : '. Examples: Em7, A7, Dmaj7, C6/9, Dmaj13#11'}`,
     );
-  }
-  let bass: number | undefined;
-  if (slash.length > 1) {
-    if (!/^[A-Ga-g][#b]?$/.test(slash[1])) throw new Error(`invalid bass note in chord "${symbol}"`);
-    bass = pitchClass(slash[1]);
   }
   const members: ParsedChord['members'] = { 1: 0, 5: quality.fifth ?? 7 };
   if (quality.third !== undefined) members[3] = quality.third;
@@ -227,8 +304,17 @@ const TRIADS = new Set(['', 'maj', 'M', 'm', 'min', '-', 'dim', 'aug', '+', 'sus
 
 /** Up to four intervals that make up the played voicing. Triads stay triads. */
 function voicingIntervals(name: string, q: Quality): number[] {
+  if (q.sixNine && q.third !== undefined && q.ninth !== undefined) return [0, q.third, 9, q.ninth];
   if ((name === 'add9' || name === 'madd9') && q.third !== undefined && q.fifth !== undefined && q.ninth !== undefined) {
     return [0, q.third, q.fifth, q.ninth];
+  }
+  if (q.thirteenth !== undefined && q.eleventh !== undefined && q.seventh !== undefined) {
+    return [0, q.seventh, q.eleventh, q.thirteenth];
+  }
+  if (q.thirteenth !== undefined && q.seventh !== undefined) return [0, q.seventh, q.ninth ?? 14, q.thirteenth];
+  if (q.eleventh !== undefined && q.seventh !== undefined) {
+    if (q.ninth !== undefined) return [0, q.seventh, q.ninth, q.eleventh];
+    if (q.third !== undefined) return [0, q.third, q.seventh, q.eleventh];
   }
   const tones = [0];
   if (q.third !== undefined) tones.push(q.third);
