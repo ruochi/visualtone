@@ -1,85 +1,154 @@
 /**
- * VisualTone score format v1.
+ * VisualTone score format v2.
  *
- * A score is a list of tracks. Each track holds notes (synthesized),
- * sfx (built-in effects) and/or clips (external WAV files), plus simple
- * mixing settings. Times are in seconds, pitches are MIDI numbers or note names.
+ * A score is tempo, key, sections and tracks. Tracks hold notes, looping
+ * patterns, chord progressions, sound effects and audio clips. Unknown fields
+ * are errors: a model that writes `t` or `velocity` in the wrong place is told
+ * what to write instead.
  */
-import { z } from 'zod';
+import { z, type ZodError } from 'zod';
+import { DRUM_NAMES, INSTRUMENT_ALIASES, INSTRUMENT_NAMES } from './instruments.js';
+import { SFX_NAMES } from './sfx.js';
+import { suggest } from './suggest.js';
 
-export const PitchSchema = z.union([
-  z.number().min(0).max(127),
-  z.string().regex(/^[A-G][#b]?-?\d$/, 'Note name like C4, F#3, Bb2'),
+const TimeSchema = z.union([z.number().min(0), z.string().min(1)]);
+const LengthSchema = z.union([z.number().positive(), z.string().min(1)]);
+
+export const NoteSchema = z
+  .object({
+    at: TimeSchema,
+    pitch: z.union([z.number().int().min(0).max(127), z.string().min(1)]),
+    duration: LengthSchema.optional(),
+    velocity: z.number().min(0).max(1).default(0.8),
+  })
+  .strict();
+
+export const SfxSchema = z
+  .object({
+    type: z.enum(SFX_NAMES),
+    at: z.union([TimeSchema, z.array(TimeSchema).min(1)]),
+    duration: LengthSchema.optional(),
+    size: z.number().min(0).max(1).default(0.6),
+    pan: z.number().min(-1).max(1).default(0),
+    brightness: z.number().min(0).max(1).default(0.5),
+    pitch: z.number().min(-24).max(24).default(0),
+    direction: z.enum(['in', 'out']).optional(),
+  })
+  .strict()
+  .refine((e) => e.direction === undefined || e.type === 'whoosh', {
+    message: 'direction is only for whoosh (in or out)',
+  });
+
+export const ClipSchema = z
+  .object({
+    src: z.string().min(1),
+    at: TimeSchema.default(0),
+    offset: z.number().min(0).default(0),
+    duration: LengthSchema.optional(),
+    loop: z.boolean().default(false),
+    gain: z.number().default(0),
+    fadeIn: z.number().min(0).default(0),
+    fadeOut: z.number().min(0).default(0),
+  })
+  .strict();
+
+export const DuckSchema = z.union([
+  z.enum(['auto', 'off']),
+  z
+    .object({
+      by: z.string().min(1),
+      amount: z.number().min(0).max(1).default(0.5),
+      release: z.number().positive().default(0.25),
+    })
+    .strict(),
 ]);
 
-export const NoteSchema = z.object({
-  t: z.number().min(0).describe('Start time, seconds'),
-  pitch: PitchSchema.default(60).describe('MIDI 0-127 or note name. Drum kits use GM numbers'),
-  size: z.number().min(0).max(1).default(0.8).describe('Velocity 0-1'),
-  duration: z.number().positive().default(0.25).describe('Seconds'),
-});
+const InSchema = z.union([
+  z.array(z.string().min(1)).min(1),
+  z.object({ from: z.string().min(1), to: z.string().min(1) }).strict(),
+]);
 
-export const SFX_NAMES = ['whoosh', 'riser', 'impact', 'pop', 'tick'] as const;
+export const PatternSchema = z
+  .object({
+    in: InSchema.optional(),
+    grid: z.union([z.string().min(1), z.number().positive()]).optional(),
+    steps: z.record(z.string(), z.string()).optional(),
+    notes: z.string().optional(),
+  })
+  .strict()
+  .refine((p) => Number(p.steps !== undefined) + Number(p.notes !== undefined) === 1, {
+    message: 'a pattern needs steps (drums) or notes (a pitched line), and not both',
+  });
 
-export const SfxSchema = z.object({
-  sfx: z.enum(SFX_NAMES),
-  t: z.number().min(0),
-  size: z.number().min(0).max(1).default(0.7),
-  duration: z.number().positive().optional().describe('Defaults per effect'),
-});
-
-export const ClipSchema = z.object({
-  src: z.string().describe('WAV path, relative to the score file'),
-  at: z.number().default(0).describe('Timeline position, seconds'),
-  gain: z.number().default(0).describe('dB'),
-  fadeIn: z.number().min(0).default(0),
-  fadeOut: z.number().min(0).default(0),
-});
-
-export const DuckSchema = z.object({
-  by: z.string().describe('Track id whose level pushes this track down'),
-  amount: z.number().min(0).max(1).default(0.5),
-  release: z.number().positive().default(0.25).describe('Seconds'),
-});
+export const ChordSchema = z
+  .object({
+    in: InSchema.optional(),
+    progression: z.string().min(1),
+    per: z.union([z.string().min(1), z.number().positive()]).optional(),
+    style: z.enum(['pad', 'block', 'stab', 'strum', 'arp-up', 'arp-down', 'arp-updown']).default('block'),
+    rhythm: z.string().optional(),
+    register: z.string().optional(),
+    voicing: z.enum(['close', 'open', 'spread']).default('close'),
+  })
+  .strict();
 
 export const TrackSchema = z
   .object({
-    id: z.string(),
+    id: z.string().min(1),
     role: z.enum(['music', 'sfx', 'voice']).default('music'),
-    instrument: z.string().default('lead').describe('Preset name, see INSTRUMENTS'),
-    hue: z.number().min(0).max(360).optional().describe('Overrides the preset waveform blend'),
-    lightness: z.number().min(0).max(1).optional().describe('Overrides the preset filter brightness'),
-    gain: z.number().default(0).describe('dB'),
-    pan: z.number().min(-1).max(1).default(0),
-    lowCut: z.number().positive().optional().describe('High-pass Hz'),
-    highCut: z.number().positive().optional().describe('Low-pass Hz'),
-    reverb: z.number().min(0).max(1).default(0).describe('Send to master reverb'),
-    delay: z.number().min(0).max(1).default(0).describe('Send to master delay'),
+    instrument: z.string().optional(),
+    gain: z.number().default(0),
+    pan: z.number().min(-1).max(1).optional(),
+    brightness: z.number().min(0).max(1).default(0.5),
+    space: z.number().min(0).max(1).optional(),
     duck: DuckSchema.optional(),
-    params: z.record(z.string(), z.unknown()).optional().describe('Engine-specific settings. Engines ignore keys they do not know'),
+    follow: z.string().min(1).optional(),
     notes: z.array(NoteSchema).default([]),
+    patterns: z.array(PatternSchema).default([]),
+    chords: z.array(ChordSchema).default([]),
     sfx: z.array(SfxSchema).default([]),
     clips: z.array(ClipSchema).default([]),
   })
-  .refine((t) => t.notes.length + t.sfx.length + t.clips.length > 0, {
-    message: 'Track needs notes, sfx or clips',
+  .strict()
+  .refine((t) => t.notes.length + t.patterns.length + t.chords.length + t.sfx.length + t.clips.length > 0, {
+    message: 'a track needs notes, patterns, chords, sfx or clips',
   });
 
-export const MasterSchema = z.object({
-  loudness: z.number().default(-14).describe('Target RMS loudness, dBFS (approximate LUFS)'),
-  ceiling: z.number().max(0).default(-1).describe('Peak ceiling, dBFS'),
-  reverb: z.object({ size: z.number().min(0).max(1).default(0.6), damping: z.number().min(0).max(1).default(0.4) }).default({}),
-  delay: z.object({ time: z.number().positive().default(0.375), feedback: z.number().min(0).max(0.95).default(0.35) }).default({}),
-});
-
-export const ScoreSchema = z.object({
-  version: z.literal(1).default(1),
-  sampleRate: z.number().int().positive().default(48000),
-  duration: z.number().positive().optional().describe('Seconds. Default: last event + tail'),
-  seed: z.number().int().default(1),
-  tracks: z.array(TrackSchema).min(1),
-  master: MasterSchema.default({}),
-});
+export const ScoreSchema = z
+  .object({
+    version: z.literal(2).default(2),
+    seed: z.number().int().default(1),
+    sampleRate: z.number().int().positive().default(48000),
+    duration: z.number().positive().optional(),
+    tempo: z
+      .object({
+        bpm: z.number().positive().max(400),
+        meter: z.enum(['2/4', '3/4', '4/4', '5/4', '6/8', '7/8', '12/8']).default('4/4'),
+        swing: z.number().min(0).max(0.5).default(0),
+      })
+      .strict()
+      .optional(),
+    key: z.string().optional(),
+    sections: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[A-Za-z][A-Za-z0-9_-]*$/, 'section id must start with a letter (no ":" or "@")'),
+            at: z.number().min(0),
+          })
+          .strict(),
+      )
+      .default([]),
+    tracks: z.array(TrackSchema).min(1),
+    mix: z
+      .object({
+        loudness: z.number().default(-16),
+        ceiling: z.number().max(0).default(-1),
+      })
+      .strict()
+      .default({}),
+  })
+  .strict();
 
 export type Score = z.infer<typeof ScoreSchema>;
 export type ScoreInput = z.input<typeof ScoreSchema>;
@@ -87,23 +156,119 @@ export type Track = z.infer<typeof TrackSchema>;
 export type Note = z.infer<typeof NoteSchema>;
 export type SfxEvent = z.infer<typeof SfxSchema>;
 export type Clip = z.infer<typeof ClipSchema>;
+export type Pattern = z.infer<typeof PatternSchema>;
+export type ChordTrack = z.infer<typeof ChordSchema>;
 
-export function parseScore(input: unknown): Score {
-  const score = ScoreSchema.parse(input);
-  const ids = new Set(score.tracks.map((t) => t.id));
-  if (ids.size !== score.tracks.length) throw new Error('Track ids must be unique');
-  for (const t of score.tracks) {
-    if (t.duck && !ids.has(t.duck.by)) throw new Error(`Track ${t.id}: duck.by "${t.duck.by}" is not a track id`);
-  }
-  return score;
+const FIELD_ALIASES: Record<string, Record<string, string>> = {
+  score: { master: 'mix', bpm: 'tempo', keySignature: 'key' },
+  tempo: { rate: 'bpm', time: 'meter', signature: 'meter' },
+  sections: { name: 'id', t: 'at', time: 'at', start: 'at' },
+  tracks: {
+    name: 'id', t: 'at', hue: 'brightness', lightness: 'brightness', reverb: 'space', delay: 'space',
+    volume: 'gain', level: 'gain', track: 'id',
+  },
+  notes: { t: 'at', time: 'at', start: 'at', len: 'duration', length: 'duration', size: 'velocity', vel: 'velocity', note: 'pitch' },
+  patterns: { pattern: 'notes', sequence: 'steps', section: 'in' },
+  chords: { chords: 'progression', chord: 'progression', section: 'in', length: 'per' },
+  sfx: { sfx: 'type', name: 'type', t: 'at', time: 'at', start: 'at', velocity: 'size', len: 'duration', length: 'duration' },
+  clips: { file: 'src', path: 'src', t: 'at', time: 'at', start: 'at', len: 'duration', length: 'duration', volume: 'gain' },
+  mix: { master: 'loudness', gain: 'loudness', limit: 'ceiling' },
+  duck: { track: 'by', source: 'by', from: 'by' },
+  in: { start: 'from', end: 'to' },
+};
+
+const FIELDS: Record<string, readonly string[]> = {
+  score: ['version', 'seed', 'sampleRate', 'duration', 'tempo', 'key', 'sections', 'tracks', 'mix'],
+  tempo: ['bpm', 'meter', 'swing'],
+  sections: ['id', 'at'],
+  tracks: ['id', 'role', 'instrument', 'gain', 'pan', 'brightness', 'space', 'duck', 'follow', 'notes', 'patterns', 'chords', 'sfx', 'clips'],
+  notes: ['at', 'pitch', 'duration', 'velocity'],
+  patterns: ['in', 'grid', 'steps', 'notes'],
+  chords: ['in', 'progression', 'per', 'style', 'rhythm', 'register', 'voicing'],
+  sfx: ['type', 'at', 'duration', 'size', 'pan', 'brightness', 'pitch', 'direction'],
+  clips: ['src', 'at', 'offset', 'duration', 'loop', 'gain', 'fadeIn', 'fadeOut'],
+  mix: ['loudness', 'ceiling'],
+  duck: ['by', 'amount', 'release'],
+  in: ['from', 'to'],
+  steps: DRUM_NAMES,
+};
+
+function pathString(path: (string | number)[]): string {
+  if (!path.length) return 'score';
+  let s = '';
+  for (const p of path) s += typeof p === 'number' ? `[${p}]` : (s ? '.' : '') + p;
+  return s;
 }
 
-const LETTERS: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+function kindOf(path: (string | number)[]): string {
+  for (let i = path.length - 1; i >= 0; i--) if (typeof path[i] === 'string') return path[i] as string;
+  return 'score';
+}
 
-/** C4 = 60, A4 = 69. */
-export function toMidi(pitch: number | string): number {
-  if (typeof pitch === 'number') return pitch;
-  const m = /^([A-G])([#b]?)(-?\d)$/.exec(pitch);
-  if (!m) throw new Error(`Invalid note name: ${pitch}`);
-  return LETTERS[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + (Number(m[3]) + 1) * 12;
+function formatZod(error: ZodError): string {
+  const lines: string[] = [];
+  for (const issue of error.issues) {
+    if (lines.length >= 8) break;
+    const path = pathString(issue.path);
+    if (issue.code === 'unrecognized_keys') {
+      const kind = kindOf(issue.path);
+      const fields = FIELDS[kind] ?? [];
+      for (const key of issue.keys) {
+        if (lines.length >= 8) break;
+        const hint = suggest(key, fields, FIELD_ALIASES[kind] ?? {});
+        lines.push(`${path}.${key}: unknown field${hint ? `; did you mean "${hint}"?` : ''}`);
+      }
+      continue;
+    }
+    if (issue.code === 'invalid_enum_value' && issue.path[issue.path.length - 1] === 'instrument') {
+      lines.push(`${path}: unknown instrument "${String(issue.received)}"`);
+      continue;
+    }
+    lines.push(`${path}: ${issue.message}`);
+  }
+  const extra = error.issues.length - lines.length;
+  if (extra > 0) lines.push(`and ${extra} more`);
+  return lines.join('\n');
+}
+
+function checkNames(score: Score): void {
+  const ids = new Set<string>();
+  for (const t of score.tracks) {
+    if (ids.has(t.id)) throw new Error(`track id "${t.id}" is used twice`);
+    ids.add(t.id);
+  }
+  const sections = new Set<string>();
+  let prev = -1;
+  for (const s of score.sections) {
+    if (sections.has(s.id)) throw new Error(`section id "${s.id}" is used twice`);
+    sections.add(s.id);
+    if (s.at < prev) throw new Error(`section "${s.id}" starts before the previous section; list sections in time order`);
+    prev = s.at;
+  }
+  for (const t of score.tracks) {
+    if (t.follow && !ids.has(t.follow)) {
+      const hint = suggest(t.follow, [...ids]);
+      throw new Error(`track ${t.id}: follow "${t.follow}" is not a track${hint ? `; did you mean "${hint}"?` : ''}`);
+    }
+    if (t.duck && typeof t.duck === 'object' && !ids.has(t.duck.by)) {
+      const hint = suggest(t.duck.by, [...ids]);
+      throw new Error(`track ${t.id}: duck.by "${t.duck.by}" is not a track${hint ? `; did you mean "${hint}"?` : ''}`);
+    }
+    const needsInstrument = t.notes.length + t.patterns.length + t.chords.length > 0;
+    if (needsInstrument && !t.instrument) throw new Error(`track ${t.id}: needs an instrument (${INSTRUMENT_NAMES.join(', ')})`);
+    if (t.instrument && !INSTRUMENT_NAMES.includes(t.instrument)) {
+      const hint = suggest(t.instrument, INSTRUMENT_NAMES, INSTRUMENT_ALIASES);
+      throw new Error(`track ${t.id}: unknown instrument "${t.instrument}"${hint ? `; did you mean "${hint}"?` : ''}. Known: ${INSTRUMENT_NAMES.join(', ')}`);
+    }
+  }
+}
+
+export function parseScore(input: unknown): Score {
+  if (input && typeof input === 'object' && (input as { version?: unknown }).version === 1) {
+    throw new Error('score version 1 is not supported. Write version 2: tempo, sections, patterns and chords (see README)');
+  }
+  const parsed = ScoreSchema.safeParse(input);
+  if (!parsed.success) throw new Error(formatZod(parsed.error));
+  checkNames(parsed.data);
+  return parsed.data;
 }

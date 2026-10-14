@@ -1,14 +1,15 @@
 /**
- * Score → stereo buffers. Instruments are pluggable: pass `instruments` to
- * replace the built-in lite synths (this is how visualtonestudio plugs in).
+ * Score → stereo buffers. `instruments` replaces the built-in synths;
+ * `processTrack` and `processMaster` are the other two extension points.
  */
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { OnePole, dbToGain, gainToDb, rng } from './dsp.js';
-import { delay, limit, reverb } from './effects.js';
-import { INSTRUMENTS, renderDrumNote, renderSynthNote } from './instruments.js';
-import { type Note, type Score, type Track, toMidi } from './schema.js';
-import { renderSfx, SFX_DURATION } from './sfx.js';
+import { compile, type CompiledScore, type CompiledTrack, type Issue } from './compile.js';
+import { dbToGain, gainToDb, OnePole, rng, Svf } from './dsp.js';
+import { limit, reverb } from './effects.js';
+import { INSTRUMENTS, renderDrumNote, renderSynthNote, type InstrumentInfo } from './instruments.js';
+import type { Score, Track } from './schema.js';
+import { renderSfx } from './sfx.js';
 import { type DecodedWav, decodeWav } from './wav.js';
 
 export type Stereo = [Float32Array, Float32Array];
@@ -17,25 +18,32 @@ export interface NoteContext {
   sampleRate: number;
   rand: () => number;
   track: Track;
+  brightness: number;
 }
 
 export interface Instrument {
   /** Mono or stereo buffer starting at note-on, including the release tail. */
-  renderNote(note: Note, midi: number, ctx: NoteContext): Float32Array | Stereo;
-  /** Seconds of sound after note-off, used to size the render. */
+  renderNote(note: CompiledTrack['notes'][number], midi: number, ctx: NoteContext): Float32Array | Stereo;
   tail?: number;
 }
 
 export type InstrumentResolver = (track: Track) => Instrument | undefined;
 
+export interface ClipBuffer {
+  sampleRate: number;
+  channels: Float32Array[];
+}
+
 export interface RenderOptions {
   instruments?: InstrumentResolver;
   /** Base directory for clip paths. */
   baseDir?: string;
+  /** In-memory clips. Keys match `src` in the score, so nothing is read from disk. */
+  clips?: Record<string, ClipBuffer>;
   loadClip?: (path: string) => DecodedWav;
-  /** Runs on each track after gain/pan/cuts, before ducking and sends. Edit in place. */
+  /** Runs on each track after gain and pan, before ducking and the vocal dip. */
   processTrack?: (track: Track, audio: Stereo, sampleRate: number) => void;
-  /** Runs on the summed mix (after reverb/delay returns), before loudness match and limiting. */
+  /** Runs on the summed mix, before loudness match and limiting. */
   processMaster?: (mix: Stereo, sampleRate: number) => void;
 }
 
@@ -43,15 +51,17 @@ export interface RenderResult {
   left: Float32Array;
   right: Float32Array;
   sampleRate: number;
-  report: { duration: number; peakDb: number; loudnessDb: number; limiterDb: number };
-}
-
-/** The built-in lite instrument for a track. */
-export function liteInstrument(track: Track): Instrument {
-  const preset = INSTRUMENTS[track.instrument];
-  if (!preset) throw new Error(`Track ${track.id}: unknown instrument "${track.instrument}". Known: ${Object.keys(INSTRUMENTS).join(', ')}`);
-  if (preset.kind === 'drums') return { renderNote: (n, m, c) => renderDrumNote(n, m, { ...c, hue: track.hue, lightness: track.lightness }), tail: 0.5 };
-  return { renderNote: (n, m, c) => renderSynthNote(preset, n, m, { ...c, hue: track.hue, lightness: track.lightness }), tail: preset.tail };
+  report: {
+    /** Length of the returned buffers, seconds. */
+    duration: number;
+    /** End of the written music, before release tails. */
+    contentDuration: number;
+    peakDb: number;
+    loudnessDb: number;
+    /** How many dB the limiter took off the loudest peak. */
+    limiterDb: number;
+    issues: Issue[];
+  };
 }
 
 function hash(s: string): number {
@@ -60,21 +70,28 @@ function hash(s: string): number {
   return h >>> 0;
 }
 
-/** Linear resampling, good enough for clips that are already at a common rate. */
+/** The built-in instrument for a track. */
+export function liteInstrument(track: Track): Instrument {
+  const info: InstrumentInfo | undefined = track.instrument ? INSTRUMENTS[track.instrument] : undefined;
+  if (!info) throw new Error(`track ${track.id}: unknown instrument "${track.instrument ?? ''}"`);
+  if (info.kind === 'drums') {
+    return { tail: info.tail, renderNote: (n, _m, c) => renderDrumNote(n, c) };
+  }
+  return { tail: info.tail, renderNote: (n, m, c) => renderSynthNote(info, n, m, c) };
+}
+
 function resample(x: Float32Array, from: number, to: number): Float32Array {
   if (from === to) return x;
-  const n = Math.floor((x.length * to) / from);
+  const n = Math.max(0, Math.floor((x.length * to) / from));
   const out = new Float32Array(n);
   for (let i = 0; i < n; i++) {
     const p = (i * from) / to;
     const j = Math.floor(p);
-    const f = p - j;
-    out[i] = x[j] * (1 - f) + (x[j + 1] ?? 0) * f;
+    out[i] = x[j] * (1 - (p - j)) + (x[j + 1] ?? 0) * (p - j);
   }
   return out;
 }
 
-/** Equal-power pan of a mono signal, or balance for a stereo one. */
 function addPanned(dst: Stereo, src: Float32Array | Stereo, at: number, pan: number, gain = 1): void {
   const a = ((pan + 1) * Math.PI) / 4;
   const gl = Math.cos(a) * Math.SQRT2 * gain;
@@ -87,15 +104,16 @@ function addPanned(dst: Stereo, src: Float32Array | Stereo, at: number, pan: num
   }
 }
 
-function trackEnd(track: Track, inst: Instrument | undefined, clipLen: (src: string) => number): number {
-  let end = 0;
-  for (const n of track.notes) end = Math.max(end, n.t + n.duration + (inst?.tail ?? 0.5));
-  for (const s of track.sfx) end = Math.max(end, s.t + (s.duration ?? SFX_DURATION[s.sfx]));
-  for (const c of track.clips) end = Math.max(end, c.at + clipLen(c.src));
-  return end;
+/** A few dB out of the vocal band, so a pad doesn't sit on the voice. */
+function dipVocal(x: Float32Array, sampleRate: number, amount: number): void {
+  if (amount <= 0) return;
+  const f = new Svf(sampleRate);
+  for (let i = 0; i < x.length; i++) {
+    const band = f.process(x[i], 2500, 0.9)[1];
+    x[i] -= amount * band;
+  }
 }
 
-/** Envelope follower, normalized so the source's loud passages read ~1. */
 function envelope(x: Stereo, sampleRate: number, releaseSec: number): Float32Array {
   const atk = Math.exp(-1 / (0.005 * sampleRate));
   const rel = Math.exp(-1 / (releaseSec * sampleRate));
@@ -112,7 +130,6 @@ function envelope(x: Stereo, sampleRate: number, releaseSec: number): Float32Arr
   return env;
 }
 
-/** Gated RMS loudness in dBFS over 400 ms blocks (blocks under -50 dB ignored). */
 function loudness(l: Float32Array, r: Float32Array, sampleRate: number): number {
   const block = Math.round(0.4 * sampleRate);
   let sum = 0;
@@ -129,125 +146,174 @@ function loudness(l: Float32Array, r: Float32Array, sampleRate: number): number 
   return count ? 10 * Math.log10(sum / count) : -120;
 }
 
-export function render(score: Score, opts: RenderOptions = {}): RenderResult {
+function bandEnergy(x: Float32Array, sampleRate: number, hz: number, gate: Float32Array): number {
+  const f = new Svf(sampleRate);
+  let e = 0;
+  let n = 0;
+  for (let i = 0; i < x.length; i++) {
+    const b = f.process(x[i], hz, 0.8)[1];
+    if (gate[i] > 0.2) {
+      e += b * b;
+      n++;
+    }
+  }
+  return n > sampleRate * 0.15 ? e / n : 0;
+}
+
+function takeClip(src: Stereo, clip: CompiledTrack['clips'][number], sampleRate: number): Stereo {
+  const offset = Math.round(clip.offset * sampleRate);
+  const available = Math.max(0, src[0].length - offset);
+  const want = clip.duration !== undefined ? Math.max(0, Math.round(clip.duration * sampleRate)) : available;
+  const out: Stereo = [new Float32Array(want), new Float32Array(want)];
+  if (!want || !available) return out;
+  for (let i = 0; i < want; i++) {
+    let j = offset + i;
+    if (j >= src[0].length) {
+      if (!clip.loop) break;
+      j = offset + ((i % available) + available) % available;
+    }
+    const left = want - i;
+    const gIn = clip.fadeIn > 0 ? Math.min(1, i / (clip.fadeIn * sampleRate)) : 1;
+    const gOut = clip.fadeOut > 0 ? Math.min(1, left / (clip.fadeOut * sampleRate)) : 1;
+    const g = Math.min(gIn, gOut);
+    out[0][i] = src[0][j] * g;
+    out[1][i] = src[1][j] * g;
+  }
+  return out;
+}
+
+function loadScoreClips(score: Score, opts: RenderOptions): { buffers: Map<string, Stereo>; lengths: Record<string, number> } {
   const sr = score.sampleRate;
   const baseDir = opts.baseDir ?? process.cwd();
-  const clipCache = new Map<string, Stereo>();
-  const loadClip = (src: string): Stereo => {
-    let c = clipCache.get(src);
-    if (!c) {
-      const wav = (opts.loadClip ?? ((p) => decodeWav(readFileSync(p))))(resolve(baseDir, src));
-      const l = resample(wav.channels[0], wav.sampleRate, sr);
-      c = [l, wav.channels[1] ? resample(wav.channels[1], wav.sampleRate, sr) : l];
-      clipCache.set(src, c);
-    }
-    return c;
-  };
+  const buffers = new Map<string, Stereo>();
+  const lengths: Record<string, number> = {};
+  const srcs = [...new Set(score.tracks.flatMap((t) => t.clips.map((c) => c.src)))];
+  for (const src of srcs) {
+    const given = opts.clips?.[src];
+    const wav = given ?? (opts.loadClip ?? ((p: string) => decodeWav(readFileSync(p))))(resolve(baseDir, src));
+    const l = resample(wav.channels[0] ?? new Float32Array(), wav.sampleRate, sr);
+    const r = wav.channels[1] ? resample(wav.channels[1], wav.sampleRate, sr) : l;
+    buffers.set(src, [l, r]);
+    lengths[src] = l.length / sr;
+  }
+  return { buffers, lengths };
+}
 
-  const instruments = score.tracks.map((t) => (t.notes.length ? (opts.instruments?.(t) ?? liteInstrument(t)) : undefined));
-  const usesFx = score.tracks.some((t) => t.reverb > 0 || t.delay > 0);
-  const end = Math.max(...score.tracks.map((t, i) => trackEnd(t, instruments[i], (s) => loadClip(s)[0].length / sr)));
-  const duration = score.duration ?? end + (usesFx ? 1.5 : 0.1);
-  const n = Math.ceil(duration * sr);
+export function render(score: Score, opts: RenderOptions = {}): RenderResult {
+  const { buffers: clipBuffers, lengths } = loadScoreClips(score, opts);
+  const compiled: CompiledScore = compile(score, { clipLengths: lengths });
+  const sr = compiled.sampleRate;
+  const tail = compiled.fixedDuration !== undefined
+    ? 0
+    : Math.max(0.05, ...compiled.tracks.map((t) => t.tail), compiled.tracks.some((t) => t.space > 0.01) ? 1.1 : 0);
+  const duration = (compiled.fixedDuration ?? compiled.contentEnd) + tail;
+  const n = Math.max(1, Math.ceil(duration * sr));
+  const issues: Issue[] = [...compiled.issues];
 
-  // 1. Render every track to its own stereo buffer (pre-duck).
-  const buses = score.tracks.map((track, ti): Stereo => {
+  const buses = compiled.tracks.map((track): Stereo => {
     const buf: Stereo = [new Float32Array(n), new Float32Array(n)];
-    const rand = rng(score.seed ^ hash(track.id));
-    const inst = instruments[ti];
+    const rand = rng(compiled.seed ^ hash(track.id));
+    const plays = track.notes.length > 0;
+    const inst = plays ? (opts.instruments?.(track.source) ?? liteInstrument(track.source)) : undefined;
+    const ctx: NoteContext = { sampleRate: sr, rand, track: track.source, brightness: track.brightness };
     for (const note of track.notes) {
-      const audio = inst!.renderNote(note, toMidi(note.pitch), { sampleRate: sr, rand, track });
-      addPanned(buf, audio, Math.round(note.t * sr), 0);
+      const audio = inst!.renderNote(note, note.midi, ctx);
+      addPanned(buf, audio, Math.round(note.at * sr), 0);
     }
-    for (const e of track.sfx) addPanned(buf, renderSfx(e, sr, rand), Math.round(e.t * sr), 0);
+    for (const e of track.sfx) {
+      addPanned(buf, renderSfx(e, sr, rand), Math.round(e.start * sr), e.pan);
+    }
     for (const clip of track.clips) {
-      const [cl, cr] = loadClip(clip.src);
-      const fi = clip.fadeIn * sr;
-      const fo = clip.fadeOut * sr;
-      const faded: Stereo = [cl.slice(), cr.slice()];
-      for (let i = 0; i < cl.length; i++) {
-        const g = Math.min(1, fi > 0 ? i / fi : 1, fo > 0 ? (cl.length - i) / fo : 1);
-        faded[0][i] *= g;
-        faded[1][i] *= g;
-      }
-      // Clips are already stereo; pan 0 here, track pan is applied below as balance.
-      addPanned(buf, faded, Math.round(clip.at * sr), 0, dbToGain(clip.gain) / Math.SQRT2);
+      const src = clipBuffers.get(clip.src);
+      if (!src) throw new Error(`track ${track.id}: missing clip "${clip.src}"`);
+      const slice = takeClip(src, clip, sr);
+      addPanned(buf, slice, Math.round(clip.at * sr), 0, dbToGain(clip.gain) / Math.SQRT2);
     }
-    // Track EQ cuts, gain and pan.
     const g = dbToGain(track.gain);
-    const a = ((track.pan + 1) * Math.PI) / 4;
-    const gains = [Math.cos(a) * Math.SQRT2 * g, Math.sin(a) * Math.SQRT2 * g];
+    const angle = ((track.pan + 1) * Math.PI) / 4;
+    const gains = [Math.cos(angle) * Math.SQRT2 * g, Math.sin(angle) * Math.SQRT2 * g];
     for (let c = 0; c < 2; c++) {
       const hp = new OnePole(sr);
-      const lp = new OnePole(sr);
       const x = buf[c];
-      for (let i = 0; i < n; i++) {
-        let v = x[i];
-        if (track.lowCut) v = hp.high(v, track.lowCut);
-        if (track.highCut) v = lp.low(v, track.highCut);
-        x[i] = v * gains[c];
-      }
+      for (let i = 0; i < n; i++) x[i] = (track.lowCut ? hp.high(x[i], track.lowCut) : x[i]) * gains[c];
     }
-    opts.processTrack?.(track, buf, sr);
+    opts.processTrack?.(track.source, buf, sr);
+    if (track.vocalDip) {
+      dipVocal(buf[0], sr, track.vocalDip);
+      dipVocal(buf[1], sr, track.vocalDip);
+    }
     return buf;
   });
 
-  // 2. Ducking uses the pre-duck level of the source track.
-  const envs = new Map<string, Float32Array>();
-  score.tracks.forEach((track) => {
-    if (!track.duck) return;
-    const srcIndex = score.tracks.findIndex((t) => t.id === track.duck!.by);
-    if (srcIndex < 0) return;
-    const key = `${track.duck.by}:${track.duck.release}`;
-    if (!envs.has(key)) envs.set(key, envelope(buses[srcIndex], sr, track.duck.release));
+  const voiceMix: Stereo = [new Float32Array(n), new Float32Array(n)];
+  compiled.tracks.forEach((track, ti) => {
+    if (track.role !== 'voice') return;
+    for (let c = 0; c < 2; c++) for (let i = 0; i < n; i++) voiceMix[c][i] += buses[ti][c][i];
   });
-  score.tracks.forEach((track, ti) => {
-    if (!track.duck) return;
-    const env = envs.get(`${track.duck.by}:${track.duck.release}`);
+  const voiceEnv = compiled.tracks.some((t) => t.duck?.auto) ? envelope(voiceMix, sr, 0.28) : undefined;
+  const envs = new Map<string, Float32Array>();
+  compiled.tracks.forEach((track, ti) => {
+    const duck = track.duck;
+    if (!duck) return;
+    let env: Float32Array | undefined;
+    if (duck.auto) env = voiceEnv;
+    else {
+      const key = `${duck.by}:${duck.release}`;
+      env = envs.get(key);
+      if (!env) {
+        const src = compiled.tracks.findIndex((t) => t.id === duck.by);
+        if (src < 0) return;
+        env = envelope(buses[src], sr, duck.release);
+        envs.set(key, env);
+      }
+    }
     if (!env) return;
     for (let i = 0; i < n; i++) {
-      const g = 1 - track.duck.amount * env[i];
+      const g = 1 - duck.amount * env[i];
       buses[ti][0][i] *= g;
       buses[ti][1][i] *= g;
     }
   });
 
-  // 3. Sum, with post-fader sends to the master reverb and delay.
+  if (compiled.tracks.some((t) => t.role === 'voice')) {
+    const music: Stereo = [new Float32Array(n), new Float32Array(n)];
+    compiled.tracks.forEach((track, ti) => {
+      if (track.role !== 'music') return;
+      for (let c = 0; c < 2; c++) for (let i = 0; i < n; i++) music[c][i] += buses[ti][c][i];
+    });
+    const gate = envelope(voiceMix, sr, 0.2);
+    const voiceBand = bandEnergy(voiceMix[0], sr, 2500, gate);
+    const musicBand = bandEnergy(music[0], sr, 2500, gate);
+    // bandEnergy is mean square, so a power ratio uses 10 log10. 4× is about 6 dB.
+    if (voiceBand > 1e-8 && musicBand > voiceBand * 4) {
+      const db = 10 * Math.log10(musicBand / voiceBand);
+      issues.push({
+        code: 'voice-masked',
+        message: `voice is covered: while the voice is speaking, music is ${db.toFixed(1)} dB louder around 2.5 kHz`,
+      });
+    }
+  }
+
   const mix: Stereo = [new Float32Array(n), new Float32Array(n)];
   const rvIn: Stereo = [new Float32Array(n), new Float32Array(n)];
-  const dlIn: Stereo = [new Float32Array(n), new Float32Array(n)];
-  score.tracks.forEach((track, ti) => {
+  compiled.tracks.forEach((track, ti) => {
     for (let c = 0; c < 2; c++) {
       const x = buses[ti][c];
       for (let i = 0; i < n; i++) {
         mix[c][i] += x[i];
-        if (track.reverb) rvIn[c][i] += x[i] * track.reverb;
-        if (track.delay) dlIn[c][i] += x[i] * track.delay;
+        if (track.space) rvIn[c][i] += x[i] * track.space;
       }
     }
   });
-  const m = score.master;
-  if (score.tracks.some((t) => t.delay > 0)) {
-    const [dl, dr] = delay(dlIn[0], dlIn[1], m.delay.time, m.delay.feedback, sr);
-    for (let i = 0; i < n; i++) {
-      mix[0][i] += dl[i];
-      mix[1][i] += dr[i];
-      // Delay repeats also feed the reverb a little, so they sit in the same space.
-      rvIn[0][i] += dl[i] * 0.3;
-      rvIn[1][i] += dr[i] * 0.3;
-    }
-  }
-  if (score.tracks.some((t) => t.reverb > 0)) {
-    const [wl, wr] = reverb(rvIn[0], rvIn[1], m.reverb.size, m.reverb.damping, sr);
+  if (compiled.tracks.some((t) => t.space > 0)) {
+    const [wl, wr] = reverb(rvIn[0], rvIn[1], 0.55, 0.48, sr);
     for (let i = 0; i < n; i++) {
       mix[0][i] += wl[i];
       mix[1][i] += wr[i];
     }
   }
-
   opts.processMaster?.(mix, sr);
 
-  // 4. Remove DC (asymmetric saturation leaves some), match loudness, then limit.
   for (let c = 0; c < 2; c++) {
     let xPrev = 0;
     let yPrev = 0;
@@ -260,12 +326,24 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
     }
   }
   const before = loudness(mix[0], mix[1], sr);
-  const g = before > -120 ? dbToGain(m.loudness - before) : 1;
+  const matched = before > -120 ? dbToGain(compiled.mix.loudness - before) : 1;
   for (let i = 0; i < n; i++) {
-    mix[0][i] *= g;
-    mix[1][i] *= g;
+    mix[0][i] *= matched;
+    mix[1][i] *= matched;
   }
-  const limiterDb = limit(mix[0], mix[1], m.ceiling, sr);
+  const limiterDb = limit(mix[0], mix[1], compiled.mix.ceiling, sr);
+  if (limiterDb > 8) {
+    issues.push({
+      code: 'deep-limiting',
+      message: `limiter reduced the mix by ${limiterDb.toFixed(1)} dB. Lower a track gain, or the loud notes will pump`,
+    });
+  }
+  const fade = Math.min(n, Math.round(0.012 * sr));
+  for (let i = 0; i < fade; i++) {
+    const g = i / fade;
+    mix[0][n - 1 - i] *= g;
+    mix[1][n - 1 - i] *= g;
+  }
   let peak = 0;
   for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(mix[0][i]), Math.abs(mix[1][i]));
 
@@ -273,11 +351,17 @@ export function render(score: Score, opts: RenderOptions = {}): RenderResult {
     left: mix[0],
     right: mix[1],
     sampleRate: sr,
-    report: { duration, peakDb: gainToDb(peak), loudnessDb: loudness(mix[0], mix[1], sr), limiterDb },
+    report: {
+      duration: n / sr,
+      contentDuration: compiled.contentEnd,
+      peakDb: gainToDb(peak),
+      loudnessDb: loudness(mix[0], mix[1], sr),
+      limiterDb,
+      issues,
+    },
   };
 }
 
-/** Clip paths in a score file are relative to the file. */
 export function baseDirOf(scorePath: string): string {
   return dirname(resolve(scorePath));
 }

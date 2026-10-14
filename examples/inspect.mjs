@@ -38,11 +38,15 @@ const stats = (x) => {
 const full = render(score, { baseDir: baseDirOf(path) });
 const m = stats(full.left);
 console.log(`MIX  rms ${db(m.rms)} dBFS  peak ${db(m.peak)}  crest ${db(m.crest)} dB  dc ${m.dc.toExponential(1)}  finite ${m.finite}`);
+console.log(`     loudness ${full.report.loudnessDb.toFixed(1)}  limiter ${full.report.limiterDb.toFixed(1)} dB`);
 console.log(`     ${bands(full.left)}`);
+for (const issue of full.report.issues) console.log(`! ${issue.code}: ${issue.message}`);
 
 for (const t of score.tracks) {
-  const solo = render({ ...score, duration: full.report.duration, tracks: [t], master: { ...score.master, loudness: 0, ceiling: 0 } }, { baseDir: baseDirOf(path) });
-  // loudness 0 would normalize; undo by re-rendering at the mix gain is overkill, so report shape only.
+  const solo = render(
+    { ...score, tracks: [t], mix: { ...score.mix, loudness: 0, ceiling: 0 } },
+    { baseDir: baseDirOf(path) },
+  );
   const s = stats(solo.left);
-  console.log(`${t.id.padEnd(5)} crest ${db(s.crest)} dB  ${bands(solo.left)}`);
+  console.log(`${t.id.padEnd(6)} crest ${db(s.crest)} dB  ${bands(solo.left)}`);
 }
